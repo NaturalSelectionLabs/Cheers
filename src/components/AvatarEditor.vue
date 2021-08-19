@@ -52,14 +52,14 @@ export default class Avatar extends Vue {
             @apply w-14 h-14;
         }
         &.md {
-            @apply w-18 h-18;
+            @apply w-16 h-16;
         }
         &.lg {
-            @apply w-30 h-30;
+            @apply w-24 h-24;
         }
 
         .image {
-            @apply object-contain object-center absolute left-0 top-0 w-full h-full rounded-full;
+            @apply object-contain object-center absolute left-0 top-0 w-full h-full rounded-full object-cover;
         }
     }
 }

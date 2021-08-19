@@ -4,7 +4,6 @@
         type="text"
         class="input"
         :placeholder="placeholder"
-        :style="style"
         :value="modelValue"
         @input="$emit('update:modelValue', $event.target.value)"
     />
@@ -12,7 +11,6 @@
         v-else
         class="input textarea"
         :placeholder="placeholder"
-        :style="style"
         :value="modelValue"
         @input="$emit('update:modelValue', $event.target.value)"
     />
@@ -26,7 +24,6 @@ import { Options, Vue } from 'vue-class-component';
     props: {
         modelValue: String,
         placeholder: String,
-        width: String,
         isSingleLine: Boolean,
     },
     emits: ['update:modelValue'],
