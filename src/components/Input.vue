@@ -10,7 +10,7 @@
     />
     <textarea
         v-else
-        class="input"
+        class="input textarea"
         :placeholder="placeholder"
         :style="style"
         :value="modelValue"
@@ -37,15 +37,11 @@ export default class Input extends Vue {}
 <style>
 @layer components {
     .input {
-        @apply box-border font-extralight pl-3 pr-5 rounded-xl border-none resize-none outline-none text-sm; /* color && bg */
+        @apply box-border font-extralight pl-5 pr-5 pt-3 pb-3 rounded-xl border-none resize-none outline-none bg-gray-bg;
+    }
 
-        &:focus {
-            @apply pl-4; /* bg */
-        }
-
-        &::placeholder {
-            @apply font-medium; /* color*/
-        }
+    .textarea {
+        @apply h-40;
     }
 }
 </style>
