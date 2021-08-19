@@ -5,7 +5,7 @@ export default {
         return new Promise<string>(async (resolve) => {
             if (file) {
                 let pinataMetadataStringify = JSON.stringify({
-                    name: 'Re: ID',
+                    name: 'RSS3Page',
                 });
                 const formData = new FormData();
                 formData.append('file', file);
