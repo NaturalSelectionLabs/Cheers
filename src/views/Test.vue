@@ -75,7 +75,11 @@
 
         <Button size="sm" class="text-xs bg-nft-button text-white shadow-nft"> Select NFTs to display </Button>
 
-        <Button size="sm" class="text-xs bg-content-button opacity-35 text-white shadow-content" disabled>
+        <Button
+            size="sm"
+            class="text-xs bg-content-button opacity-35 text-white shadow-content cursor-not-allowed"
+            disabled
+        >
             Coming Soon
         </Button>
     </div>
