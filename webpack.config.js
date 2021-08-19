@@ -109,7 +109,7 @@ module.exports = (env, argv) => ({
         new HtmlWebpackPlugin({
             chunks: ['index'],
             filename: 'index.html',
-            title: 'Re: ID',
+            title: 'RSS3 Page',
             favicon: 'public/favicon.ico',
             hash: true,
             template: 'src/assets/index.ejs',
@@ -131,5 +131,7 @@ module.exports = (env, argv) => ({
     devServer: {
         static: path.join(__dirname, 'dist'),
         compress: true,
+        hot: true,
+        historyApiFallback: true,
     },
 });
