@@ -19,17 +19,17 @@ module.exports = {
                 account: {
                     button: '#40D22F',
                     title: '#13BD00',
-                    bg: '#F6FFF5'
+                    bg: '#F6FFF5',
                 },
                 nft: {
                     button: '#7553FF',
                     title: '#2D00E0',
-                    bg: '#F7F5FF'
+                    bg: '#F7F5FF',
                 },
                 content: {
                     button: '#178BFF',
                     title: '#0070E0',
-                    bg: '#F5FAFF'
+                    bg: '#F5FAFF',
                 },
                 gray: {
                     bg: '#F4F7F8',
@@ -41,20 +41,20 @@ module.exports = {
                 primary: '0px 9px 35px -7px rgba(0, 114, 255, 0.94)',
                 secondary: '0px 9px 35px -7px rgba(55, 155, 255, 0.72)',
                 account: '0px 4px 9px 1px rgba(64, 210, 47, 0.68)',
-                'account-sm':'0px 4px 16px -6px rgba(19, 189, 0, 0.78)',
+                'account-sm': '0px 4px 16px -6px rgba(19, 189, 0, 0.78)',
                 nft: '0px 9px 35px -7px rgba(117, 83, 255, 0.94)',
-                'nft-sm':'0px 4px 16px -6px rgba(117, 83, 255, 0.78)',
+                'nft-sm': '0px 4px 16px -6px rgba(117, 83, 255, 0.78)',
                 content: '0px 9px 35px -7px rgba(55, 155, 255, 0.94)',
-                'content-sm': '-2px 2px 4px rgba(36, 146, 255, 0.13)'
+                'content-sm': '-2px 2px 4px rgba(36, 146, 255, 0.13)',
             },
             dropShadow: {
                 account: '-4px 4px 5px rgba(17, 170, 0, 0.12)',
-                nft: '-2px 4px 5px rgba(45, 0, 225, 0.12)'
+                nft: '-2px 4px 5px rgba(45, 0, 225, 0.12)',
             },
             opacity: {
                 30: '0.2', //input label
                 35: '0.35', //disabled
-                60: '0.6' //overlay
+                60: '0.6', //overlay
             },
             spacing: {
                 0.5: '0.125rem', //2px
@@ -65,7 +65,10 @@ module.exports = {
                 5: '1.25rem', //20px
                 8: '2rem', //32px
                 9: '2.25rem', //36px
-                72: '18rem' //288px
+                72: '18rem', //288px
+            },
+            fontFamily: {
+                'sf-compact-rounded': 'SFCompactRounded, sans-serif',
             },
             // inset: {
             //     '4/5': '80%',
@@ -127,9 +130,6 @@ module.exports = {
             // },
             // transitionTimeFunction: {
             //     'in-out-expo': 'cubic-bezier(.5, -.5, .5, 1.5)',
-            // },
-            // fontFamily: {
-            //     'sf-compact-rounded': 'SFCompactRounded, sans-serif',
             // },
             // fontSize: {
             //     '6.3xl': '4rem',
