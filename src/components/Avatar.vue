@@ -46,7 +46,7 @@ export default class Avatar extends Vue {
 <style lang="postcss" scoped>
 @layer components {
     .avatar {
-        @apply flex justify-center items-center cursor-pointer rounded overflow-hidden relative;
+        @apply flex justify-center items-center cursor-pointer rounded-full relative bg-gray-bg;
 
         &.sm {
             @apply w-14 h-14;
@@ -59,7 +59,7 @@ export default class Avatar extends Vue {
         }
 
         .image {
-            @apply object-contain object-center absolute left-0 top-0 w-full h-full;
+            @apply object-contain object-center absolute left-0 top-0 w-full h-full rounded-full;
         }
     }
 }
