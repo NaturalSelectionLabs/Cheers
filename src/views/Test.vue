@@ -82,17 +82,29 @@
         >
             Coming Soon
         </Button>
+
+        <hr />
+
+        <AvatarEditor size="sm" />
+        <AvatarEditor size="md" />
+        <AvatarEditor size="lg" />
+        <Input :is-single-line="true" placeholder="SingleLineInputComponent" v-model="value" class="w-80" />
+        <Input :is-single-line="false" placeholder="MultiLineInputComponent" v-model="value" class="w-80" />
     </div>
 </template>
 
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
 import Button from '@/components/Button.vue';
+import Input from '@/components/Input.vue';
+import AvatarEditor from '@/components/AvatarEditor.vue';
 
 @Options({
-    components: { Button },
+    components: { AvatarEditor, Button, Input },
 })
-export default class Test extends Vue {}
+export default class Test extends Vue {
+    value: String = 'value';
+}
 </script>
 
 <style></style>
