@@ -127,4 +127,9 @@ module.exports = (env, argv) => ({
     experiments: {
         topLevelAwait: true,
     },
+
+    devServer: {
+        static: path.join(__dirname, 'dist'),
+        compress: true,
+    },
 });
