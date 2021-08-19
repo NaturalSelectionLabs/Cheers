@@ -158,6 +158,7 @@ module.exports = {
             borderColor: ['active'],
             display: ['group-hover'],
             fill: ['active', 'focus'],
+            transfrom: ['active'],
             translate: ['active'],
         },
     },

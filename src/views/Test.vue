@@ -68,6 +68,16 @@
             <span>Following</span>
             <i class="bx bx-check bx-sm"></i>
         </Button>
+
+        <Button size="sm" class="text-xs bg-white text-account-button shadow-account-sm"> Show All </Button>
+
+        <Button size="sm" class="text-xs bg-white text-nft-button shadow-nft-sm"> Hide All </Button>
+
+        <Button size="sm" class="text-xs bg-nft-button text-white shadow-nft"> Select NFTs to display </Button>
+
+        <Button size="sm" class="text-xs bg-content-button opacity-35 text-white shadow-content" disabled>
+            Coming Soon
+        </Button>
     </div>
 </template>
 
