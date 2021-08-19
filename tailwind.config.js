@@ -135,7 +135,7 @@ module.exports = {
                 'in-out-expo': 'cubic-bezier(.5, -.5, .5, 1.5)',
             },
             fontFamily: {
-                montserrat: 'Montserrat, sans-serif',
+                'sf-compact-rounded': 'SFCompactRounded, sans-serif',
             },
             fontSize: {
                 '6.3xl': '4rem',
