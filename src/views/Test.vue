@@ -88,8 +88,8 @@
         <AvatarEditor size="sm" />
         <AvatarEditor size="md" />
         <AvatarEditor size="lg" />
-        <Input :is-single-line="false" v-model="value" class="w-80" />
-        <Input :is-single-line="true" v-model="value" class="w-80" />
+        <Input :is-single-line="true" placeholder="SingleLineInputComponent" v-model="value" class="w-80" />
+        <Input :is-single-line="false" placeholder="MultiLineInputComponent" v-model="value" class="w-80" />
     </div>
 </template>
 
