@@ -26,6 +26,7 @@
     "homepage": "https://github.com/NaturalSelectionLabs/RSS3-Page#readme",
     "dependencies": {
         "axios": "0.21.1",
+        "boxicons": "2.0.9",
         "eth-crypto": "2.0.0",
         "lodash": "4.17.21",
         "moment": "2.29.1",
