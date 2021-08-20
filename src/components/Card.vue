@@ -9,7 +9,12 @@
             </div>
             <slot name="header-button" />
         </div>
-        <div class="card-content">
+        <div
+            class="card-content"
+            :class="{
+                'single-line': isSingleLine,
+            }"
+        >
             <slot v-if="isHavingContent" name="content" />
             <span v-else class="body-tips" :class="colorTips">
                 {{ $props.tips }}
@@ -35,6 +40,7 @@ import { Options, Vue } from 'vue-class-component';
         colorBackground: String,
         tips: String,
         isHavingContent: Boolean,
+        isSingleLine: Boolean,
     },
 })
 export default class Card extends Vue {}
@@ -42,10 +48,10 @@ export default class Card extends Vue {}
 <style>
 @layer components {
     .card {
-        @apply box-border rounded-xl pt-4 pb-4 pl-5 pr-5 flex flex-col items-start h-40;
+        @apply box-border rounded-xl pt-4 pb-4 pl-5 pr-5 flex flex-col items-start min-h-48;
 
         > * + * {
-            @apply mt-5;
+            @apply my-5;
         }
 
         .card-header {
@@ -58,25 +64,24 @@ export default class Card extends Vue {}
         }
 
         .card-content {
-            @apply w-full overflow-y-auto;
+            @apply break-all mx-auto;
+            &.single-line {
+                @apply w-full overflow-y-auto;
+            }
             .body-tips {
                 @apply flex w-full justify-center;
             }
         }
 
         .card-footer {
-            @apply w-full flex flex-row justify-between font-normal mt-auto;
+            @apply w-full flex flex-row justify-between font-normal mt-auto mb-0;
 
             > * {
                 @apply flex m-auto mr-0;
             }
 
             .footer-tips {
-                @apply text-center font-extralight;
-
-                > * {
-                    @apply mt-auto;
-                }
+                @apply text-center font-extralight m-auto;
             }
         }
     }
