@@ -90,6 +90,44 @@
         <AvatarEditor size="lg" />
         <Input :is-single-line="true" placeholder="SingleLineInputComponent" v-model="value" class="w-80" />
         <Input :is-single-line="false" placeholder="MultiLineInputComponent" v-model="value" class="w-80" />
+
+        <Card
+            title="TestCard"
+            color-title="text-account-title"
+            color-tips="text-account-title"
+            color-background="bg-account-bg"
+            class="w-80"
+            tips="123456"
+            :is-having-content="false"
+        >
+            <template #accessibility>
+                <i class="bx bx-info-circle" style="color: rgba(0, 0, 0, 0.2)" />
+            </template>
+            <template #header-button>
+                <Button size="sm" class="w-10 h-10 bg-account-button text-white shadow-account">
+                    <i class="bx bx-plus bx-sm"></i>
+                </Button>
+            </template>
+            <template #footer-button>
+                <Button size="sm" class="text-xs bg-white text-account-button shadow-account-sm"> Show All </Button>
+            </template>
+        </Card>
+        <Card
+            title="TestCard"
+            color-title="text-nft-title"
+            color-tips="text-nft-title"
+            color-background="bg-nft-bg"
+            class="w-80"
+            tips="123456"
+            :is-having-content="true"
+        >
+            <template #accessibility>
+                <i class="bx bx-info-circle" style="color: rgba(0, 0, 0, 0.2)" />
+            </template>
+            <template #footer-button>
+                <Button size="sm" class="text-xs bg-white text-nft-button shadow-nft-sm"> Hide All </Button>
+            </template>
+        </Card>
     </div>
 </template>
 
@@ -98,9 +136,10 @@ import { Options, Vue } from 'vue-class-component';
 import Button from '@/components/Button.vue';
 import Input from '@/components/Input.vue';
 import AvatarEditor from '@/components/AvatarEditor.vue';
+import Card from '@/components/Card.vue';
 
 @Options({
-    components: { AvatarEditor, Button, Input },
+    components: { Card, AvatarEditor, Button, Input },
 })
 export default class Test extends Vue {
     value: String = 'value';
