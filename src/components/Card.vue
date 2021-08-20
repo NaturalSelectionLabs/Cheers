@@ -52,7 +52,7 @@ export default class Card extends Vue {}
             @apply w-full flex justify-between items-center;
             .card-title-wrapper {
                 .card-title {
-                    @apply mr-1;
+                    @apply mr-1 text-xl font-semibold;
                 }
             }
         }
