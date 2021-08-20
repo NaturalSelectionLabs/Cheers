@@ -134,8 +134,7 @@
             color-tips="text-content-title"
             color-background="bg-content-bg"
             class="w-80"
-            tips="123456"
-            :is-having-content="false"
+            :is-having-content="true"
         >
             <template #accessibility>
                 <i class="bx bx-info-circle" style="color: rgba(0, 0, 0, 0.2)" />
@@ -149,6 +148,24 @@
                         <i class="bx bx-expand-alt bx-xs"></i>
                     </Button>
                 </div>
+            </template>
+            <template #content>
+                <Button
+                    size="sm"
+                    class="
+                        text-xs
+                        bg-content-button
+                        opacity-35
+                        text-white
+                        shadow-content
+                        cursor-not-allowed
+                        m-auto
+                        mt-4
+                    "
+                    disabled
+                >
+                    Coming Soon
+                </Button>
             </template>
         </Card>
     </div>
