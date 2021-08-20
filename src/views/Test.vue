@@ -97,7 +97,7 @@
             color-tips="text-account-title"
             color-background="bg-account-bg"
             class="w-80"
-            tips="123456"
+            tips="TipsTipsTipsTipsTipsTipsTipsTipsTipsTipsTipsTipsTipsTipsTipsTipsTipsTips"
             :is-having-content="false"
         >
             <template #accessibility>
@@ -126,6 +126,29 @@
             </template>
             <template #footer-button>
                 <Button size="sm" class="text-xs bg-white text-nft-button shadow-nft-sm"> Hide All </Button>
+            </template>
+        </Card>
+        <Card
+            title="TestCard"
+            color-title="text-content-title"
+            color-tips="text-content-title"
+            color-background="bg-content-bg"
+            class="w-80"
+            tips="123456"
+            :is-having-content="false"
+        >
+            <template #accessibility>
+                <i class="bx bx-info-circle" style="color: rgba(0, 0, 0, 0.2)" />
+            </template>
+            <template #header-button>
+                <div class="flex flex-row gap-2">
+                    <Button size="sm" class="w-8 h-8 bg-white text-content-button shadow-content-md">
+                        <i class="bx bxs-pencil bx-xs"></i>
+                    </Button>
+                    <Button size="sm" class="w-8 h-8 bg-white text-content-button shadow-content-md">
+                        <i class="bx bx-expand-alt bx-xs"></i>
+                    </Button>
+                </div>
             </template>
         </Card>
     </div>
