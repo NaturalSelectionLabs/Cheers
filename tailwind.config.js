@@ -148,6 +148,13 @@ module.exports = {
             // zIndex: {
             //     '-10': '-10',
             // },
+            backgroundImage: (theme) => ({
+                BSC: "url('@/assets/images/chains/BSC.png')",
+                Ethereum: "url('@/assets/images/chains/Ethereum.png')",
+                Ronin: "url('@/assets/images/chains/Ronin.png')",
+                Etherscan: "url('@/assets/images/scans/Etherscan.png')",
+                Roninscan: "url('@/assets/images/scans/Roninscan.png')",
+            }),
         },
     },
     variants: {
