@@ -20,7 +20,6 @@
 import { Options, Vue } from 'vue-class-component';
 
 @Options({
-    components: {},
     props: {
         modelValue: String,
         placeholder: String,
@@ -31,7 +30,7 @@ import { Options, Vue } from 'vue-class-component';
 export default class Input extends Vue {}
 </script>
 
-<style>
+<style scoped lang="postcss">
 @layer components {
     .input {
         @apply box-border font-extralight pl-5 pr-5 pt-3 pb-3 rounded-xl border-none resize-none outline-none bg-gray-bg;

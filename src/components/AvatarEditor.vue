@@ -22,7 +22,6 @@ import ipfs from '@/common/ipfs';
         size: String,
         url: String,
     },
-    components: {},
 })
 export default class Avatar extends Vue {
     file?: File;
@@ -43,7 +42,7 @@ export default class Avatar extends Vue {
 }
 </script>
 
-<style lang="postcss" scoped>
+<style scoped lang="postcss">
 @layer components {
     .avatar {
         @apply flex justify-center items-center cursor-pointer rounded-full relative bg-gray-bg;
