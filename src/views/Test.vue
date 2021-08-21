@@ -279,6 +279,14 @@
                 />
             </template>
         </Card>
+        <FollowerCard
+            class="w-80 shadow-content"
+            v-for="id in 3"
+            :key="id"
+            avatar="https://i.imgur.com/GdWEt4z.jpg"
+            name="Test"
+            address="0xD3E8ce4841ed658Ec8dcb99B7a74beFC377253EA"
+        />
     </div>
 </template>
 
@@ -289,9 +297,10 @@ import Input from '@/components/Input.vue';
 import AvatarEditor from '@/components/AvatarEditor.vue';
 import Card from '@/components/Card.vue';
 import ImgHolder from '@/components/ImgHolder.vue';
+import FollowerCard from '@/components/FollowerCard.vue';
 
 @Options({
-    components: { ImgHolder, Card, AvatarEditor, Button, Input },
+    components: { FollowerCard, ImgHolder, Card, AvatarEditor, Button, Input },
 })
 export default class Test extends Vue {
     value: String = 'value';
