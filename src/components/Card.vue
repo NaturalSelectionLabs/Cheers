@@ -34,7 +34,6 @@
 import { Options, Vue } from 'vue-class-component';
 
 @Options({
-    components: {},
     props: {
         title: String,
         colorTitle: String,
@@ -47,7 +46,7 @@ import { Options, Vue } from 'vue-class-component';
 })
 export default class Card extends Vue {}
 </script>
-<style>
+<style scoped lang="postcss">
 @layer components {
     .card {
         @apply box-border rounded-xl pt-4 pb-4 pl-5 pr-5 flex flex-col items-start min-h-48;
