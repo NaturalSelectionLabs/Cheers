@@ -37,7 +37,7 @@ module.exports = (env, argv) => ({
                 exclude: /node_modules/,
             },
             {
-                test: /\.css$/,
+                test: /\.(postcss|css)$/,
                 use: [
                     'vue-style-loader',
                     {
@@ -65,42 +65,8 @@ module.exports = (env, argv) => ({
                 ],
             },
             {
-                test: /\.postcss$/,
-                use: [
-                    'vue-style-loader',
-                    {
-                        loader: 'css-loader',
-                        options: {
-                            importLoaders: 2,
-                        },
-                    },
-                    {
-                        loader: 'postcss-loader',
-                        options: {
-                            postcssOptions: {
-                                plugins: [
-                                    require('tailwindcss'),
-                                    require('postcss-nested'),
-                                    require('autoprefixer'),
-                                    require('cssnano')({
-                                        preset: 'default',
-                                    }),
-                                ],
-                            },
-                        },
-                    },
-                ],
-            },
-            {
                 test: /\.vue$/,
                 loader: 'vue-loader',
-            },
-            {
-                test: /\.(png|jpg)$/,
-                loader: 'url-loader',
-                options: {
-                    limit: 40000,
-                },
             },
         ],
     },
