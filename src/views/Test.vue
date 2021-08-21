@@ -83,6 +83,10 @@
             Coming Soon
         </Button>
 
+        <Button size="lg" class="text-lg bg-account-button text-white shadow-account"> Manage Accounts</Button>
+
+        <Button size="lg" class="text-lg bg-nft-button text-white shadow-nft"> Manage NFTs</Button>
+
         <hr />
 
         <AvatarEditor size="sm" />

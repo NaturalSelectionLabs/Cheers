@@ -26,10 +26,10 @@ export default class Button extends Vue {
 <style scoped lang="postcss">
 @layer components {
     .btn {
-        @apply focus:outline-none transform active:-translate-y-px flex flex-row gap-2 justify-center items-center text-center;
+        @apply focus:outline-none transform active:-translate-y-px flex flex-row gap-2 justify-center items-center text-center leading-none;
     }
     .btn-lg {
-        @apply rounded px-5 py-3.5;
+        @apply rounded px-5 py-4;
     }
     .btn-sm {
         @apply rounded-sm px-2 py-2;
