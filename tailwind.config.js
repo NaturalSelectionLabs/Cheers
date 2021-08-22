@@ -68,7 +68,13 @@ module.exports = {
                 7: '1.75rem', //28px
                 8: '2rem', //32px
                 9: '2.25rem', //36px
+                17.5: '4.375rem', // 70px
+                18.5: '4.625rem', // 74px
+                83.5: '20.875rem', // 334px
                 72: '18rem', //288px
+            },
+            lineHeight: {
+                17.5: '4.375rem', // 70px
             },
             fontFamily: {
                 'sf-compact-rounded': 'SFCompactRounded, sans-serif',
