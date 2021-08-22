@@ -279,6 +279,50 @@
                 />
             </template>
         </Card>
+
+        <Card
+            title="TestCard"
+            color-title="text-nft-title"
+            color-tips="text-nft-title"
+            color-background="bg-nft-bg"
+            class="w-80"
+            :is-having-content="true"
+        >
+            <template #accessibility>
+                <i class="bx bx-info-circle" style="color: rgba(0, 0, 0, 0.2)" />
+            </template>
+            <template #content>
+                <details open>
+                    <summary class="text-nft-button">Cool Cats NFTs</summary>
+                    <p>
+                        <ImgHolder
+                            v-for="id in 7"
+                            :key="id"
+                            class="w-16 h-16 shadow-nft-sm inline-flex m-0.5"
+                            :is-square="true"
+                            :is-border="true"
+                            src="https://i.imgur.com/GdWEt4z.jpg"
+                            alt="nya"
+                        />
+                    </p>
+                </details>
+                <details class="mt-2">
+                    <summary class="text-nft-button">Cool Fendi NFTs</summary>
+                    <p>
+                        <ImgHolder
+                            v-for="id in 6"
+                            :key="id"
+                            class="w-16 h-16 shadow-nft-sm inline-flex m-0.5"
+                            :is-square="true"
+                            :is-border="true"
+                            src="https://i.imgur.com/GdWEt4z.jpg"
+                            alt="nya"
+                        />
+                    </p>
+                </details>
+            </template>
+        </Card>
+
         <FollowerCard
             class="w-80 shadow-content"
             v-for="id in 3"
