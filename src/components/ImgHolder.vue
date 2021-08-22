@@ -15,7 +15,6 @@
 import { Options, Vue } from 'vue-class-component';
 
 @Options({
-    components: {},
     props: {
         src: String,
         alt: String,
@@ -27,7 +26,7 @@ import { Options, Vue } from 'vue-class-component';
 export default class ImgHolder extends Vue {}
 </script>
 
-<style>
+<style scoped lang="postcss">
 @layer components {
     .img-holder {
         > img {

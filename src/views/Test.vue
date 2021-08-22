@@ -103,7 +103,6 @@
             class="w-80"
             tips="TipsTipsTipsTipsTipsTipsTipsTipsTipsTipsTipsTipsTipsTipsTipsTipsTipsTips"
             :is-having-content="false"
-            :is-single-line="true"
         >
             <template #accessibility>
                 <i class="bx bx-info-circle" style="color: rgba(0, 0, 0, 0.2)" />
@@ -225,6 +224,113 @@
                 />
             </template>
         </Card>
+
+        <Card
+            title="TestCard"
+            color-title="text-account-title"
+            color-tips="text-account-title"
+            color-background="bg-account-bg"
+            class="w-80"
+            :is-having-content="true"
+            :is-single-line="true"
+        >
+            <template #accessibility>
+                <i class="bx bx-info-circle" style="color: rgba(0, 0, 0, 0.2)" />
+            </template>
+            <template #header-button>
+                <Button size="sm" class="w-10 h-10 bg-account-button text-white shadow-account">
+                    <i class="bx bx-plus bx-sm"></i>
+                </Button>
+            </template>
+            <template #content>
+                <ImgHolder
+                    v-for="id in 8"
+                    :key="id"
+                    class="w-16 h-16 shadow-account-sm inline-flex m-0.5"
+                    :is-rounded="true"
+                    :is-border="true"
+                    src="https://i.imgur.com/GdWEt4z.jpg"
+                    alt="nya"
+                />
+            </template>
+        </Card>
+        <Card
+            title="TestCard"
+            color-title="text-nft-title"
+            color-tips="text-nft-title"
+            color-background="bg-nft-bg"
+            class="w-80"
+            tips="123456"
+            :is-having-content="true"
+            :is-single-line="true"
+        >
+            <template #accessibility>
+                <i class="bx bx-info-circle" style="color: rgba(0, 0, 0, 0.2)" />
+            </template>
+            <template #content>
+                <ImgHolder
+                    v-for="id in 8"
+                    :key="id"
+                    class="w-16 h-16 shadow-nft-sm inline-flex m-0.5"
+                    :is-square="true"
+                    :is-border="true"
+                    src="https://i.imgur.com/GdWEt4z.jpg"
+                    alt="nya"
+                />
+            </template>
+        </Card>
+
+        <Card
+            title="TestCard"
+            color-title="text-nft-title"
+            color-tips="text-nft-title"
+            color-background="bg-nft-bg"
+            class="w-80"
+            :is-having-content="true"
+        >
+            <template #accessibility>
+                <i class="bx bx-info-circle" style="color: rgba(0, 0, 0, 0.2)" />
+            </template>
+            <template #content>
+                <details open>
+                    <summary class="text-nft-button">Cool Cats NFTs</summary>
+                    <p>
+                        <ImgHolder
+                            v-for="id in 7"
+                            :key="id"
+                            class="w-16 h-16 shadow-nft-sm inline-flex m-0.5"
+                            :is-square="true"
+                            :is-border="true"
+                            src="https://i.imgur.com/GdWEt4z.jpg"
+                            alt="nya"
+                        />
+                    </p>
+                </details>
+                <details class="mt-2">
+                    <summary class="text-nft-button">Cool Fendi NFTs</summary>
+                    <p>
+                        <ImgHolder
+                            v-for="id in 6"
+                            :key="id"
+                            class="w-16 h-16 shadow-nft-sm inline-flex m-0.5"
+                            :is-square="true"
+                            :is-border="true"
+                            src="https://i.imgur.com/GdWEt4z.jpg"
+                            alt="nya"
+                        />
+                    </p>
+                </details>
+            </template>
+        </Card>
+
+        <FollowerCard
+            class="w-80 shadow-content"
+            v-for="id in 3"
+            :key="id"
+            avatar="https://i.imgur.com/GdWEt4z.jpg"
+            name="Test"
+            address="0xD3E8ce4841ed658Ec8dcb99B7a74beFC377253EA"
+        />
     </div>
 </template>
 
@@ -235,9 +341,10 @@ import Input from '@/components/Input.vue';
 import AvatarEditor from '@/components/AvatarEditor.vue';
 import Card from '@/components/Card.vue';
 import ImgHolder from '@/components/ImgHolder.vue';
+import FollowerCard from '@/components/FollowerCard.vue';
 
 @Options({
-    components: { ImgHolder, Card, AvatarEditor, Button, Input },
+    components: { FollowerCard, ImgHolder, Card, AvatarEditor, Button, Input },
 })
 export default class Test extends Vue {
     value: String = 'value';
