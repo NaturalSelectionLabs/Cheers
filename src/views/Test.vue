@@ -113,7 +113,9 @@
                 </Button>
             </template>
             <template #footer-button>
-                <Button size="sm" class="text-xs bg-white text-account-button shadow-account-sm"> Show All </Button>
+                <Button size="sm" class="text-xs bg-white text-account-button shadow-account-sm ml-auto">
+                    Show All
+                </Button>
             </template>
         </Card>
         <Card
@@ -189,14 +191,12 @@
                 </Button>
             </template>
             <template #content>
-                <ImgHolder
+                <AccountItem
                     v-for="id in 8"
                     :key="id"
-                    class="w-16 h-16 shadow-account-sm inline-flex m-0.5"
-                    :is-rounded="true"
-                    :is-border="true"
-                    src="https://i.imgur.com/GdWEt4z.jpg"
-                    alt="nya"
+                    class="shadow-account-sm inline-flex m-0.5"
+                    size="64"
+                    chain="Ethereum"
                 />
             </template>
         </Card>
@@ -213,14 +213,12 @@
                 <i class="bx bx-info-circle" style="color: rgba(0, 0, 0, 0.2)" />
             </template>
             <template #content>
-                <ImgHolder
+                <NFTItem
                     v-for="id in 8"
                     :key="id"
-                    class="w-16 h-16 shadow-nft-sm inline-flex m-0.5"
-                    :is-square="true"
-                    :is-border="true"
-                    src="https://i.imgur.com/GdWEt4z.jpg"
-                    alt="nya"
+                    class="shadow-nft-sm inline-flex m-0.5"
+                    :size="64"
+                    imageUrl="https://i.imgur.com/GdWEt4z.jpg"
                 />
             </template>
         </Card>
@@ -243,14 +241,12 @@
                 </Button>
             </template>
             <template #content>
-                <ImgHolder
+                <AccountItem
                     v-for="id in 8"
                     :key="id"
-                    class="w-16 h-16 shadow-account-sm inline-flex m-0.5"
-                    :is-rounded="true"
-                    :is-border="true"
-                    src="https://i.imgur.com/GdWEt4z.jpg"
-                    alt="nya"
+                    class="shadow-account-sm inline-flex m-0.5"
+                    size="64"
+                    chain="Ethereum"
                 />
             </template>
         </Card>
@@ -268,14 +264,12 @@
                 <i class="bx bx-info-circle" style="color: rgba(0, 0, 0, 0.2)" />
             </template>
             <template #content>
-                <ImgHolder
+                <NFTItem
                     v-for="id in 8"
                     :key="id"
-                    class="w-16 h-16 shadow-nft-sm inline-flex m-0.5"
-                    :is-square="true"
-                    :is-border="true"
-                    src="https://i.imgur.com/GdWEt4z.jpg"
-                    alt="nya"
+                    class="shadow-nft-sm inline-flex m-0.5"
+                    :size="64"
+                    imageUrl="https://i.imgur.com/GdWEt4z.jpg"
                 />
             </template>
         </Card>
@@ -295,28 +289,24 @@
                 <details open>
                     <summary class="text-nft-button">Cool Cats NFTs</summary>
                     <p>
-                        <ImgHolder
-                            v-for="id in 7"
+                        <NFTItem
+                            v-for="id in 8"
                             :key="id"
-                            class="w-16 h-16 shadow-nft-sm inline-flex m-0.5"
-                            :is-square="true"
-                            :is-border="true"
-                            src="https://i.imgur.com/GdWEt4z.jpg"
-                            alt="nya"
+                            class="shadow-nft-sm inline-flex m-0.5"
+                            :size="64"
+                            imageUrl="https://i.imgur.com/GdWEt4z.jpg"
                         />
                     </p>
                 </details>
                 <details class="mt-2">
                     <summary class="text-nft-button">Cool Fendi NFTs</summary>
                     <p>
-                        <ImgHolder
-                            v-for="id in 6"
+                        <NFTItem
+                            v-for="id in 8"
                             :key="id"
-                            class="w-16 h-16 shadow-nft-sm inline-flex m-0.5"
-                            :is-square="true"
-                            :is-border="true"
-                            src="https://i.imgur.com/GdWEt4z.jpg"
-                            alt="nya"
+                            class="shadow-nft-sm inline-flex m-0.5"
+                            :size="64"
+                            imageUrl="https://i.imgur.com/GdWEt4z.jpg"
                         />
                     </p>
                 </details>
@@ -340,11 +330,12 @@ import Button from '@/components/Button.vue';
 import Input from '@/components/Input.vue';
 import AvatarEditor from '@/components/AvatarEditor.vue';
 import Card from '@/components/Card.vue';
-import ImgHolder from '@/components/ImgHolder.vue';
 import FollowerCard from '@/components/FollowerCard.vue';
+import AccountItem from '@/components/AccountItem.vue';
+import NFTItem from '@/components/NFT/NFTItem.vue';
 
 @Options({
-    components: { FollowerCard, ImgHolder, Card, AvatarEditor, Button, Input },
+    components: { NFTItem, AccountItem, FollowerCard, Card, AvatarEditor, Button, Input },
 })
 export default class Test extends Vue {
     value: String = 'value';
