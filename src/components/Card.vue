@@ -67,7 +67,7 @@ export default class Card extends Vue {}
         .card-content {
             @apply break-all mx-auto w-full;
             &.single-line {
-                @apply overflow-y-auto;
+                @apply overflow-y-auto px-4 pb-4;
                 > .content-wrapper {
                     @apply w-max;
                 }
