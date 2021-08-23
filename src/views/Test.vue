@@ -321,6 +321,55 @@
             name="Test"
             address="0xD3E8ce4841ed658Ec8dcb99B7a74beFC377253EA"
         />
+
+        <Card
+            :title="`Draggable - 1 (Count: ${accounts.array1.length})`"
+            color-title="text-account-title"
+            color-tips="text-account-title"
+            color-background="bg-account-bg"
+            class="w-80"
+            :is-having-content="true"
+        >
+            <template #accessibility>
+                <i class="bx bx-info-circle" style="color: rgba(0, 0, 0, 0.2)" />
+            </template>
+            <template #header-button>
+                <Button size="sm" class="w-10 h-10 bg-account-button text-white shadow-account">
+                    <i class="bx bx-plus bx-sm"></i>
+                </Button>
+            </template>
+            <template #content>
+                <draggable class="min-h-16" :list="accounts.array1" group="accounts" itemKey="chain">
+                    <template #item="{ element, index }">
+                        <AccountItem class="shadow-account-sm inline-flex m-0.5" :size="64" :chain="element.chain" />
+                    </template>
+                </draggable>
+            </template>
+        </Card>
+        <Card
+            :title="`Draggable - 2 (Count: ${accounts.array2.length})`"
+            color-title="text-account-title"
+            color-tips="text-account-title"
+            color-background="bg-account-bg"
+            class="w-80"
+            :is-having-content="true"
+        >
+            <template #accessibility>
+                <i class="bx bx-info-circle" style="color: rgba(0, 0, 0, 0.2)" />
+            </template>
+            <template #header-button>
+                <Button size="sm" class="w-10 h-10 bg-account-button text-white shadow-account">
+                    <i class="bx bx-plus bx-sm"></i>
+                </Button>
+            </template>
+            <template #content>
+                <draggable class="min-h-16" :list="accounts.array2" group="accounts" itemKey="chain">
+                    <template #item="{ element, index }">
+                        <AccountItem class="shadow-account-sm inline-flex m-0.5" :size="64" :chain="element.chain" />
+                    </template>
+                </draggable>
+            </template>
+        </Card>
     </div>
 </template>
 
@@ -334,11 +383,31 @@ import FollowerCard from '@/components/FollowerCard.vue';
 import AccountItem from '@/components/AccountItem.vue';
 import NFTItem from '@/components/NFT/NFTItem.vue';
 
+import draggable from 'vuedraggable';
+
 @Options({
-    components: { NFTItem, AccountItem, FollowerCard, Card, AvatarEditor, Button, Input },
+    components: { NFTItem, AccountItem, FollowerCard, Card, AvatarEditor, Button, Input, draggable },
 })
 export default class Test extends Vue {
     value: String = 'value';
+    accounts: Object = {
+        array1: [
+            {
+                address: '0x123456789',
+                chain: 'Ethereum',
+            },
+            {
+                address: '0x123456789',
+                chain: 'BSC',
+            },
+        ],
+        array2: [
+            {
+                address: '0x123456789',
+                chain: 'Ronin',
+            },
+        ],
+    };
 }
 </script>
 
