@@ -4,7 +4,6 @@
         <div class="dialog">
             <div class="header">
                 <slot name="header" />
-                <hr />
             </div>
             <div class="body">
                 <slot name="body" />
@@ -33,7 +32,7 @@ export default class Modal extends Vue {}
         .dialog {
             @apply relative left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded border w-80 h-80 p-4;
             .header {
-                @apply text-2xl font-bold text-center;
+                @apply text-xl font-semibold text-center;
             }
             .body {
                 @apply m-2;
