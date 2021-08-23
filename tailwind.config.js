@@ -10,7 +10,6 @@ module.exports = {
             borderWidth: {
                 xs: '1px',
                 sm: '2px',
-                md: '3px',
                 DEFAULT: '4px',
             },
             colors: {
