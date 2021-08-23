@@ -6,7 +6,7 @@
             height: size + 'px',
             backgroundImage: `url(${imageUrl})`,
         }"
-    ></div>
+    />
 </template>
 
 <script lang="ts">

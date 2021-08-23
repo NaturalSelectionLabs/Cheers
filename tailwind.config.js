@@ -10,7 +10,6 @@ module.exports = {
             borderWidth: {
                 xs: '1px',
                 sm: '2px',
-                md: '3px',
                 DEFAULT: '4px',
             },
             colors: {
@@ -164,7 +163,7 @@ module.exports = {
             }),
         },
         minHeight: {
-            48: '12rem', // Min height for card
+            20: '5rem', // Min height of card content
         },
     },
     variants: {
