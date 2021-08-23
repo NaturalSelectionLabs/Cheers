@@ -164,7 +164,7 @@ module.exports = {
             }),
         },
         minHeight: {
-            16: '4rem', // Min height of card content
+            20: '5rem', // Min height of card content
         },
     },
     variants: {

@@ -157,17 +157,8 @@
             </template>
             <template #content>
                 <Button
-                    size="sm"
-                    class="
-                        text-xs
-                        bg-content-button
-                        opacity-35
-                        text-white
-                        shadow-content
-                        cursor-not-allowed
-                        m-auto
-                        mt-4
-                    "
+                    size="lg"
+                    class="text-xs bg-content-button opacity-35 text-white shadow-content cursor-not-allowed m-auto"
                     disabled
                 >
                     Coming Soon
@@ -339,7 +330,7 @@
                 </Button>
             </template>
             <template #content>
-                <draggable class="min-h-16" :list="accounts.array1" group="accounts" itemKey="chain">
+                <draggable class="min-h-20" :list="accounts.array1" group="accounts" itemKey="chain">
                     <template #item="{ element, index }">
                         <AccountItem class="shadow-account-sm inline-flex m-0.5" :size="64" :chain="element.chain" />
                     </template>
@@ -363,7 +354,7 @@
                 </Button>
             </template>
             <template #content>
-                <draggable class="min-h-16" :list="accounts.array2" group="accounts" itemKey="chain">
+                <draggable class="min-h-20" :list="accounts.array2" group="accounts" itemKey="chain">
                     <template #item="{ element, index }">
                         <AccountItem class="shadow-account-sm inline-flex m-0.5" :size="64" :chain="element.chain" />
                     </template>
