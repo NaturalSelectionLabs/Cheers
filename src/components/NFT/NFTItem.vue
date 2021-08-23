@@ -6,7 +6,9 @@
             height: size + 'px',
             backgroundImage: `url(${imageUrl})`,
         }"
-    ></div>
+    >
+        <slot></slot>
+    </div>
 </template>
 
 <script lang="ts">
