@@ -2,7 +2,7 @@
     <div
         class="scan-tag"
         :class="{
-            'bg-Etherscan': chain === 'Etherscan',
+            'bg-Etherscan': chain === 'Ethereum',
             'bg-Roninscan': chain === 'Ronin',
         }"
     >

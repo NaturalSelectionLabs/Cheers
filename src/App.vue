@@ -11,4 +11,9 @@ import { Options, Vue } from 'vue-class-component';
 export default class App extends Vue {}
 </script>
 
-<style></style>
+<style>
+#app {
+    width: 100%;
+    height: 100vh;
+}
+</style>
