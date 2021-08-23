@@ -361,6 +361,32 @@
                 </draggable>
             </template>
         </Card>
+
+        <Button size="lg" class="w-45 bg-content-button text-white shadow-content" @click="isShowingModal = true">
+            Open Modal
+        </Button>
+        <Modal v-if="isShowingModal">
+            <template #header>
+                <h1>Test Modal</h1>
+            </template>
+            <template #body>
+                <p>Here's something ...</p>
+            </template>
+            <template #footer>
+                <div class="flex flex-row gap-5">
+                    <Button
+                        size="sm"
+                        class="w-32 bg-white text-primary shadow-secondary"
+                        @click="isShowingModal = false"
+                    >
+                        Discard
+                    </Button>
+                    <Button size="sm" class="w-32 bg-primary text-white shadow-primary" @click="isShowingModal = false">
+                        Save
+                    </Button>
+                </div>
+            </template>
+        </Modal>
     </div>
 </template>
 
@@ -373,11 +399,12 @@ import Card from '@/components/Card.vue';
 import FollowerCard from '@/components/FollowerCard.vue';
 import AccountItem from '@/components/AccountItem.vue';
 import NFTItem from '@/components/NFT/NFTItem.vue';
+import Modal from '@/components/Modal.vue';
 
 import draggable from 'vuedraggable';
 
 @Options({
-    components: { NFTItem, AccountItem, FollowerCard, Card, AvatarEditor, Button, Input, draggable },
+    components: { Modal, NFTItem, AccountItem, FollowerCard, Card, AvatarEditor, Button, Input, draggable },
 })
 export default class Test extends Vue {
     value: String = 'value';
@@ -399,6 +426,7 @@ export default class Test extends Vue {
             },
         ],
     };
+    isShowingModal: Boolean = false;
 }
 </script>
 
