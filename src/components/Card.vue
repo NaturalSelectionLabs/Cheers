@@ -49,7 +49,7 @@ export default class Card extends Vue {}
 <style scoped lang="postcss">
 @layer components {
     .card {
-        @apply box-border rounded-xl pt-4 pb-4 pl-5 pr-5 flex flex-col items-start min-h-48;
+        @apply box-border rounded-xl pt-4 pb-4 pl-5 pr-5 flex flex-col items-start;
 
         > * + * {
             @apply my-5;
@@ -66,6 +66,9 @@ export default class Card extends Vue {}
 
         .card-content {
             @apply break-all mx-auto w-full;
+            > .content-wrapper {
+                @apply min-h-16;
+            }
             &.single-line {
                 @apply overflow-y-auto;
                 > .content-wrapper {
