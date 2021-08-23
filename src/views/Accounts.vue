@@ -44,15 +44,11 @@ import AccountItem from '@/components/AccountItem.vue';
     components: { ImgHolder, Button, AccountItem },
 })
 export default class Accounts extends Vue {
-    data() {
-        return {
-            accountList: [
-                { chain: 'Ethereum', address: '98765tgdusgakdgetg' },
-                { chain: 'BSC', address: '98765tgdusgakdgetg' },
-                { chain: 'Ronin', address: '98765tgdusgakdgetg' },
-            ],
-        };
-    }
+    public accountList: Object = [
+        { chain: 'Ethereum', address: '98765tgdusgakdgetg' },
+        { chain: 'BSC', address: '98765tgdusgakdgetg' },
+        { chain: 'Ronin', address: '98765tgdusgakdgetg' },
+    ];
     /**
      * filter
      */

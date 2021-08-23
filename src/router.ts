@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 
 import Index from '@/views/Index.vue';
 import Test from '@/views/Test.vue';
+import Home from '@/views/Home.vue';
 import Followings from '@/views/Followings.vue';
 import Followers from '@/views/Followers.vue';
 import Accounts from '@/views/Accounts.vue';
@@ -17,11 +18,15 @@ const routes = [
         path: '/test',
         component: Test,
     },
+
+    {
+        path: '/public',
+        component: Home,
+    },
     {
         path: '/followings',
         component: Followings,
     },
-
     {
         path: '/followers',
         component: Followers,

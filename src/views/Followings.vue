@@ -36,30 +36,26 @@ import FollowerCard from '@/components/FollowerCard.vue';
     components: { ImgHolder, Button, FollowerCard },
 })
 export default class Followings extends Vue {
-    data() {
-        return {
-            followList: [
-                {
-                    avatar: 'https://i.imgur.com/GdWEt4z.jpg',
-                    username: 'Fendiiii',
-                    address: '98765tgdusgakdgetg',
-                    bio: 'Cutest cat in the world',
-                },
-                {
-                    avatar: 'https://i.imgur.com/GdWEt4z.jpg',
-                    username: 'Fendiiii',
-                    address: '98765tgdusgakdgetg',
-                    bio: 'Cutest cat in the world',
-                },
-                {
-                    avatar: 'https://i.imgur.com/GdWEt4z.jpg',
-                    username: 'Fendiiii',
-                    address: '98765tgdusgakdgetg',
-                    bio: 'Cutest cat in the world',
-                },
-            ],
-        };
-    }
+    public followList: Object = [
+        {
+            avatar: 'https://i.imgur.com/GdWEt4z.jpg',
+            username: 'Fendiiii',
+            address: '98765tgdusgakdgetg',
+            bio: 'Cutest cat in the world',
+        },
+        {
+            avatar: 'https://i.imgur.com/GdWEt4z.jpg',
+            username: 'Fendiiii',
+            address: '98765tgdusgakdgetg',
+            bio: 'Cutest cat in the world',
+        },
+        {
+            avatar: 'https://i.imgur.com/GdWEt4z.jpg',
+            username: 'Fendiiii',
+            address: '98765tgdusgakdgetg',
+            bio: 'Cutest cat in the world',
+        },
+    ];
 }
 </script>
 

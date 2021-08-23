@@ -34,100 +34,95 @@ import NFTItem from '@/components/NFT/NFTItem.vue';
     components: { ImgHolder, Button, NFTItem },
 })
 export default class NFTs extends Vue {
-    data() {
-        return {
-            windowWidth: window.innerWidth,
-            nftList: [
+    public nftList: Array<Object> = [
+        {
+            chain: 'Ethereum',
+            name: 'Fendi Cat',
+            token_id: '114',
+            description: 'Fendi has short legs',
+            image_url: 'https://i.imgur.com/GdWEt4z.jpg',
+            image_thumbnail_url: 'https://i.imgur.com/GdWEt4z.jpg',
+            asset_contract: {},
+            collection: {
+                name: 'Fendi Cat NFT',
+                description: 'Munchkin Fendi',
+                image_url: 'https://i.imgur.com/GdWEt4z.jpg',
+            },
+            traits: [
                 {
-                    chain: 'Ethereum',
-                    name: 'Fendi Cat',
-                    token_id: '114',
-                    description: 'Fendi has short legs',
-                    image_url: 'https://i.imgur.com/GdWEt4z.jpg',
-                    image_thumbnail_url: 'https://i.imgur.com/GdWEt4z.jpg',
-                    asset_contract: {},
-                    collection: {
-                        name: 'Fendi Cat NFT',
-                        description: 'Munchkin Fendi',
-                        image_url: 'https://i.imgur.com/GdWEt4z.jpg',
-                    },
-                    traits: [
-                        {
-                            trait_type: 'age',
-                            value: ' 27 months',
-                        },
-                        {
-                            trait_type: 'weight',
-                            value: '2.7 kg',
-                        },
-                        { trait_type: 'color', value: 'calico' },
-                        {
-                            trait_type: 'gender',
-                            value: 'female',
-                        },
-                    ],
+                    trait_type: 'age',
+                    value: ' 27 months',
                 },
                 {
-                    chain: 'Ethereum',
-                    name: 'Fendi Cat',
-                    token_id: '114',
-                    description: 'Fendi has short legs',
-                    image_url: 'https://i.imgur.com/GdWEt4z.jpg',
-                    image_thumbnail_url: 'https://i.imgur.com/GdWEt4z.jpg',
-                    asset_contract: {},
-                    collection: {
-                        name: 'Fendi Cat NFT',
-                        description: 'Munchkin Fendi',
-                        image_url: 'https://i.imgur.com/GdWEt4z.jpg',
-                    },
-                    traits: [
-                        {
-                            trait_type: 'age',
-                            value: ' 27 months',
-                        },
-                        {
-                            trait_type: 'weight',
-                            value: '2.7 kg',
-                        },
-                        { trait_type: 'color', value: 'calico' },
-                        {
-                            trait_type: 'gender',
-                            value: 'female',
-                        },
-                    ],
+                    trait_type: 'weight',
+                    value: '2.7 kg',
                 },
+                { trait_type: 'color', value: 'calico' },
                 {
-                    chain: 'Ethereum',
-                    name: 'Fendi Cat',
-                    token_id: '114',
-                    description: 'Fendi has short legs',
-                    image_url: 'https://i.imgur.com/GdWEt4z.jpg',
-                    image_thumbnail_url: 'https://i.imgur.com/GdWEt4z.jpg',
-                    asset_contract: {},
-                    collection: {
-                        name: 'Fendi Cat NFT',
-                        description: 'Munchkin Fendi',
-                        image_url: 'https://i.imgur.com/GdWEt4z.jpg',
-                    },
-                    traits: [
-                        {
-                            trait_type: 'age',
-                            value: ' 27 months',
-                        },
-                        {
-                            trait_type: 'weight',
-                            value: '2.7 kg',
-                        },
-                        { trait_type: 'color', value: 'calico' },
-                        {
-                            trait_type: 'gender',
-                            value: 'female',
-                        },
-                    ],
+                    trait_type: 'gender',
+                    value: 'female',
                 },
             ],
-        };
-    }
+        },
+        {
+            chain: 'Ethereum',
+            name: 'Fendi Cat',
+            token_id: '114',
+            description: 'Fendi has short legs',
+            image_url: 'https://i.imgur.com/GdWEt4z.jpg',
+            image_thumbnail_url: 'https://i.imgur.com/GdWEt4z.jpg',
+            asset_contract: {},
+            collection: {
+                name: 'Fendi Cat NFT',
+                description: 'Munchkin Fendi',
+                image_url: 'https://i.imgur.com/GdWEt4z.jpg',
+            },
+            traits: [
+                {
+                    trait_type: 'age',
+                    value: ' 27 months',
+                },
+                {
+                    trait_type: 'weight',
+                    value: '2.7 kg',
+                },
+                { trait_type: 'color', value: 'calico' },
+                {
+                    trait_type: 'gender',
+                    value: 'female',
+                },
+            ],
+        },
+        {
+            chain: 'Ethereum',
+            name: 'Fendi Cat',
+            token_id: '114',
+            description: 'Fendi has short legs',
+            image_url: 'https://i.imgur.com/GdWEt4z.jpg',
+            image_thumbnail_url: 'https://i.imgur.com/GdWEt4z.jpg',
+            asset_contract: {},
+            collection: {
+                name: 'Fendi Cat NFT',
+                description: 'Munchkin Fendi',
+                image_url: 'https://i.imgur.com/GdWEt4z.jpg',
+            },
+            traits: [
+                {
+                    trait_type: 'age',
+                    value: ' 27 months',
+                },
+                {
+                    trait_type: 'weight',
+                    value: '2.7 kg',
+                },
+                { trait_type: 'color', value: 'calico' },
+                {
+                    trait_type: 'gender',
+                    value: 'female',
+                },
+            ],
+        },
+    ];
 }
 </script>
 

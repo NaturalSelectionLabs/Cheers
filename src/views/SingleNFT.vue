@@ -36,39 +36,35 @@ import NFTDetail from '@/components/NFT/NFTDetails.vue';
     components: { AccountItem, Button, NFTDetail, ImgHolder },
 })
 export default class SingleNFT extends Vue {
-    data() {
-        return {
-            details: {
-                chain: 'Ethereum',
-                name: 'Fendi Cat',
-                token_id: '114',
-                description: 'Fendi has short legs',
-                image_url: 'https://i.imgur.com/GdWEt4z.jpg',
-                image_thumbnail_url: 'https://i.imgur.com/GdWEt4z.jpg',
-                asset_contract: {},
-                collection: {
-                    name: 'Fendi Cat NFT',
-                    description: 'Munchkin Fendi',
-                    image_url: 'https://i.imgur.com/GdWEt4z.jpg',
-                },
-                traits: [
-                    {
-                        trait_type: 'age',
-                        value: ' 27 months',
-                    },
-                    {
-                        trait_type: 'weight',
-                        value: '2.7 kg',
-                    },
-                    { trait_type: 'color', value: 'calico' },
-                    {
-                        trait_type: 'gender',
-                        value: 'female',
-                    },
-                ],
+    public details: Object = {
+        chain: 'Ethereum',
+        name: 'Fendi Cat',
+        token_id: '114',
+        description: 'Fendi has short legs',
+        image_url: 'https://i.imgur.com/GdWEt4z.jpg',
+        image_thumbnail_url: 'https://i.imgur.com/GdWEt4z.jpg',
+        asset_contract: {},
+        collection: {
+            name: 'Fendi Cat NFT',
+            description: 'Munchkin Fendi',
+            image_url: 'https://i.imgur.com/GdWEt4z.jpg',
+        },
+        traits: [
+            {
+                trait_type: 'age',
+                value: ' 27 months',
             },
-        };
-    }
+            {
+                trait_type: 'weight',
+                value: '2.7 kg',
+            },
+            { trait_type: 'color', value: 'calico' },
+            {
+                trait_type: 'gender',
+                value: 'female',
+            },
+        ],
+    };
 }
 </script>
 
