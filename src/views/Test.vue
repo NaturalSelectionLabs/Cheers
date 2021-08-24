@@ -312,7 +312,7 @@
             name="Test"
             address="0xD3E8ce4841ed658Ec8dcb99B7a74beFC377253EA"
         />
-        
+
         <AccountItem chain="Ethereum" size="70" :deleteMode="true" />
         <AccountItem chain="Ethereum" size="70" :deleteMode="false" />
 
@@ -355,7 +355,11 @@
             <template #content>
                 <draggable class="min-h-20" :list="accounts.array1" group="accounts" itemKey="chain">
                     <template #item="{ element, index }">
-                        <AccountItem class="shadow-account-sm inline-flex m-0.5" :size="64" :chain="element.chain" />
+                        <AccountItem
+                            class="shadow-account-sm inline-flex m-0.5 rounded-full"
+                            :size="64"
+                            :chain="element.chain"
+                        />
                     </template>
                 </draggable>
             </template>
@@ -379,7 +383,11 @@
             <template #content>
                 <draggable class="min-h-20" :list="accounts.array2" group="accounts" itemKey="chain">
                     <template #item="{ element, index }">
-                        <AccountItem class="shadow-account-sm inline-flex m-0.5" :size="64" :chain="element.chain" />
+                        <AccountItem
+                            class="shadow-account-sm inline-flex m-0.5 rounded-full"
+                            :size="64"
+                            :chain="element.chain"
+                        />
                     </template>
                 </draggable>
             </template>
@@ -430,8 +438,8 @@ import draggable from 'vuedraggable';
 
 @Options({
     components: {
+        Modal,
         FollowerCard,
-        ImgHolder,
         Card,
         AvatarEditor,
         Button,
@@ -439,11 +447,8 @@ import draggable from 'vuedraggable';
         AccountItem,
         NFTItem,
         NFTBadges,
-        ScanTag,
+        draggable,
     },
-
-@Options({
-    components: { Modal, NFTItem, AccountItem, FollowerCard, Card, AvatarEditor, Button, Input, draggable },
 })
 export default class Test extends Vue {
     value: String = 'value';
