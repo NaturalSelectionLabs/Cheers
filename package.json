@@ -25,6 +25,7 @@
     },
     "homepage": "https://github.com/NaturalSelectionLabs/RSS3-Page#readme",
     "dependencies": {
+        "@walletconnect/web3-provider": "1.6.2",
         "axios": "0.21.1",
         "boxicons": "2.0.9",
         "eth-crypto": "2.0.0",
@@ -36,7 +37,8 @@
         "vue": "3.1.5",
         "vue-class-component": "8.0.0-rc.1",
         "vue-moment": "4.1.0",
-        "vuedraggable": "4.1.0"
+        "vuedraggable": "4.1.0",
+        "web3": "1.5.2"
     },
     "devDependencies": {
         "@babel/core": "7.14.8",
