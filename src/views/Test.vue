@@ -331,6 +331,28 @@
             name="Test"
             address="0xD3E8ce4841ed658Ec8dcb99B7a74beFC377253EA"
         />
+        <AccountItem chain="Ethereum" size="70" :deleteMode="true" />
+        <AccountItem chain="Ethereum" size="70" :deleteMode="false" />
+
+        <div class="relative w-45 h-45">
+            <NFTItem size="180" imageUrl="https://i.imgur.com/GdWEt4z.jpg" />
+            <NFTBadges
+                class="absolute z-50 top-2.5 right-2.5"
+                chain="Ethereum"
+                location="overlay"
+                collectionImg="https://i.imgur.com/GdWEt4z.jpg"
+            />
+        </div>
+
+        <NFTBadges
+            class="absolute z-50 top-2.5 right-2.5"
+            chain="Ethereum"
+            location="header"
+            collectionImg="https://i.imgur.com/GdWEt4z.jpg"
+        />
+
+        <ScanTag chain="Ethereum" />
+        <ScanTag chain="Ronins" />
     </div>
 </template>
 
@@ -342,9 +364,24 @@ import AvatarEditor from '@/components/AvatarEditor.vue';
 import Card from '@/components/Card.vue';
 import ImgHolder from '@/components/ImgHolder.vue';
 import FollowerCard from '@/components/FollowerCard.vue';
+import AccountItem from '@/components/AccountItem.vue';
+import NFTItem from '@/components/NFT/NFTItem.vue';
+import NFTBadges from '@/components/NFT/NFTBadges.vue';
+import ScanTag from '@/components/NFT/ScanTag.vue';
 
 @Options({
-    components: { FollowerCard, ImgHolder, Card, AvatarEditor, Button, Input },
+    components: {
+        FollowerCard,
+        ImgHolder,
+        Card,
+        AvatarEditor,
+        Button,
+        Input,
+        AccountItem,
+        NFTItem,
+        NFTBadges,
+        ScanTag,
+    },
 })
 export default class Test extends Vue {
     value: String = 'value';

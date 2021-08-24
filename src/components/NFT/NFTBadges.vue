@@ -9,7 +9,7 @@
             :style="{ backgroundImage: `url(${collectionImg})` }"
         ></div>
         <div
-            class="badge"
+            class="badge bg-white"
             :class="{
                 'bg-BSC': chain === 'BSC',
                 'bg-Ethereum': chain === 'Ethereum',
