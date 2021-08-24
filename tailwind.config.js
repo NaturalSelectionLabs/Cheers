@@ -94,7 +94,7 @@ module.exports = {
                 //     19: '4.75rem', //75px
                 //     21: '5.25rem', //84px, raw rss3 codeblock tooltip width
                 //     26: '6.5rem', //104px, popup.html selected menu item width
-                //     27: '6.75rem', //108px, small button width; popup.html collapse [...] menu width
+                27: '6.75rem', //108px, scan tag width
                 //     30: '7.5rem', //120px, options.html profile tab avatar size
                 //     35: '8.75rem', //140px,
                 45: '11.25rem', //180px, discard & save button width
@@ -161,6 +161,9 @@ module.exports = {
                 Etherscan: "url('@/assets/images/scans/Etherscan.png')",
                 Roninscan: "url('@/assets/images/scans/Roninscan.png')",
             }),
+            backgroundSize: {
+                85: '85%',
+            },
         },
         minHeight: {
             20: '5rem', // Min height of card content
