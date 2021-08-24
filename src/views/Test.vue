@@ -113,7 +113,9 @@
                 </Button>
             </template>
             <template #footer-button>
-                <Button size="sm" class="text-xs bg-white text-account-button shadow-account-sm"> Show All </Button>
+                <Button size="sm" class="text-xs bg-white text-account-button shadow-account-sm ml-auto">
+                    Show All
+                </Button>
             </template>
         </Card>
         <Card
@@ -155,17 +157,8 @@
             </template>
             <template #content>
                 <Button
-                    size="sm"
-                    class="
-                        text-xs
-                        bg-content-button
-                        opacity-35
-                        text-white
-                        shadow-content
-                        cursor-not-allowed
-                        m-auto
-                        mt-4
-                    "
+                    size="lg"
+                    class="text-xs bg-content-button opacity-35 text-white shadow-content cursor-not-allowed m-auto"
                     disabled
                 >
                     Coming Soon
@@ -189,14 +182,12 @@
                 </Button>
             </template>
             <template #content>
-                <ImgHolder
+                <AccountItem
                     v-for="id in 8"
                     :key="id"
-                    class="w-16 h-16 shadow-account-sm inline-flex m-0.5"
-                    :is-rounded="true"
-                    :is-border="true"
-                    src="https://i.imgur.com/GdWEt4z.jpg"
-                    alt="nya"
+                    class="shadow-account-sm inline-flex m-0.5"
+                    size="64"
+                    chain="Ethereum"
                 />
             </template>
         </Card>
@@ -213,14 +204,12 @@
                 <i class="bx bx-info-circle" style="color: rgba(0, 0, 0, 0.2)" />
             </template>
             <template #content>
-                <ImgHolder
+                <NFTItem
                     v-for="id in 8"
                     :key="id"
-                    class="w-16 h-16 shadow-nft-sm inline-flex m-0.5"
-                    :is-square="true"
-                    :is-border="true"
-                    src="https://i.imgur.com/GdWEt4z.jpg"
-                    alt="nya"
+                    class="shadow-nft-sm inline-flex m-0.5"
+                    :size="64"
+                    imageUrl="https://i.imgur.com/GdWEt4z.jpg"
                 />
             </template>
         </Card>
@@ -243,14 +232,12 @@
                 </Button>
             </template>
             <template #content>
-                <ImgHolder
+                <AccountItem
                     v-for="id in 8"
                     :key="id"
-                    class="w-16 h-16 shadow-account-sm inline-flex m-0.5"
-                    :is-rounded="true"
-                    :is-border="true"
-                    src="https://i.imgur.com/GdWEt4z.jpg"
-                    alt="nya"
+                    class="shadow-account-sm inline-flex m-0.5"
+                    size="64"
+                    chain="Ethereum"
                 />
             </template>
         </Card>
@@ -268,14 +255,12 @@
                 <i class="bx bx-info-circle" style="color: rgba(0, 0, 0, 0.2)" />
             </template>
             <template #content>
-                <ImgHolder
+                <NFTItem
                     v-for="id in 8"
                     :key="id"
-                    class="w-16 h-16 shadow-nft-sm inline-flex m-0.5"
-                    :is-square="true"
-                    :is-border="true"
-                    src="https://i.imgur.com/GdWEt4z.jpg"
-                    alt="nya"
+                    class="shadow-nft-sm inline-flex m-0.5"
+                    :size="64"
+                    imageUrl="https://i.imgur.com/GdWEt4z.jpg"
                 />
             </template>
         </Card>
@@ -295,28 +280,24 @@
                 <details open>
                     <summary class="text-nft-button">Cool Cats NFTs</summary>
                     <p>
-                        <ImgHolder
-                            v-for="id in 7"
+                        <NFTItem
+                            v-for="id in 8"
                             :key="id"
-                            class="w-16 h-16 shadow-nft-sm inline-flex m-0.5"
-                            :is-square="true"
-                            :is-border="true"
-                            src="https://i.imgur.com/GdWEt4z.jpg"
-                            alt="nya"
+                            class="shadow-nft-sm inline-flex m-0.5"
+                            :size="64"
+                            imageUrl="https://i.imgur.com/GdWEt4z.jpg"
                         />
                     </p>
                 </details>
                 <details class="mt-2">
                     <summary class="text-nft-button">Cool Fendi NFTs</summary>
                     <p>
-                        <ImgHolder
-                            v-for="id in 6"
+                        <NFTItem
+                            v-for="id in 8"
                             :key="id"
-                            class="w-16 h-16 shadow-nft-sm inline-flex m-0.5"
-                            :is-square="true"
-                            :is-border="true"
-                            src="https://i.imgur.com/GdWEt4z.jpg"
-                            alt="nya"
+                            class="shadow-nft-sm inline-flex m-0.5"
+                            :size="64"
+                            imageUrl="https://i.imgur.com/GdWEt4z.jpg"
                         />
                     </p>
                 </details>
@@ -331,6 +312,7 @@
             name="Test"
             address="0xD3E8ce4841ed658Ec8dcb99B7a74beFC377253EA"
         />
+        
         <AccountItem chain="Ethereum" size="70" :deleteMode="true" />
         <AccountItem chain="Ethereum" size="70" :deleteMode="false" />
 
@@ -353,6 +335,81 @@
 
         <ScanTag chain="Ethereum" />
         <ScanTag chain="Ronins" />
+
+        <Card
+            :title="`Draggable - 1 (Count: ${accounts.array1.length})`"
+            color-title="text-account-title"
+            color-tips="text-account-title"
+            color-background="bg-account-bg"
+            class="w-80"
+            :is-having-content="true"
+        >
+            <template #accessibility>
+                <i class="bx bx-info-circle" style="color: rgba(0, 0, 0, 0.2)" />
+            </template>
+            <template #header-button>
+                <Button size="sm" class="w-10 h-10 bg-account-button text-white shadow-account">
+                    <i class="bx bx-plus bx-sm"></i>
+                </Button>
+            </template>
+            <template #content>
+                <draggable class="min-h-20" :list="accounts.array1" group="accounts" itemKey="chain">
+                    <template #item="{ element, index }">
+                        <AccountItem class="shadow-account-sm inline-flex m-0.5" :size="64" :chain="element.chain" />
+                    </template>
+                </draggable>
+            </template>
+        </Card>
+        <Card
+            :title="`Draggable - 2 (Count: ${accounts.array2.length})`"
+            color-title="text-account-title"
+            color-tips="text-account-title"
+            color-background="bg-account-bg"
+            class="w-80"
+            :is-having-content="true"
+        >
+            <template #accessibility>
+                <i class="bx bx-info-circle" style="color: rgba(0, 0, 0, 0.2)" />
+            </template>
+            <template #header-button>
+                <Button size="sm" class="w-10 h-10 bg-account-button text-white shadow-account">
+                    <i class="bx bx-plus bx-sm"></i>
+                </Button>
+            </template>
+            <template #content>
+                <draggable class="min-h-20" :list="accounts.array2" group="accounts" itemKey="chain">
+                    <template #item="{ element, index }">
+                        <AccountItem class="shadow-account-sm inline-flex m-0.5" :size="64" :chain="element.chain" />
+                    </template>
+                </draggable>
+            </template>
+        </Card>
+
+        <Button size="lg" class="w-45 bg-content-button text-white shadow-content" @click="isShowingModal = true">
+            Open Modal
+        </Button>
+        <Modal v-if="isShowingModal">
+            <template #header>
+                <h1>Test Modal</h1>
+            </template>
+            <template #body>
+                <p>Here's something ...</p>
+            </template>
+            <template #footer>
+                <div class="flex flex-row gap-5">
+                    <Button
+                        size="sm"
+                        class="w-32 bg-white text-primary shadow-secondary"
+                        @click="isShowingModal = false"
+                    >
+                        Discard
+                    </Button>
+                    <Button size="sm" class="w-32 bg-primary text-white shadow-primary" @click="isShowingModal = false">
+                        Save
+                    </Button>
+                </div>
+            </template>
+        </Modal>
     </div>
 </template>
 
@@ -362,12 +419,14 @@ import Button from '@/components/Button.vue';
 import Input from '@/components/Input.vue';
 import AvatarEditor from '@/components/AvatarEditor.vue';
 import Card from '@/components/Card.vue';
-import ImgHolder from '@/components/ImgHolder.vue';
 import FollowerCard from '@/components/FollowerCard.vue';
 import AccountItem from '@/components/AccountItem.vue';
 import NFTItem from '@/components/NFT/NFTItem.vue';
 import NFTBadges from '@/components/NFT/NFTBadges.vue';
 import ScanTag from '@/components/NFT/ScanTag.vue';
+import Modal from '@/components/Modal.vue';
+
+import draggable from 'vuedraggable';
 
 @Options({
     components: {
@@ -382,9 +441,31 @@ import ScanTag from '@/components/NFT/ScanTag.vue';
         NFTBadges,
         ScanTag,
     },
+
+@Options({
+    components: { Modal, NFTItem, AccountItem, FollowerCard, Card, AvatarEditor, Button, Input, draggable },
 })
 export default class Test extends Vue {
     value: String = 'value';
+    accounts: Object = {
+        array1: [
+            {
+                address: '0x123456789',
+                chain: 'Ethereum',
+            },
+            {
+                address: '0x123456789',
+                chain: 'BSC',
+            },
+        ],
+        array2: [
+            {
+                address: '0x123456789',
+                chain: 'Ronin',
+            },
+        ],
+    };
+    isShowingModal: Boolean = false;
 }
 </script>
 

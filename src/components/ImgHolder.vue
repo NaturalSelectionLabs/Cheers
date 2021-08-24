@@ -4,7 +4,6 @@
         :class="{
             round: isRounded,
             square: isSquare,
-            border: isBorder,
         }"
     >
         <img :src="src" :alt="alt" />
@@ -20,7 +19,6 @@ import { Options, Vue } from 'vue-class-component';
         alt: String,
         isRounded: Boolean,
         isSquare: Boolean,
-        isBorder: Boolean,
     },
 })
 export default class ImgHolder extends Vue {}
@@ -47,10 +45,6 @@ export default class ImgHolder extends Vue {}
             > img {
                 @apply rounded;
             }
-        }
-
-        &.border {
-            @apply border-white border-md;
         }
     }
 }
