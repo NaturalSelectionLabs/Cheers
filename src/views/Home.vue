@@ -1,5 +1,5 @@
 <template>
-    <div class="main px-4 py-8 flex flex-col gap-y-2">
+    <div class="main px-4 py-8 flex flex-col gap-y-2 max-w-md m-auto">
         <Profile
             :avatar="rss3Profile.avatar"
             :username="rss3Profile.username"
@@ -45,15 +45,13 @@
                 </Button>
             </template>
             <template #content>
-                <ImgHolder
-                    v-for="id in 8"
-                    :key="id"
-                    class="w-16 h-16 shadow-account-sm inline-flex m-0.5"
-                    :is-rounded="true"
-                    :is-border="true"
-                    src="https://i.imgur.com/GdWEt4z.jpg"
-                    alt="nya"
-                />
+                <AccountItem
+                    class="inline-block mr-1"
+                    size="70"
+                    :chain="item.chain"
+                    v-for="(item, index) in accountList"
+                    :key="index"
+                ></AccountItem>
             </template>
         </Card>
 
@@ -75,20 +73,18 @@
                 </Button>
             </template>
             <template #content>
-                <ImgHolder
+                <NFTItem
+                    class="inline-block mr-1"
                     v-for="id in 8"
                     :key="id"
-                    class="w-16 h-16 shadow-nft-sm inline-flex m-0.5"
-                    :is-square="true"
-                    :isBorder="true"
-                    src="https://i.imgur.com/GdWEt4z.jpg"
-                    alt="nya"
-                />
+                    imageUrl="https://i.imgur.com/GdWEt4z.jpg"
+                    :size="70"
+                ></NFTItem>
             </template>
         </Card>
 
         <Card
-            title="Content"
+            title="Contents"
             color-title="text-content-title"
             color-tips="text-content-title"
             color-background="bg-content-bg"
@@ -123,12 +119,13 @@
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
 import Button from '@/components/Button.vue';
-import ImgHolder from '@/components/ImgHolder.vue';
 import Card from '@/components/Card.vue';
 import Profile from '@/components/Profile.vue';
+import AccountItem from '@/components/AccountItem.vue';
+import NFTItem from '@/components/NFT/NFTItem.vue';
 
 @Options({
-    components: { ImgHolder, Button, Card, Profile },
+    components: { Button, Card, Profile, AccountItem, NFTItem },
 })
 export default class Home extends Vue {
     public isFollowing: boolean = true;
@@ -174,6 +171,11 @@ export default class Home extends Vue {
             },
         ],
     };
+    public accountList: Object = [
+        { chain: 'Ethereum', address: '98765tgdusgakdgetg' },
+        { chain: 'BSC', address: '98765tgdusgakdgetg' },
+        { chain: 'Ronin', address: '98765tgdusgakdgetg' },
+    ];
 }
 </script>
 

@@ -1,26 +1,27 @@
 <template>
-    <div class="main h-auto px-4 py-8 bg-nft-bg">
-        <div class="header flex justify-between items-center pb-4">
-            <Button size="sm" class="w-10 h-10 bg-white text-nft-button shadow-nft">
-                <i class="bx bx-chevron-left bx-sm"></i>
-            </Button>
-            <div class="section-title text-2xl text-nft-title font-bold text-center">{{ details.name + ' NFT' }}</div>
-            <div class="badges flex flex-row justify-center items-center">
-                <account-item size="24" :chain="BSC"></account-item>
-                <account-item size="24" :chain="Ronin"></account-item>
+    <div class="h-screen bg-nft-bg overflow-y-auto">
+        <div class="main px-4 py-8 max-w-md m-auto">
+            <div class="header flex justify-between items-center pb-4">
+                <Button size="sm" class="w-10 h-10 bg-white text-primary shadow-secondary">
+                    <i class="bx bx-chevron-left bx-sm"></i>
+                </Button>
+                <div class="section-title text-2xl text-nft-title font-bold text-center">
+                    {{ details.name + ' NFT' }}
+                </div>
+                <div class="badges flex flex-row justify-center items-center">
+                    <account-item size="24" :chain="BSC"></account-item>
+                    <account-item size="24" :chain="Ronin"></account-item>
+                </div>
             </div>
-        </div>
-        <div class="content">
-            <div class="image pb-4">
-                <ImgHolder
-                    class="w-auto shadow-nft-sm inline-flex m-0.5"
-                    :is-square="true"
-                    :is-border="true"
-                    src="https://i.imgur.com/GdWEt4z.jpg"
-                    alt="nya"
-                />
+            <div class="content">
+                <div class="image pb-4">
+                    <NFTItem
+                        imageUrl="https://i.imgur.com/GdWEt4z.jpg"
+                        :size="NFTWidth > 416 ? 416 : NFTWidth"
+                    ></NFTItem>
+                </div>
+                <NFTDetail :chain="Ronin" :details="details" />
             </div>
-            <NFTDetail :chain="Ronin" :details="details" />
         </div>
     </div>
 </template>
@@ -28,14 +29,15 @@
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
 import Button from '@/components/Button.vue';
-import AccountItem from '@/components/AccountItem.vue';
-import ImgHolder from '@/components/ImgHolder.vue';
+import NFTItem from '@/components/NFT/NFTItem.vue';
 import NFTDetail from '@/components/NFT/NFTDetails.vue';
+import AccountItem from '@/components/AccountItem.vue';
 
 @Options({
-    components: { AccountItem, Button, NFTDetail, ImgHolder },
+    components: { Button, NFTDetail, NFTItem, AccountItem },
 })
 export default class SingleNFT extends Vue {
+    public NFTWidth: number = window.innerWidth - 32;
     public details: Object = {
         chain: 'Ethereum',
         name: 'Fendi Cat',
