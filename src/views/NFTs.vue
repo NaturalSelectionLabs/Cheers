@@ -40,6 +40,7 @@ import ImgHolder from '@/components/ImgHolder.vue';
 import NFTItem from '@/components/NFT/NFTItem.vue';
 import NFTBadges from '@/components/NFT/NFTBadges.vue';
 import axios from 'axios';
+import RSS3 from '@/common/rss3';
 
 @Options({
     components: { ImgHolder, Button, NFTItem, NFTBadges },
@@ -51,15 +52,14 @@ export default class NFTs extends Vue {
     public username: String = '';
 
     async mounted() {
-        const res = await axios.get(
-            `https://rss3-asset-hub-g886a.ondigitalocean.app/asset-profile/${this.$route.params.address}`,
-        );
+        const address: string = <string>this.$route.params.address;
+        const data = await RSS3.getAsset(address);
 
-        if (res.data) {
-            this.avatar = res.data.rss3File.profile?.avatar?.[0];
-            this.username = res.data.rss3File.profile?.name?.[0];
+        if (data) {
+            this.avatar = data.rss3File.profile?.avatar?.[0];
+            this.username = data.rss3File.profile?.name?.[0];
 
-            res.data.assets.ethereum.forEach((item: { nft: any[] }, aid: any) => {
+            data.assets.ethereum.forEach((item: { nft: any[] }, aid: any) => {
                 item.nft.forEach((nft, i) => {
                     this.nftList.push({
                         account: aid,

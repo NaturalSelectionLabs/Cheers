@@ -40,6 +40,7 @@ import { Options, Vue } from 'vue-class-component';
 import Button from '@/components/Button.vue';
 import ImgHolder from '@/components/ImgHolder.vue';
 import AccountItem from '@/components/AccountItem.vue';
+import RSS3 from '@/common/rss3';
 import axios from 'axios';
 
 @Options({
@@ -52,19 +53,18 @@ export default class Accounts extends Vue {
 
     async mounted() {
         const address: string = <string>this.$route.params.address;
-        const res = await axios.get(`https://rss3-asset-hub-g886a.ondigitalocean.app/asset-profile/${address}`);
-
-        if (res.data) {
-            this.avatar = res.data.rss3File.profile?.avatar?.[0];
-            this.username = res.data.rss3File.profile?.name?.[0];
+        const data = await RSS3.getAsset(address);
+        if (data) {
+            this.avatar = data.rss3File.profile?.avatar?.[0];
+            this.username = data.rss3File.profile?.name?.[0];
 
             this.accountList.push({
                 chain: 'Ethereum',
                 address: this.$route.params.address,
             });
 
-            if (res.data.rss3File.accounts) {
-                const accounts = res.data.rss3File.accounts;
+            if (data.rss3File.accounts) {
+                const accounts = data.rss3File.accounts;
                 for (const item of accounts) {
                     this.accountList.push({
                         chain: item.platform,
