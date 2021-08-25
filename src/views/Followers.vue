@@ -1,7 +1,7 @@
 <template>
     <div class="main px-4 py-8 max-w-md m-auto">
         <div class="header flex justify-between items-center pb-4">
-            <Button size="sm" class="w-10 h-10 bg-white text-primary shadow-secondary">
+            <Button size="sm" class="w-10 h-10 bg-white text-primary shadow-secondary" @click="back">
                 <i class="bx bx-chevron-left bx-sm"></i>
             </Button>
             <div class="section-title text-2xl text-primary font-bold text-center">Followers</div>
@@ -9,14 +9,14 @@
                 class="w-10 h-10 inline-flex my-auto"
                 :is-rounded="true"
                 :is-border="false"
-                src="https://i.imgur.com/GdWEt4z.jpg"
+                :src="this.avatar"
                 alt="nya"
             />
         </div>
         <div class="follow-list flex flex-col gap-y-2">
             <FollowerCard
                 class="w-auto shadow-secondary"
-                v-for="(item, index) in followList"
+                v-for="(item, index) in followerList"
                 :key="index"
                 :avatar="item.avatar"
                 :name="item.username"
@@ -31,31 +31,36 @@ import { Options, Vue } from 'vue-class-component';
 import Button from '@/components/Button.vue';
 import ImgHolder from '@/components/ImgHolder.vue';
 import FollowerCard from '@/components/FollowerCard.vue';
+import RSS3 from '@/common/rss3';
 
 @Options({
     components: { ImgHolder, Button, FollowerCard },
 })
 export default class Followers extends Vue {
-    public followList: Object = [
-        {
-            avatar: 'https://i.imgur.com/GdWEt4z.jpg',
-            username: 'Fendiiii',
-            address: '98765tgdusgakdgetg',
-            bio: 'Cutest cat in the world',
-        },
-        {
-            avatar: 'https://i.imgur.com/GdWEt4z.jpg',
-            username: 'Fendiiii',
-            address: '98765tgdusgakdgetg',
-            bio: 'Cutest cat in the world',
-        },
-        {
-            avatar: 'https://i.imgur.com/GdWEt4z.jpg',
-            username: 'Fendiiii',
-            address: '98765tgdusgakdgetg',
-            bio: 'Cutest cat in the world',
-        },
-    ];
+    public followerList: Array<Object> = [];
+    public avatar: String = '';
+
+    async mounted() {
+        const address: string = <string>this.$route.params.address;
+        const rss3 = await RSS3.visitor();
+        const profile = await rss3.profile.get(address);
+        this.avatar = profile?.avatar?.[0] || '';
+        const followersList = await rss3.backlinks.get(address, 'following');
+        if (rss3 && followersList) {
+            for (const item of followersList) {
+                const profile = await rss3.profile.get(item);
+                this.followerList.push({
+                    avatar: profile.avatar?.[0] || '',
+                    username: profile.name || '',
+                    address: item,
+                });
+            }
+        }
+    }
+
+    public back() {
+        window.history.back();
+    }
 }
 </script>
 

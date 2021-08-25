@@ -2,7 +2,7 @@
     <div class="h-screen bg-account-bg overflow-y-auto">
         <div class="main px-4 py-8 max-w-md m-auto">
             <div class="header flex justify-between items-center pb-4">
-                <Button size="sm" class="w-10 h-10 bg-white text-primary shadow-secondary">
+                <Button size="sm" class="w-10 h-10 bg-white text-primary shadow-secondary" @click="back">
                     <i class="bx bx-chevron-left bx-sm"></i>
                 </Button>
                 <div class="section-title text-2xl text-account-title font-bold text-center">Accounts</div>
@@ -10,8 +10,7 @@
                     class="w-10 h-10 inline-flex my-auto"
                     :is-rounded="true"
                     :is-border="false"
-                    src="https://i.imgur.com/GdWEt4z.jpg"
-                    alt="nya"
+                    :src="this.avatar"
                 />
             </div>
             <div class="account-list">
@@ -41,16 +40,40 @@ import { Options, Vue } from 'vue-class-component';
 import Button from '@/components/Button.vue';
 import ImgHolder from '@/components/ImgHolder.vue';
 import AccountItem from '@/components/AccountItem.vue';
+import RSS3 from '@/common/rss3';
+import axios from 'axios';
 
 @Options({
     components: { ImgHolder, Button, AccountItem },
 })
 export default class Accounts extends Vue {
-    public accountList: Object = [
-        { chain: 'Ethereum', address: '98765tgdusgakdgetg' },
-        { chain: 'BSC', address: '98765tgdusgakdgetg' },
-        { chain: 'Ronin', address: '98765tgdusgakdgetg' },
-    ];
+    public accountList: Array<Object> = [];
+    public avatar: String = '';
+    public username: String = '';
+
+    async mounted() {
+        const address: string = <string>this.$route.params.address;
+        const data = await RSS3.getAsset(address);
+        if (data) {
+            this.avatar = data.rss3File.profile?.avatar?.[0];
+            this.username = data.rss3File.profile?.name?.[0];
+
+            this.accountList.push({
+                chain: 'Ethereum',
+                address: this.$route.params.address,
+            });
+
+            if (data.rss3File.accounts) {
+                const accounts = data.rss3File.accounts;
+                for (const item of accounts) {
+                    this.accountList.push({
+                        chain: item.platform,
+                        address: item.identity,
+                    });
+                }
+            }
+        }
+    }
     /**
      * filter
      */
@@ -59,6 +82,9 @@ export default class Accounts extends Vue {
         res += '....';
         res += address.slice(-4);
         return res;
+    }
+    public back() {
+        window.history.back();
     }
 }
 </script>

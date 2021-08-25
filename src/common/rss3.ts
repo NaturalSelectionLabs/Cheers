@@ -2,6 +2,7 @@ import WalletConnectProvider from '@walletconnect/web3-provider';
 import Web3 from 'web3';
 import RSS3 from 'rss3-next';
 import { RSS3Account, RSS3AccountInput } from 'rss3-next/types/rss3';
+import axios from 'axios';
 
 const infuraId = '76af1228cdf345d2bff6a9c0f35112e1';
 const endpoint = 'https://rss3-asset-hub-g886a.ondigitalocean.app';
@@ -45,6 +46,16 @@ async function walletConnect() {
     return rss3;
 }
 
+async function visitor() {
+    if (rss3) {
+        return rss3;
+    } else {
+        return new RSS3({
+            endpoint: endpoint,
+        });
+    }
+}
+
 async function metamaskConnect() {
     const metamaskEthereum = (window as any).ethereum;
     web3 = new Web3(metamaskEthereum);
@@ -68,6 +79,7 @@ async function metamaskConnect() {
 export default {
     walletConnect: walletConnect,
     metamaskConnect: metamaskConnect,
+    visitor: visitor,
     isValidRSS3: () => {
         return !!rss3;
     },
@@ -76,6 +88,10 @@ export default {
             await walletConnect();
         }
         return rss3;
+    },
+    getAsset: async (address: string) => {
+        const res = await axios.get(`${endpoint}/asset-profile/${address}`);
+        return res.data;
     },
     addNewAccount: async (platform: string) => {
         if (!rss3) {

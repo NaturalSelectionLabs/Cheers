@@ -27,7 +27,7 @@ import Button from '@/components/Button.vue';
 @Options({
     components: { Button },
     props: {
-        size: Number,
+        size: String,
         chain: String,
         deleteMode: Boolean,
     },
