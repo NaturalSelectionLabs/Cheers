@@ -23,6 +23,16 @@ module.exports = (env, argv) => ({
         alias: {
             '@': __dirname + '/src',
         },
+        fallback: {
+            crypto: require.resolve('crypto-browserify'),
+            stream: require.resolve('stream-browserify'),
+            buffer: require.resolve('buffer/'),
+            assert: require.resolve('assert/'),
+            https: require.resolve('https-browserify'),
+            http: require.resolve('stream-http'),
+            os: require.resolve('os-browserify/browser'),
+            url: false,
+        },
     },
 
     module: {
@@ -89,6 +99,10 @@ module.exports = (env, argv) => ({
             ],
         }),
         new VueLoaderPlugin(),
+        new webpack.ProvidePlugin({
+            process: 'process/browser',
+            Buffer: ['buffer', 'Buffer'],
+        }),
     ],
     experiments: {
         topLevelAwait: true,
