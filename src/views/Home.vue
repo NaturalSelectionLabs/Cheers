@@ -157,17 +157,15 @@ export default class Home extends Vue {
         const address: string = 'RSS3 Address';
 
         const rss3 = await RSS3.visitor();
-        const profile = await rss3.profile.get(address);
+
+        const data = await RSS3.getAsset(address);
+
+        const profile = data.rss3File.profile;
 
         this.rss3Profile.avatar = profile?.avatar?.[0] || '';
         this.rss3Profile.username = profile?.name || '';
         this.rss3Profile.bio = profile?.bio || '';
         this.rss3Profile.address = address;
-
-        const data = await RSS3.getAsset(address);
-
-        this.rss3Relations['followers'] = await rss3?.backlinks.get(address, 'following');
-        this.rss3Relations['followings'] = (await rss3?.links.get(address, 'following'))?.list || [];
 
         if (data) {
             this.accountList.push({
@@ -193,6 +191,12 @@ export default class Home extends Vue {
                 });
             });
         }
+
+        // 将耗时操作从主线程中分离，先让其他元素的更新渲染上
+        setTimeout(async () => {
+            this.rss3Relations['followers'] = await rss3?.backlinks.get(address, 'following');
+            this.rss3Relations['followings'] = (await rss3?.links.get(address, 'following'))?.list || [];
+        }, 0);
     }
     public toAccountsPage() {
         this.$router.push(`/${this.rss3Profile['address']}/accounts`);

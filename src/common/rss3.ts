@@ -9,6 +9,7 @@ const endpoint = 'https://rss3-asset-hub-g886a.ondigitalocean.app';
 
 let rss3: RSS3 | null;
 let web3: Web3 | null;
+let assets = new Map();
 
 export type IRSS3 = RSS3;
 
@@ -89,9 +90,14 @@ export default {
         }
         return rss3;
     },
-    getAsset: async (address: string) => {
-        const res = await axios.get(`${endpoint}/asset-profile/${address}`);
-        return res.data;
+    getAsset: async (address: string, refresh: boolean = false) => {
+        if (assets.has(address) && !refresh) {
+            return assets.get(address);
+        } else {
+            const res = await axios.get(`${endpoint}/asset-profile/${address}`);
+            assets.set(address, res.data);
+            return res.data;
+        }
     },
     addNewAccount: async (platform: string) => {
         if (!rss3) {
