@@ -2,7 +2,7 @@
     <div class="h-screen bg-account-bg overflow-y-auto">
         <div class="main px-4 py-8 max-w-md m-auto">
             <div class="header flex justify-between items-center pb-4">
-                <Button size="sm" class="w-10 h-10 bg-white text-primary shadow-secondary">
+                <Button size="sm" class="w-10 h-10 bg-white text-primary shadow-secondary" @click="back">
                     <i class="bx bx-chevron-left bx-sm"></i>
                 </Button>
                 <div class="section-title text-2xl text-account-title font-bold text-center">Accounts</div>
@@ -59,6 +59,9 @@ export default class Accounts extends Vue {
         res += '....';
         res += address.slice(-4);
         return res;
+    }
+    public back() {
+        window.history.back();
     }
 }
 </script>

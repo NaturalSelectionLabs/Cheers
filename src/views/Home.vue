@@ -40,7 +40,11 @@
                 <i class="bx bx-info-circle" style="color: rgba(0, 0, 0, 0.2)" />
             </template>
             <template #header-button>
-                <Button size="sm" class="w-10 h-10 text-account-button bg-white shadow-account-sm">
+                <Button
+                    size="sm"
+                    class="w-10 h-10 text-account-button bg-white shadow-account-sm"
+                    @click="toAccountsPage"
+                >
                     <i class="bx bx-expand-alt bx-xs"></i>
                 </Button>
             </template>
@@ -68,7 +72,7 @@
                 <i class="bx bx-info-circle" style="color: rgba(0, 0, 0, 0.2)" />
             </template>
             <template #header-button>
-                <Button size="sm" class="w-10 h-10 text-nft-button bg-white shadow-nft-sm">
+                <Button size="sm" class="w-10 h-10 text-nft-button bg-white shadow-nft-sm" @click="toNFTsPage">
                     <i class="bx bx-expand-alt bx-xs"></i>
                 </Button>
             </template>
@@ -79,6 +83,7 @@
                     :key="id"
                     imageUrl="https://i.imgur.com/GdWEt4z.jpg"
                     :size="70"
+                    @click="toSinglenftPage"
                 ></NFTItem>
             </template>
         </Card>
@@ -176,6 +181,15 @@ export default class Home extends Vue {
         { chain: 'BSC', address: '98765tgdusgakdgetg' },
         { chain: 'Ronin', address: '98765tgdusgakdgetg' },
     ];
+    public toAccountsPage() {
+        this.$router.push(`/address/accounts`);
+    }
+    public toNFTsPage() {
+        this.$router.push(`/nfts`);
+    }
+    public toSinglenftPage() {
+        this.$router.push(`/singlenft`);
+    }
 }
 </script>
 

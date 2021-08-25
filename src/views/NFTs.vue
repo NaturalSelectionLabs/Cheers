@@ -2,7 +2,7 @@
     <div class="h-screen bg-nft-bg overflow-y-auto">
         <div class="main px-4 py-8 max-w-md m-auto">
             <div class="header flex justify-between items-center pb-4">
-                <Button size="sm" class="w-10 h-10 bg-white text-primary shadow-secondary">
+                <Button size="sm" class="w-10 h-10 bg-white text-primary shadow-secondary" @click="back">
                     <i class="bx bx-chevron-left bx-sm"></i>
                 </Button>
                 <div class="section-title text-2xl text-nft-title font-bold text-center">NFTs</div>
@@ -15,12 +15,19 @@
                 />
             </div>
             <div class="nft-list flex flex-wrap justify-between items-center gap-y-4">
-                <NFTItem
-                    :size="NFTWidth > 200 ? 200 : NFTWidth"
-                    :imageUrl="item.image_url"
-                    v-for="(item, index) in nftList"
-                    :key="index"
-                />
+                <div class="relative" v-for="(item, index) in nftList" :key="index">
+                    <NFTItem
+                        :size="NFTWidth > 200 ? 200 : NFTWidth"
+                        :imageUrl="item.image_url"
+                        @click="toSinglenftPage"
+                    />
+                    <NFTBadges
+                        class="absolute z-50 top-2.5 right-2.5"
+                        chain="Ethereum"
+                        location="overlay"
+                        collectionImg="https://i.imgur.com/GdWEt4z.jpg"
+                    />
+                </div>
             </div>
         </div>
     </div>
@@ -31,9 +38,10 @@ import { Options, Vue } from 'vue-class-component';
 import Button from '@/components/Button.vue';
 import ImgHolder from '@/components/ImgHolder.vue';
 import NFTItem from '@/components/NFT/NFTItem.vue';
+import NFTBadges from '@/components/NFT/NFTBadges.vue';
 
 @Options({
-    components: { ImgHolder, Button, NFTItem },
+    components: { ImgHolder, Button, NFTItem, NFTBadges },
 })
 export default class NFTs extends Vue {
     public NFTWidth: number = (window.innerWidth - 52) / 2;
@@ -126,6 +134,12 @@ export default class NFTs extends Vue {
             ],
         },
     ];
+    public toSinglenftPage() {
+        this.$router.push(`/singlenft`);
+    }
+    public back() {
+        window.history.back();
+    }
 }
 </script>
 
