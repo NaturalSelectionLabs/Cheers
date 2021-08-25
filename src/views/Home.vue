@@ -79,11 +79,11 @@
             <template #content>
                 <NFTItem
                     class="inline-block mr-1"
-                    v-for="id in 8"
-                    :key="id"
-                    imageUrl="https://i.imgur.com/GdWEt4z.jpg"
+                    v-for="(item, index) in nftList"
+                    :key="index"
+                    :imageUrl="item.nft.image_url"
                     :size="70"
-                    @click="toSinglenftPage"
+                    @click="toSinglenftPage(item.account, index)"
                 ></NFTItem>
             </template>
         </Card>
@@ -128,6 +128,12 @@ import Card from '@/components/Card.vue';
 import Profile from '@/components/Profile.vue';
 import AccountItem from '@/components/AccountItem.vue';
 import NFTItem from '@/components/NFT/NFTItem.vue';
+import RSS3 from '@/common/rss3';
+
+interface Relations {
+    followers: Array<Object>;
+    followings: Array<Object>;
+}
 
 @Options({
     components: { Button, Card, Profile, AccountItem, NFTItem },
@@ -135,60 +141,68 @@ import NFTItem from '@/components/NFT/NFTItem.vue';
 export default class Home extends Vue {
     public isFollowing: boolean = true;
     public rss3Profile = {
-        avatar: 'https://i.imgur.com/GdWEt4z.jpg',
-        username: 'Fendiiii',
-        address: 'RSS3 Address',
-        bio: 'Cutest cat in the world',
+        avatar: '',
+        username: '',
+        address: '',
+        bio: '',
     };
-    public rss3Relations: Object = {
-        followers: [
-            {
-                avatar: 'https://i.imgur.com/GdWEt4z.jpg',
-                username: 'Fendiiii',
-                address: '98765tgdusgakdgetg',
-                bio: 'Cutest cat in the world',
-            },
-            {
-                avatar: 'https://i.imgur.com/GdWEt4z.jpg',
-                username: 'Fendiiii',
-                address: '98765tgdusgakdgetg',
-                bio: 'Cutest cat in the world',
-            },
-        ],
-        followings: [
-            {
-                avatar: 'https://i.imgur.com/GdWEt4z.jpg',
-                username: 'Fendiiii',
-                address: '98765tgdusgakdgetg',
-                bio: 'Cutest cat in the world',
-            },
-            {
-                avatar: 'https://i.imgur.com/GdWEt4z.jpg',
-                username: 'Fendiiii',
-                address: '98765tgdusgakdgetg',
-                bio: 'Cutest cat in the world',
-            },
-            {
-                avatar: 'https://i.imgur.com/GdWEt4z.jpg',
-                username: 'Fendiiii',
-                address: '98765tgdusgakdgetg',
-                bio: 'Cutest cat in the world',
-            },
-        ],
+    public rss3Relations: Relations = {
+        followers: [],
+        followings: [],
     };
-    public accountList: Object = [
-        { chain: 'Ethereum', address: '98765tgdusgakdgetg' },
-        { chain: 'BSC', address: '98765tgdusgakdgetg' },
-        { chain: 'Ronin', address: '98765tgdusgakdgetg' },
-    ];
+    public accountList: Array<Object> = [];
+    public nftList: Array<Object> = [];
+
+    async mounted() {
+        const address: string = 'RSS3 Address';
+
+        const rss3 = await RSS3.visitor();
+        const profile = await rss3.profile.get(address);
+
+        this.rss3Profile.avatar = profile?.avatar?.[0] || '';
+        this.rss3Profile.username = profile?.name || '';
+        this.rss3Profile.bio = profile?.bio || '';
+        this.rss3Profile.address = address;
+
+        const data = await RSS3.getAsset(address);
+
+        this.rss3Relations['followers'] = await rss3?.backlinks.get(address, 'following');
+        this.rss3Relations['followings'] = (await rss3?.links.get(address, 'following'))?.list || [];
+
+        if (data) {
+            this.accountList.push({
+                chain: 'Ethereum',
+                address: this.rss3Profile.address,
+            });
+            if (data.rss3File.accounts) {
+                data.rss3File.accounts.forEach((account: { platform: any; identity: any }) => {
+                    this.accountList.push({
+                        chain: account.platform,
+                        address: account.identity,
+                    });
+                });
+            }
+
+            data.assets.ethereum.forEach((item: { nft: any[] }, aid: any) => {
+                item.nft.forEach((nft, i) => {
+                    this.nftList.push({
+                        account: aid,
+                        index: i,
+                        nft: nft,
+                    });
+                });
+            });
+        }
+    }
     public toAccountsPage() {
         this.$router.push(`/${this.rss3Profile['address']}/accounts`);
     }
     public toNFTsPage() {
         this.$router.push(`/${this.rss3Profile['address']}/nfts`);
     }
-    public toSinglenftPage() {
-        this.$router.push(`/singlenft`);
+    public toSinglenftPage(account: string, index: number) {
+        const address = <string>this.rss3Profile.address;
+        this.$router.push(`/${address}/singlenft/${account}/${index}`);
     }
 }
 </script>

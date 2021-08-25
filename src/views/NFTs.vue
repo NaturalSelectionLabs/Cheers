@@ -39,7 +39,6 @@ import Button from '@/components/Button.vue';
 import ImgHolder from '@/components/ImgHolder.vue';
 import NFTItem from '@/components/NFT/NFTItem.vue';
 import NFTBadges from '@/components/NFT/NFTBadges.vue';
-import axios from 'axios';
 import RSS3 from '@/common/rss3';
 
 @Options({
