@@ -4,12 +4,8 @@
         <span class="username font-bold text-2xl">{{ username }}</span>
         <span class="address font-medium text-lg"> {{ filter(address) }} </span>
         <div class="relations font-medium text-lg flex flex-row justify-center items-center gap-x-4 text-primary">
-            <router-link to="/followers">
-                <div class="followers">{{ followers.length }} followers</div>
-            </router-link>
-            <router-link to="/followings">
-                <div class="followings">{{ followings.length }} followings</div>
-            </router-link>
+            <div class="followers" @click="toFollowersPage">{{ followers.length }} followers</div>
+            <div class="followings" @click="toFollowingsPage">{{ followings.length }} followings</div>
         </div>
         <div class="bio w-full font-medium text-lg px-5">{{ bio }}</div>
     </div>
@@ -39,6 +35,12 @@ export default class Profile extends Vue {
         res += '....';
         res += address.slice(-4);
         return res;
+    }
+    public toFollowersPage() {
+        this.$router.push(`/address/followers`);
+    }
+    public toFollowingsPage() {
+        this.$router.push(`/address/followings`);
     }
 }
 </script>

@@ -24,15 +24,18 @@ const routes = [
         component: Home,
     },
     {
-        path: '/followings',
-        component: Followings,
-    },
-    {
-        path: '/followers',
+        path: '/:address/followers',
+        name: 'Followers',
         component: Followers,
     },
     {
-        path: '/accounts',
+        path: '/:address/followings',
+        name: 'Followings',
+        component: Followings,
+    },
+    {
+        path: '/:address/accounts',
+        name: 'Accounts',
         component: Accounts,
     },
     {
