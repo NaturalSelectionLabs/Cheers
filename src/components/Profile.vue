@@ -27,6 +27,7 @@ import ImgHolder from '@/components/ImgHolder.vue';
     },
 })
 export default class Profile extends Vue {
+    address!: String;
     /**
      * filter
      */
@@ -37,10 +38,10 @@ export default class Profile extends Vue {
         return res;
     }
     public toFollowersPage() {
-        this.$router.push(`/address/followers`);
+        this.$router.push(`/${this.address}/followers`);
     }
     public toFollowingsPage() {
-        this.$router.push(`/address/followings`);
+        this.$router.push(`/${this.address}/followings`);
     }
 }
 </script>

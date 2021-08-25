@@ -10,8 +10,7 @@
                     class="w-10 h-10 inline-flex my-auto"
                     :is-rounded="true"
                     :is-border="false"
-                    src="https://i.imgur.com/GdWEt4z.jpg"
-                    alt="nya"
+                    :src="this.avatar"
                 />
             </div>
             <div class="account-list">
@@ -41,16 +40,40 @@ import { Options, Vue } from 'vue-class-component';
 import Button from '@/components/Button.vue';
 import ImgHolder from '@/components/ImgHolder.vue';
 import AccountItem from '@/components/AccountItem.vue';
+import axios from 'axios';
 
 @Options({
     components: { ImgHolder, Button, AccountItem },
 })
 export default class Accounts extends Vue {
-    public accountList: Object = [
-        { chain: 'Ethereum', address: '98765tgdusgakdgetg' },
-        { chain: 'BSC', address: '98765tgdusgakdgetg' },
-        { chain: 'Ronin', address: '98765tgdusgakdgetg' },
-    ];
+    public accountList: Array<Object> = [];
+    public avatar: String = '';
+    public username: String = '';
+
+    async mounted() {
+        const address: string = <string>this.$route.params.address;
+        const res = await axios.get(`https://rss3-asset-hub-g886a.ondigitalocean.app/asset-profile/${address}`);
+
+        if (res.data) {
+            this.avatar = res.data.rss3File.profile?.avatar?.[0];
+            this.username = res.data.rss3File.profile?.name?.[0];
+
+            this.accountList.push({
+                chain: 'Ethereum',
+                address: this.$route.params.address,
+            });
+
+            if (res.data.rss3File.accounts) {
+                const accounts = res.data.rss3File.accounts;
+                for (const item of accounts) {
+                    this.accountList.push({
+                        chain: item.platform,
+                        address: item.identity,
+                    });
+                }
+            }
+        }
+    }
     /**
      * filter
      */

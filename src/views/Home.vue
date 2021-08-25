@@ -134,10 +134,10 @@ import NFTItem from '@/components/NFT/NFTItem.vue';
 })
 export default class Home extends Vue {
     public isFollowing: boolean = true;
-    public rss3Profile: Object = {
+    public rss3Profile = {
         avatar: 'https://i.imgur.com/GdWEt4z.jpg',
         username: 'Fendiiii',
-        address: '98765tgdusgakdgetg',
+        address: 'RSS3 Address',
         bio: 'Cutest cat in the world',
     };
     public rss3Relations: Object = {
@@ -182,10 +182,10 @@ export default class Home extends Vue {
         { chain: 'Ronin', address: '98765tgdusgakdgetg' },
     ];
     public toAccountsPage() {
-        this.$router.push(`/address/accounts`);
+        this.$router.push(`/${this.rss3Profile['address']}/accounts`);
     }
     public toNFTsPage() {
-        this.$router.push(`/nfts`);
+        this.$router.push(`/${this.rss3Profile['address']}/nfts`);
     }
     public toSinglenftPage() {
         this.$router.push(`/singlenft`);

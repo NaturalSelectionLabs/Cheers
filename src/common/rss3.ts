@@ -45,6 +45,16 @@ async function walletConnect() {
     return rss3;
 }
 
+async function visitor() {
+    if (rss3) {
+        return rss3;
+    } else {
+        return new RSS3({
+            endpoint: 'https://rss3-asset-hub-g886a.ondigitalocean.app',
+        });
+    }
+}
+
 async function metamaskConnect() {
     const metamaskEthereum = (window as any).ethereum;
     web3 = new Web3(metamaskEthereum);
@@ -68,6 +78,7 @@ async function metamaskConnect() {
 export default {
     walletConnect: walletConnect,
     metamaskConnect: metamaskConnect,
+    visitor: visitor,
     isValidRSS3: () => {
         return !!rss3;
     },

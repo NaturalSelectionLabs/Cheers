@@ -9,14 +9,14 @@
                 class="w-10 h-10 inline-flex my-auto"
                 :is-rounded="true"
                 :is-border="false"
-                src="https://i.imgur.com/GdWEt4z.jpg"
+                :src="this.avatar"
                 alt="nya"
             />
         </div>
         <div class="follow-list flex flex-col gap-y-2">
             <FollowerCard
                 class="w-auto shadow-secondary"
-                v-for="(item, index) in followList"
+                v-for="(item, index) in followerList"
                 :key="index"
                 :avatar="item.avatar"
                 :name="item.username"
@@ -31,35 +31,33 @@ import { Options, Vue } from 'vue-class-component';
 import Button from '@/components/Button.vue';
 import ImgHolder from '@/components/ImgHolder.vue';
 import FollowerCard from '@/components/FollowerCard.vue';
+import RSS3 from '@/common/rss3';
 
 @Options({
     components: { ImgHolder, Button, FollowerCard },
 })
 export default class Followers extends Vue {
-    public followList: Object = [
-        {
-            avatar: 'https://i.imgur.com/GdWEt4z.jpg',
-            username: 'Fendiiii',
-            address: '98765tgdusgakdgetg',
-            bio: 'Cutest cat in the world',
-        },
-        {
-            avatar: 'https://i.imgur.com/GdWEt4z.jpg',
-            username: 'Fendiiii',
-            address: '98765tgdusgakdgetg',
-            bio: 'Cutest cat in the world',
-        },
-        {
-            avatar: 'https://i.imgur.com/GdWEt4z.jpg',
-            username: 'Fendiiii',
-            address: '98765tgdusgakdgetg',
-            bio: 'Cutest cat in the world',
-        },
-    ];
-    public rss3Profile: Object = { avatar: '' };
-    public rss3Relations: Object = {
-        followers: [],
-    };
+    public followerList: Array<Object> = [];
+    public avatar: String = '';
+
+    async mounted() {
+        const address: string = <string>this.$route.params.address;
+        const rss3 = await RSS3.visitor();
+        const profile = await rss3.profile.get(address);
+        this.avatar = profile?.avatar?.[0] || '';
+        const followersList = await rss3.backlinks.get(address, 'following');
+        if (rss3 && followersList) {
+            for (const item of followersList) {
+                const profile = await rss3.profile.get(item);
+                this.followerList.push({
+                    avatar: profile.avatar?.[0] || '',
+                    username: profile.name || '',
+                    address: item,
+                });
+            }
+        }
+    }
+
     public back() {
         window.history.back();
     }
