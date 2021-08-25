@@ -50,7 +50,7 @@ async function visitor() {
         return rss3;
     } else {
         return new RSS3({
-            endpoint: 'https://rss3-asset-hub-g886a.ondigitalocean.app',
+            endpoint: endpoint,
         });
     }
 }
