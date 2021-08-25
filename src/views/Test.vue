@@ -418,6 +418,19 @@
                 </div>
             </template>
         </Modal>
+
+        <div class="flex flex-row gap-5">
+            <Button size="lg" class="w-40 bg-primary text-white shadow-primary" @click="walletConnect">
+                Wallet Connect
+            </Button>
+            <Button size="lg" class="w-40 bg-danger text-white" @click="walletDisconnect"> Wallet Disconnect </Button>
+        </div>
+        <div class="flex flex-row gap-5">
+            <Button size="lg" class="w-40 bg-yellow-600 text-white" @click="metamaskConnect"> Metamask Connect </Button>
+            <Button size="lg" class="w-40 bg-red-400 text-white cursor-not-allowed" disabled>
+                Metamask Disconnect
+            </Button>
+        </div>
     </div>
 </template>
 
@@ -433,11 +446,13 @@ import NFTItem from '@/components/NFT/NFTItem.vue';
 import NFTBadges from '@/components/NFT/NFTBadges.vue';
 import ScanTag from '@/components/NFT/ScanTag.vue';
 import Modal from '@/components/Modal.vue';
+import RSS3 from '@/common/rss3';
 
 import draggable from 'vuedraggable';
 
 @Options({
     components: {
+        ScanTag,
         Modal,
         FollowerCard,
         Card,
@@ -471,6 +486,18 @@ export default class Test extends Vue {
         ],
     };
     isShowingModal: Boolean = false;
+
+    async walletConnect() {
+        await RSS3.walletConnect();
+    }
+
+    async metamaskConnect() {
+        await RSS3.metamaskConnect();
+    }
+
+    async walletDisconnect() {
+        await RSS3.walletDisconnect();
+    }
 }
 </script>
 
