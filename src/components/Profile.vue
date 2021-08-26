@@ -1,11 +1,11 @@
 <template>
     <div class="profile-container flex flex-col justify-start items-center gap-y-1">
-        <ImgHolder class="w-24 h-24" :is-rounded="true" :is-border="false" :src="avatar" alt="nya" />
+        <ImgHolder class="w-24 h-24" :is-rounded="true" :is-border="false" :src="avatar" />
         <span class="username font-bold text-2xl">{{ username }}</span>
         <span class="address font-medium text-lg"> {{ filter(address) }} </span>
         <div class="relations font-medium text-lg flex flex-row justify-center items-center gap-x-4 text-primary">
-            <div class="followers" @click="toFollowersPage">{{ followers.length }} followers</div>
-            <div class="followings" @click="toFollowingsPage">{{ followings.length }} followings</div>
+            <div class="followers cursor-pointer" @click="toFollowersPage">{{ followers.length }} followers</div>
+            <div class="followings cursor-pointer" @click="toFollowingsPage">{{ followings.length }} followings</div>
         </div>
         <div class="bio w-full font-medium text-lg px-5">{{ bio }}</div>
     </div>

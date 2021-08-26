@@ -78,7 +78,7 @@
             </template>
             <template #content>
                 <NFTItem
-                    class="inline-block mr-1"
+                    class="inline-block mr-1 cursor-pointer"
                     v-for="(item, index) in nftList"
                     :key="index"
                     :imageUrl="item.nft.image_url"
@@ -130,6 +130,13 @@ import AccountItem from '@/components/AccountItem.vue';
 import NFTItem from '@/components/NFT/NFTItem.vue';
 import RSS3 from '@/common/rss3';
 
+interface ProfileInfo {
+    avatar: string;
+    username: string;
+    address: string;
+    bio: string;
+}
+
 interface Relations {
     followers: Array<Object>;
     followings: Array<Object>;
@@ -140,7 +147,7 @@ interface Relations {
 })
 export default class Home extends Vue {
     public isFollowing: boolean = true;
-    public rss3Profile = {
+    public rss3Profile: ProfileInfo = {
         avatar: '',
         username: '',
         address: '',
@@ -154,7 +161,12 @@ export default class Home extends Vue {
     public nftList: Array<Object> = [];
 
     async mounted() {
-        const address: string = 'RSS3 Address';
+        let address: string;
+        if (this.$route.params.address) {
+            address = <string>this.$route.params.address;
+        } else {
+            address = 'RSS3 Address';
+        }
 
         const rss3 = await RSS3.visitor();
 
@@ -198,12 +210,15 @@ export default class Home extends Vue {
             this.rss3Relations['followings'] = (await rss3?.links.get(address, 'following'))?.list || [];
         }, 0);
     }
+
     public toAccountsPage() {
         this.$router.push(`/${this.rss3Profile['address']}/accounts`);
     }
+
     public toNFTsPage() {
         this.$router.push(`/${this.rss3Profile['address']}/nfts`);
     }
+
     public toSinglenftPage(account: string, index: number) {
         const address = <string>this.rss3Profile.address;
         this.$router.push(`/${address}/singlenft/${account}/${index}`);
