@@ -187,10 +187,6 @@ export default class Home extends Vue {
         this.rss3Profile.address = address;
 
         const data = await RSS3.getAsset(address);
-
-        this.rss3Relations['followers'] = await rss3?.backlinks.get(address, 'following');
-        this.rss3Relations['followings'] = (await rss3?.links.get(address, 'following'))?.list || [];
-
         if (data) {
             this.accountList.push({
                 chain: 'Ethereum',
@@ -215,6 +211,12 @@ export default class Home extends Vue {
                 });
             });
         }
+
+        // Split time-consuming methods from main thread, so it won't stuck the page loading progress
+        setTimeout(async () => {
+            this.rss3Relations['followers'] = await rss3?.backlinks.get(address, 'following');
+            this.rss3Relations['followings'] = (await rss3?.links.get(address, 'following'))?.list || [];
+        }, 0);
     }
 
     public toAccountsPage() {

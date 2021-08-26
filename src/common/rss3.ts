@@ -9,11 +9,13 @@ const endpoint = 'https://rss3-asset-hub-g886a.ondigitalocean.app';
 
 let rss3: RSS3 | null;
 let web3: Web3 | null;
+let assets = new Map();
+let provider: WalletConnectProvider;
 
 export type IRSS3 = RSS3;
 
 async function walletConnect() {
-    const provider = new WalletConnectProvider({
+    provider = new WalletConnectProvider({
         infuraId: infuraId,
     });
 
@@ -31,6 +33,7 @@ async function walletConnect() {
     provider.on('disconnect', (code: number, reason: string) => {
         console.log(code, reason);
         rss3 = null;
+        web3 = null;
     });
 
     const address = (await web3.eth.getAccounts())[0];
@@ -40,7 +43,10 @@ async function walletConnect() {
     rss3 = new RSS3({
         endpoint: endpoint,
         address: address,
-        sign: async (data: string) => (await web3?.eth.personal.sign(data, address, '')) || '',
+        sign: async (data: string) => {
+            alert('Ready to sign... You may need to prepare your wallet.');
+            return (await web3?.eth.personal.sign(data, address, '')) || '';
+        },
     });
 
     return rss3;
@@ -70,7 +76,9 @@ async function metamaskConnect() {
     rss3 = new RSS3({
         endpoint: endpoint,
         address: address,
-        sign: async (data: string) => (await web3?.eth.personal.sign(data, address, '')) || '',
+        sign: async (data: string) => {
+            return (await web3?.eth.personal.sign(data, address, '')) || '';
+        },
     });
 
     return rss3;
@@ -79,19 +87,28 @@ async function metamaskConnect() {
 export default {
     walletConnect: walletConnect,
     metamaskConnect: metamaskConnect,
+    walletDisconnect: async () => {
+        rss3 = null;
+        web3 = null;
+        if (provider) {
+            await provider.disconnect();
+        }
+    },
     visitor: visitor,
     isValidRSS3: () => {
         return !!rss3;
     },
     get: async () => {
-        if (!rss3) {
-            await walletConnect();
-        }
         return rss3;
     },
-    getAsset: async (address: string) => {
-        const res = await axios.get(`${endpoint}/asset-profile/${address}`);
-        return res.data;
+    getAsset: async (address: string, refresh: boolean = false) => {
+        if (assets.has(address) && !refresh) {
+            return assets.get(address);
+        } else {
+            const res = await axios.get(`${endpoint}/asset-profile/${address}`);
+            assets.set(address, res.data);
+            return res.data;
+        }
     },
     addNewAccount: async (platform: string) => {
         if (!rss3) {
@@ -116,6 +133,6 @@ export default {
             signature: signature,
         };
         await rss3.accounts.post(newAddress);
-        // await rss3.files.sync();
+        await rss3.files.sync();
     },
 };
