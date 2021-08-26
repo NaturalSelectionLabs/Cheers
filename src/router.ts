@@ -4,7 +4,7 @@ import Index from '@/views/Index.vue';
 import Test from '@/views/Test.vue';
 import Setup from '@/views/Setup.vue';
 import SetupAccounts from '@/views/SetupAccounts.vue';
-import SetupNfts from '@/views/SetupNfts.vue';
+import SetupNfts from '@/views/SetupNFTs.vue';
 import Home from '@/views/Home.vue';
 import Followings from '@/views/Followings.vue';
 import Followers from '@/views/Followers.vue';

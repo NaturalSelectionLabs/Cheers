@@ -102,6 +102,9 @@ export default {
         return rss3;
     },
     getAsset: async (address: string, refresh: boolean = false) => {
+        if (!address) {
+            return null;
+        }
         if (assets.has(address) && !refresh) {
             return assets.get(address);
         } else {
@@ -133,6 +136,6 @@ export default {
             signature: signature,
         };
         await rss3.accounts.post(newAddress);
-        await rss3.files.sync();
+        // await rss3.files.sync();
     },
 };

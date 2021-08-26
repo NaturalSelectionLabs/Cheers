@@ -156,13 +156,24 @@
                 </div>
             </template>
             <template #content>
-                <Button
-                    size="lg"
-                    class="text-xs bg-content-button opacity-35 text-white shadow-content cursor-not-allowed m-auto"
-                    disabled
-                >
-                    Coming Soon
-                </Button>
+                <div class="flex justify-center">
+                    <Button
+                        size="lg"
+                        class="
+                            text-lg
+                            font-extralight
+                            bg-content-button
+                            opacity-35
+                            text-white
+                            shadow-content
+                            cursor-not-allowed
+                            m-auto
+                        "
+                        disabled
+                    >
+                        Coming Soon
+                    </Button>
+                </div>
             </template>
         </Card>
         <Card
