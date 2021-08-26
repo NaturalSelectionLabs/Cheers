@@ -313,6 +313,29 @@
             address="0xD3E8ce4841ed658Ec8dcb99B7a74beFC377253EA"
         />
 
+        <AccountItem chain="Ethereum" size="70" :deleteMode="true" />
+        <AccountItem chain="Ethereum" size="70" :deleteMode="false" />
+
+        <div class="relative w-45 h-45">
+            <NFTItem size="180" imageUrl="https://i.imgur.com/GdWEt4z.jpg" />
+            <NFTBadges
+                class="absolute z-50 top-2.5 right-2.5"
+                chain="Ethereum"
+                location="overlay"
+                collectionImg="https://i.imgur.com/GdWEt4z.jpg"
+            />
+        </div>
+
+        <NFTBadges
+            class="absolute z-50 top-2.5 right-2.5"
+            chain="Ethereum"
+            location="header"
+            collectionImg="https://i.imgur.com/GdWEt4z.jpg"
+        />
+
+        <ScanTag chain="Ethereum" />
+        <ScanTag chain="Ronins" />
+
         <Card
             :title="`Draggable - 1 (Count: ${accounts.array1.length})`"
             color-title="text-account-title"
@@ -332,7 +355,11 @@
             <template #content>
                 <draggable class="min-h-20" :list="accounts.array1" group="accounts" itemKey="chain">
                     <template #item="{ element, index }">
-                        <AccountItem class="shadow-account-sm inline-flex m-0.5" :size="64" :chain="element.chain" />
+                        <AccountItem
+                            class="shadow-account-sm inline-flex m-0.5 rounded-full"
+                            :size="64"
+                            :chain="element.chain"
+                        />
                     </template>
                 </draggable>
             </template>
@@ -356,7 +383,11 @@
             <template #content>
                 <draggable class="min-h-20" :list="accounts.array2" group="accounts" itemKey="chain">
                     <template #item="{ element, index }">
-                        <AccountItem class="shadow-account-sm inline-flex m-0.5" :size="64" :chain="element.chain" />
+                        <AccountItem
+                            class="shadow-account-sm inline-flex m-0.5 rounded-full"
+                            :size="64"
+                            :chain="element.chain"
+                        />
                     </template>
                 </draggable>
             </template>
@@ -387,6 +418,19 @@
                 </div>
             </template>
         </Modal>
+
+        <div class="flex flex-row gap-5">
+            <Button size="lg" class="w-40 bg-primary text-white shadow-primary" @click="walletConnect">
+                Wallet Connect
+            </Button>
+            <Button size="lg" class="w-40 bg-danger text-white" @click="walletDisconnect"> Wallet Disconnect </Button>
+        </div>
+        <div class="flex flex-row gap-5">
+            <Button size="lg" class="w-40 bg-yellow-600 text-white" @click="metamaskConnect"> Metamask Connect </Button>
+            <Button size="lg" class="w-40 bg-red-400 text-white cursor-not-allowed" disabled>
+                Metamask Disconnect
+            </Button>
+        </div>
     </div>
 </template>
 
@@ -399,12 +443,27 @@ import Card from '@/components/Card.vue';
 import FollowerCard from '@/components/FollowerCard.vue';
 import AccountItem from '@/components/AccountItem.vue';
 import NFTItem from '@/components/NFT/NFTItem.vue';
+import NFTBadges from '@/components/NFT/NFTBadges.vue';
+import ScanTag from '@/components/NFT/ScanTag.vue';
 import Modal from '@/components/Modal.vue';
+import RSS3 from '@/common/rss3';
 
 import draggable from 'vuedraggable';
 
 @Options({
-    components: { Modal, NFTItem, AccountItem, FollowerCard, Card, AvatarEditor, Button, Input, draggable },
+    components: {
+        ScanTag,
+        Modal,
+        FollowerCard,
+        Card,
+        AvatarEditor,
+        Button,
+        Input,
+        AccountItem,
+        NFTItem,
+        NFTBadges,
+        draggable,
+    },
 })
 export default class Test extends Vue {
     value: String = 'value';
@@ -427,6 +486,18 @@ export default class Test extends Vue {
         ],
     };
     isShowingModal: Boolean = false;
+
+    async walletConnect() {
+        await RSS3.walletConnect();
+    }
+
+    async metamaskConnect() {
+        await RSS3.metamaskConnect();
+    }
+
+    async walletDisconnect() {
+        await RSS3.walletDisconnect();
+    }
 }
 </script>
 

@@ -49,13 +49,13 @@ export default class NFTDetail extends Vue {
         @apply w-full px-5 py-4 bg-white rounded filter drop-shadow-nft text-black flex flex-col justify-start items-start gap-5;
     }
     h2 {
-        @apply text-xl font-semibold capitalize;
+        @apply text-xl font-semibold capitalize overflow-ellipsis overflow-hidden break-all;
     }
     h3 {
         @apply text-lg font-medium capitalize;
     }
     p {
-        @apply text-sm leading-normal;
+        @apply text-sm leading-normal break-all;
     }
     .traits-container {
         @apply flex flex-row flex-wrap justify-start items-center gap-2.5;
