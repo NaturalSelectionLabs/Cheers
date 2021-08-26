@@ -100,8 +100,8 @@
                     :class="{
                         'bg-gray-100 cursor-not-allowed': show.length === 0,
                     }"
-                    @click="hideAll"
                     :disabled="show.length === 0"
+                    @click="hideAll"
                 >
                     Hide All
                 </Button>
@@ -220,12 +220,10 @@ export default class Setup extends Vue {
     }
 
     hideAll() {
-        this.hide.push(...this.show);
-        this.show.splice(0, this.show.length);
+        this.hide.push(...this.show.splice(0, this.show.length));
     }
     showAll() {
-        this.show.push(...this.hide);
-        this.hide.splice(0, this.hide.length);
+        this.show.push(...this.hide.splice(0, this.hide.length));
     }
 
     async save() {
