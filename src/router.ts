@@ -18,7 +18,10 @@ const routes = [
         path: '/test',
         component: Test,
     },
-
+    {
+        path: '/:address',
+        component: Home,
+    },
     {
         path: '/public',
         component: Home,
