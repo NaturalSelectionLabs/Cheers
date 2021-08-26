@@ -87,7 +87,7 @@
                                 size="64"
                                 :chain="element.platform"
                                 :delete-mode="mode === 'delete'"
-                                @delete-account="deleteAccount(index, element)"
+                                @delete-account="deleteAccount(index)"
                             />
                         </template>
                     </draggable>
@@ -176,6 +176,7 @@ export default class Setup extends Vue {
     additionalAccounts: String[] = ['Ethereum', 'BSC', 'Ronin'];
     show: RSS3Account[] = [];
     hide: RSS3Account[] = [];
+    toDelete: RSS3Account[] = [];
     rss3: IRSS3 | null = null;
 
     mode: String = 'normal';
@@ -214,9 +215,8 @@ export default class Setup extends Vue {
         await RSS3.addNewAccount(platform);
     }
 
-    async deleteAccount(i: number, acc: RSS3Account) {
-        this.show.splice(i, 1);
-        await (<IRSS3>this.rss3).accounts.delete(acc);
+    async deleteAccount(i: number) {
+        this.toDelete.push(...this.show.splice(i, 1));
     }
 
     hideAll() {
@@ -241,6 +241,9 @@ export default class Setup extends Vue {
                 // Newly hide
                 // Todo: set to hidden
             }
+        }
+        for (const account of this.toDelete) {
+            await (<IRSS3>this.rss3).accounts.delete(account);
         }
 
         await (<IRSS3>this.rss3).files.sync();
