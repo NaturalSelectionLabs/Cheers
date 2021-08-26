@@ -9,22 +9,23 @@
             :bio="rss3Profile.bio"
         ></Profile>
         <Button
-            v-if="isFollowing"
             size="sm"
-            class="w-auto text-lg bg-primary text-white shadow-secondary mb-4"
+            class="w-auto text-lg shadow-secondary mb-4 duration-200"
+            v-if="!isOwner"
+            v-bind:class="[isFollowing ? 'bg-primary text-white' : 'bg-white text-primary']"
             @click="isFollowing = !isFollowing"
         >
-            <span>Follow</span>
-            <i class="bx bx-plus bx-sm"></i>
+            <span>{{ isFollowing ? 'Follow' : 'Following' }}</span>
+            <i class="bx bx-sm" v-bind:class="[isFollowing ? 'bx-plus' : 'bx-check']"></i>
         </Button>
         <Button
-            v-else
             size="sm"
             class="w-auto text-lg bg-white text-primary shadow-secondary mb-4"
-            @click="isFollowing = !isFollowing"
+            v-if="isOwner"
+            @click="toSetupPage"
         >
-            <span>Following</span>
-            <i class="bx bx-check bx-sm"></i>
+            <span>Edit Profile</span>
+            <i class="bx bx-pencil bx-sm"></i>
         </Button>
 
         <Card
@@ -147,6 +148,8 @@ interface Relations {
 })
 export default class Home extends Vue {
     public isFollowing: boolean = true;
+    public isOwner: boolean = false;
+
     public rss3Profile: ProfileInfo = {
         avatar: '',
         username: '',
@@ -161,14 +164,21 @@ export default class Home extends Vue {
     public nftList: Array<Object> = [];
 
     async mounted() {
+        const rss3 = await RSS3.visitor();
+        const owner: string = <string>rss3.account.address;
+
         let address: string;
         if (this.$route.params.address) {
             address = <string>this.$route.params.address;
+            if (address === owner) {
+                this.isOwner = true;
+            }
         } else {
-            address = 'RSS3 Address';
+            // address = 'RSS3 Address';
+            address = owner;
+            this.isOwner = true;
         }
 
-        const rss3 = await RSS3.visitor();
         const profile = await rss3.profile.get(address);
 
         this.rss3Profile.avatar = profile?.avatar?.[0] || '';
@@ -218,6 +228,10 @@ export default class Home extends Vue {
     public toSinglenftPage(account: string, index: number) {
         const address = <string>this.rss3Profile.address;
         this.$router.push(`/${address}/singlenft/${account}/${index}`);
+    }
+
+    public toSetupPage() {
+        this.$router.push(`/setup`);
     }
 }
 </script>

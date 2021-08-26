@@ -69,7 +69,7 @@
             </template>
         </Card>
         <div class="flex gap-5">
-            <Button size="lg" class="flex-1 text-lg bg-white text-primary shadow-secondary">Back</Button>
+            <Button size="lg" class="flex-1 text-lg bg-white text-primary shadow-secondary" @click="back">Back</Button>
             <Button size="lg" class="flex-1 text-lg bg-primary text-white shadow-primary">Done</Button>
         </div>
     </div>
@@ -102,6 +102,10 @@ export default class Setup extends Vue {
     assets: RSS3Asset[] = [];
 
     async mounted() {}
+
+    public back() {
+        window.history.back();
+    }
 }
 </script>
 

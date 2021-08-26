@@ -37,6 +37,15 @@
                     </div>
                 </div>
             </div>
+            <div class="px-4 py-4 flex gap-5 fixed bottom-0 left-0 right-0 max-w-md m-auto w-full" v-if="isOwner">
+                <Button
+                    size="lg"
+                    class="m-auto text-lg bg-account-button text-white shadow-account"
+                    @click="toSetupAccounts"
+                >
+                    Manage Accounts
+                </Button>
+            </div>
         </div>
     </div>
 </template>
@@ -59,6 +68,7 @@ interface Profile {
     components: { ImgHolder, Button, AccountItem },
 })
 export default class Accounts extends Vue {
+    public isOwner: boolean = false;
     public accountList: Array<Object> = [];
     public rss3Profile: Profile = {
         avatar: '',
@@ -68,7 +78,15 @@ export default class Accounts extends Vue {
     };
 
     async mounted() {
+        const rss3 = await RSS3.visitor();
         const address: string = <string>this.$route.params.address;
+        const owner: string = <string>rss3.account.address;
+        // const owner: string = 'RSS3 Address';
+
+        if (owner === address) {
+            this.isOwner = true;
+        }
+
         const data = await RSS3.getAsset(address);
         if (data) {
             this.rss3Profile.avatar = data.rss3File.profile?.avatar?.[0];
@@ -114,6 +132,10 @@ export default class Accounts extends Vue {
 
     public toPublicPage(address: string) {
         this.$router.push(`/${address}`);
+    }
+
+    public toSetupAccounts() {
+        this.$router.push(`/setup/accounts`);
     }
 
     public back() {

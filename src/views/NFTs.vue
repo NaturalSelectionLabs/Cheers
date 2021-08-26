@@ -24,12 +24,17 @@
                         @click="toSinglenftPage(item.account, index)"
                     />
                     <NFTBadges
-                        class="absolute z-50 top-2.5 right-2.5"
+                        class="absolute top-2.5 right-2.5"
                         :chain="item.nft.chain"
                         location="overlay"
                         :collectionImg="item.nft.collection.image_url"
                     />
                 </div>
+            </div>
+            <div class="px-4 py-4 flex gap-5 fixed bottom-0 left-0 right-0 max-w-md m-auto w-full z-50" v-if="isOwner">
+                <Button size="lg" class="m-auto text-lg bg-nft-button text-white shadow-nft" @click="toSetupNfts">
+                    Manage NFTs
+                </Button>
             </div>
         </div>
     </div>
@@ -55,6 +60,7 @@ interface Profile {
 })
 export default class NFTs extends Vue {
     public NFTWidth: number = (window.innerWidth - 52) / 2;
+    public isOwner: boolean = false;
     public nftList: Array<Object> = [];
     public rss3Profile: Profile = {
         avatar: '',
@@ -64,7 +70,15 @@ export default class NFTs extends Vue {
     };
 
     async mounted() {
+        const rss3 = await RSS3.visitor();
         const address: string = <string>this.$route.params.address;
+        const owner: string = <string>rss3.account.address;
+        // const owner: string = 'RSS3 Address';
+
+        if (owner === address) {
+            this.isOwner = true;
+        }
+
         const data = await RSS3.getAsset(address);
 
         if (data) {
@@ -90,6 +104,10 @@ export default class NFTs extends Vue {
 
     public toPublicPage(address: string) {
         this.$router.push(`/${address}`);
+    }
+
+    public toSetupNfts() {
+        this.$router.push(`/setup/nfts`);
     }
 
     public back() {
