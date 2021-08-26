@@ -1,5 +1,5 @@
 <template>
-    <div class="px-4 py-9">
+    <div class="px-4 py-9 max-w-md m-auto">
         <div class="flex justify-between items-center mb-4">
             <Button size="sm" class="w-10 h-10 bg-white text-primary shadow-secondary">
                 <i class="bx bx-chevron-left bx-sm"></i>
@@ -59,7 +59,7 @@
                 <Button size="sm" class="text-xs bg-white text-nft-button shadow-nft-sm"> Show All </Button>
             </template>
         </Card>
-        <div class="flex gap-5">
+        <div class="px-4 py-4 flex gap-5 fixed bottom-0 left-0 right-0 max-w-md m-auto w-full">
             <Button size="lg" class="flex-1 text-lg bg-white text-primary shadow-secondary">Discard</Button>
             <Button size="lg" class="flex-1 text-lg bg-primary text-white shadow-primary">Save</Button>
         </div>

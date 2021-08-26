@@ -1,5 +1,5 @@
 <template>
-    <div class="px-4 py-9">
+    <div class="px-4 py-9 max-w-md m-auto pb-20">
         <div class="text-center mb-4">
             <h1 class="text-5xl text-primary font-bold">Setup</h1>
         </div>
@@ -31,15 +31,20 @@
             </template>
         </Card>
         <Card
-            title="TestCard"
+            title="NFTs"
             color-title="text-nft-title"
             color-tips="text-nft-title"
             color-background="bg-nft-bg"
             class="mb-4 w-full"
             :is-having-content="assets.length !== 0"
-            :is-single-line="true"
+            :is-single-line="false"
             :tips="assets.length === 0 ? 'You don’t have any NFTs yet : {' : ''"
         >
+            <template #header-button>
+                <Button size="sm" class="w-10 h-10 bg-nft-button text-white shadow-nft">
+                    <i class="bx bx-pencil bx-sm" />
+                </Button>
+            </template>
             <template #content>
                 <NFTItem
                     v-for="asset in assets"
@@ -51,7 +56,7 @@
             </template>
         </Card>
         <Card
-            title="TestCard"
+            title="Contents"
             color-title="text-content-title"
             color-tips="text-content-title"
             color-background="bg-content-bg"
@@ -59,16 +64,27 @@
             :is-having-content="true"
         >
             <template #content>
-                <Button
-                    size="lg"
-                    class="text-xs bg-content-button opacity-35 text-white shadow-content cursor-not-allowed m-auto"
-                    disabled
-                >
-                    Coming Soon
-                </Button>
+                <div class="flex justify-center">
+                    <Button
+                        size="lg"
+                        class="
+                            text-lg
+                            font-extralight
+                            bg-content-button
+                            opacity-35
+                            text-white
+                            shadow-content
+                            cursor-not-allowed
+                            m-auto
+                        "
+                        disabled
+                    >
+                        Coming Soon
+                    </Button>
+                </div>
             </template>
         </Card>
-        <div class="flex gap-5">
+        <div class="px-4 py-4 flex gap-5 fixed bottom-0 left-0 right-0 max-w-md m-auto w-full">
             <Button size="lg" class="flex-1 text-lg bg-white text-primary shadow-secondary">Back</Button>
             <Button size="lg" class="flex-1 text-lg bg-primary text-white shadow-primary">Done</Button>
         </div>

@@ -109,7 +109,7 @@
             </template>
             <template #header-button>
                 <Button size="sm" class="w-10 h-10 bg-account-button text-white shadow-account">
-                    <i class="bx bx-plus bx-sm"></i>
+                    <i class="bx bx-plus bx-sm" />
                 </Button>
             </template>
             <template #footer-button>
@@ -185,7 +185,7 @@
                 <AccountItem
                     v-for="id in 8"
                     :key="id"
-                    class="shadow-account-sm inline-flex m-0.5"
+                    class="shadow-account-sm inline-flex m-0.5 rounded-full"
                     size="64"
                     chain="Ethereum"
                 />
@@ -235,7 +235,7 @@
                 <AccountItem
                     v-for="id in 8"
                     :key="id"
-                    class="shadow-account-sm inline-flex m-0.5"
+                    class="shadow-account-sm inline-flex m-0.5 rounded-full"
                     size="64"
                     chain="Ethereum"
                 />
