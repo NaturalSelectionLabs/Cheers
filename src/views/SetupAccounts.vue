@@ -1,5 +1,5 @@
 <template>
-    <div class="px-4 py-9">
+    <div class="px-4 py-9 max-w-md m-auto">
         <div class="flex justify-between items-center mb-4">
             <Button size="sm" class="w-10 h-10 bg-white text-primary shadow-secondary">
                 <i class="bx bx-chevron-left bx-sm"></i>
@@ -20,7 +20,7 @@
             :is-having-content="true"
         >
             <template #content>
-                <AccountItem class="shadow-account-sm inline-flex m-0.5" :size="64" chain="Ethereum" />
+                <AccountItem class="inline-flex m-0.5" :size="64" chain="Ethereum"></AccountItem>
             </template>
         </Card>
         <Card

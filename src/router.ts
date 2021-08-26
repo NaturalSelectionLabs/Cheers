@@ -8,6 +8,9 @@ import Followers from '@/views/Followers.vue';
 import Accounts from '@/views/Accounts.vue';
 import NFTs from '@/views/NFTs.vue';
 import Singlenft from '@/views/SingleNFT.vue';
+import Setup from '@/views/Setup.vue';
+import SetupAccounts from '@/views/SetupAccounts.vue';
+import SetupNfts from '@/views/SetupNfts.vue';
 
 const routes = [
     {
@@ -50,6 +53,18 @@ const routes = [
         path: '/:address/singlenft/:aid/:id',
         name: 'SingleNFT',
         component: Singlenft,
+    },
+    {
+        path: '/setup',
+        component: Setup,
+    },
+    {
+        path: '/setup/accounts',
+        component: SetupAccounts,
+    },
+    {
+        path: '/setup/nfts',
+        component: SetupNfts,
     },
 ];
 
