@@ -230,7 +230,7 @@ export default class Setup extends Vue {
             account.tags = [];
         } else {
             const orderPattern = /^order:(-?\d+)$/i;
-            const oldIndex = account.tags.findIndex((tag) => orderPattern.test(tag)) || -1;
+            const oldIndex = account.tags.findIndex((tag) => orderPattern.test(tag));
             if (oldIndex !== -1) {
                 account.tags.splice(oldIndex, 1);
             }
@@ -244,7 +244,11 @@ export default class Setup extends Vue {
     }
 
     async addAccount(platform: string) {
-        await RSS3.addNewAccount(platform);
+        const newAccount = await RSS3.addNewAccount(platform);
+        if (newAccount) {
+            this.show.push(newAccount);
+        }
+        this.mode = 'normal';
     }
 
     async deleteAccount(i: number) {

@@ -111,9 +111,9 @@ export default {
             return res.data;
         }
     },
-    addNewAccount: async (platform: string) => {
+    addNewAccount: async (platform: string): Promise<RSS3Account | null> => {
         if (!rss3) {
-            return;
+            return null;
         }
         const metamaskEthereum = (window as any).ethereum;
         const metaMaskWeb3 = new Web3(metamaskEthereum);
@@ -133,7 +133,7 @@ export default {
             identity: address,
             signature: signature,
         };
-        await rss3.accounts.post(newAddress);
+        return await rss3.accounts.post(newAddress);
         // await rss3.files.sync();
     },
 };

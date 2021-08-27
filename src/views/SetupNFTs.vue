@@ -221,7 +221,7 @@ export default class SetupNFTs extends Vue {
             asset.tags = [];
         } else {
             const orderPattern = /^order:(-?\d+)$/i;
-            const oldIndex = asset.tags.findIndex((tag) => orderPattern.test(tag)) || -1;
+            const oldIndex = asset.tags.findIndex((tag) => orderPattern.test(tag));
             if (oldIndex !== -1) {
                 asset.tags.splice(oldIndex, 1);
             }

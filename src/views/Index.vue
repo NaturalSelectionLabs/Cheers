@@ -62,7 +62,7 @@ export default class Index extends Vue {
         } else {
             // this.$gtag.config(rss3.account.address)
             // this.$gtag.event('sign_up', { userid: rss3.account.address, event_label: rss3.account.address })
-            await this.$router.push('/settings');
+            await this.$router.push('/setup');
         }
     }
 }
