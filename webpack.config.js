@@ -78,6 +78,11 @@ module.exports = (env, argv) => ({
                 test: /\.vue$/,
                 loader: 'vue-loader',
             },
+            {
+                test: /\.mjs$/,
+                include: /node_modules/,
+                type: 'javascript/auto',
+            },
         ],
     },
 
