@@ -26,7 +26,6 @@
                 </Button>
             </template>
             <template #content>
-                <AccountItem class="shadow-account-sm inline-flex m-0.5 rounded-full" size="64" chain="Ethereum" />
                 <AccountItem
                     v-for="account in accounts"
                     :key="account.platform + account.identity"
@@ -173,6 +172,13 @@ export default class Setup extends Vue {
     }
 
     async loadAccounts() {
+        // Add original account
+        this.accounts.push({
+            platform: 'Ethereum',
+            identity: (<IRSS3>this.rss3).account.address,
+            signature: '',
+            tags: ['order:-1'],
+        });
         // Get accounts
         const accounts = await (<IRSS3>this.rss3).accounts.get((<IRSS3>this.rss3).account.address);
         if (accounts) {
@@ -263,8 +269,9 @@ export default class Setup extends Vue {
         this.saveEdited();
         this.$router.push('/manage/nfts');
     }
-    back() {
+    async back() {
         this.clearEdited();
+        await RSS3.getAssetProfile((<IRSS3>this.rss3).account.address, true);
         window.history.back();
     }
     async save() {
@@ -282,6 +289,7 @@ export default class Setup extends Vue {
         await (<IRSS3>this.rss3).profile.patch(newProfile);
         await (<IRSS3>this.rss3).files.sync();
         this.clearEdited();
+        await RSS3.getAssetProfile((<IRSS3>this.rss3).account.address, true);
         await this.$router.push('/public');
     }
 }

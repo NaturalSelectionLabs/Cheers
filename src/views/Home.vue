@@ -53,10 +53,10 @@
                 <AccountItem
                     class="inline-block mr-1"
                     size="70"
-                    :chain="item.chain"
-                    v-for="(item, index) in accountList"
+                    :chain="item.platform"
+                    v-for="(item, index) in accounts"
                     :key="index"
-                ></AccountItem>
+                />
             </template>
         </Card>
 
@@ -80,7 +80,7 @@
             <template #content>
                 <NFTItem
                     class="inline-block mr-1 cursor-pointer"
-                    v-for="(item, index) in nftList"
+                    v-for="(item, index) in assets"
                     :key="index"
                     :imageUrl="item.nft.image_url"
                     :size="70"
@@ -129,7 +129,9 @@ import Card from '@/components/Card.vue';
 import Profile from '@/components/Profile.vue';
 import AccountItem from '@/components/AccountItem.vue';
 import NFTItem from '@/components/NFT/NFTItem.vue';
-import RSS3 from '@/common/rss3';
+import RSS3, { IRSS3 } from '@/common/rss3';
+import { RSS3Account, RSS3Asset } from 'rss3-next/types/rss3';
+import { DetailedNFT, RSS3AssetShow } from '@/common/types';
 
 interface ProfileInfo {
     avatar: string;
@@ -160,8 +162,8 @@ export default class Home extends Vue {
         followers: [],
         followings: [],
     };
-    public accountList: Array<Object> = [];
-    public nftList: Array<Object> = [];
+    accounts: RSS3Account[] = [];
+    assets: Object[] = [];
 
     async mounted() {
         const rss3 = await RSS3.visitor();
@@ -190,23 +192,20 @@ export default class Home extends Vue {
         this.rss3Profile.address = address;
 
         const data = await RSS3.getAssetProfile(address);
-        if (data) {
-            this.accountList.push({
-                chain: 'Ethereum',
-                address: this.rss3Profile.address,
-            });
-            if (data.rss3File.accounts) {
-                data.rss3File.accounts.forEach((account: { platform: any; identity: any }) => {
-                    this.accountList.push({
-                        chain: account.platform,
-                        address: account.identity,
-                    });
-                });
-            }
 
+        if (data) {
+            this.accounts.push({
+                platform: 'Ethereum',
+                identity: rss3.account.address,
+                signature: '',
+                tags: ['order:-1'],
+            });
+            await this.loadAccounts(<RSS3Account[]>data.rss3File.accounts);
+
+            // await this.loadAssets(data);
             data.assets.ethereum.forEach((item: { nft: any[] }, aid: any) => {
                 item.nft.forEach((nft, i) => {
-                    this.nftList.push({
+                    this.assets.push({
                         account: aid,
                         index: i,
                         nft: nft,
