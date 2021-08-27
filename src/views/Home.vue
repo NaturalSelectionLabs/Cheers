@@ -184,14 +184,21 @@ export default class Home extends Vue {
             this.isOwner = true;
         }
 
-        const profile = await rss3.profile.get(address);
+        // const profile = await rss3.profile.get(address);
+        //
+        // this.rss3Profile.avatar = profile?.avatar?.[0] || '';
+        // this.rss3Profile.username = profile?.name || '';
+        // this.rss3Profile.bio = profile?.bio || '';
+        // this.rss3Profile.address = address;
+
+        const data = await RSS3.getAssetProfile(address);
+
+        const profile = data.rss3File.profile;
 
         this.rss3Profile.avatar = profile?.avatar?.[0] || '';
         this.rss3Profile.username = profile?.name || '';
         this.rss3Profile.bio = profile?.bio || '';
         this.rss3Profile.address = address;
-
-        const data = await RSS3.getAssetProfile(address);
 
         if (data) {
             this.accounts.push({
