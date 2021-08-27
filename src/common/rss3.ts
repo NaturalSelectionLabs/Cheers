@@ -101,7 +101,7 @@ export default {
     get: async () => {
         return rss3;
     },
-    getAsset: async (address: string, refresh: boolean = false) => {
+    getAssetProfile: async (address: string, refresh: boolean = false) => {
         if (!address) {
             return null;
         }

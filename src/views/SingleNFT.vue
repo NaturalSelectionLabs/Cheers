@@ -52,7 +52,7 @@ export default class SingleNFT extends Vue {
         const address: string = <string>this.$route.params.address;
         const aid: number = Number(this.$route.params.aid);
         const id: number = Number(this.$route.params.id);
-        const data = await RSS3.getAsset(address);
+        const data = await RSS3.getAssetProfile(address);
 
         if (data) {
             this.details = data.assets.ethereum[aid].nft[id];

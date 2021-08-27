@@ -186,7 +186,7 @@ export default class Home extends Vue {
         this.rss3Profile.bio = profile?.bio || '';
         this.rss3Profile.address = address;
 
-        const data = await RSS3.getAsset(address);
+        const data = await RSS3.getAssetProfile(address);
         if (data) {
             this.accountList.push({
                 chain: 'Ethereum',

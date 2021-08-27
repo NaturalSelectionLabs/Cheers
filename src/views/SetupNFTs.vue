@@ -105,7 +105,7 @@ import { Options, Vue } from 'vue-class-component';
 import Button from '@/components/Button.vue';
 import Card from '@/components/Card.vue';
 import NFTItem from '@/components/NFT/NFTItem.vue';
-import { RSS3Account, RSS3Asset } from 'rss3-next/types/rss3';
+import { RSS3Asset } from 'rss3-next/types/rss3';
 import RSS3, { IRSS3 } from '@/common/rss3';
 
 interface DetailedNFT {
@@ -177,8 +177,8 @@ export default class SetupNFTs extends Vue {
         }
 
         // Organize NFTs
-        const data = await RSS3.getAsset((<IRSS3>this.rss3).account.address);
-        const assetsNFTs: RSS3AssetShow[] = [];
+        const data = await RSS3.getAssetProfile((<IRSS3>this.rss3).account.address);
+        const assetsNFTs: RSS3AssetShow[] = []; // Real-time NFTs queried from asset
         for (const key in data.assets) {
             // key: ethereum / bsc / ...
             data.assets[key].forEach((account: any) => {
@@ -204,7 +204,7 @@ export default class SetupNFTs extends Vue {
                 });
             });
         }
-        const filedNFTs: RSS3Asset[] = data.rss3File.assets;
+        const filedNFTs: RSS3Asset[] = data.rss3File.assets; // NFTs cached in RSS3 file `asset`
 
         assetsNFTs.forEach((nft: RSS3AssetShow) => {
             const i = filedNFTs.findIndex(
@@ -216,7 +216,7 @@ export default class SetupNFTs extends Vue {
                 }
                 nft.tags.push(...(filedNFTs[i].tags || []));
                 nft.tags.forEach((tag: string) => {
-                    if (tag.startsWith('order-')) {
+                    if (tag.startsWith('order:')) {
                         nft.order = parseInt(tag.substr(6), 10);
                     }
                 });
@@ -228,6 +228,7 @@ export default class SetupNFTs extends Vue {
                     // Show
                     this.show.push(nft);
                 }
+                filedNFTs.splice(i, 1); // Remains are gone NFTs
             } else {
                 // Newly added
                 nft.order = -1;
@@ -246,19 +247,6 @@ export default class SetupNFTs extends Vue {
                 return a.order - b.order;
             });
         });
-    }
-
-    getTaggedOrder(asset: RSS3AssetShow): number {
-        if (!asset.tags) {
-            return -1;
-        }
-        const orderPattern = /^order:(-?\d+)$/i;
-        for (const tag of asset.tags) {
-            if (orderPattern.test(tag)) {
-                return parseInt(orderPattern.exec(tag)?.[1] || '-1');
-            }
-        }
-        return -1;
     }
 
     setTaggedOrder(asset: RSS3Asset, order: number): void {
@@ -281,10 +269,18 @@ export default class SetupNFTs extends Vue {
     async refresh() {}
 
     hideAll() {
-        // this.hide.push(...this.show.splice(0, this.show.length));
+        for (const asset of this.show) {
+            this.hide[this.findGroupID(asset)].assets.push(asset);
+        }
+        this.show.splice(0, this.show.length);
     }
     showAll() {
-        // this.show.push(...this.hide.splice(0, this.hide.length));
+        for (const group of this.hide) {
+            for (const asset of group.assets) {
+                this.show.push(asset);
+            }
+            group.assets.splice(0, group.assets.length);
+        }
     }
 
     findGroupID(asset: RSS3AssetShow): number {
@@ -295,12 +291,53 @@ export default class SetupNFTs extends Vue {
         this.activatedGroupID = this.findGroupID(ev.element);
     }
 
-    dragChange(ev: any) {}
-
     dragAddAsset(ev: any) {}
 
     async save() {
         // Update order tag
+        // Hide
+        for (const group of this.hide) {
+            for (const [order, asset] of group.assets.entries()) {
+                if (!asset.tags) {
+                    asset.tags = [];
+                }
+                if (!asset.tags.includes('hidden')) {
+                    asset.tags.push('hidden');
+                }
+                const filedAsset: RSS3Asset = {
+                    platform: asset.platform,
+                    identity: asset.identity,
+                    id: asset.id,
+                    tags: [...(asset.tags || [])],
+                };
+                this.setTaggedOrder(filedAsset, order);
+                if (asset.order !== -1) {
+                    await (<IRSS3>this.rss3).assets.patchTags(filedAsset, <string[]>filedAsset.tags);
+                } // todo: else: how to?
+            }
+        }
+
+        // Show
+        for (const [order, asset] of this.show.entries()) {
+            if (!asset.tags) {
+                asset.tags = [];
+            }
+            if (asset.tags.includes('hidden')) {
+                asset.tags.splice(asset.tags.indexOf('hidden'));
+            }
+            const filedAsset: RSS3Asset = {
+                platform: asset.platform,
+                identity: asset.identity,
+                id: asset.id,
+                tags: [...(asset.tags || [])],
+            };
+            this.setTaggedOrder(filedAsset, order);
+            if (asset.order !== -1) {
+                await (<IRSS3>this.rss3).assets.patchTags(filedAsset, <string[]>filedAsset.tags);
+            } // todo: else: how to?
+        }
+
+        await (<IRSS3>this.rss3).files.sync();
     }
 }
 </script>

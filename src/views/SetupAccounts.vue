@@ -266,7 +266,7 @@ export default class Setup extends Vue {
             }
             if (account.tags.includes('hidden')) {
                 // Newly shown
-                account.tags.splice(account.tags.findIndex('hidden'), 1);
+                account.tags.splice(account.tags.indexOf('hidden'), 1);
             }
             this.setTaggedOrder(account, order);
             await (<IRSS3>this.rss3).accounts.patchTags(
