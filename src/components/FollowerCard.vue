@@ -1,7 +1,7 @@
 <template>
     <div class="follower-container button-shadow-secondary">
         <div class="avatar">
-            <img :src="$props.avatar" />
+            <img :src="$props.avatar" ref="img" />
         </div>
         <div class="info">
             <span class="username">
@@ -14,6 +14,7 @@
 
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
+import Vibrant from 'node-vibrant';
 
 @Options({
     props: {
@@ -22,7 +23,18 @@ import { Options, Vue } from 'vue-class-component';
         address: String,
     },
 })
-export default class FollowerCard extends Vue {}
+export default class FollowerCard extends Vue {
+    public avatar!: string;
+    mounted() {
+        let img = this.$refs.img;
+
+        img.addEventListener('load', function () {
+            var vibrant = new Vibrant(img);
+            var swatches = vibrant.swatches();
+            console.log(swatches);
+        });
+    }
+}
 </script>
 
 <style scoped lang="postcss">
