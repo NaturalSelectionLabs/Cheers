@@ -105,7 +105,7 @@ import { Options, Vue } from 'vue-class-component';
 import Button from '@/components/Button.vue';
 import Card from '@/components/Card.vue';
 import NFTItem from '@/components/NFT/NFTItem.vue';
-import { RSS3Asset } from 'rss3-next/types/rss3';
+import { RSS3Account, RSS3Asset } from 'rss3-next/types/rss3';
 import RSS3, { IRSS3 } from '@/common/rss3';
 
 interface DetailedNFT {
@@ -246,6 +246,32 @@ export default class SetupNFTs extends Vue {
                 return a.order - b.order;
             });
         });
+    }
+
+    getTaggedOrder(asset: RSS3AssetShow): number {
+        if (!asset.tags) {
+            return -1;
+        }
+        const orderPattern = /^order:(-?\d+)$/i;
+        for (const tag of asset.tags) {
+            if (orderPattern.test(tag)) {
+                return parseInt(orderPattern.exec(tag)?.[1] || '-1');
+            }
+        }
+        return -1;
+    }
+
+    setTaggedOrder(asset: RSS3Asset, order: number): void {
+        if (!asset.tags) {
+            asset.tags = [];
+        } else {
+            const orderPattern = /^order:(-?\d+)$/i;
+            const oldIndex = asset.tags.findIndex((tag) => orderPattern.test(tag)) || -1;
+            if (oldIndex !== -1) {
+                asset.tags.splice(oldIndex, 1);
+            }
+        }
+        asset.tags.push(`order:${order}`);
     }
 
     back() {
