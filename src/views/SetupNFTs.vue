@@ -100,7 +100,7 @@ import { Options, Vue } from 'vue-class-component';
 import Button from '@/components/Button.vue';
 import Card from '@/components/Card.vue';
 import NFTItem from '@/components/NFT/NFTItem.vue';
-import { RSS3Asset } from 'rss3-next/types/rss3';
+import { RSS3Account, RSS3Asset } from 'rss3-next/types/rss3';
 import RSS3, { IRSS3 } from '@/common/rss3';
 
 interface DetailedNFT {
@@ -151,7 +151,6 @@ interface RSS3AssetCollectionShow {
         NFTItem,
     },
 })
-
 export default class SetupNFTs extends Vue {
     avatar: String = '';
     show: RSS3AssetShow[] = [];
@@ -202,15 +201,13 @@ export default class SetupNFTs extends Vue {
         const filedNFTs: RSS3Asset[] = data.rss3File.assets;
 
         assetsNFTs.forEach((nft: RSS3AssetShow) => {
-            const i = filedNFTs.findIndex((fn) =>
-                nft.platform === fn.platform
-                && nft.identity === fn.identity
-                && nft.id === fn.id
+            const i = filedNFTs.findIndex(
+                (fn) => nft.platform === fn.platform && nft.identity === fn.identity && nft.id === fn.id,
             );
             if (i !== -1) {
                 nft.tags?.push(...filedNFTs[i].tags);
-                nft.order = // todo: order tag
-                if (nft.tags?.includes("hidden")) {
+                nft.order = this.getTaggedOrder(nft);
+                if (nft.tags?.includes('hidden')) {
                     // Hidden group
                     const gid = this.findGroupID(nft);
                     this.hide[gid].assets.push(nft);
@@ -223,29 +220,52 @@ export default class SetupNFTs extends Vue {
                 nft.order = -1;
                 this.show.push(nft);
             }
-
         });
 
         // Sort by order
 
         this.show.sort((a, b) => {
-            return a.order - b.order
+            return a.order - b.order;
         });
 
         this.hide.forEach((group) => {
             group.assets.sort((a, b) => {
-                return a.order - b.order
+                return a.order - b.order;
             });
         });
+    }
+
+    getTaggedOrder(asset: RSS3AssetShow): number {
+        if (!asset.tags) {
+            return -1;
+        }
+        const orderPattern = /^order:(-?\d+)$/i;
+        for (const tag of asset.tags) {
+            if (orderPattern.test(tag)) {
+                return parseInt(orderPattern.exec(tag)?.[1] || '-1');
+            }
+        }
+        return -1;
+    }
+
+    setTaggedOrder(asset: RSS3Asset, order: number): void {
+        if (!asset.tags) {
+            asset.tags = [];
+        } else {
+            const orderPattern = /^order:(-?\d+)$/i;
+            const oldIndex = asset.tags.findIndex((tag) => orderPattern.test(tag)) || -1;
+            if (oldIndex !== -1) {
+                asset.tags.splice(oldIndex, 1);
+            }
+        }
+        asset.tags.push(`order:${order}`);
     }
 
     back() {
         window.history.back();
     }
 
-    async refresh() {
-
-    }
+    async refresh() {}
 
     hideAll() {
         // this.hide.push(...this.show.splice(0, this.show.length));
@@ -255,26 +275,19 @@ export default class SetupNFTs extends Vue {
     }
 
     findGroupID(asset: RSS3AssetShow): number {
-        return this.hide.findIndex(
-            group => group.contract_address === asset.identity
-        );
+        return this.hide.findIndex((group) => group.contract_address === asset.identity);
     }
 
     chooseAsset(ev: any) {
         this.activatedGroupID = this.findGroupID(ev.element);
     }
 
-    dragChange(ev: any) {
+    dragChange(ev: any) {}
 
-    }
-
-    dragAddAsset(ev: any) {
-
-    }
+    dragAddAsset(ev: any) {}
 
     async save() {
         // Update order tag
-
     }
 }
 </script>

@@ -194,16 +194,48 @@ export default class Setup extends Vue {
             this.avatar = profile?.avatar?.[0] || '';
         }
 
-        const file = await (<IRSS3>this.rss3).files.get((<IRSS3>this.rss3).account.address);
-        if ((<RSS3Index>file).accounts) {
-            (<RSS3Account[]>(<RSS3Index>file).accounts).forEach((account: RSS3Account) => {
+        const accounts = await (<IRSS3>this.rss3).accounts.get((<IRSS3>this.rss3).account.address);
+        if (accounts) {
+            accounts.forEach((account: RSS3Account) => {
                 if (account.tags?.includes('hidden')) {
                     this.hide.push(account);
                 } else {
                     this.show.push(account);
                 }
             });
+            this.hide.sort((a, b) => {
+                return this.getTaggedOrder(a) - this.getTaggedOrder(b);
+            });
+            this.show.sort((a, b) => {
+                return this.getTaggedOrder(a) - this.getTaggedOrder(b);
+            });
         }
+    }
+
+    getTaggedOrder(account: RSS3Account): number {
+        if (!account.tags) {
+            return -1;
+        }
+        const orderPattern = /^order:(-?\d+)$/i;
+        for (const tag of account.tags) {
+            if (orderPattern.test(tag)) {
+                return parseInt(orderPattern.exec(tag)?.[1] || '-1');
+            }
+        }
+        return -1;
+    }
+
+    setTaggedOrder(account: RSS3Account, order: number): void {
+        if (!account.tags) {
+            account.tags = [];
+        } else {
+            const orderPattern = /^order:(-?\d+)$/i;
+            const oldIndex = account.tags.findIndex((tag) => orderPattern.test(tag)) || -1;
+            if (oldIndex !== -1) {
+                account.tags.splice(oldIndex, 1);
+            }
+        }
+        account.tags.push(`order:${order}`);
     }
 
     async back() {
@@ -228,17 +260,39 @@ export default class Setup extends Vue {
 
     async save() {
         // Apply changes
-        for (const account of this.show) {
-            if (account.tags?.includes('hidden')) {
-                // Newly shown
-                // Todo: set to shown
+        for (const [order, account] of this.show.entries()) {
+            if (!account.tags) {
+                account.tags = [];
             }
+            if (account.tags.includes('hidden')) {
+                // Newly shown
+                account.tags.splice(account.tags.findIndex('hidden'), 1);
+            }
+            this.setTaggedOrder(account, order);
+            await (<IRSS3>this.rss3).accounts.patchTags(
+                {
+                    platform: account.platform,
+                    identity: account.identity,
+                },
+                account.tags,
+            );
         }
-        for (const account of this.hide) {
+        for (const [order, account] of this.hide.entries()) {
+            if (!account.tags) {
+                account.tags = [];
+            }
             if (!account.tags?.includes('hidden')) {
                 // Newly hide
-                // Todo: set to hidden
+                account.tags.push('hidden');
             }
+            this.setTaggedOrder(account, order);
+            await (<IRSS3>this.rss3).accounts.patchTags(
+                {
+                    platform: account.platform,
+                    identity: account.identity,
+                },
+                account.tags,
+            );
         }
         for (const account of this.toDelete) {
             await (<IRSS3>this.rss3).accounts.delete(account);
