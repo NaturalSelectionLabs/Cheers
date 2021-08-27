@@ -95,7 +95,7 @@
             <Button size="lg" class="flex-1 text-lg bg-white text-primary shadow-secondary" @click="back"
                 >Discard</Button
             >
-            <Button size="lg" class="flex-1 text-lg bg-primary text-white shadow-primary">Save</Button>
+            <Button size="lg" class="flex-1 text-lg bg-primary text-white shadow-primary" @click="save">Save</Button>
         </div>
     </div>
 </template>
@@ -108,40 +108,7 @@ import NFTItem from '@/components/NFT/NFTItem.vue';
 import { RSS3Asset } from 'rss3-next/types/rss3';
 import RSS3, { IRSS3 } from '@/common/rss3';
 
-interface DetailedNFT {
-    chain: string;
-    token_id: string;
-    name: string;
-    description: string | null;
-    image_url: string;
-    image_preview_url: string;
-    image_thumbnail_url: string;
-    animation_url: string | null;
-    animation_original_url: string | null;
-    asset_contract: {
-        address: string;
-        created_date: string;
-        symbol: string;
-    };
-    collection: {
-        name: string;
-        description: string;
-        image_url: string;
-    };
-    traits: {
-        trait_type: string;
-        value: string;
-        display_type: string | null;
-        max_value: string | null;
-        trait_count: number;
-        order: string | null;
-    }[];
-}
-
-interface RSS3AssetShow extends RSS3Asset {
-    image_url: string;
-    order: number;
-}
+import { DetailedNFT, RSS3AssetShow } from '@/common/types';
 
 interface RSS3AssetCollectionShow {
     collection_name: string;
@@ -178,7 +145,7 @@ export default class SetupNFTs extends Vue {
 
         // Organize NFTs
         const data = await RSS3.getAssetProfile((<IRSS3>this.rss3).account.address);
-        const assetsNFTs: RSS3AssetShow[] = []; // Real-time NFTs queried from asset
+        const queriedAssets: RSS3AssetShow[] = []; // Real-time NFTs queried from asset
         for (const key in data.assets) {
             // key: ethereum / bsc / ...
             data.assets[key].forEach((account: any) => {
@@ -200,21 +167,21 @@ export default class SetupNFTs extends Vue {
                             assets: [],
                         });
                     }
-                    assetsNFTs.push(aNFT);
+                    queriedAssets.push(aNFT);
                 });
             });
         }
-        const filedNFTs: RSS3Asset[] = data.rss3File.assets; // NFTs cached in RSS3 file `asset`
+        const filedAssets: RSS3Asset[] = data.rss3File.assets; // NFTs cached in RSS3 file `asset`
 
-        assetsNFTs.forEach((nft: RSS3AssetShow) => {
-            const i = filedNFTs.findIndex(
+        queriedAssets.forEach((nft: RSS3AssetShow) => {
+            const i = filedAssets.findIndex(
                 (fn) => nft.platform === fn.platform && nft.identity === fn.identity && nft.id === fn.id,
             );
             if (i !== -1) {
                 if (!nft.tags) {
                     nft.tags = [];
                 }
-                nft.tags.push(...(filedNFTs[i].tags || []));
+                nft.tags.push(...(filedAssets[i].tags || []));
                 nft.tags.forEach((tag: string) => {
                     if (tag.startsWith('order:')) {
                         nft.order = parseInt(tag.substr(6), 10);
@@ -228,7 +195,7 @@ export default class SetupNFTs extends Vue {
                     // Show
                     this.show.push(nft);
                 }
-                filedNFTs.splice(i, 1); // Remains are gone NFTs
+                filedAssets.splice(i, 1); // Remains are gone NFTs
             } else {
                 // Newly added
                 nft.order = -1;
@@ -338,6 +305,7 @@ export default class SetupNFTs extends Vue {
         }
 
         await (<IRSS3>this.rss3).files.sync();
+        await this.$router.push('/public');
     }
 }
 </script>

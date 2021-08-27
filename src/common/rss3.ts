@@ -45,7 +45,7 @@ async function walletConnect() {
         address: address,
         sign: async (data: string) => {
             alert('Ready to sign... You may need to prepare your wallet.');
-            return (await web3?.eth.personal.sign(data, address, '')) || '';
+            return await (<Web3>web3).eth.personal.sign(data, address, '');
         },
     });
 
@@ -76,9 +76,7 @@ async function metamaskConnect() {
     rss3 = new RSS3({
         endpoint: endpoint,
         address: address,
-        sign: async (data: string) => {
-            return (await web3?.eth.personal.sign(data, address, '')) || '';
-        },
+        sign: async (data: string) => await (<Web3>web3).eth.personal.sign(data, address, ''),
     });
 
     return rss3;
