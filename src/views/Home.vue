@@ -12,11 +12,11 @@
             size="sm"
             class="w-auto text-lg shadow-secondary mb-4 duration-200"
             v-if="!isOwner"
-            v-bind:class="[isFollowing ? 'bg-primary text-white' : 'bg-white text-primary']"
-            @click="isFollowing = !isFollowing"
+            v-bind:class="[isFollowing ? 'bg-white text-primary' : 'bg-primary text-white']"
+            @click="action()"
         >
-            <span>{{ isFollowing ? 'Follow' : 'Following' }}</span>
-            <i class="bx bx-sm" v-bind:class="[isFollowing ? 'bx-plus' : 'bx-check']"></i>
+            <span>{{ isFollowing ? 'Following' : 'Follow' }}</span>
+            <i class="bx bx-sm" v-bind:class="[isFollowing ? 'bx-check' : 'bx-plus']"></i>
         </Button>
         <Button
             size="sm"
@@ -130,6 +130,7 @@ import Profile from '@/components/Profile.vue';
 import AccountItem from '@/components/AccountItem.vue';
 import NFTItem from '@/components/NFT/NFTItem.vue';
 import RSS3 from '@/common/rss3';
+import RSS3Type from 'rss3-next';
 
 interface ProfileInfo {
     avatar: string;
@@ -147,6 +148,7 @@ interface Relations {
     components: { Button, Card, Profile, AccountItem, NFTItem },
 })
 export default class Home extends Vue {
+    public rss3?: RSS3Type;
     public isFollowing: boolean = true;
     public isOwner: boolean = false;
 
@@ -164,8 +166,8 @@ export default class Home extends Vue {
     public nftList: Array<Object> = [];
 
     async mounted() {
-        const rss3 = await RSS3.visitor();
-        const owner: string = <string>rss3.account.address;
+        this.rss3 = await RSS3.visitor();
+        const owner: string = <string>this.rss3.account.address;
 
         let address: string;
         if (this.$route.params.address) {
@@ -174,12 +176,13 @@ export default class Home extends Vue {
                 this.isOwner = true;
             }
         } else {
-            // address = 'RSS3 Address';
             address = owner;
             this.isOwner = true;
         }
 
-        const profile = await rss3.profile.get(address);
+        await this.checkIsFollowing();
+
+        const profile = await this.rss3.profile.get(address);
 
         this.rss3Profile.avatar = profile?.avatar?.[0] || '';
         this.rss3Profile.username = profile?.name || '';
@@ -188,8 +191,8 @@ export default class Home extends Vue {
 
         const data = await RSS3.getAsset(address);
 
-        this.rss3Relations['followers'] = await rss3?.backlinks.get(address, 'following');
-        this.rss3Relations['followings'] = (await rss3?.links.get(address, 'following'))?.list || [];
+        this.rss3Relations['followers'] = await this.rss3?.backlinks.get(address, 'following');
+        this.rss3Relations['followings'] = (await this.rss3?.links.get(address, 'following'))?.list || [];
 
         if (data) {
             this.accountList.push({
@@ -214,6 +217,46 @@ export default class Home extends Vue {
                     });
                 });
             });
+        }
+    }
+
+    public action() {
+        if (this.isFollowing) {
+            this.follow();
+        } else {
+            this.unfollow();
+        }
+    }
+
+    public async checkIsFollowing() {
+        const followList = await this.rss3?.links.get(this.rss3.account.address, 'following');
+        if (typeof followList === 'undefined') {
+            // No following list. Not following
+            this.isFollowing = false;
+            return false;
+        } else if (followList.list?.includes(<string>this.$route.params.address)) {
+            return true;
+        } else {
+            this.isFollowing = false;
+            return false;
+        }
+    }
+
+    async follow() {
+        const rss3 = await RSS3.get();
+        if (await this.checkIsFollowing()) {
+            this.isFollowing = true;
+        } else {
+            await rss3?.link.post('following', <string>this.$route.params.address);
+        }
+    }
+
+    async unfollow() {
+        const rss3 = await RSS3.get();
+        if (!(await this.checkIsFollowing())) {
+            this.isFollowing = false;
+        } else {
+            await this.rss3?.link.delete('following', this.rss3Profile.address);
         }
     }
 

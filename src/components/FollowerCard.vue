@@ -26,13 +26,12 @@ import Vibrant from 'node-vibrant';
 export default class FollowerCard extends Vue {
     public avatar!: string;
     mounted() {
-        let img = this.$refs.img;
-
-        img.addEventListener('load', function () {
-            var vibrant = new Vibrant(img);
-            var swatches = vibrant.swatches();
-            console.log(swatches);
-        });
+        // let img = <HTMLImageElement>this.$refs.img;
+        // img.addEventListener('load', function () {
+        //     var vibrant = new Vibrant(img);
+        //     var swatches = vibrant.result.palettes['Vibrant'];
+        //     console.log(swatches);
+        // });
     }
 }
 </script>

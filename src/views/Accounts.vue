@@ -31,7 +31,11 @@
                         >
                             <i class="bx bxs-copy bx-sm"></i>
                         </Button>
-                        <Button size="sm" class="w-10 h-10 bg-account-button text-white shadow-account">
+                        <Button
+                            size="sm"
+                            class="w-10 h-10 bg-account-button text-white shadow-account"
+                            @click="toPublicPage(item.address)"
+                        >
                             <i class="bx bx-link-external bx-sm"></i>
                         </Button>
                     </div>
