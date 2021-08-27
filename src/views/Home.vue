@@ -9,22 +9,23 @@
             :bio="rss3Profile.bio"
         ></Profile>
         <Button
-            v-if="isFollowing"
             size="sm"
-            class="w-auto text-lg bg-primary text-white shadow-secondary mb-4"
+            class="w-auto text-lg shadow-secondary mb-4 duration-200"
+            v-if="!isOwner"
+            v-bind:class="[isFollowing ? 'bg-primary text-white' : 'bg-white text-primary']"
             @click="isFollowing = !isFollowing"
         >
-            <span>Follow</span>
-            <i class="bx bx-plus bx-sm"></i>
+            <span>{{ isFollowing ? 'Follow' : 'Following' }}</span>
+            <i class="bx bx-sm" v-bind:class="[isFollowing ? 'bx-plus' : 'bx-check']"></i>
         </Button>
         <Button
-            v-else
             size="sm"
             class="w-auto text-lg bg-white text-primary shadow-secondary mb-4"
-            @click="isFollowing = !isFollowing"
+            v-if="isOwner"
+            @click="toSetupPage"
         >
-            <span>Following</span>
-            <i class="bx bx-check bx-sm"></i>
+            <span>Edit Profile</span>
+            <i class="bx bx-pencil bx-sm"></i>
         </Button>
 
         <Card
@@ -78,7 +79,7 @@
             </template>
             <template #content>
                 <NFTItem
-                    class="inline-block mr-1"
+                    class="inline-block mr-1 cursor-pointer"
                     v-for="(item, index) in nftList"
                     :key="index"
                     :imageUrl="item.nft.image_url"
@@ -130,6 +131,13 @@ import AccountItem from '@/components/AccountItem.vue';
 import NFTItem from '@/components/NFT/NFTItem.vue';
 import RSS3 from '@/common/rss3';
 
+interface ProfileInfo {
+    avatar: string;
+    username: string;
+    address: string;
+    bio: string;
+}
+
 interface Relations {
     followers: Array<Object>;
     followings: Array<Object>;
@@ -140,7 +148,9 @@ interface Relations {
 })
 export default class Home extends Vue {
     public isFollowing: boolean = true;
-    public rss3Profile = {
+    public isOwner: boolean = false;
+
+    public rss3Profile: ProfileInfo = {
         avatar: '',
         username: '',
         address: '',
@@ -154,19 +164,29 @@ export default class Home extends Vue {
     public nftList: Array<Object> = [];
 
     async mounted() {
-        const address: string = 'RSS3 Address';
-
         const rss3 = await RSS3.visitor();
+        const owner: string = <string>rss3.account.address;
 
-        const data = await RSS3.getAsset(address);
+        let address: string;
+        if (this.$route.params.address) {
+            address = <string>this.$route.params.address;
+            if (address === owner) {
+                this.isOwner = true;
+            }
+        } else {
+            // address = 'RSS3 Address';
+            address = owner;
+            this.isOwner = true;
+        }
 
-        const profile = data.rss3File.profile;
+        const profile = await rss3.profile.get(address);
 
         this.rss3Profile.avatar = profile?.avatar?.[0] || '';
         this.rss3Profile.username = profile?.name || '';
         this.rss3Profile.bio = profile?.bio || '';
         this.rss3Profile.address = address;
 
+        const data = await RSS3.getAsset(address);
         if (data) {
             this.accountList.push({
                 chain: 'Ethereum',
@@ -198,15 +218,22 @@ export default class Home extends Vue {
             this.rss3Relations['followings'] = (await rss3?.links.get(address, 'following'))?.list || [];
         }, 0);
     }
+
     public toAccountsPage() {
         this.$router.push(`/${this.rss3Profile['address']}/accounts`);
     }
+
     public toNFTsPage() {
         this.$router.push(`/${this.rss3Profile['address']}/nfts`);
     }
+
     public toSinglenftPage(account: string, index: number) {
         const address = <string>this.rss3Profile.address;
         this.$router.push(`/${address}/singlenft/${account}/${index}`);
+    }
+
+    public toSetupPage() {
+        this.$router.push(`/setup`);
     }
 }
 </script>

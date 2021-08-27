@@ -6,21 +6,23 @@
             </Button>
             <div class="section-title text-2xl text-primary font-bold text-center">Followers</div>
             <ImgHolder
-                class="w-10 h-10 inline-flex my-auto"
+                class="w-10 h-10 inline-flex my-auto cursor-pointer"
                 :is-rounded="true"
                 :is-border="false"
-                :src="this.avatar"
-                alt="nya"
+                :src="this.rss3Profile.avatar"
+                :alt="this.rss3Profile.username"
+                @click="toPublicPage(this.rss3Profile.address)"
             />
         </div>
         <div class="follow-list flex flex-col gap-y-2">
             <FollowerCard
-                class="w-auto shadow-secondary"
+                class="w-auto shadow-secondary cursor-pointer"
                 v-for="(item, index) in followerList"
                 :key="index"
                 :avatar="item.avatar"
                 :name="item.username"
                 :address="item.address"
+                @click="toPublicPage(item.address)"
             />
         </div>
     </div>
@@ -33,19 +35,35 @@ import ImgHolder from '@/components/ImgHolder.vue';
 import FollowerCard from '@/components/FollowerCard.vue';
 import RSS3 from '@/common/rss3';
 
+interface Profile {
+    avatar: string;
+    username: string;
+    address: string;
+    bio: string;
+}
+
 @Options({
     components: { ImgHolder, Button, FollowerCard },
 })
 export default class Followers extends Vue {
     public followerList: Array<Object> = [];
-    public avatar: String = '';
+    public rss3Profile: Profile = {
+        avatar: '',
+        username: '',
+        address: '',
+        bio: '',
+    };
 
     async mounted() {
         const address: string = <string>this.$route.params.address;
         const rss3 = await RSS3.visitor();
         const profile = await rss3.profile.get(address);
-        this.avatar = profile?.avatar?.[0] || '';
         const followersList = await rss3.backlinks.get(address, 'following');
+
+        this.rss3Profile.avatar = profile?.avatar?.[0] || '';
+        this.rss3Profile.username = profile?.name || '';
+        this.rss3Profile.address = address;
+
         if (rss3 && followersList) {
             for (const item of followersList) {
                 const profile = await rss3.profile.get(item);
@@ -56,6 +74,10 @@ export default class Followers extends Vue {
                 });
             }
         }
+    }
+
+    public toPublicPage(address: string) {
+        this.$router.push(`/${address}`);
     }
 
     public back() {

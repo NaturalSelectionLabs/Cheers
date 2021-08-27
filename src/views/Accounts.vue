@@ -7,10 +7,12 @@
                 </Button>
                 <div class="section-title text-2xl text-account-title font-bold text-center">Accounts</div>
                 <ImgHolder
-                    class="w-10 h-10 inline-flex my-auto"
+                    class="w-10 h-10 inline-flex my-auto cursor-pointer"
                     :is-rounded="true"
                     :is-border="false"
-                    :src="this.avatar"
+                    :src="this.rss3Profile.avatar"
+                    :alt="this.rss3Profile.username"
+                    @click="toPublicPage(this.rss3Profile.address)"
                 />
             </div>
             <div class="account-list">
@@ -22,7 +24,11 @@
                     >
                         <AccountItem size="70" :chain="item.chain"></AccountItem>
                         <span class="address text-2xl font-semibold">{{ filter(item.address) }}</span>
-                        <Button size="sm" class="w-10 h-10 bg-account-button text-white shadow-account">
+                        <Button
+                            size="sm"
+                            class="w-10 h-10 bg-account-button text-white shadow-account"
+                            @click="copyToClipboard(item.address)"
+                        >
                             <i class="bx bxs-copy bx-sm"></i>
                         </Button>
                         <Button size="sm" class="w-10 h-10 bg-account-button text-white shadow-account">
@@ -30,6 +36,15 @@
                         </Button>
                     </div>
                 </div>
+            </div>
+            <div class="px-4 py-4 flex gap-5 fixed bottom-0 left-0 right-0 max-w-md m-auto w-full" v-if="isOwner">
+                <Button
+                    size="lg"
+                    class="m-auto text-lg bg-account-button text-white shadow-account"
+                    @click="toSetupAccounts"
+                >
+                    Manage Accounts
+                </Button>
             </div>
         </div>
     </div>
@@ -41,22 +56,42 @@ import Button from '@/components/Button.vue';
 import ImgHolder from '@/components/ImgHolder.vue';
 import AccountItem from '@/components/AccountItem.vue';
 import RSS3 from '@/common/rss3';
-import axios from 'axios';
+
+interface Profile {
+    avatar: string;
+    username: string;
+    address: string;
+    bio: string;
+}
 
 @Options({
     components: { ImgHolder, Button, AccountItem },
 })
 export default class Accounts extends Vue {
+    public isOwner: boolean = false;
     public accountList: Array<Object> = [];
-    public avatar: String = '';
-    public username: String = '';
+    public rss3Profile: Profile = {
+        avatar: '',
+        username: '',
+        address: '',
+        bio: '',
+    };
 
     async mounted() {
+        const rss3 = await RSS3.visitor();
         const address: string = <string>this.$route.params.address;
+        const owner: string = <string>rss3.account.address;
+        // const owner: string = 'RSS3 Address';
+
+        if (owner === address) {
+            this.isOwner = true;
+        }
+
         const data = await RSS3.getAsset(address);
         if (data) {
-            this.avatar = data.rss3File.profile?.avatar?.[0];
-            this.username = data.rss3File.profile?.name?.[0];
+            this.rss3Profile.avatar = data.rss3File.profile?.avatar?.[0];
+            this.rss3Profile.username = data.rss3File.profile?.name?.[0];
+            this.rss3Profile.address = address;
 
             this.accountList.push({
                 chain: 'Ethereum',
@@ -83,6 +118,26 @@ export default class Accounts extends Vue {
         res += address.slice(-4);
         return res;
     }
+
+    public copyToClipboard(address: string) {
+        navigator.clipboard.writeText(address).then(
+            function () {
+                console.log('Async: Copying to clipboard was successful!');
+            },
+            function (err) {
+                console.error('Async: Could not copy the account: ', err);
+            },
+        );
+    }
+
+    public toPublicPage(address: string) {
+        this.$router.push(`/${address}`);
+    }
+
+    public toSetupAccounts() {
+        this.$router.push(`/setup/accounts`);
+    }
+
     public back() {
         window.history.back();
     }

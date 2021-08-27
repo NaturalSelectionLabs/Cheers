@@ -7,27 +7,34 @@
                 </Button>
                 <div class="section-title text-2xl text-nft-title font-bold text-center">NFTs</div>
                 <ImgHolder
-                    class="w-10 h-10 inline-flex my-auto"
+                    class="w-10 h-10 inline-flex my-auto cursor-pointer"
                     :is-rounded="true"
                     :is-border="false"
-                    :src="this.avatar"
-                    :alt="this.username"
+                    :src="this.rss3Profile.avatar"
+                    :alt="this.rss3Profile.username"
+                    @click="toPublicPage(this.rss3Profile.address)"
                 />
             </div>
             <div class="nft-list flex flex-wrap justify-between items-center gap-y-4">
                 <div class="relative" v-for="(item, index) in nftList" :key="index">
                     <NFTItem
+                        class="cursor-pointer"
                         :size="NFTWidth > 200 ? 200 : NFTWidth"
                         :imageUrl="item.nft.image_url"
                         @click="toSinglenftPage(item.account, index)"
                     />
                     <NFTBadges
-                        class="absolute z-50 top-2.5 right-2.5"
+                        class="absolute top-2.5 right-2.5"
                         :chain="item.nft.chain"
                         location="overlay"
                         :collectionImg="item.nft.collection.image_url"
                     />
                 </div>
+            </div>
+            <div class="px-4 py-4 flex gap-5 fixed bottom-0 left-0 right-0 max-w-md m-auto w-full z-50" v-if="isOwner">
+                <Button size="lg" class="m-auto text-lg bg-nft-button text-white shadow-nft" @click="toSetupNfts">
+                    Manage NFTs
+                </Button>
             </div>
         </div>
     </div>
@@ -41,22 +48,43 @@ import NFTItem from '@/components/NFT/NFTItem.vue';
 import NFTBadges from '@/components/NFT/NFTBadges.vue';
 import RSS3 from '@/common/rss3';
 
+interface Profile {
+    avatar: string;
+    username: string;
+    address: string;
+    bio: string;
+}
+
 @Options({
     components: { ImgHolder, Button, NFTItem, NFTBadges },
 })
 export default class NFTs extends Vue {
     public NFTWidth: number = (window.innerWidth - 52) / 2;
+    public isOwner: boolean = false;
     public nftList: Array<Object> = [];
-    public avatar: String = '';
-    public username: String = '';
+    public rss3Profile: Profile = {
+        avatar: '',
+        username: '',
+        address: '',
+        bio: '',
+    };
 
     async mounted() {
+        const rss3 = await RSS3.visitor();
         const address: string = <string>this.$route.params.address;
+        const owner: string = <string>rss3.account.address;
+        // const owner: string = 'RSS3 Address';
+
+        if (owner === address) {
+            this.isOwner = true;
+        }
+
         const data = await RSS3.getAsset(address);
 
         if (data) {
-            this.avatar = data.rss3File.profile?.avatar?.[0];
-            this.username = data.rss3File.profile?.name?.[0];
+            this.rss3Profile.avatar = data.rss3File.profile?.avatar?.[0];
+            this.rss3Profile.username = data.rss3File.profile?.name?.[0];
+            this.rss3Profile.address = address;
 
             data.assets.ethereum.forEach((item: { nft: any[] }, aid: any) => {
                 item.nft.forEach((nft, i) => {
@@ -73,6 +101,15 @@ export default class NFTs extends Vue {
         const address = <string>this.$route.params.address;
         this.$router.push(`/${address}/singlenft/${account}/${index}`);
     }
+
+    public toPublicPage(address: string) {
+        this.$router.push(`/${address}`);
+    }
+
+    public toSetupNfts() {
+        this.$router.push(`/setup/nfts`);
+    }
+
     public back() {
         window.history.back();
     }
