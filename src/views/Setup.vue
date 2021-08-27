@@ -185,13 +185,15 @@ export default class Setup extends Vue {
         if (!this.rss3) {
             this.rss3 = await RSS3.get();
         }
-        const avatarUrl = await (<any>this.$refs.avatar).upload();
         const newProfile: RSS3Profile = {
             name: this.profile.name,
             bio: this.profile.bio,
-            avatar: [avatarUrl],
         };
-        (<IRSS3>this.rss3).profile.patch(newProfile);
+        const avatarUrl = await (<any>this.$refs.avatar).upload();
+        if (avatarUrl) {
+            newProfile.avatar = [avatarUrl];
+        }
+        await (<IRSS3>this.rss3).profile.patch(newProfile);
         await (<IRSS3>this.rss3).files.sync();
         this.clearEdited();
         await this.$router.push('/public');
