@@ -15,11 +15,16 @@
                 'single-line': isSingleLine,
             }"
         >
-            <div class="content-wrapper">
+            <div
+                class="content-wrapper"
+                :class="{
+                    content: isHavingContent,
+                }"
+            >
                 <slot v-if="isHavingContent" name="content" />
-                <span v-else class="body-tips" :class="colorTips">
+                <div v-else class="body-tips" :class="colorTips">
                     {{ $props.tips }}
-                </span>
+                </div>
             </div>
         </div>
         <div class="card-footer">
@@ -65,9 +70,13 @@ export default class Card extends Vue {}
         }
 
         .card-content {
-            @apply break-all mx-auto w-full;
+            @apply break-all mx-auto w-full h-full;
             > .content-wrapper {
-                @apply min-h-20;
+                @apply min-h-20 h-full;
+
+                &:not(.content) {
+                    @apply flex;
+                }
             }
             &.single-line {
                 @apply overflow-y-auto;
@@ -76,7 +85,7 @@ export default class Card extends Vue {}
                 }
             }
             .body-tips {
-                @apply flex w-full justify-center;
+                @apply flex w-full justify-center items-center;
             }
         }
 

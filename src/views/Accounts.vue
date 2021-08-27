@@ -19,15 +19,15 @@
                 <div class="flex flex-col gap-y-4">
                     <div
                         class="account-wrapper flex flex-row justify-between items-center"
-                        v-for="(item, index) in accountList"
+                        v-for="(item, index) in accounts"
                         :key="index"
                     >
-                        <AccountItem size="70" :chain="item.chain"></AccountItem>
-                        <span class="address text-2xl font-semibold">{{ filter(item.address) }}</span>
+                        <AccountItem size="70" :chain="item.platform"></AccountItem>
+                        <span class="address text-2xl font-semibold">{{ filter(item.identity) }}</span>
                         <Button
                             size="sm"
                             class="w-10 h-10 bg-account-button text-white shadow-account"
-                            @click="copyToClipboard(item.address)"
+                            @click="copyToClipboard(item.identity)"
                         >
                             <i class="bx bxs-copy bx-sm"></i>
                         </Button>
@@ -56,6 +56,7 @@ import Button from '@/components/Button.vue';
 import ImgHolder from '@/components/ImgHolder.vue';
 import AccountItem from '@/components/AccountItem.vue';
 import RSS3 from '@/common/rss3';
+import { RSS3Account } from 'rss3-next/types/rss3';
 
 interface Profile {
     avatar: string;
@@ -69,7 +70,7 @@ interface Profile {
 })
 export default class Accounts extends Vue {
     public isOwner: boolean = false;
-    public accountList: Array<Object> = [];
+    public accounts: RSS3Account[] = [];
     public rss3Profile: Profile = {
         avatar: '',
         username: '',
@@ -87,25 +88,21 @@ export default class Accounts extends Vue {
             this.isOwner = true;
         }
 
-        const data = await RSS3.getAsset(address);
+        const data = await RSS3.getAssetProfile(address);
         if (data) {
             this.rss3Profile.avatar = data.rss3File.profile?.avatar?.[0];
             this.rss3Profile.username = data.rss3File.profile?.name?.[0];
             this.rss3Profile.address = address;
 
-            this.accountList.push({
-                chain: 'Ethereum',
-                address: this.$route.params.address,
+            this.accounts.push({
+                platform: 'Ethereum',
+                identity: <string>this.$route.params.address,
+                signature: '',
+                tags: ['order:-1'],
             });
 
             if (data.rss3File.accounts) {
-                const accounts = data.rss3File.accounts;
-                for (const item of accounts) {
-                    this.accountList.push({
-                        chain: item.platform,
-                        address: item.identity,
-                    });
-                }
+                await this.loadAccounts(<RSS3Account[]>data.rss3File.accounts);
             }
         }
     }
@@ -128,6 +125,33 @@ export default class Accounts extends Vue {
                 console.error('Async: Could not copy the account: ', err);
             },
         );
+    }
+
+    async loadAccounts(accounts: RSS3Account[]) {
+        // Get accounts
+        if (accounts) {
+            accounts.forEach((account: RSS3Account) => {
+                if (!account.tags?.includes('hidden')) {
+                    this.accounts.push(account);
+                }
+            });
+            this.accounts.sort((a, b) => {
+                return this.getTaggedOrder(a) - this.getTaggedOrder(b);
+            });
+        }
+    }
+
+    getTaggedOrder(taggedElement: RSS3Account): number {
+        if (!taggedElement.tags) {
+            return -1;
+        }
+        const orderPattern = /^order:(-?\d+)$/i;
+        for (const tag of taggedElement.tags) {
+            if (orderPattern.test(tag)) {
+                return parseInt(orderPattern.exec(tag)?.[1] || '-1');
+            }
+        }
+        return -1;
     }
 
     public toPublicPage(address: string) {

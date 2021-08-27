@@ -1,11 +1,11 @@
 <template>
-    <div class="px-4 py-9 max-w-md m-auto">
+    <div class="px-4 py-9 max-w-md m-auto pb-20">
         <div class="text-center mb-4">
             <h1 class="text-5xl text-primary font-bold">Setup</h1>
         </div>
-        <AvatarEditor class="m-auto mb-4" size="lg" />
-        <Input class="mb-4 w-full" :is-single-line="true" placeholder="Username" v-model="username" />
-        <Input class="mb-4 w-full" :is-single-line="false" placeholder="Bio" v-model="bio" />
+        <AvatarEditor class="m-auto mb-4" size="lg" :url="profile.avatar" ref="avatar" />
+        <Input class="mb-4 w-full" :is-single-line="true" placeholder="Username" v-model="profile.name" />
+        <Input class="mb-4 w-full" :is-single-line="false" placeholder="Bio" v-model="profile.bio" />
         <Card
             title="Accounts"
             color-title="text-account-title"
@@ -16,30 +16,45 @@
             :is-single-line="true"
         >
             <template #header-button>
-                <Button size="sm" class="w-10 h-10 bg-account-button text-white shadow-account">
-                    <i class="bx bx-plus bx-sm"></i>
+                <Button
+                    size="sm"
+                    v-if="!isMobile"
+                    class="w-10 h-10 bg-account-button text-white shadow-account"
+                    @click="toManageAccounts"
+                >
+                    <i class="bx bx-plus bx-sm" />
                 </Button>
             </template>
             <template #content>
                 <AccountItem
                     v-for="account in accounts"
                     :key="account.platform + account.identity"
-                    class="shadow-account-sm inline-flex m-0.5"
+                    class="shadow-account-sm inline-flex m-0.5 rounded-full"
                     size="64"
                     :chain="account.platform"
                 />
             </template>
         </Card>
         <Card
-            title="TestCard"
+            title="NFTs"
             color-title="text-nft-title"
             color-tips="text-nft-title"
             color-background="bg-nft-bg"
             class="mb-4 w-full"
             :is-having-content="assets.length !== 0"
-            :is-single-line="true"
+            :is-single-line="assets.length !== 0"
             :tips="assets.length === 0 ? 'You don’t have any NFTs yet : {' : ''"
         >
+            <template #header-button>
+                <Button
+                    size="sm"
+                    class="w-10 h-10 bg-nft-button text-white shadow-nft"
+                    v-if="assets.length !== 0"
+                    @click="toManageNFTs"
+                >
+                    <i class="bx bx-pencil bx-sm" />
+                </Button>
+            </template>
             <template #content>
                 <NFTItem
                     v-for="asset in assets"
@@ -51,7 +66,7 @@
             </template>
         </Card>
         <Card
-            title="TestCard"
+            title="Contents"
             color-title="text-content-title"
             color-tips="text-content-title"
             color-background="bg-content-bg"
@@ -59,18 +74,29 @@
             :is-having-content="true"
         >
             <template #content>
-                <Button
-                    size="lg"
-                    class="text-xs bg-content-button opacity-35 text-white shadow-content cursor-not-allowed m-auto"
-                    disabled
-                >
-                    Coming Soon
-                </Button>
+                <div class="flex justify-center">
+                    <Button
+                        size="lg"
+                        class="
+                            text-lg
+                            font-extralight
+                            bg-content-button
+                            opacity-35
+                            text-white
+                            shadow-content
+                            cursor-not-allowed
+                            m-auto
+                        "
+                        disabled
+                    >
+                        Coming Soon
+                    </Button>
+                </div>
             </template>
         </Card>
-        <div class="flex gap-5">
+        <div class="px-4 py-4 flex gap-5 fixed bottom-0 left-0 right-0 max-w-md m-auto w-full">
             <Button size="lg" class="flex-1 text-lg bg-white text-primary shadow-secondary" @click="back">Back</Button>
-            <Button size="lg" class="flex-1 text-lg bg-primary text-white shadow-primary">Done</Button>
+            <Button size="lg" class="flex-1 text-lg bg-primary text-white shadow-primary" @click="save">Done</Button>
         </div>
     </div>
 </template>
@@ -83,7 +109,10 @@ import Card from '@/components/Card.vue';
 import AccountItem from '@/components/AccountItem.vue';
 import NFTItem from '@/components/NFT/NFTItem.vue';
 import Input from '@/components/Input.vue';
-import { RSS3Account, RSS3Asset } from 'rss3-next/types/rss3';
+import { RSS3Account, RSS3Asset, RSS3Profile } from 'rss3-next/types/rss3';
+import RSS3, { IRSS3 } from '@/common/rss3';
+
+import { DetailedNFT, RSS3AssetShow } from '@/common/types';
 
 @Options({
     components: {
@@ -96,15 +125,172 @@ import { RSS3Account, RSS3Asset } from 'rss3-next/types/rss3';
     },
 })
 export default class Setup extends Vue {
-    username = '';
-    bio = '';
+    profile: {
+        avatar: string;
+        name: string;
+        bio: string;
+    } = {
+        avatar: '',
+        name: '',
+        bio: '',
+    };
     accounts: RSS3Account[] = [];
-    assets: RSS3Asset[] = [];
+    assets: RSS3AssetShow[] = [];
+    rss3: IRSS3 | null = null;
 
-    async mounted() {}
+    isMobile: Boolean = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
-    public back() {
+    async mounted() {
+        if (!RSS3.isValidRSS3()) {
+            await this.$router.push('/');
+        } else {
+            this.rss3 = await RSS3.get();
+        }
+        if (!this.loadEdited()) {
+            const profile = await (<IRSS3>this.rss3).profile.get();
+            console.log(profile);
+            this.profile.avatar = profile?.avatar?.[0] || '';
+            this.profile.name = profile?.name || '';
+            this.profile.bio = profile?.bio || '';
+        }
+
+        await this.loadAccounts();
+        await this.loadAssets();
+    }
+
+    getTaggedOrder(taggedElement: RSS3Account | RSS3Asset): number {
+        if (!taggedElement.tags) {
+            return -1;
+        }
+        const orderPattern = /^order:(-?\d+)$/i;
+        for (const tag of taggedElement.tags) {
+            if (orderPattern.test(tag)) {
+                return parseInt(orderPattern.exec(tag)?.[1] || '-1');
+            }
+        }
+        return -1;
+    }
+
+    async loadAccounts() {
+        // Add original account
+        this.accounts.push({
+            platform: 'Ethereum',
+            identity: (<IRSS3>this.rss3).account.address,
+            signature: '',
+            tags: ['order:-1'],
+        });
+        // Get accounts
+        const accounts = await (<IRSS3>this.rss3).accounts.get((<IRSS3>this.rss3).account.address);
+        if (accounts) {
+            accounts.forEach((account: RSS3Account) => {
+                if (!account.tags?.includes('hidden')) {
+                    this.accounts.push(account);
+                }
+            });
+            this.accounts.sort((a, b) => {
+                return this.getTaggedOrder(a) - this.getTaggedOrder(b);
+            });
+        }
+    }
+
+    async loadAssets() {
+        const data = await RSS3.getAssetProfile((<IRSS3>this.rss3).account.address);
+        const queriedAssets: RSS3AssetShow[] = []; // Real-time NFTs queried from asset
+        for (const key in data.assets) {
+            // key: ethereum / bsc / ...
+            data.assets[key].forEach((account: any) => {
+                account.nft?.forEach((nft: DetailedNFT) => {
+                    const aNFT: RSS3AssetShow = {
+                        tags: [],
+                        platform: nft.chain,
+                        identity: nft.asset_contract.address,
+                        id: nft.token_id,
+                        image_url: nft.image_url,
+                        order: 0,
+                    };
+                    queriedAssets.push(aNFT);
+                });
+            });
+        }
+
+        const filedAssets: RSS3Asset[] = data.rss3File.assets; // NFTs cached in RSS3 file `asset`
+
+        queriedAssets.forEach((nft: RSS3AssetShow) => {
+            const i = filedAssets.findIndex(
+                (fn) => nft.platform === fn.platform && nft.identity === fn.identity && nft.id === fn.id,
+            );
+            if (i !== -1) {
+                if (!nft.tags) {
+                    nft.tags = [];
+                }
+                nft.tags.push(...(filedAssets[i].tags || []));
+                nft.tags.forEach((tag: string) => {
+                    if (tag.startsWith('order:')) {
+                        nft.order = parseInt(tag.substr(6), 10);
+                    }
+                });
+                if (!nft.tags.includes('hidden')) {
+                    // Show
+                    this.assets.push(nft);
+                }
+                filedAssets.splice(i, 1); // Remains are gone NFTs
+            } else {
+                // Newly added
+                nft.order = -1;
+                this.assets.push(nft);
+            }
+        });
+
+        this.assets.sort((a, b) => {
+            return a.order - b.order;
+        });
+    }
+
+    loadEdited() {
+        if (localStorage.getItem('profile')) {
+            this.profile = JSON.parse(localStorage.getItem('profile') || '');
+            return true;
+        } else {
+            return false;
+        }
+    }
+    saveEdited() {
+        localStorage.setItem('profile', JSON.stringify(this.profile));
+    }
+    clearEdited() {
+        localStorage.removeItem('profile');
+    }
+
+    toManageAccounts() {
+        this.saveEdited();
+        this.$router.push('/setup/accounts');
+    }
+    toManageNFTs() {
+        this.saveEdited();
+        this.$router.push('/manage/nfts');
+    }
+    async back() {
+        this.clearEdited();
+        await RSS3.getAssetProfile((<IRSS3>this.rss3).account.address, true);
         window.history.back();
+    }
+    async save() {
+        if (!this.rss3) {
+            this.rss3 = await RSS3.get();
+        }
+        const newProfile: RSS3Profile = {
+            name: this.profile.name,
+            bio: this.profile.bio,
+        };
+        const avatarUrl = await (<any>this.$refs.avatar).upload();
+        if (avatarUrl) {
+            newProfile.avatar = [avatarUrl];
+        }
+        await (<IRSS3>this.rss3).profile.patch(newProfile);
+        await (<IRSS3>this.rss3).files.sync();
+        this.clearEdited();
+        await RSS3.getAssetProfile((<IRSS3>this.rss3).account.address, true);
+        await this.$router.push('/public');
     }
 }
 </script>

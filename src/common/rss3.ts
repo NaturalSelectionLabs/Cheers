@@ -45,7 +45,7 @@ async function walletConnect() {
         address: address,
         sign: async (data: string) => {
             alert('Ready to sign... You may need to prepare your wallet.');
-            return (await web3?.eth.personal.sign(data, address, '')) || '';
+            return await (<Web3>web3).eth.personal.sign(data, address, '');
         },
     });
 
@@ -76,9 +76,7 @@ async function metamaskConnect() {
     rss3 = new RSS3({
         endpoint: endpoint,
         address: address,
-        sign: async (data: string) => {
-            return (await web3?.eth.personal.sign(data, address, '')) || '';
-        },
+        sign: async (data: string) => await (<Web3>web3).eth.personal.sign(data, address, ''),
     });
 
     return rss3;
@@ -101,7 +99,10 @@ export default {
     get: async () => {
         return rss3;
     },
-    getAsset: async (address: string, refresh: boolean = false) => {
+    getAssetProfile: async (address: string, refresh: boolean = false) => {
+        if (!address) {
+            return null;
+        }
         if (assets.has(address) && !refresh) {
             return assets.get(address);
         } else {
@@ -110,9 +111,9 @@ export default {
             return res.data;
         }
     },
-    addNewAccount: async (platform: string) => {
+    addNewAccount: async (platform: string): Promise<RSS3Account | null> => {
         if (!rss3) {
-            return;
+            return null;
         }
         const metamaskEthereum = (window as any).ethereum;
         const metaMaskWeb3 = new Web3(metamaskEthereum);
@@ -132,7 +133,7 @@ export default {
             identity: address,
             signature: signature,
         };
-        await rss3.accounts.post(newAddress);
-        await rss3.files.sync();
+        return await rss3.accounts.post(newAddress);
+        // await rss3.files.sync();
     },
 };

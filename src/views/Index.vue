@@ -24,7 +24,7 @@
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
 import Button from '@/components/Button.vue';
-// import RSS3 from '@/common/rss3'
+import RSS3, { IRSS3 } from '@/common/rss3';
 
 @Options({
     components: {
@@ -32,19 +32,60 @@ import Button from '@/components/Button.vue';
     },
 })
 export default class Index extends Vue {
-    async walletConnect() {}
+    rss3: IRSS3 | null = null;
 
-    async metaMask() {}
+    async walletConnect() {
+        this.rss3 = await RSS3.walletConnect();
+        await this.verifyProfile();
+    }
+
+    async metaMask() {
+        this.rss3 = await RSS3.metamaskConnect();
+        await this.verifyProfile();
+    }
+
+    async verifyProfile() {
+        if (!this.rss3) {
+            return;
+        }
+        let profile;
+        try {
+            profile = await this.rss3.profile.get();
+            console.log(profile);
+        } catch (e) {
+            console.error(e);
+        }
+        if (profile) {
+            // this.$gtag.config(rss3.account.address)
+            // this.$gtag.event('login', { userid: rss3.account.address, event_label: rss3.account.address })
+            await this.$router.push('/public');
+        } else {
+            // this.$gtag.config(rss3.account.address)
+            // this.$gtag.event('sign_up', { userid: rss3.account.address, event_label: rss3.account.address })
+            await this.$router.push('/setup');
+        }
+    }
 }
 </script>
 
 <style lang="postcss" scoped>
-.onboarding {
-    background-image: url('../assets/images/rss3-bg.png');
+@layer components {
+    .onboarding {
+        background-image: url('../assets/images/rss3-bg.png');
+        .body {
+            .hello {
+                text-shadow: 0 9px 35px #b7d7ff;
+            }
 
-    .body {
-        .hello {
-            text-shadow: 0 9px 35px #b7d7ff;
+            .connect {
+                box-shadow: 0px 9px 35px -7px rgba(0, 114, 255, 0.94);
+            }
+
+            .metamask {
+                background: #fff4eb;
+                box-shadow: 0px 8px 12px 5px rgba(246, 133, 27, 0.18);
+                color: #944300;
+            }
         }
     }
 }

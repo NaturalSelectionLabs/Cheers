@@ -10,7 +10,7 @@ import NFTs from '@/views/NFTs.vue';
 import Singlenft from '@/views/SingleNFT.vue';
 import Setup from '@/views/Setup.vue';
 import SetupAccounts from '@/views/SetupAccounts.vue';
-import SetupNfts from '@/views/SetupNfts.vue';
+import SetupNFTs from '@/views/SetupNFTs.vue';
 
 const routes = [
     {
@@ -64,7 +64,7 @@ const routes = [
     },
     {
         path: '/setup/nfts',
-        component: SetupNfts,
+        component: SetupNFTs,
     },
 ];
 
