@@ -221,6 +221,33 @@ export default class Home extends Vue {
         }, 0);
     }
 
+    getTaggedOrder(taggedElement: RSS3Account | RSS3Asset): number {
+        if (!taggedElement.tags) {
+            return -1;
+        }
+        const orderPattern = /^order:(-?\d+)$/i;
+        for (const tag of taggedElement.tags) {
+            if (orderPattern.test(tag)) {
+                return parseInt(orderPattern.exec(tag)?.[1] || '-1');
+            }
+        }
+        return -1;
+    }
+
+    async loadAccounts(accounts: RSS3Account[]) {
+        // Get accounts
+        if (accounts) {
+            accounts.forEach((account: RSS3Account) => {
+                if (!account.tags?.includes('hidden')) {
+                    this.accounts.push(account);
+                }
+            });
+            this.accounts.sort((a, b) => {
+                return this.getTaggedOrder(a) - this.getTaggedOrder(b);
+            });
+        }
+    }
+
     public toAccountsPage() {
         this.$router.push(`/${this.rss3Profile['address']}/accounts`);
     }
