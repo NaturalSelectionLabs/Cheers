@@ -303,7 +303,7 @@ export default class Setup extends Vue {
         }
 
         await (<IRSS3>this.rss3).files.sync();
-        await this.$router.push('/public');
+        window.history.back(); // Back
     }
 }
 </script>
