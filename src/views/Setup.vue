@@ -162,7 +162,7 @@ export default class Setup extends Vue {
     isMobile: Boolean = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
     async mounted() {
-        if (!RSS3.isValidRSS3()) {
+        if (!(await RSS3.reconnect())) {
             await this.$router.push('/');
         } else {
             this.rss3 = await RSS3.get();

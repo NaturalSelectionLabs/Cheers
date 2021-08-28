@@ -82,20 +82,45 @@ async function metamaskConnect() {
     return rss3;
 }
 
+function isValidRSS3() {
+    return !!rss3;
+}
+
 export default {
-    walletConnect: walletConnect,
-    metamaskConnect: metamaskConnect,
-    walletDisconnect: async () => {
+    walletConnect: async () => {
+        localStorage.setItem('lastConnect', 'walletConnect');
+        return await walletConnect();
+    },
+    metamaskConnect: async () => {
+        localStorage.setItem('lastConnect', 'metamask');
+        return await metamaskConnect();
+    },
+    disconnect: async () => {
         rss3 = null;
         web3 = null;
         if (provider) {
             await provider.disconnect();
         }
+        localStorage.removeItem('lastConnect');
+    },
+    reconnect: async (): Promise<boolean> => {
+        if (!isValidRSS3()) {
+            const lastConnect = localStorage.getItem('lastConnect');
+            switch (lastConnect) {
+                case 'walletConnect':
+                    await walletConnect();
+                    return true;
+                case 'metamask':
+                    await metamaskConnect();
+                    return true;
+                default:
+                    return false;
+            }
+        }
+        return true;
     },
     visitor: visitor,
-    isValidRSS3: () => {
-        return !!rss3;
-    },
+    isValidRSS3: isValidRSS3,
     get: async () => {
         return rss3;
     },

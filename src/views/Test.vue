@@ -434,14 +434,9 @@
             <Button size="lg" class="w-40 bg-primary text-white shadow-primary" @click="walletConnect">
                 Wallet Connect
             </Button>
-            <Button size="lg" class="w-40 bg-danger text-white" @click="walletDisconnect"> Wallet Disconnect </Button>
-        </div>
-        <div class="flex flex-row gap-5">
             <Button size="lg" class="w-40 bg-yellow-600 text-white" @click="metamaskConnect"> Metamask Connect </Button>
-            <Button size="lg" class="w-40 bg-red-400 text-white cursor-not-allowed" disabled>
-                Metamask Disconnect
-            </Button>
         </div>
+        <Button size="lg" class="w-80 bg-danger text-white" @click="disconnect"> Disconnect </Button>
 
         <Button size="lg" class="w-80 bg-primary text-white shadow-primary" @click="loadingModal"> Loading </Button>
         <Modal v-show="isLoading">
@@ -527,8 +522,8 @@ export default class Test extends Vue {
         await RSS3.metamaskConnect();
     }
 
-    async walletDisconnect() {
-        await RSS3.walletDisconnect();
+    async disconnect() {
+        await RSS3.disconnect();
     }
 
     async loadingModal() {

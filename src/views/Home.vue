@@ -177,7 +177,7 @@ export default class Home extends Vue {
             }
         } else {
             // address = 'RSS3 Address';
-            if (!RSS3.isValidRSS3()) {
+            if (!(await RSS3.reconnect())) {
                 await this.$router.push('/');
             }
             address = owner;

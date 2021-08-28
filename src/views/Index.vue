@@ -37,6 +37,12 @@ export default class Index extends Vue {
     rss3: IRSS3 | null = null;
     isHavingMetamaskPlugin: Boolean = (window as any).ethereum;
 
+    async mounted() {
+        if (await RSS3.reconnect()) {
+            await this.$router.push('/public');
+        }
+    }
+
     async walletConnect() {
         this.rss3 = await RSS3.walletConnect();
         await this.verifyProfile();

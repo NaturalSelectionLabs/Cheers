@@ -132,7 +132,7 @@ export default class SetupNFTs extends Vue {
     isLoading: Boolean = false;
 
     async mounted() {
-        if (!RSS3.isValidRSS3()) {
+        if (!(await RSS3.reconnect())) {
             await this.$router.push('/');
         }
         this.rss3 = await RSS3.get();
