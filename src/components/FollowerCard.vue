@@ -1,7 +1,7 @@
 <template>
-    <div class="follower-container button-shadow-secondary">
+    <div class="follower-container button-shadow-secondary" ref="card">
         <div class="avatar">
-            <img :src="$props.avatar" />
+            <img :src="$props.avatar" ref="avatar" crossorigin="anonymous" />
         </div>
         <div class="info">
             <span class="username">
@@ -14,6 +14,8 @@
 
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
+import ColorThief from 'colorthief';
+import { hslToRgb, rgbToHsl } from '@/common/utils';
 
 @Options({
     props: {
@@ -22,7 +24,26 @@ import { Options, Vue } from 'vue-class-component';
         address: String,
     },
 })
-export default class FollowerCard extends Vue {}
+export default class FollowerCard extends Vue {
+    mounted() {
+        const colorThief = new ColorThief();
+        const img = <HTMLImageElement>this.$refs.avatar;
+
+        if (img.complete) {
+            this.setBGColor(colorThief.getColor(img));
+        } else {
+            img.addEventListener('load', () => {
+                this.setBGColor(colorThief.getColor(img));
+            });
+        }
+    }
+
+    setBGColor(rgb: [number, number, number]) {
+        const hsl = rgbToHsl(...rgb);
+        const newRGB = hslToRgb(hsl[0], hsl[1], 0.925);
+        (<HTMLDivElement>this.$refs.card).style.backgroundColor = `rgb(${newRGB[0]}, ${newRGB[1]}, ${newRGB[2]})`;
+    }
+}
 </script>
 
 <style scoped lang="postcss">
