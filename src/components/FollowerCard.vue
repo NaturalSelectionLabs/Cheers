@@ -1,7 +1,7 @@
 <template>
     <div class="follower-container button-shadow-secondary">
         <div class="avatar">
-            <img :src="$props.avatar" ref="avatar" />
+            <img :src="$props.avatar" ref="avatar" crossorigin="anonymous" />
         </div>
         <div class="info">
             <span class="username">
@@ -14,7 +14,7 @@
 
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
-import ColorThief from 'colorthief/dist/color-thief.mjs';
+import ColorThief from 'colorthief';
 
 @Options({
     props: {
