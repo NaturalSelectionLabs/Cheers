@@ -12,11 +12,11 @@
             size="sm"
             class="w-auto text-lg shadow-secondary mb-4 duration-200"
             v-if="!isOwner"
-            v-bind:class="[isFollowing ? 'bg-primary text-white' : 'bg-white text-primary']"
-            @click="isFollowing = !isFollowing"
+            v-bind:class="[isFollowing ? 'bg-white text-primary' : 'bg-primary text-white']"
+            @click="action()"
         >
-            <span>{{ isFollowing ? 'Follow' : 'Following' }}</span>
-            <i class="bx bx-sm" v-bind:class="[isFollowing ? 'bx-plus' : 'bx-check']"></i>
+            <span>{{ isFollowing ? 'Following' : 'Follow' }}</span>
+            <i class="bx bx-sm" v-bind:class="[isFollowing ? 'bx-check' : 'bx-plus']"></i>
         </Button>
         <Button
             size="sm"
@@ -130,7 +130,7 @@ import Profile from '@/components/Profile.vue';
 import AccountItem from '@/components/AccountItem.vue';
 import NFTItem from '@/components/NFT/NFTItem.vue';
 import RSS3, { IRSS3 } from '@/common/rss3';
-import { RSS3Account, RSS3Asset } from 'rss3-next/types/rss3';
+import { RSS3Account, RSS3Asset, RSS3Backlink, RSS3ID } from 'rss3-next/types/rss3';
 import { DetailedNFT, RSS3AssetShow } from '@/common/types';
 
 interface ProfileInfo {
@@ -141,14 +141,15 @@ interface ProfileInfo {
 }
 
 interface Relations {
-    followers: Array<Object>;
-    followings: Array<Object>;
+    followers: RSS3ID[];
+    followings: RSS3ID[];
 }
 
 @Options({
     components: { Button, Card, Profile, AccountItem, NFTItem },
 })
 export default class Home extends Vue {
+    public rss3?: IRSS3;
     public isFollowing: boolean = true;
     public isOwner: boolean = false;
 
@@ -166,8 +167,9 @@ export default class Home extends Vue {
     assets: Object[] = [];
 
     async mounted() {
-        const rss3 = await RSS3.visitor();
-        const owner: string = <string>rss3.account.address;
+        const isValidRSS3 = await RSS3.reconnect();
+        this.rss3 = await RSS3.visitor();
+        const owner: string = <string>this.rss3.account.address;
 
         let address: string;
         if (this.$route.params.address) {
@@ -177,33 +179,31 @@ export default class Home extends Vue {
             }
         } else {
             // address = 'RSS3 Address';
-            if (!(await RSS3.reconnect())) {
+            if (!isValidRSS3) {
                 await this.$router.push('/');
             }
             address = owner;
             this.isOwner = true;
         }
 
-        // const profile = await rss3.profile.get(address);
-        //
-        // this.rss3Profile.avatar = profile?.avatar?.[0] || '';
-        // this.rss3Profile.username = profile?.name || '';
-        // this.rss3Profile.bio = profile?.bio || '';
-        // this.rss3Profile.address = address;
-
         const data = await RSS3.getAssetProfile(address);
 
+        // const profile = await rss3.profile.get(address);
         const profile = data.rss3File.profile;
+        await this.checkIsFollowing();
 
         this.rss3Profile.avatar = profile?.avatar?.[0] || '';
         this.rss3Profile.username = profile?.name || '';
         this.rss3Profile.bio = profile?.bio || '';
         this.rss3Profile.address = address;
 
+        this.rss3Relations.followers = await this.rss3?.backlinks.get(address, 'following');
+        this.rss3Relations.followings = (await this.rss3?.links.get(address, 'following'))?.list || [];
+
         if (data) {
             this.accounts.push({
                 platform: 'Ethereum',
-                identity: rss3.account.address,
+                identity: address,
                 signature: '',
                 tags: ['order:-1'],
             });
@@ -223,8 +223,8 @@ export default class Home extends Vue {
 
         // Split time-consuming methods from main thread, so it won't stuck the page loading progress
         setTimeout(async () => {
-            this.rss3Relations['followers'] = await rss3?.backlinks.get(address, 'following');
-            this.rss3Relations['followings'] = (await rss3?.links.get(address, 'following'))?.list || [];
+            this.rss3Relations.followers = (await this.rss3?.backlinks.get(address, 'following')) || [];
+            this.rss3Relations.followings = (await this.rss3?.links.get(address, 'following'))?.list || [];
         }, 0);
     }
 
@@ -253,6 +253,46 @@ export default class Home extends Vue {
                 return this.getTaggedOrder(a) - this.getTaggedOrder(b);
             });
         }
+    }
+
+    public async action() {
+        if (this.isFollowing) {
+            await this.unfollow();
+        } else {
+            await this.follow();
+        }
+        await (<IRSS3>this.rss3).files.sync();
+    }
+
+    public async checkIsFollowing() {
+        const followList = await this.rss3?.links.get(this.rss3.account.address, 'following');
+        if (typeof followList === 'undefined') {
+            // No following list. Not following
+            this.isFollowing = false;
+            return false;
+        } else if (followList.list?.includes(<string>this.$route.params.address)) {
+            this.isFollowing = true;
+            return true;
+        } else {
+            this.isFollowing = false;
+            return false;
+        }
+    }
+
+    async follow() {
+        const rss3 = await RSS3.get();
+        if (!(await this.checkIsFollowing())) {
+            await rss3?.link.post('following', <string>this.$route.params.address);
+        }
+        this.isFollowing = true;
+    }
+
+    async unfollow() {
+        const rss3 = await RSS3.get();
+        if (await this.checkIsFollowing()) {
+            await rss3?.link.delete('following', this.rss3Profile.address);
+        }
+        this.isFollowing = false;
     }
 
     public toAccountsPage() {

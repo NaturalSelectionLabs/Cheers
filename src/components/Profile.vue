@@ -7,7 +7,7 @@
             <div class="followers cursor-pointer" @click="toFollowersPage">{{ followers.length }} followers</div>
             <div class="followings cursor-pointer" @click="toFollowingsPage">{{ followings.length }} followings</div>
         </div>
-        <div class="bio w-full font-medium text-lg px-5">{{ bio }}</div>
+        <div class="bio w-full font-medium text-lg px-5 break-all">{{ bio }}</div>
     </div>
 </template>
 
