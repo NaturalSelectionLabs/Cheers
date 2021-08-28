@@ -45,6 +45,7 @@ module.exports = {
             boxShadow: {
                 primary: '0px 9px 35px -7px rgba(0, 114, 255, 0.94)', //primary blue button shadow
                 secondary: '0px 9px 35px -7px rgba(55, 155, 255, 0.72)', //white button shadow with primary blue text
+                'primary-card': '0px 9px 18px -9px rgba(55, 155, 255, 0.25);', //follower card shadow
                 metamask: '0px 8px 12px 5px rgba(246, 133, 27, 0.18)', //cream-colored button shadow
                 account: '0px 4px 9px 1px rgba(64, 210, 47, 0.68)', //solid green button shadow for accounts
                 'account-sm': '0px 4px 16px -6px rgba(19, 189, 0, 0.78)', // show/hide white button shadow for accounts
