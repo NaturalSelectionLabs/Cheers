@@ -160,6 +160,7 @@ export default class Setup extends Vue {
     isLoading: Boolean = false;
 
     isMobile: Boolean = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    $gtag: any;
 
     async mounted() {
         if (!(await RSS3.reconnect())) {
@@ -292,6 +293,7 @@ export default class Setup extends Vue {
     }
     async back() {
         this.clearEdited();
+        this.$gtag.event('cancelEditProfile', { userid: (<IRSS3>this.rss3).account.address });
         await RSS3.getAssetProfile((<IRSS3>this.rss3).account.address, true);
         window.history.back();
     }
@@ -312,6 +314,7 @@ export default class Setup extends Vue {
         await (<IRSS3>this.rss3).files.sync();
         this.clearEdited();
         await RSS3.getAssetProfile((<IRSS3>this.rss3).account.address, true);
+        this.$gtag.event('finishEditProfile', { userid: (<IRSS3>this.rss3).account.address });
         this.isLoading = false;
         await this.$router.push('/public');
     }

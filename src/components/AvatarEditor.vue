@@ -26,6 +26,7 @@ import ipfs from '@/common/ipfs';
 export default class Avatar extends Vue {
     file?: File;
     newUrl: string = '';
+    $gtag: any;
 
     preview(evt: any) {
         this.file = evt.target?.files?.[0];
@@ -34,6 +35,7 @@ export default class Avatar extends Vue {
 
     async upload() {
         if (this.file) {
+            this.$gtag.event('avatarUpload', {});
             return ipfs.upload(this.file);
         } else {
             return null;

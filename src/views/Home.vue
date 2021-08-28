@@ -165,6 +165,7 @@ export default class Home extends Vue {
     };
     accounts: RSS3Account[] = [];
     assets: Object[] = [];
+    $gtag: any;
 
     async mounted() {
         const isValidRSS3 = await RSS3.reconnect();
@@ -282,6 +283,7 @@ export default class Home extends Vue {
     async follow() {
         const rss3 = await RSS3.get();
         if (!(await this.checkIsFollowing())) {
+            this.$gtag.event('followFriend', { userid: this.rss3Profile['address'] });
             await rss3?.link.post('following', <string>this.$route.params.address);
         }
         this.isFollowing = true;
@@ -290,21 +292,25 @@ export default class Home extends Vue {
     async unfollow() {
         const rss3 = await RSS3.get();
         if (await this.checkIsFollowing()) {
+            this.$gtag.event('unfollowFriend', { userid: this.rss3Profile['address'] });
             await rss3?.link.delete('following', this.rss3Profile.address);
         }
         this.isFollowing = false;
     }
 
     public toAccountsPage() {
+        this.$gtag.event('visitAccountsPage', { userid: this.rss3Profile['address'] });
         this.$router.push(`/${this.rss3Profile['address']}/accounts`);
     }
 
     public toNFTsPage() {
+        this.$gtag.event('visitNftPage', { userid: this.rss3Profile['address'] });
         this.$router.push(`/${this.rss3Profile['address']}/nfts`);
     }
 
     public toSinglenftPage(account: string, index: number) {
         const address = <string>this.rss3Profile.address;
+        this.$gtag.event('visitSingleNft', { userid: address, nftid: account, nftindex: index });
         this.$router.push(`/${address}/singlenft/${account}/${index}`);
     }
 
