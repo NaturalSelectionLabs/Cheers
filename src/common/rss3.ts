@@ -110,9 +110,9 @@ export default {
                 case 'walletConnect':
                     await walletConnect();
                     return true;
-                case 'metamask':
-                    await metamaskConnect();
-                    return true;
+                // case 'metamask':
+                //     await metamaskConnect();
+                //     return true;
                 default:
                     return false;
             }

@@ -19,6 +19,24 @@
                     Metamask
                 </Button>
             </div>
+            <Modal v-show="isLoading">
+                <template #body>
+                    <span
+                        class="
+                            text-9xl text-primary
+                            opacity-50
+                            block
+                            absolute
+                            top-1/2
+                            left-1/2
+                            transform
+                            -translate-x-1/2 -translate-y-1/2
+                        "
+                    >
+                        <i class="bx bx-sync bx-spin" />
+                    </span>
+                </template>
+            </Modal>
         </div>
     </div>
 </template>
@@ -27,15 +45,18 @@
 import { Options, Vue } from 'vue-class-component';
 import Button from '@/components/Button.vue';
 import RSS3, { IRSS3 } from '@/common/rss3';
+import Modal from '@/components/Modal.vue';
 
 @Options({
     components: {
+        Modal,
         Button,
     },
 })
 export default class Index extends Vue {
     rss3: IRSS3 | null = null;
     isHavingMetamaskPlugin: Boolean = (window as any).ethereum;
+    isLoading: Boolean = false;
 
     async mounted() {
         if (await RSS3.reconnect()) {
@@ -49,6 +70,7 @@ export default class Index extends Vue {
     }
 
     async metaMask() {
+        this.isLoading = true;
         this.rss3 = await RSS3.metamaskConnect();
         await this.verifyProfile();
     }
