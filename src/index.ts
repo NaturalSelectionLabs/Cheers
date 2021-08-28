@@ -6,6 +6,7 @@ import 'boxicons/css/boxicons.min.css'; // boxicons
 import App from './App.vue';
 import router from './router';
 import VueGtag from 'vue-gtag';
+import Hotjar from 'vue-hotjar';
 
 const app = createApp(App);
 
@@ -19,5 +20,9 @@ app.use(
     },
     router,
 );
+
+app.use(Hotjar, {
+    id: '2541834', // Hotjar Site ID
+});
 
 app.mount('#app');
