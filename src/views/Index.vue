@@ -57,6 +57,7 @@ export default class Index extends Vue {
     rss3: IRSS3 | null = null;
     isHavingMetamaskPlugin: Boolean = (window as any).ethereum;
     isLoading: Boolean = false;
+    $gtag: any;
 
     async mounted() {
         if (await RSS3.reconnect()) {
@@ -65,11 +66,13 @@ export default class Index extends Vue {
     }
 
     async walletConnect() {
+        this.$gtag.event('loginWallet', { method: 'WalletConnect' });
         this.rss3 = await RSS3.walletConnect();
         await this.verifyProfile();
     }
 
     async metaMask() {
+        this.$gtag.event('loginWallet', { method: 'MetaMask' });
         this.isLoading = true;
         this.rss3 = await RSS3.metamaskConnect();
         await this.verifyProfile();
@@ -80,19 +83,21 @@ export default class Index extends Vue {
             return;
         }
         let profile;
+        let address;
         try {
             profile = await this.rss3.profile.get();
+            address = await this.rss3.account.address;
             console.log(profile);
         } catch (e) {
             console.error(e);
         }
         if (profile) {
-            // this.$gtag.config(rss3.account.address)
-            // this.$gtag.event('login', { userid: rss3.account.address, event_label: rss3.account.address })
+            this.$gtag.config(address);
+            this.$gtag.event('login', { userid: address });
             await this.$router.push('/public');
         } else {
-            // this.$gtag.config(rss3.account.address)
-            // this.$gtag.event('sign_up', { userid: rss3.account.address, event_label: rss3.account.address })
+            this.$gtag.config(address);
+            this.$gtag.event('sign_up', { userid: address });
             await this.$router.push('/setup');
         }
     }
