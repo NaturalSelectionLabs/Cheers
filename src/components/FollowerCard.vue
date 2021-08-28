@@ -1,5 +1,5 @@
 <template>
-    <div class="follower-container button-shadow-secondary">
+    <div class="follower-container button-shadow-secondary" ref="card">
         <div class="avatar">
             <img :src="$props.avatar" ref="avatar" crossorigin="anonymous" />
         </div>
@@ -15,6 +15,7 @@
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
 import ColorThief from 'colorthief';
+import { hslToRgb, rgbToHsl } from '@/common/utils';
 
 @Options({
     props: {
@@ -29,12 +30,18 @@ export default class FollowerCard extends Vue {
         const img = <HTMLImageElement>this.$refs.avatar;
 
         if (img.complete) {
-            console.log(colorThief.getColor(img));
+            this.setBGColor(colorThief.getColor(img));
         } else {
             img.addEventListener('load', () => {
-                console.log(colorThief.getColor(img));
+                this.setBGColor(colorThief.getColor(img));
             });
         }
+    }
+
+    setBGColor(rgb: [number, number, number]) {
+        const hsl = rgbToHsl(...rgb);
+        const newRGB = hslToRgb(hsl[0], hsl[1], 0.925);
+        (<HTMLDivElement>this.$refs.card).style.backgroundColor = `rgb(${newRGB[0]}, ${newRGB[1]}, ${newRGB[2]})`;
     }
 }
 </script>
