@@ -129,6 +129,7 @@ export default class SetupNFTs extends Vue {
     hide: RSS3AssetCollectionShow[] = [];
     rss3: IRSS3 | null = null;
     activatedGroupID: Number = 0;
+    isLoading: Boolean = false;
 
     async mounted() {
         if (!RSS3.isValidRSS3()) {
@@ -261,6 +262,7 @@ export default class SetupNFTs extends Vue {
     dragAddAsset(ev: any) {}
 
     async save() {
+        this.isLoading = true;
         // Update order tag
         // Hide
         for (const group of this.hide) {
@@ -305,6 +307,7 @@ export default class SetupNFTs extends Vue {
         }
 
         await (<IRSS3>this.rss3).files.sync();
+        this.isLoading = false;
         window.history.back(); // Back
     }
 }

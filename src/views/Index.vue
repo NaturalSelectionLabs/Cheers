@@ -8,14 +8,16 @@
                     class="bg-primary shadow-primary rounded-3xl w-full h-17.5 mb-9"
                     @click="walletConnect"
                 >
-                    Connect A Wallet
+                    Wallet Connect
                 </Button>
                 <Button
                     size="lg"
                     class="text-metamask-text bg-metamask-bg shadow-metamask rounded-3xl w-full h-17.5"
+                    v-show="isHavingMetamaskPlugin"
                     @click="metaMask"
-                    >Metamask</Button
                 >
+                    Metamask
+                </Button>
             </div>
         </div>
     </div>
@@ -33,6 +35,7 @@ import RSS3, { IRSS3 } from '@/common/rss3';
 })
 export default class Index extends Vue {
     rss3: IRSS3 | null = null;
+    isHavingMetamaskPlugin: Boolean = (window as any).ethereum;
 
     async walletConnect() {
         this.rss3 = await RSS3.walletConnect();

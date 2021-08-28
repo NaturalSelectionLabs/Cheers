@@ -98,6 +98,24 @@
             <Button size="lg" class="flex-1 text-lg bg-white text-primary shadow-secondary" @click="back">Back</Button>
             <Button size="lg" class="flex-1 text-lg bg-primary text-white shadow-primary" @click="save">Done</Button>
         </div>
+        <Modal v-show="isLoading">
+            <template #body>
+                <span
+                    class="
+                        text-9xl text-primary
+                        opacity-50
+                        block
+                        absolute
+                        top-1/2
+                        left-1/2
+                        transform
+                        -translate-x-1/2 -translate-y-1/2
+                    "
+                >
+                    <i class="bx bx-sync bx-spin" />
+                </span>
+            </template>
+        </Modal>
     </div>
 </template>
 
@@ -109,6 +127,7 @@ import Card from '@/components/Card.vue';
 import AccountItem from '@/components/AccountItem.vue';
 import NFTItem from '@/components/NFT/NFTItem.vue';
 import Input from '@/components/Input.vue';
+import Modal from '@/components/Modal.vue';
 import { RSS3Account, RSS3Asset, RSS3Profile } from 'rss3-next/types/rss3';
 import RSS3, { IRSS3 } from '@/common/rss3';
 
@@ -116,6 +135,7 @@ import { DetailedNFT, RSS3AssetShow } from '@/common/types';
 
 @Options({
     components: {
+        Modal,
         Button,
         AvatarEditor,
         Card,
@@ -137,6 +157,7 @@ export default class Setup extends Vue {
     accounts: RSS3Account[] = [];
     assets: RSS3AssetShow[] = [];
     rss3: IRSS3 | null = null;
+    isLoading: Boolean = false;
 
     isMobile: Boolean = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
@@ -275,6 +296,7 @@ export default class Setup extends Vue {
         window.history.back();
     }
     async save() {
+        this.isLoading = true;
         if (!this.rss3) {
             this.rss3 = await RSS3.get();
         }
@@ -290,6 +312,7 @@ export default class Setup extends Vue {
         await (<IRSS3>this.rss3).files.sync();
         this.clearEdited();
         await RSS3.getAssetProfile((<IRSS3>this.rss3).account.address, true);
+        this.isLoading = false;
         await this.$router.push('/public');
     }
 }

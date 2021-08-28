@@ -442,6 +442,26 @@
                 Metamask Disconnect
             </Button>
         </div>
+
+        <Button size="lg" class="w-80 bg-primary text-white shadow-primary" @click="loadingModal"> Loading </Button>
+        <Modal v-show="isLoading">
+            <template #body>
+                <span
+                    class="
+                        text-9xl text-primary
+                        opacity-50
+                        block
+                        absolute
+                        top-1/2
+                        left-1/2
+                        transform
+                        -translate-x-1/2 -translate-y-1/2
+                    "
+                >
+                    <i class="bx bx-sync bx-spin" />
+                </span>
+            </template>
+        </Modal>
     </div>
 </template>
 
@@ -497,6 +517,7 @@ export default class Test extends Vue {
         ],
     };
     isShowingModal: Boolean = false;
+    isLoading: Boolean = false;
 
     async walletConnect() {
         await RSS3.walletConnect();
@@ -508,6 +529,13 @@ export default class Test extends Vue {
 
     async walletDisconnect() {
         await RSS3.walletDisconnect();
+    }
+
+    async loadingModal() {
+        this.isLoading = true;
+        setTimeout(() => {
+            this.isLoading = false;
+        }, 2000);
     }
 }
 </script>

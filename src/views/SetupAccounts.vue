@@ -62,7 +62,7 @@
                         v-else
                         size="sm"
                         class="w-8 h-8 bg-account-button text-white shadow-account-sm"
-                        @click="mode = 'add'"
+                        @click="addAccountPreTest"
                     >
                         <i class="bx bx-plus bx-xs" />
                     </Button>
@@ -150,6 +150,45 @@
             >
             <Button size="lg" class="flex-1 text-lg bg-primary text-white shadow-primary" @click="save">Save</Button>
         </div>
+        <Modal v-show="isLoading">
+            <template #body>
+                <span
+                    class="
+                        text-9xl text-primary
+                        opacity-50
+                        block
+                        absolute
+                        top-1/2
+                        left-1/2
+                        transform
+                        -translate-x-1/2 -translate-y-1/2
+                    "
+                >
+                    <i class="bx bx-sync bx-spin" />
+                </span>
+            </template>
+        </Modal>
+        <Modal v-if="isShowingAddAccountNotice">
+            <template #header>
+                <h1>Oops!</h1>
+            </template>
+            <template #body>
+                <p class="mt-1 p-4">
+                    {{ addAccountNotice }}
+                </p>
+            </template>
+            <template #footer>
+                <div class="flex flex-row gap-5">
+                    <Button
+                        size="sm"
+                        class="w-72 bg-primary text-white shadow-primary"
+                        @click="isShowingAddAccountNotice = false"
+                    >
+                        OK
+                    </Button>
+                </div>
+            </template>
+        </Modal>
     </div>
 </template>
 
@@ -158,6 +197,7 @@ import { Options, Vue } from 'vue-class-component';
 import Button from '@/components/Button.vue';
 import Card from '@/components/Card.vue';
 import AccountItem from '@/components/AccountItem.vue';
+import Modal from '@/components/Modal.vue';
 import { RSS3Account, RSS3Index } from 'rss3-next/types/rss3';
 import RSS3, { IRSS3 } from '@/common/rss3';
 
@@ -165,6 +205,7 @@ import draggable from 'vuedraggable';
 
 @Options({
     components: {
+        Modal,
         Button,
         Card,
         AccountItem,
@@ -178,6 +219,11 @@ export default class Setup extends Vue {
     hide: RSS3Account[] = [];
     toDelete: RSS3Account[] = [];
     rss3: IRSS3 | null = null;
+    isLoading: Boolean = false;
+    isShowingAddAccountNotice: Boolean = false;
+    addAccountNotice: String = '';
+
+    isMobile: Boolean = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
     mode: String = 'normal';
 
@@ -243,6 +289,19 @@ export default class Setup extends Vue {
         await window.history.back();
     }
 
+    async addAccountPreTest() {
+        if (this.isMobile) {
+            this.addAccountNotice =
+                'Adding accounts are now only supported on PC with MetaMask browser extension installed.';
+            this.isShowingAddAccountNotice = true;
+        } else if (!(window as any).ethereum) {
+            this.addAccountNotice = 'Adding accounts are now only supported with MetaMask browser extension.';
+            this.isShowingAddAccountNotice = true;
+        } else {
+            this.mode = 'add';
+        }
+    }
+
     async addAccount(platform: string) {
         const newAccount = await RSS3.addNewAccount(platform);
         if (newAccount) {
@@ -263,6 +322,7 @@ export default class Setup extends Vue {
     }
 
     async save() {
+        this.isLoading = true;
         // Apply changes
         for (const [order, account] of this.show.entries()) {
             if (!account.tags) {
@@ -303,6 +363,8 @@ export default class Setup extends Vue {
         }
 
         await (<IRSS3>this.rss3).files.sync();
+        await RSS3.getAssetProfile((<IRSS3>this.rss3).account.address, true);
+        this.isLoading = false;
         window.history.back(); // Back
     }
 }

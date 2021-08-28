@@ -35,7 +35,7 @@ export default class Modal extends Vue {}
                 @apply text-xl font-semibold text-center;
             }
             .body {
-                @apply m-2;
+                @apply p-2 w-full h-full;
             }
             .footer {
                 @apply absolute bottom-4;
