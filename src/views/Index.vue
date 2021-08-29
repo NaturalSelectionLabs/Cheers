@@ -61,7 +61,9 @@ export default class Index extends Vue {
 
     async mounted() {
         if (await RSS3.reconnect()) {
-            await this.$router.push('/public');
+            const redirectFrom = localStorage.getItem('redirectFrom');
+            localStorage.removeItem('redirectFrom');
+            await this.$router.push(redirectFrom || '/public');
         }
     }
 
@@ -94,7 +96,9 @@ export default class Index extends Vue {
         if (profile) {
             this.$gtag.config(address);
             this.$gtag.event('login', { userid: address });
-            await this.$router.push('/public');
+            const redirectFrom = localStorage.getItem('redirectFrom');
+            localStorage.removeItem('redirectFrom');
+            await this.$router.push(redirectFrom || '/public');
         } else {
             this.$gtag.config(address);
             this.$gtag.event('sign_up', { userid: address });

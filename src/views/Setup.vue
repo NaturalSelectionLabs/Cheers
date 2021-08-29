@@ -18,11 +18,10 @@
             <template #header-button>
                 <Button
                     size="sm"
-                    v-if="!isMobile"
                     class="w-10 h-10 bg-account-button text-white shadow-account"
                     @click="toManageAccounts"
                 >
-                    <i class="bx bx-plus bx-sm" />
+                    <i class="bx bx-pencil bx-sm" />
                 </Button>
             </template>
             <template #content>
@@ -159,11 +158,11 @@ export default class Setup extends Vue {
     rss3: IRSS3 | null = null;
     isLoading: Boolean = false;
 
-    isMobile: Boolean = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
     $gtag: any;
 
     async mounted() {
         if (!(await RSS3.reconnect())) {
+            localStorage.setItem('redirectFrom', this.$route.fullPath);
             await this.$router.push('/');
         } else {
             this.rss3 = await RSS3.get();
@@ -316,7 +315,9 @@ export default class Setup extends Vue {
         await RSS3.getAssetProfile((<IRSS3>this.rss3).account.address, true);
         this.$gtag.event('finishEditProfile', { userid: (<IRSS3>this.rss3).account.address });
         this.isLoading = false;
-        await this.$router.push('/public');
+        const redirectFrom = localStorage.getItem('redirectFrom');
+        localStorage.removeItem('redirectFrom');
+        await this.$router.push(redirectFrom || '/public');
     }
 }
 </script>
