@@ -25,6 +25,8 @@
     },
     "homepage": "https://github.com/NaturalSelectionLabs/RSS3-Page#readme",
     "dependencies": {
+        "@sentry/tracing": "6.11.0",
+        "@sentry/vue": "6.11.0",
         "@walletconnect/web3-provider": "1.6.2",
         "assert": "2.0.0",
         "axios": "0.21.1",
