@@ -305,8 +305,11 @@ export default class Setup extends Vue {
 
     async addAccount(platform: string) {
         const newAccount = await RSS3.addNewAccount(platform);
-        if (newAccount) {
+        if (newAccount.identity) {
             this.show.push(newAccount);
+        } else {
+            this.addAccountNotice = newAccount.signature;
+            this.isShowingAddAccountNotice = true;
         }
         this.mode = 'normal';
     }
