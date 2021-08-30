@@ -41,7 +41,24 @@
                 <i class="bx bx-info-circle" style="color: rgba(0, 0, 0, 0.2)" />
             </template>
             <template #header-button>
+                <div v-if="isOwner" class="flex flex-row gap-2">
+                    <Button
+                        size="sm"
+                        class="w-8 h-8 bg-white text-account-button shadow-account-sm"
+                        @click="toManageAccounts"
+                    >
+                        <i class="bx bxs-pencil bx-xs" />
+                    </Button>
+                    <Button
+                        size="sm"
+                        class="w-8 h-8 bg-white text-account-button shadow-account-sm"
+                        @click="toAccountsPage"
+                    >
+                        <i class="bx bx-expand-alt bx-xs" />
+                    </Button>
+                </div>
                 <Button
+                    v-else
                     size="sm"
                     class="w-10 h-10 text-account-button bg-white shadow-account-sm"
                     @click="toAccountsPage"
@@ -73,7 +90,20 @@
                 <i class="bx bx-info-circle" style="color: rgba(0, 0, 0, 0.2)" />
             </template>
             <template #header-button>
-                <Button size="sm" class="w-10 h-10 text-nft-button bg-white shadow-nft-sm" @click="toNFTsPage">
+                <div v-if="isOwner" class="flex flex-row gap-2">
+                    <Button
+                        size="sm"
+                        class="w-8 h-8 bg-white text-nft-button shadow-nft-sm"
+                        v-if="isOwner"
+                        @click="toManageNFTs"
+                    >
+                        <i class="bx bxs-pencil bx-xs" />
+                    </Button>
+                    <Button size="sm" class="w-8 h-8 bg-white text-nft-button shadow-nft-sm" @click="toNFTsPage">
+                        <i class="bx bx-expand-alt bx-xs" />
+                    </Button>
+                </div>
+                <Button v-else size="sm" class="w-10 h-10 text-nft-button bg-white shadow-nft-sm" @click="toNFTsPage">
                     <i class="bx bx-expand-alt bx-xs"></i>
                 </Button>
             </template>
@@ -302,6 +332,13 @@ export default class Home extends Vue {
             await rss3?.link.delete('following', this.rss3Profile.address);
         }
         this.isFollowing = false;
+    }
+
+    toManageAccounts() {
+        this.$router.push('/setup/accounts');
+    }
+    toManageNFTs() {
+        this.$router.push('/setup/nfts');
     }
 
     public toAccountsPage() {

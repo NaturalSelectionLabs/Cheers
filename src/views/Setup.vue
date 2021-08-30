@@ -288,7 +288,7 @@ export default class Setup extends Vue {
     }
     toManageNFTs() {
         this.saveEdited();
-        this.$router.push('/manage/nfts');
+        this.$router.push('/setup/nfts');
     }
     async back() {
         this.clearEdited();
