@@ -9,7 +9,13 @@
                         {{ notice }}
                     </span>
                 </span>
-                <Input class="input" :is-single-line="true" placeholder="Enter an RNS" v-model="rns" />
+                <Input
+                    class="input"
+                    :is-single-line="true"
+                    placeholder="Enter an RNS"
+                    v-model="rns"
+                    @keyup.enter.native="verifyRNS"
+                />
                 <span class="about">
                     <i class="bx bx-info-circle" />
                     <span> An RNS is a unique domain for a Web 3 Pass by RSS3 </span>
