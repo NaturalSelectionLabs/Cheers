@@ -317,7 +317,7 @@ export default class Setup extends Vue {
         this.isLoading = false;
         const redirectFrom = localStorage.getItem('redirectFrom');
         localStorage.removeItem('redirectFrom');
-        await this.$router.push(redirectFrom || '/public');
+        await this.$router.push(redirectFrom || '/home');
     }
 }
 </script>
