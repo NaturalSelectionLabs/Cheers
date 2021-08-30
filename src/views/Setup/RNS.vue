@@ -120,6 +120,7 @@ export default class RNS extends Vue {
     }
 
     async verifyRNS() {
+        this.rns = this.rns.toLowerCase();
         if (this.rns.length < 5) {
             this.notice = 'An RNS must have at least 5 characters';
             return;
