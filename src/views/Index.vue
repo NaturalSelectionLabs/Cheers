@@ -46,6 +46,7 @@ import { Options, Vue } from 'vue-class-component';
 import Button from '@/components/Button.vue';
 import RSS3, { IRSS3 } from '@/common/rss3';
 import Modal from '@/components/Modal.vue';
+import { RSS3Profile } from 'rss3-next/types/rss3';
 
 @Options({
     components: {
@@ -85,10 +86,10 @@ export default class Index extends Vue {
             return;
         }
         let profile;
-        let address;
+        let address: string = '';
         try {
             profile = await this.rss3.profile.get();
-            address = await this.rss3.account.address;
+            address = this.rss3.account.address;
             console.log(profile);
         } catch (e) {
             console.error(e);

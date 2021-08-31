@@ -26,7 +26,7 @@ const routes = [
         component: Home,
     },
     {
-        path: '/public',
+        path: '/home',
         component: Home,
     },
     {
