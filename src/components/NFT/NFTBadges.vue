@@ -46,13 +46,13 @@ export default class NFTBadges extends Vue {
     }
 
     .badge {
-        @apply rounded-full border-sm border-white filter drop-shadow-nft bg-cover bg-center bg-no-repeat;
+        @apply rounded-full border-sm border-white filter drop-shadow-nft bg-85 bg-center bg-no-repeat bg-white;
     }
     .badge-overlay {
         @apply w-6 h-6;
     }
     .badge-header {
-        @apply w-9 h-9;
+        @apply w-8 h-8;
     }
 }
 </style>
