@@ -36,11 +36,11 @@ module.exports = {
                 },
                 success: '#00c700',
                 danger: '#b01a0a',
-                metamask: '#fff4eb',
                 metamask: {
                     text: '#944300',
                     bg: '#fff4eb',
                 },
+                error: '#D75F5F',
             },
             boxShadow: {
                 primary: '0px 9px 35px -7px rgba(0, 114, 255, 0.94)', //primary blue button shadow

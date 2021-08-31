@@ -181,6 +181,7 @@ export default class Home extends Vue {
         } else {
             // address = 'RSS3 Address';
             if (!isValidRSS3) {
+                localStorage.setItem('redirectFrom', this.$route.fullPath);
                 await this.$router.push('/');
             }
             address = owner;
@@ -257,12 +258,17 @@ export default class Home extends Vue {
     }
 
     public async action() {
-        if (this.isFollowing) {
-            await this.unfollow();
+        if (RSS3.isValidRSS3()) {
+            if (this.isFollowing) {
+                await this.unfollow();
+            } else {
+                await this.follow();
+            }
+            await (<IRSS3>this.rss3).files.sync();
         } else {
-            await this.follow();
+            localStorage.setItem('redirectFrom', this.$route.fullPath);
+            await this.$router.push('/');
         }
-        await (<IRSS3>this.rss3).files.sync();
     }
 
     public async checkIsFollowing() {

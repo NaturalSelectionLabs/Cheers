@@ -61,7 +61,9 @@ export default class Index extends Vue {
 
     async mounted() {
         if (await RSS3.reconnect()) {
-            await this.$router.push('/public');
+            const redirectFrom = localStorage.getItem('redirectFrom');
+            localStorage.removeItem('redirectFrom');
+            await this.$router.push(redirectFrom || '/home');
         }
     }
 
@@ -94,7 +96,9 @@ export default class Index extends Vue {
         if (profile) {
             this.$gtag.config(address);
             this.$gtag.event('login', { userid: address });
-            await this.$router.push('/public');
+            const redirectFrom = localStorage.getItem('redirectFrom');
+            localStorage.removeItem('redirectFrom');
+            await this.$router.push(redirectFrom || '/home');
         } else {
             this.$gtag.config(address);
             this.$gtag.event('sign_up', { userid: address });
@@ -108,21 +112,6 @@ export default class Index extends Vue {
 @layer components {
     .onboarding {
         background-image: url('../assets/images/rss3-bg.png');
-        .body {
-            .hello {
-                text-shadow: 0 9px 35px #b7d7ff;
-            }
-
-            .connect {
-                box-shadow: 0px 9px 35px -7px rgba(0, 114, 255, 0.94);
-            }
-
-            .metamask {
-                background: #fff4eb;
-                box-shadow: 0px 8px 12px 5px rgba(246, 133, 27, 0.18);
-                color: #944300;
-            }
-        }
     }
 }
 </style>

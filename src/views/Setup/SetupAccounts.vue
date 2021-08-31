@@ -229,6 +229,7 @@ export default class Setup extends Vue {
 
     async mounted() {
         if (!(await RSS3.reconnect())) {
+            localStorage.setItem('redirectFrom', this.$route.fullPath);
             await this.$router.push('/');
         }
         this.rss3 = await RSS3.get();
