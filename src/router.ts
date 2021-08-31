@@ -7,10 +7,11 @@ import Followings from '@/views/Followings.vue';
 import Followers from '@/views/Followers.vue';
 import Accounts from '@/views/Accounts.vue';
 import NFTs from '@/views/NFTs.vue';
-import Singlenft from '@/views/SingleNFT.vue';
-import Setup from '@/views/Setup.vue';
-import SetupAccounts from '@/views/SetupAccounts.vue';
-import SetupNFTs from '@/views/SetupNFTs.vue';
+import SingleNFT from '@/views/SingleNFT.vue';
+import Setup from '@/views/Setup/Setup.vue';
+import SetupAccounts from '@/views/Setup/SetupAccounts.vue';
+import SetupNFTs from '@/views/Setup/SetupNFTs.vue';
+import RNS from '@/views/Setup/RNS.vue';
 
 const routes = [
     {
@@ -52,7 +53,7 @@ const routes = [
     {
         path: '/:address/singlenft/:aid/:id',
         name: 'SingleNFT',
-        component: Singlenft,
+        component: SingleNFT,
     },
     {
         path: '/setup',
@@ -65,6 +66,10 @@ const routes = [
     {
         path: '/setup/nfts',
         component: SetupNFTs,
+    },
+    {
+        path: '/rns',
+        component: RNS,
     },
 ];
 
