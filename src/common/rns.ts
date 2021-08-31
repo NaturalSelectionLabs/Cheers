@@ -1,106 +1,8 @@
 import { ethers } from 'ethers';
 import axios from 'axios';
+import config from '@/config';
 
 type SPEED = 'fast' | 'average' | 'fastest' | 'safeLow' | undefined;
-
-const config = {
-    networks: {
-        ropsten: {
-            rnsAddr: '0xbe22076940636352860585809c32afb40611fff5',
-        },
-        localhost: {
-            rnsAddr: '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512',
-        },
-    },
-    contract: {
-        // rns contract abi
-        rnsABI: [
-            {
-                inputs: [
-                    {
-                        internalType: 'string',
-                        name: 'name',
-                        type: 'string',
-                    },
-                ],
-                name: 'getAddress',
-                outputs: [
-                    {
-                        internalType: 'address',
-                        name: '',
-                        type: 'address',
-                    },
-                ],
-                stateMutability: 'view',
-                type: 'function',
-            },
-            {
-                inputs: [
-                    {
-                        internalType: 'uint256',
-                        name: 'i',
-                        type: 'uint256',
-                    },
-                ],
-                name: 'getAddressByID',
-                outputs: [
-                    {
-                        internalType: 'address',
-                        name: '',
-                        type: 'address',
-                    },
-                ],
-                stateMutability: 'view',
-                type: 'function',
-            },
-            {
-                inputs: [],
-                name: 'getN',
-                outputs: [
-                    {
-                        internalType: 'uint256',
-                        name: '',
-                        type: 'uint256',
-                    },
-                ],
-                stateMutability: 'view',
-                type: 'function',
-            },
-            {
-                inputs: [
-                    {
-                        internalType: 'address',
-                        name: 'addr',
-                        type: 'address',
-                    },
-                ],
-                name: 'getName',
-                outputs: [
-                    {
-                        internalType: 'string',
-                        name: '',
-                        type: 'string',
-                    },
-                ],
-                stateMutability: 'view',
-                type: 'function',
-            },
-            {
-                inputs: [
-                    {
-                        internalType: 'string',
-                        name: 'name',
-                        type: 'string',
-                    },
-                ],
-                name: 'register',
-                outputs: [],
-                stateMutability: 'nonpayable',
-                type: 'function',
-            },
-        ],
-    },
-};
 
 async function callRNSContract(
     providerType: 'web3' | 'infura',
@@ -110,20 +12,34 @@ async function callRNSContract(
 ): Promise<ethers.providers.TransactionResponse> {
     (window as any).ethereum.enable();
     let provider: ethers.providers.Web3Provider | ethers.providers.InfuraProvider;
+    let signer; // TODO
     if (providerType === 'web3') {
         provider = new ethers.providers.Web3Provider((window as any).ethereum);
+        signer = provider.getSigner();
     } else {
-        provider = new ethers.providers.InfuraProvider('ropsten', process.env.INFURA_PROJECT_ID);
+        provider = new ethers.providers.InfuraProvider(config.rns.test ? 'ropsten' : 'homestead', {
+            projectId: config.rns.infuraProjectId,
+        });
     }
-    const signer = provider.getSigner();
 
-    const contract = await new ethers.Contract(getRNSContract(), config.contract.rnsABI, signer);
-    return contract[method](...args, await makeTxParams(speed));
+    const contract = await new ethers.Contract(getRNSContract(), config.rns.contract.rnsABI, signer);
+    let isView = false;
+    const abi = config.rns.contract.rnsABI.find((item: any) => item.name === 'view');
+    if (abi) {
+        isView = abi.stateMutability === 'view';
+    }
+    return contract[method](...args, isView ? null : await makeTxParams(speed));
 }
 
 async function makeTxParams(speed: SPEED): Promise<ethers.Overrides> {
     speed = speed ? speed : 'average';
-    const gasPrice = (await axios.get('ethGas')).data; // TODO
+    const gasPrice = (
+        await axios.get('https://ethgasstation.info/api/ethgasAPI.json', {
+            params: {
+                'api-key': '403f08c04612ca8c165ae6855136505f7acf017b2662126699e43a874ef6',
+            },
+        })
+    ).data;
     let gasGwei: string = '30';
     gasGwei = (gasPrice[speed] / 10).toString();
     return {
@@ -133,18 +49,15 @@ async function makeTxParams(speed: SPEED): Promise<ethers.Overrides> {
 }
 
 function getRNSContract() {
-    const network = process.env.VUE_APP_NETWORK;
-    if (network === 'ropsten') {
-        return config.networks.ropsten.rnsAddr;
-    } else if (network === 'localhost') {
-        return config.networks.localhost.rnsAddr;
+    if (config.rns.test) {
+        return config.rns.contractNetworks.ropsten.rnsAddr;
     } else {
         return '';
     }
 }
 
 export default {
-    register(name: string, speed: SPEED = 'average') {
+    async register(name: string, speed: SPEED = 'average') {
         return callRNSContract('web3', speed, 'register', name);
     },
     addr2Name(addr: string, speed: SPEED = 'average') {

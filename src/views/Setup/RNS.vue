@@ -85,6 +85,7 @@
 import { Options, Vue } from 'vue-class-component';
 import Button from '@/components/Button.vue';
 import RSS3, { IRSS3 } from '@/common/rss3';
+import RNSUtils from '@/common/rns';
 import Modal from '@/components/Modal.vue';
 import Input from '@/components/Input.vue';
 
@@ -97,7 +98,7 @@ import Input from '@/components/Input.vue';
 })
 export default class RNS extends Vue {
     rss3: IRSS3 | null = null;
-    rns: String = '';
+    rns: string = '';
     notice: String = '';
     isErrorNotice: Boolean = true;
     isLoading: Boolean = false;
@@ -105,6 +106,7 @@ export default class RNS extends Vue {
     $gtag: any;
 
     async mounted() {
+        console.log(RNSUtils);
         // if (!(await RSS3.reconnect())) {
         //     localStorage.setItem('redirectFrom', this.$route.fullPath);
         //     await this.$router.push('/');
@@ -134,8 +136,8 @@ export default class RNS extends Vue {
     }
 
     async confirm() {
+        await RNSUtils.register(this.rns);
         this.isShowingConfirm = false;
-        // Claim this RNS
     }
 }
 </script>
