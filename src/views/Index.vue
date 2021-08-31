@@ -8,7 +8,8 @@
                     class="bg-primary shadow-primary rounded-3xl w-full h-17.5 mb-9"
                     @click="walletConnect"
                 >
-                    Wallet Connect
+                    <WalletConnect size="40" />
+                    <span> Wallet Connect </span>
                 </Button>
                 <Button
                     size="lg"
@@ -16,7 +17,8 @@
                     v-show="isHavingMetamaskPlugin"
                     @click="metaMask"
                 >
-                    Metamask
+                    <Metamask size="40" />
+                    <span> Metamask </span>
                 </Button>
             </div>
             <Modal v-show="isLoading">
@@ -47,9 +49,13 @@ import Button from '@/components/Button.vue';
 import RSS3, { IRSS3 } from '@/common/rss3';
 import Modal from '@/components/Modal.vue';
 import { RSS3Profile } from 'rss3-next/types/rss3';
+import WalletConnect from '@/components/Icons/WalletConnect.vue';
+import Metamask from '@/components/Icons/Metamask.vue';
 
 @Options({
     components: {
+        Metamask,
+        WalletConnect,
         Modal,
         Button,
     },
