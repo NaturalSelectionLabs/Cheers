@@ -1,6 +1,7 @@
 <template>
     <div class="badges-container">
         <div
+            v-if="collectionImg !== null"
             class="badge"
             :class="{
                 'badge-overlay': location === 'overlay',
