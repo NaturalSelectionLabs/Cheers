@@ -12,7 +12,7 @@
                     :is-border="false"
                     :src="this.rss3Profile.avatar"
                     :alt="this.rss3Profile.username"
-                    @click="toPublicPage(this.rss3Profile.address)"
+                    @click="toEtherScan(this.rss3Profile.address)"
                 />
             </div>
             <div class="account-list">
@@ -34,7 +34,7 @@
                         <Button
                             size="sm"
                             class="w-10 h-10 bg-account-button text-white shadow-account"
-                            @click="toPublicPage(item.identity)"
+                            @click="toEtherScan(item.identity)"
                         >
                             <i class="bx bx-link-external bx-sm"></i>
                         </Button>
@@ -158,8 +158,9 @@ export default class Accounts extends Vue {
         return -1;
     }
 
-    public toPublicPage(address: string) {
-        this.$router.push(`/${address}`);
+    public toEtherScan(address: string) {
+        // this.$router.push(`/${address}`);
+        window.open(`https://etherscan.io/address/${address}`);
     }
 
     public toSetupAccounts() {
