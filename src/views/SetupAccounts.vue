@@ -214,7 +214,7 @@ import draggable from 'vuedraggable';
 })
 export default class Setup extends Vue {
     avatar: String = '';
-    additionalAccounts: String[] = ['Ethereum', 'BSC', 'Ronin'];
+    additionalAccounts: String[] = ['Ethereum', 'BSC'];
     show: RSS3Account[] = [];
     hide: RSS3Account[] = [];
     toDelete: RSS3Account[] = [];
