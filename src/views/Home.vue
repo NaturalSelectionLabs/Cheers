@@ -68,11 +68,12 @@
             </template>
             <template #content>
                 <AccountItem
-                    class="inline-block mr-1"
+                    class="inline-block mr-1 cursor-pointer"
                     size="70"
                     :chain="item.platform"
                     v-for="(item, index) in accounts"
                     :key="index"
+                    @click="displayDialog(item.identity, item.platform)"
                 />
             </template>
         </Card>
@@ -149,6 +150,33 @@
                 </Button>
             </template>
         </Card>
+
+        <Modal v-show="isdisplaying">
+            <template #header>
+                <Button
+                    size="sm"
+                    class="absolute left-4 w-10 h-10 bg-white text-primary shadow-secondary"
+                    @click="closeDialog"
+                >
+                    <i class="bx bx-chevron-left bx-sm"></i>
+                </Button>
+            </template>
+            <template #body>
+                <div class="flex flex-col gap-y-4 items-center">
+                    <AccountItem class="m-auto mt-4" size="90" :chain="this.dialogChain"></AccountItem>
+                    <span class="address text-xl font-semibold break-all text-center mt-4">{{
+                        this.dialogAddress
+                    }}</span>
+                    <Button
+                        size="sm"
+                        class="text-md bg-account-button text-white shadow-account m-auto mt-4"
+                        @click="copyToClipboard(this.dialogAddress)"
+                    >
+                        Copy
+                    </Button>
+                </div>
+            </template>
+        </Modal>
     </div>
 </template>
 
@@ -162,6 +190,7 @@ import NFTItem from '@/components/NFT/NFTItem.vue';
 import RSS3, { IRSS3 } from '@/common/rss3';
 import { RSS3Account, RSS3Asset, RSS3Backlink, RSS3ID } from 'rss3-next/types/rss3';
 import { DetailedNFT, RSS3AssetShow } from '@/common/types';
+import Modal from '@/components/Modal.vue';
 
 interface ProfileInfo {
     avatar: string;
@@ -176,12 +205,15 @@ interface Relations {
 }
 
 @Options({
-    components: { Button, Card, Profile, AccountItem, NFTItem },
+    components: { Button, Card, Profile, AccountItem, NFTItem, Modal },
 })
 export default class Home extends Vue {
     public rss3?: IRSS3;
     public isFollowing: boolean = true;
     public isOwner: boolean = false;
+    public isdisplaying: boolean = false;
+    public dialogAddress: string = '';
+    public dialogChain: string = '';
 
     public rss3Profile: ProfileInfo = {
         avatar: '',
@@ -359,6 +391,27 @@ export default class Home extends Vue {
 
     public toSetupPage() {
         this.$router.push(`/setup`);
+    }
+
+    public displayDialog(address: string, chain: string) {
+        this.dialogAddress = address;
+        this.dialogChain = chain;
+        this.isdisplaying = true;
+    }
+
+    public closeDialog() {
+        this.isdisplaying = false;
+    }
+
+    public copyToClipboard(address: string) {
+        navigator.clipboard.writeText(address).then(
+            function () {
+                console.log('Async: Copying to clipboard was successful!');
+            },
+            function (err) {
+                console.error('Async: Could not copy the account: ', err);
+            },
+        );
     }
 }
 </script>
