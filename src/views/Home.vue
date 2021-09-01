@@ -38,7 +38,7 @@
             :is-single-line="true"
         >
             <template #accessibility>
-                <i class="bx bx-info-circle" style="color: rgba(0, 0, 0, 0.2)" />
+                <!-- <i class="bx bx-info-circle" style="color: rgba(0, 0, 0, 0.2)" /> -->
             </template>
             <template #header-button>
                 <div v-if="isOwner" class="flex flex-row gap-2">
@@ -88,7 +88,7 @@
             :is-single-line="true"
         >
             <template #accessibility>
-                <i class="bx bx-info-circle" style="color: rgba(0, 0, 0, 0.2)" />
+                <!-- <i class="bx bx-info-circle" style="color: rgba(0, 0, 0, 0.2)" /> -->
             </template>
             <template #header-button>
                 <div v-if="isOwner" class="flex flex-row gap-2">
@@ -129,7 +129,7 @@
             :is-having-content="true"
         >
             <template #accessibility>
-                <i class="bx bx-info-circle" style="color: rgba(0, 0, 0, 0.2)" />
+                <!-- <i class="bx bx-info-circle" style="color: rgba(0, 0, 0, 0.2)" /> -->
             </template>
             <template #content>
                 <Button
@@ -390,7 +390,7 @@ export default class Home extends Vue {
     }
 
     public toSetupPage() {
-        this.$router.push(`/setup`);
+        this.$router.push(`/profile`);
     }
 
     public displayDialog(address: string, chain: string) {

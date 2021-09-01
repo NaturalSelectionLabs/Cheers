@@ -453,7 +453,7 @@
                         -translate-x-1/2 -translate-y-1/2
                     "
                 >
-                    <i class="bx bx-sync bx-spin" />
+                    <i class="bx bx-loader-alt bx-spin"></i>
                 </span>
             </template>
         </Modal>

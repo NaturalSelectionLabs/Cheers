@@ -1,14 +1,30 @@
 <template>
     <div class="h-screen bg-nft-bg overflow-y-auto">
         <div class="main px-4 py-8 max-w-md m-auto">
-            <div class="header flex justify-between items-start pb-4 relative">
-                <Button size="sm" class="w-10 h-10 mr-10 bg-white text-primary shadow-secondary" @click="back">
-                    <i class="bx bx-chevron-left bx-sm"></i>
-                </Button>
-                <div class="section-title text-2xl text-nft-title font-bold text-center">
-                    {{ details.collection.name + ' NFT' }}
+            <div class="header pb-4 relative">
+                <div
+                    class="
+                        section-title
+                        text-xl text-nft-title
+                        font-bold
+                        text-center
+                        w-full
+                        h-10
+                        absolute
+                        z-0
+                        top-0
+                        px-16
+                        flex
+                        justify-center
+                        items-center
+                    "
+                >
+                    {{ details.collection.name }}
                 </div>
-                <div class="w-10 h-10 ml-10">
+                <div class="flex justify-between items-center">
+                    <Button size="sm" class="w-10 h-10 bg-white text-primary shadow-secondary" @click="back">
+                        <i class="bx bx-chevron-left bx-sm"></i>
+                    </Button>
                     <NFTBadges
                         class="absolute z-50 right-0"
                         chain="Ethereum"

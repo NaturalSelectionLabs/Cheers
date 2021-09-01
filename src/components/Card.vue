@@ -85,7 +85,7 @@ export default class Card extends Vue {}
                 }
             }
             .body-tips {
-                @apply flex w-full justify-center items-center;
+                @apply flex w-full justify-start items-center;
             }
         }
 
@@ -97,7 +97,7 @@ export default class Card extends Vue {}
             }
 
             .footer-tips {
-                @apply text-center font-extralight m-auto;
+                @apply text-left font-extralight ml-0 flex justify-start text-sm;
             }
         }
     }

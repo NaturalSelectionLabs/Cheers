@@ -52,7 +52,7 @@ export default class NFTBadges extends Vue {
         @apply w-6 h-6;
     }
     .badge-header {
-        @apply w-8 h-8;
+        @apply w-7 h-7;
     }
 }
 </style>
