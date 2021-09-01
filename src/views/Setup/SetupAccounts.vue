@@ -390,7 +390,13 @@ export default class Setup extends Vue {
             await (<IRSS3>this.rss3).accounts.delete(account);
         }
 
-        await (<IRSS3>this.rss3).files.sync();
+        try {
+            await (<IRSS3>this.rss3).files.sync();
+        } catch (e) {
+            console.log(e);
+            this.isLoading = false;
+            return;
+        }
         await RSS3.getAssetProfile((<IRSS3>this.rss3).account.address, true);
         this.isLoading = false;
         window.history.back(); // Back

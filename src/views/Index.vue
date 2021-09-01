@@ -83,7 +83,14 @@ export default class Index extends Vue {
     async metaMask() {
         this.$gtag.event('loginWallet', { method: 'MetaMask' });
         this.isLoading = true;
-        this.rss3 = await RSS3.metamaskConnect();
+        try {
+            this.rss3 = await RSS3.metamaskConnect();
+        } catch (e) {
+            console.log(e);
+            this.isLoading = false;
+            this.$gtag.event('cancelLogin', { method: 'MetaMask' });
+            return;
+        }
         await this.verifyProfile();
     }
 
