@@ -5,7 +5,7 @@
                 <i class="bx bx-chevron-left bx-sm"></i>
             </Button>
             <span class="text-center">
-                <h1 class="text-2xl text-primary font-bold inline">Manage Accounts</h1>
+                <h1 class="text-xl text-primary font-bold inline">Manage Accounts</h1>
             </span>
             <span class="avatar">
                 <img :src="avatar" class="rounded-full w-10 h-10 inline-block" alt="avatar" />
@@ -30,7 +30,7 @@
             :color-background="mode === 'normal' ? 'bg-account-bg' : 'bg-gray-300'"
             class="w-full mb-4"
             :is-having-content="true"
-            :tips="mode !== 'delete' ? 'Add additional accounts' : 'Delete unwanted accounts'"
+            :tips="mode !== 'delete' ? 'Drag here to show and reorder' : 'Delete unwanted accounts'"
         >
             <template #header-button>
                 <div class="flex flex-row gap-2">
@@ -96,7 +96,7 @@
             <template #footer-button>
                 <Button
                     size="sm"
-                    class="text-xs bg-white text-account-button shadow-nft-sm"
+                    class="text-xs bg-white text-account-button shadow-account-sm"
                     :class="{
                         'bg-gray-100 cursor-not-allowed': show.length === 0,
                     }"
@@ -114,7 +114,7 @@
             color-background="bg-gray-bg"
             class="w-full mb-4"
             :is-having-content="true"
-            tips="Drag accounts you’d like to hide here"
+            tips="Drag here to hide"
         >
             <template #accessibility>
                 <i class="bx bx-info-circle" style="color: rgba(0, 0, 0, 0.2)" />
@@ -133,7 +133,7 @@
             <template #footer-button>
                 <Button
                     size="sm"
-                    class="text-xs bg-white text-account-button shadow-nft-sm"
+                    class="text-xs bg-white text-account-button shadow-account-sm"
                     :class="{
                         'bg-gray-100 cursor-not-allowed': hide.length === 0,
                     }"
@@ -164,7 +164,7 @@
                         -translate-x-1/2 -translate-y-1/2
                     "
                 >
-                    <i class="bx bx-sync bx-spin" />
+                    <i class="bx bx-loader-alt bx-spin"></i>
                 </span>
             </template>
         </Modal>

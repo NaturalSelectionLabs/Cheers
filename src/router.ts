@@ -12,6 +12,7 @@ import Setup from '@/views/Setup/Setup.vue';
 import SetupAccounts from '@/views/Setup/SetupAccounts.vue';
 import SetupNFTs from '@/views/Setup/SetupNFTs.vue';
 import RNS from '@/views/Setup/RNS.vue';
+import EditProfile from '@/views/EditProfile.vue';
 
 const routes = [
     {
@@ -70,6 +71,10 @@ const routes = [
     {
         path: '/rns',
         component: RNS,
+    },
+    {
+        path: '/profile',
+        component: EditProfile,
     },
 ];
 

@@ -5,7 +5,7 @@
                 <i class="bx bx-chevron-left bx-sm" />
             </Button>
             <span class="text-center">
-                <h1 class="text-2xl text-primary font-bold inline">Manage NFTs</h1>
+                <h1 class="text-xl text-primary font-bold inline">Manage NFTs</h1>
             </span>
             <span class="avatar">
                 <img :src="avatar" class="rounded-full w-10 h-10 inline-block" alt="avatar" />
@@ -18,7 +18,7 @@
             color-background="bg-nft-bg"
             class="w-full mb-4"
             :is-having-content="show.length !== 0"
-            :tips="show.length === 0 ? 'Add additional NFTs' : 'Drag to reorder'"
+            :tips="show.length === 0 ? 'Add additional NFTs' : 'Drag here to show and reorder'"
         >
             <template #header-button>
                 <Button size="sm" class="w-10 h-10 bg-nft-button text-white shadow-nft" @click="refresh">
@@ -53,10 +53,10 @@
             color-background="bg-gray-bg"
             class="w-full mb-4"
             :is-having-content="hide.length !== 0"
-            :tips="hide.length === 0 ? 'Drag NFTs you’d like to hide here' : ''"
+            tips="Drag here to hide"
         >
             <template #accessibility>
-                <i class="bx bx-info-circle" style="color: rgba(0, 0, 0, 0.2)" />
+                <!-- <i class="bx bx-info-circle" style="color: rgba(0, 0, 0, 0.2)" /> -->
             </template>
             <template #content>
                 <details
@@ -65,7 +65,7 @@
                     :open="activatedGroupID === gid"
                     @click="activatedGroupID = gid"
                 >
-                    <summary>{{ groups.collection_name }}</summary>
+                    <summary class="text-nft-button">{{ groups.collection_name }}</summary>
                     <draggable class="min-h-20" :list="groups.assets" group="nfts" itemKey="chain" @add="dragAddAsset">
                         <template #item="{ element }">
                             <NFTItem
