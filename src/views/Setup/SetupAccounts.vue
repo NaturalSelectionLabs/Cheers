@@ -217,6 +217,7 @@ export default class Setup extends Vue {
     additionalAccounts: String[] = ['Ethereum', 'BSC'];
     show: RSS3Account[] = [];
     hide: RSS3Account[] = [];
+    toAdd: RSS3Account[] = [];
     toDelete: RSS3Account[] = [];
     rss3: IRSS3 | null = null;
     isLoading: Boolean = false;
@@ -306,7 +307,19 @@ export default class Setup extends Vue {
     async addAccount(platform: string) {
         const newAccount = await RSS3.addNewAccount(platform);
         if (newAccount.identity) {
-            this.show.push(newAccount);
+            const showIndex = this.show.findIndex(
+                (account) => account.platform === newAccount.platform && account.identity === newAccount.identity,
+            );
+            const hideIndex = this.hide.findIndex(
+                (account) => account.platform === newAccount.platform && account.identity === newAccount.identity,
+            );
+            if (showIndex !== -1 || hideIndex !== -1) {
+                this.addAccountNotice = 'Account already exist';
+                this.isShowingAddAccountNotice = true;
+            } else {
+                this.show.push(newAccount);
+                this.toAdd.push(newAccount);
+            }
         } else {
             this.addAccountNotice = newAccount.signature;
             this.isShowingAddAccountNotice = true;
@@ -361,6 +374,17 @@ export default class Setup extends Vue {
                 },
                 account.tags,
             );
+        }
+        for (const account of this.toAdd) {
+            const showIndex = this.toDelete.findIndex(
+                (needDeleteAccount) =>
+                    account.platform === needDeleteAccount.platform && account.identity === needDeleteAccount.identity,
+            );
+            if (showIndex === -1) {
+                await (<IRSS3>this.rss3).accounts.post(account);
+            } else {
+                this.toDelete.splice(showIndex, 1);
+            }
         }
         for (const account of this.toDelete) {
             await (<IRSS3>this.rss3).accounts.delete(account);
