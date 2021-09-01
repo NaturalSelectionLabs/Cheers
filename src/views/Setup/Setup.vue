@@ -310,7 +310,13 @@ export default class Setup extends Vue {
             newProfile.avatar = [avatarUrl];
         }
         await (<IRSS3>this.rss3).profile.patch(newProfile);
-        await (<IRSS3>this.rss3).files.sync();
+        try {
+            await (<IRSS3>this.rss3).files.sync();
+        } catch (e) {
+            console.log(e);
+            this.isLoading = false;
+            return;
+        }
         this.clearEdited();
         await RSS3.getAssetProfile((<IRSS3>this.rss3).account.address, true);
         this.$gtag.event('finishEditProfile', { userid: (<IRSS3>this.rss3).account.address });

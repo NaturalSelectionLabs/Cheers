@@ -307,7 +307,13 @@ export default class SetupNFTs extends Vue {
             } // todo: else: how to?
         }
 
-        await (<IRSS3>this.rss3).files.sync();
+        try {
+            await (<IRSS3>this.rss3).files.sync();
+        } catch (e) {
+            console.log(e);
+            this.isLoading = false;
+            return;
+        }
         this.isLoading = false;
         window.history.back(); // Back
     }
