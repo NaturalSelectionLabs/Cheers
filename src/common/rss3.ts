@@ -110,9 +110,6 @@ export default {
                 case 'walletConnect':
                     await walletConnect();
                     return true;
-                // case 'metamask':
-                //     await metamaskConnect();
-                //     return true;
                 default:
                     return false;
             }
@@ -160,20 +157,11 @@ export default {
 
         const signature = await metaMaskWeb3.eth.personal.sign(rss3.accounts.getSigMessage(newTmpAddress), address, '');
 
-        const newAddress: RSS3Account = {
+        return {
             platform: platform,
             identity: address,
             signature: signature,
         };
-        try {
-            return await rss3.accounts.post(newAddress);
-        } catch (e) {
-            return {
-                platform: '',
-                identity: '',
-                signature: e,
-            };
-        }
         // await rss3.files.sync();
     },
 };
