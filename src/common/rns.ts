@@ -1,10 +1,12 @@
 import { ethers } from 'ethers';
 import axios from 'axios';
 import config from '@/config';
+import { namehash } from 'ethers/lib/utils';
 
 type SPEED = 'fast' | 'average' | 'fastest' | 'safeLow' | undefined;
-
+type CNAME = 'resolver' | 'token';
 async function callRNSContract(
+    cname: CNAME,
     providerType: 'web3' | 'infura',
     speed: SPEED,
     method: string,
@@ -22,9 +24,13 @@ async function callRNSContract(
         });
     }
 
-    const contract = await new ethers.Contract(getRNSContract(), config.rns.contract.rnsABI, signer);
+    const contract = await new ethers.Contract(
+        getRNSContract(cname),
+        config.rns.contract[cname],
+        signer ? signer : provider,
+    );
     let isView = false;
-    const abi = config.rns.contract.rnsABI.find((item: any) => item.name === 'view');
+    const abi = config.rns.contract[cname].find((item: any) => item.name === 'view');
     if (abi) {
         isView = abi.stateMutability === 'view';
     }
@@ -48,9 +54,9 @@ async function makeTxParams(speed: SPEED): Promise<ethers.Overrides> {
     };
 }
 
-function getRNSContract() {
+function getRNSContract(cname: CNAME) {
     if (config.rns.test) {
-        return config.rns.contractNetworks.ropsten.rnsAddr;
+        return config.rns.contractNetworks.ropsten[cname];
     } else {
         return '';
     }
@@ -58,12 +64,13 @@ function getRNSContract() {
 
 export default {
     async register(name: string, speed: SPEED = 'average') {
-        return callRNSContract('web3', speed, 'register', name);
+        return callRNSContract('token', 'web3', speed, 'register', name);
     },
     addr2Name(addr: string, speed: SPEED = 'average') {
-        return callRNSContract('web3', speed, 'getName', addr);
+        //TODO
+        return callRNSContract('resolver', 'web3', speed, 'getName', addr);
     },
     name2Addr(name: string, speed: SPEED = 'average') {
-        return callRNSContract('infura', speed, 'getAddress', name);
+        return callRNSContract('resolver', 'infura', speed, 'addr', namehash(name));
     },
 };

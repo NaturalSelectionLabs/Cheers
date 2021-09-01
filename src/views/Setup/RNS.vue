@@ -106,7 +106,8 @@ export default class RNS extends Vue {
     $gtag: any;
 
     async mounted() {
-        console.log(RNSUtils);
+        console.log('atlas addr:', await RNSUtils.name2Addr('atlas.pass3.me'));
+        console.log('rss3 addr:', await RNSUtils.name2Addr('rss3.pass3.me'));
         // if (!(await RSS3.reconnect())) {
         //     localStorage.setItem('redirectFrom', this.$route.fullPath);
         //     await this.$router.push('/');
@@ -123,8 +124,8 @@ export default class RNS extends Vue {
 
     async verifyRNS() {
         this.rns = this.rns.toLowerCase();
-        if (this.rns.length < 5) {
-            this.notice = 'An RNS must have at least 5 characters';
+        if (this.rns.length < 3) {
+            this.notice = 'An RNS must have at least 3 characters';
             return;
         }
         this.isLoading = true;

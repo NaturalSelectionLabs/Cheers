@@ -1,16 +1,16 @@
 export default {
     rns: {
         test: true,
-        infuraProjectId: '76af1228cdf345d2bff6a9c0f35112e1',
+        infuraProjectId: '8118c8ed6c6749eb8b449eaf5e580719',
         contractNetworks: {
             ropsten: {
-                rnsResolver: '0x2AfC2dbB401F2f3d1b86e20058b2452BBbea975b',
-                passToken: '0xc29B4085f84626E8884356A209cf13c3E7566540',
+                resolver: '0x2AfC2dbB401F2f3d1b86e20058b2452BBbea975b',
+                token: '0xc29B4085f84626E8884356A209cf13c3E7566540',
             },
         },
         contract: {
             // rns contract abi
-            rnsResolverABI: [
+            resolver: [
                 {
                     anonymous: false,
                     inputs: [
@@ -195,7 +195,7 @@ export default {
                     type: 'function',
                 },
             ],
-            passTokenABI: [
+            token: [
                 {
                     inputs: [],
                     stateMutability: 'nonpayable',
