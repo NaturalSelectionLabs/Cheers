@@ -36,6 +36,27 @@
                 </span>
             </template>
         </Modal>
+        <Modal v-if="isShowingNotice">
+            <template #header>
+                <h1>Oops!</h1>
+            </template>
+            <template #body>
+                <p class="mt-1 p-4">
+                    {{ notice }}
+                </p>
+            </template>
+            <template #footer>
+                <div class="flex flex-row gap-5">
+                    <Button
+                        size="sm"
+                        class="w-72 bg-primary text-white shadow-primary"
+                        @click="isShowingNotice = false"
+                    >
+                        OK
+                    </Button>
+                </div>
+            </template>
+        </Modal>
     </div>
 </template>
 
@@ -78,6 +99,9 @@ export default class EditProfile extends Vue {
     assets: RSS3AssetShow[] = [];
     rss3: IRSS3 | null = null;
     isLoading: Boolean = false;
+    maxValueLength: Number = 280;
+    notice: String = '';
+    isShowingNotice: Boolean = false;
 
     $gtag: any;
 
@@ -203,14 +227,6 @@ export default class EditProfile extends Vue {
         localStorage.removeItem('profile');
     }
 
-    toManageAccounts() {
-        this.saveEdited();
-        this.$router.push('/setup/accounts');
-    }
-    toManageNFTs() {
-        this.saveEdited();
-        this.$router.push('/setup/nfts');
-    }
     async back() {
         this.clearEdited();
         this.$gtag.event('cancelEditProfile', { userid: (<IRSS3>this.rss3).account.address });
@@ -221,6 +237,18 @@ export default class EditProfile extends Vue {
         this.isLoading = true;
         if (!this.rss3) {
             this.rss3 = await RSS3.get();
+        }
+        if (this.profile.name.length > this.maxValueLength) {
+            this.notice = `Name cannot be longer than ${this.maxValueLength} chars`;
+            this.isLoading = false;
+            this.isShowingNotice = true;
+            return;
+        }
+        if (this.profile.bio.length > this.maxValueLength) {
+            this.notice = `Bio cannot be longer than ${this.maxValueLength} chars`;
+            this.isLoading = false;
+            this.isShowingNotice = true;
+            return;
         }
         const newProfile: RSS3Profile = {
             name: this.profile.name,
