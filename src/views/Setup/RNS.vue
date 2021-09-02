@@ -130,10 +130,18 @@ export default class RNS extends Vue {
         }
         this.isLoading = true;
         // Check if is used
-
-        this.isShowingConfirm = true;
-        this.isLoading = false;
-        this.notice = '';
+        if (
+            (await RNSUtils.name2Addr(`${this.rns}.pass3.me`)).toString() !==
+            '0x0000000000000000000000000000000000000000'
+        ) {
+            // Already taken
+            this.notice = 'Sorry, but this RNS has already been taken.';
+            this.isLoading = false;
+        } else {
+            this.isShowingConfirm = true;
+            this.isLoading = false;
+            this.notice = '';
+        }
     }
 
     async confirm() {
