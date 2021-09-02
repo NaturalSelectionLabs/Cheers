@@ -264,7 +264,7 @@ export default class Setup extends Vue {
         if (!account.tags) {
             return -1;
         }
-        const orderPattern = /^order:(-?\d+)$/i;
+        const orderPattern = /^pass:order:(-?\d+)$/i;
         for (const tag of account.tags) {
             if (orderPattern.test(tag)) {
                 return parseInt(orderPattern.exec(tag)?.[1] || '-1');
@@ -277,13 +277,13 @@ export default class Setup extends Vue {
         if (!account.tags) {
             account.tags = [];
         } else {
-            const orderPattern = /^order:(-?\d+)$/i;
+            const orderPattern = /^pass:order:(-?\d+)$/i;
             const oldIndex = account.tags.findIndex((tag) => orderPattern.test(tag));
             if (oldIndex !== -1) {
                 account.tags.splice(oldIndex, 1);
             }
         }
-        account.tags.push(`order:${order}`);
+        account.tags.push(`pass:order:${order}`);
     }
 
     async back() {
@@ -347,7 +347,7 @@ export default class Setup extends Vue {
             }
             if (account.tags.includes('hidden')) {
                 // Newly shown
-                account.tags.splice(account.tags.indexOf('hidden'), 1);
+                account.tags.splice(account.tags?.indexOf('hidden'), 1);
             }
             this.setTaggedOrder(account, order);
             await (<IRSS3>this.rss3).accounts.patchTags(

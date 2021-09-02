@@ -80,10 +80,13 @@ export default class NFTs extends Vue {
         }
 
         const data = await RSS3.getAssetProfile(address);
+        if (!data) {
+            return;
+        }
 
         if (data) {
-            this.rss3Profile.avatar = data.rss3File.profile?.avatar?.[0];
-            this.rss3Profile.username = data.rss3File.profile?.name?.[0];
+            this.rss3Profile.avatar = data.rss3File.profile?.avatar?.[0] || '';
+            this.rss3Profile.username = data.rss3File.profile?.name?.[0] || '';
             this.rss3Profile.address = address;
 
             data.assets.ethereum.forEach((item: { nft: any[] }, aid: any) => {

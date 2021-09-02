@@ -128,7 +128,7 @@ export default class EditProfile extends Vue {
         if (!taggedElement.tags) {
             return -1;
         }
-        const orderPattern = /^order:(-?\d+)$/i;
+        const orderPattern = /^pass:order:(-?\d+)$/i;
         for (const tag of taggedElement.tags) {
             if (orderPattern.test(tag)) {
                 return parseInt(orderPattern.exec(tag)?.[1] || '-1');
@@ -143,7 +143,7 @@ export default class EditProfile extends Vue {
             platform: 'Ethereum',
             identity: (<IRSS3>this.rss3).account.address,
             signature: '',
-            tags: ['order:-1'],
+            tags: ['pass:order:-1'],
         });
         // Get accounts
         const accounts = await (<IRSS3>this.rss3).accounts.get((<IRSS3>this.rss3).account.address);
@@ -161,6 +161,9 @@ export default class EditProfile extends Vue {
 
     async loadAssets() {
         const data = await RSS3.getAssetProfile((<IRSS3>this.rss3).account.address);
+        if (!data) {
+            return;
+        }
         const queriedAssets: RSS3AssetShow[] = []; // Real-time NFTs queried from asset
         for (const key in data.assets) {
             // key: ethereum / bsc / ...
@@ -179,7 +182,7 @@ export default class EditProfile extends Vue {
             });
         }
 
-        const filedAssets: RSS3Asset[] = data.rss3File.assets; // NFTs cached in RSS3 file `asset`
+        const filedAssets: RSS3Asset[] = data.rss3File.assets || []; // NFTs cached in RSS3 file `asset`
 
         queriedAssets.forEach((nft: RSS3AssetShow) => {
             const i = filedAssets.findIndex(
@@ -191,8 +194,8 @@ export default class EditProfile extends Vue {
                 }
                 nft.tags.push(...(filedAssets[i].tags || []));
                 nft.tags.forEach((tag: string) => {
-                    if (tag.startsWith('order:')) {
-                        nft.order = parseInt(tag.substr(6), 10);
+                    if (tag.startsWith('pass:order:')) {
+                        nft.order = parseInt(tag.substr(11));
                     }
                 });
                 if (!nft.tags.includes('hidden')) {

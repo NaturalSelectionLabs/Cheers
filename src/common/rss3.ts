@@ -1,18 +1,30 @@
 import WalletConnectProvider from '@walletconnect/web3-provider';
 import Web3 from 'web3';
 import RSS3 from 'rss3-next';
+import { RSS3Index } from 'rss3-next/types/rss3';
 import { RSS3Account, RSS3AccountInput } from 'rss3-next/types/rss3';
 import axios from 'axios';
+import { NFTInfo } from './types';
 
 const infuraId = '76af1228cdf345d2bff6a9c0f35112e1';
 const endpoint = 'https://rss3-asset-hub-g886a.ondigitalocean.app';
 
 let rss3: RSS3 | null;
 let web3: Web3 | null;
-let assets = new Map();
+let assets: Map<string, IAssetProfile> = new Map();
 let provider: WalletConnectProvider;
 
 export type IRSS3 = RSS3;
+
+export interface IAssetProfile {
+    rss3File: RSS3Index;
+    assets: {
+        [key: string]: {
+            account: string;
+            nft: NFTInfo[];
+        }[];
+    };
+}
 
 async function walletConnect() {
     provider = new WalletConnectProvider({
@@ -122,15 +134,20 @@ export default {
         return rss3;
     },
     getAssetProfile: async (address: string, refresh: boolean = false) => {
-        if (!address) {
-            return null;
-        }
         if (assets.has(address) && !refresh) {
-            return assets.get(address);
+            return <IAssetProfile>assets.get(address);
         } else {
-            const res = await axios.get(`${endpoint}/asset-profile/${address}`);
-            assets.set(address, res.data);
-            return res.data;
+            let data: IAssetProfile | null = null;
+            try {
+                const res = await axios.get(`${endpoint}/asset-profile/${address}`);
+                if (res && res.data) {
+                    data = res.data;
+                    assets.set(address, <IAssetProfile>data);
+                }
+            } catch (error) {
+                data = null;
+            }
+            return data;
         }
     },
     addNewAccount: async (platform: string): Promise<RSS3Account> => {
