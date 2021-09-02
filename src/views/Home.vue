@@ -3,7 +3,8 @@
         <Profile
             :avatar="rss3Profile.avatar"
             :username="rss3Profile.username"
-            :address="rns"
+            :address="rss3Profile.address"
+            :rns="rns"
             :followers="rss3Relations.followers"
             :followings="rss3Relations.followings"
             :bio="rss3Profile.bio"
@@ -204,6 +205,7 @@ interface Relations {
 })
 export default class Home extends Vue {
     rns: string = '';
+    ethAddress: string = '';
     public rss3?: IRSS3;
     public isFollowing: boolean = true;
     public isOwner: boolean = false;
@@ -236,15 +238,17 @@ export default class Home extends Vue {
             if (!address.endsWith('.pass3.me')) {
                 // Might be address type
                 // Get RNS and redirect
+                this.ethAddress = address;
                 this.rns = (await RNSUtils.addr2Name(address)).toString();
                 if (this.rns !== '') {
                     await this.$router.push(`/${this.rns}`);
                 }
             } else {
                 // RNS
-                const ethAddress = (await RNSUtils.name2Addr(address)).toString();
-                if (parseInt(ethAddress) !== 0) {
-                    if (ethAddress === owner) {
+                this.rns = address;
+                this.ethAddress = (await RNSUtils.name2Addr(address)).toString();
+                if (parseInt(this.ethAddress) !== 0) {
+                    if (this.ethAddress === owner) {
                         this.isOwner = true;
                     }
                 }
@@ -259,13 +263,14 @@ export default class Home extends Vue {
                 if (this.rns === '') {
                     await this.$router.push('/rns');
                 } else {
-                    address = owner;
+                    this.ethAddress = owner;
                     this.isOwner = true;
                 }
             }
         }
 
-        const data = await RSS3.getAssetProfile(address);
+        console.log(this.ethAddress);
+        const data = await RSS3.getAssetProfile(this.ethAddress);
         if (!data) {
             return;
         }
@@ -277,15 +282,15 @@ export default class Home extends Vue {
         this.rss3Profile.avatar = profile?.avatar?.[0] || defaultAvatar;
         this.rss3Profile.username = profile?.name || '';
         this.rss3Profile.bio = profile?.bio || '';
-        this.rss3Profile.address = address;
+        this.rss3Profile.address = this.ethAddress;
 
-        this.rss3Relations.followers = await this.rss3?.backlinks.get(address, 'following');
-        this.rss3Relations.followings = (await this.rss3?.links.get(address, 'following'))?.list || [];
+        this.rss3Relations.followers = await this.rss3?.backlinks.get(this.ethAddress, 'following');
+        this.rss3Relations.followings = (await this.rss3?.links.get(this.ethAddress, 'following'))?.list || [];
 
         if (data) {
             this.accounts.push({
                 platform: 'Ethereum',
-                identity: address,
+                identity: this.ethAddress,
                 signature: '',
                 tags: ['pass:order:-1'],
             });
@@ -305,8 +310,8 @@ export default class Home extends Vue {
 
         // Split time-consuming methods from main thread, so it won't stuck the page loading progress
         setTimeout(async () => {
-            this.rss3Relations.followers = (await this.rss3?.backlinks.get(address, 'following')) || [];
-            this.rss3Relations.followings = (await this.rss3?.links.get(address, 'following'))?.list || [];
+            this.rss3Relations.followers = (await this.rss3?.backlinks.get(this.ethAddress, 'following')) || [];
+            this.rss3Relations.followings = (await this.rss3?.links.get(this.ethAddress, 'following'))?.list || [];
         }, 0);
     }
 
@@ -357,7 +362,7 @@ export default class Home extends Vue {
             // No following list. Not following
             this.isFollowing = false;
             return false;
-        } else if (followList.list?.includes(<string>this.$route.params.address)) {
+        } else if (followList.list?.includes(this.ethAddress)) {
             this.isFollowing = true;
             return true;
         } else {
@@ -370,7 +375,7 @@ export default class Home extends Vue {
         const rss3 = await RSS3.get();
         if (!(await this.checkIsFollowing())) {
             this.$gtag.event('followFriend', { userid: this.rss3Profile['address'] });
-            await rss3?.link.post('following', <string>this.$route.params.address);
+            await rss3?.link.post('following', this.ethAddress);
         }
         this.isFollowing = true;
     }
@@ -379,7 +384,7 @@ export default class Home extends Vue {
         const rss3 = await RSS3.get();
         if (await this.checkIsFollowing()) {
             this.$gtag.event('unfollowFriend', { userid: this.rss3Profile['address'] });
-            await rss3?.link.delete('following', this.rss3Profile.address);
+            await rss3?.link.delete('following', this.ethAddress);
         }
         this.isFollowing = false;
     }
