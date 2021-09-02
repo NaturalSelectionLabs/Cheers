@@ -171,7 +171,7 @@ export default class RNS extends Vue {
     async confirm() {
         await RNSUtils.register(this.rns);
         this.isShowingConfirm = false;
-        // Redirect to waiting page
+        await this.$router.push('/pending');
     }
 }
 </script>

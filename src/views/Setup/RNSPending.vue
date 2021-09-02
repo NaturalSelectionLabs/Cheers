@@ -13,10 +13,46 @@
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
 import Loading from '@/components/Loading.vue';
+import RSS3, { IRSS3 } from '@/common/rss3';
+import RNSUtils from '@/common/rns';
+
 @Options({
     components: { Loading },
 })
-export default class RNSPending extends Vue {}
+export default class RNSPending extends Vue {
+    rss3: IRSS3 | null = null;
+    rns: string = '';
+    $gtag: any;
+
+    async mounted() {
+        if (!(await RSS3.reconnect())) {
+            localStorage.setItem('redirectFrom', this.$route.fullPath);
+            await this.$router.push('/');
+        } else {
+            this.rss3 = await RSS3.get();
+            await this.checkAndRedirect();
+            setInterval(this.checkAndRedirect, 20000);
+        }
+    }
+
+    async checkAndRedirect() {
+        if ((await RNSUtils.addr2Name((<IRSS3>this.rss3).account.address)).toString() !== '') {
+            // Already setup RNS
+            const profile = await (<IRSS3>this.rss3).profile.get();
+            if (!profile) {
+                // Setup Profile
+                this.$gtag.event('sign_up', { userid: (<IRSS3>this.rss3).account.address });
+                await this.$router.push('/setup');
+            } else {
+                // Login
+                this.$gtag.event('login', { userid: (<IRSS3>this.rss3).account.address });
+                const redirectFrom = localStorage.getItem('redirectFrom');
+                localStorage.removeItem('redirectFrom');
+                await this.$router.push(redirectFrom || '/home');
+            }
+        }
+    }
+}
 </script>
 
 <style lang="postcss" scoped></style>
