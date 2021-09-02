@@ -191,6 +191,7 @@ import RSS3, { IRSS3, defaultAvatar } from '@/common/rss3';
 import { RSS3Account, RSS3Asset, RSS3Backlink, RSS3ID } from 'rss3-next/types/rss3';
 import { DetailedNFT, RSS3AssetShow } from '@/common/types';
 import Modal from '@/components/Modal.vue';
+import RNSUtils from '@/common/rns';
 
 interface ProfileInfo {
     avatar: string;
@@ -237,8 +238,19 @@ export default class Home extends Vue {
         let address: string;
         if (this.$route.params.address) {
             address = <string>this.$route.params.address;
-            if (address === owner) {
-                this.isOwner = true;
+            if (address.startsWith('0x')) {
+                // Might be address type
+                // Get RNS and redirect
+            } else {
+                // RNS
+                const ethAddress = (await RNSUtils.name2Addr(`${address}.pass3.me`)).toString();
+                if (ethAddress === '0x0000000000000000000000000000000000000000') {
+                    // Not found
+                } else {
+                    if (ethAddress === owner) {
+                        this.isOwner = true;
+                    }
+                }
             }
         } else {
             // address = 'RSS3 Address';

@@ -49,6 +49,7 @@ import Button from '@/components/Button.vue';
 import RSS3, { IRSS3 } from '@/common/rss3';
 import Modal from '@/components/Modal.vue';
 import { RSS3Profile } from 'rss3-next/types/rss3';
+import RNSUtils from '@/common/rns';
 import WalletConnect from '@/components/Icons/WalletConnect.vue';
 import Metamask from '@/components/Icons/Metamask.vue';
 
@@ -98,6 +99,8 @@ export default class Index extends Vue {
         if (!this.rss3) {
             return;
         }
+        // Check if setup RNS
+
         let profile;
         let address: string = '';
         try {
