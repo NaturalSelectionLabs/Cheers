@@ -1,6 +1,6 @@
 <template>
     <div class="onboarding h-full text-center bg-cover bg-fixed flex items-center justify-center">
-        <div class="body h-2/3 flex flex-col justify-between">
+        <div class="body px-4 h-2/3 flex flex-col justify-between">
             <h1 class="text-8xl text-primary font-bold">Hello</h1>
             <div class="leading-17.5 text-white w-83.5 text-2xl mx-auto">
                 <Button
@@ -21,7 +21,7 @@
                     <span> Metamask </span>
                 </Button>
             </div>
-            <Modal v-show="isLoading">
+            <!-- <Modal v-show="isLoading">
                 <template #body>
                     <span
                         class="
@@ -38,7 +38,25 @@
                         <i class="bx bx-loader-alt bx-spin"></i>
                     </span>
                 </template>
-            </Modal>
+            </Modal> -->
+            <div
+                v-show="isLoading"
+                class="
+                    fixed
+                    w-screen
+                    h-screen
+                    m-0
+                    p-0
+                    top-0
+                    left-0
+                    bg-black bg-opacity-50
+                    flex
+                    justify-center
+                    items-center
+                "
+            >
+                <Loading size="200" />
+            </div>
         </div>
     </div>
 </template>
@@ -51,6 +69,7 @@ import Modal from '@/components/Modal.vue';
 import { RSS3Profile } from 'rss3-next/types/rss3';
 import WalletConnect from '@/components/Icons/WalletConnect.vue';
 import Metamask from '@/components/Icons/Metamask.vue';
+import Loading from '@/components/Loading.vue';
 
 @Options({
     components: {
@@ -58,6 +77,7 @@ import Metamask from '@/components/Icons/Metamask.vue';
         WalletConnect,
         Modal,
         Button,
+        Loading,
     },
 })
 export default class Index extends Vue {

@@ -18,7 +18,7 @@
             >
             <Button size="lg" class="flex-1 text-lg bg-primary text-white shadow-primary" @click="save">Save</Button>
         </div>
-        <Modal v-show="isLoading">
+        <!-- <Modal v-show="isLoading">
             <template #body>
                 <span
                     class="
@@ -35,7 +35,13 @@
                     <i class="bx bx-loader-alt bx-spin"></i>
                 </span>
             </template>
-        </Modal>
+        </Modal> -->
+        <div
+            v-show="isLoading"
+            class="fixed w-screen h-screen m-0 p-0 top-0 left-0 bg-black bg-opacity-50 flex justify-center items-center"
+        >
+            <Loading size="200" />
+        </div>
     </div>
 </template>
 
@@ -48,6 +54,8 @@ import AccountItem from '@/components/AccountItem.vue';
 import NFTItem from '@/components/NFT/NFTItem.vue';
 import Input from '@/components/Input.vue';
 import Modal from '@/components/Modal.vue';
+import Loading from '@/components/Loading.vue';
+
 import { RSS3Account, RSS3Asset, RSS3Profile } from 'rss3-next/types/rss3';
 import RSS3, { IRSS3 } from '@/common/rss3';
 
@@ -62,6 +70,7 @@ import { DetailedNFT, RSS3AssetShow } from '@/common/types';
         AccountItem,
         NFTItem,
         Input,
+        Loading,
     },
 })
 export default class EditProfile extends Vue {
