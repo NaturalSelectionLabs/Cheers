@@ -92,23 +92,20 @@ export default class Accounts extends Vue {
             this.isOwner = true;
         }
 
-        const data = await RSS3.getAssetProfile(address);
-        if (data) {
-            this.rss3Profile.avatar = data.rss3File.profile?.avatar?.[0];
-            this.rss3Profile.username = data.rss3File.profile?.name?.[0];
-            this.rss3Profile.address = address;
+        const profile = await rss3.profile.get(address);
+        this.rss3Profile.avatar = profile?.avatar?.[0] || '';
+        this.rss3Profile.username = profile?.name?.[0] || '';
+        this.rss3Profile.address = address;
 
-            this.accounts.push({
-                platform: 'Ethereum',
-                identity: <string>this.$route.params.address,
-                signature: '',
-                tags: ['order:-1'],
-            });
+        this.accounts.push({
+            platform: 'Ethereum',
+            identity: <string>this.$route.params.address,
+            signature: '',
+            tags: ['pass:order:-1'],
+        });
 
-            if (data.rss3File.accounts) {
-                await this.loadAccounts(<RSS3Account[]>data.rss3File.accounts);
-            }
-        }
+        const accounts = await rss3.accounts.get();
+        await this.loadAccounts(accounts);
     }
     /**
      * filter
@@ -149,7 +146,7 @@ export default class Accounts extends Vue {
         if (!taggedElement.tags) {
             return -1;
         }
-        const orderPattern = /^order:(-?\d+)$/i;
+        const orderPattern = /^pass:order:(-?\d+)$/i;
         for (const tag of taggedElement.tags) {
             if (orderPattern.test(tag)) {
                 return parseInt(orderPattern.exec(tag)?.[1] || '-1');

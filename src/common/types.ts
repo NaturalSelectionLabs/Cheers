@@ -34,3 +34,34 @@ export interface RSS3AssetShow extends RSS3Asset {
     image_url: string;
     order: number;
 }
+
+export interface NFTInfo {
+    chain: string;
+    token_id: string;
+    name?: string;
+    description?: string | null;
+    image_url?: string | null;
+    image_preview_url?: string | null;
+    image_thumbnail_url?: string | null;
+    animation_url?: string | null;
+    animation_original_url?: string | null;
+    asset_contract: {
+        address: string;
+        created_date?: string;
+        symbol?: string;
+    };
+    collection?: {
+        name: string | null;
+        description: string | null;
+        image_url: string | null;
+        created_at: string;
+    };
+    traits?: {
+        trait_type: string | null;
+        value: string | null;
+    }[];
+}
+
+export interface RSS3AssetWithInfo extends RSS3Asset {
+    info?: NFTInfo;
+}

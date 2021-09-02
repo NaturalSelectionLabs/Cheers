@@ -251,6 +251,9 @@ export default class Home extends Vue {
         }
 
         const data = await RSS3.getAssetProfile(address);
+        if (!data) {
+            return;
+        }
 
         // const profile = await rss3.profile.get(address);
         const profile = data.rss3File.profile;
@@ -269,12 +272,12 @@ export default class Home extends Vue {
                 platform: 'Ethereum',
                 identity: address,
                 signature: '',
-                tags: ['order:-1'],
+                tags: ['pass:order:-1'],
             });
             await this.loadAccounts(<RSS3Account[]>data.rss3File.accounts);
 
             // await this.loadAssets(data);
-            data.assets.ethereum.forEach((item: { nft: any[] }, aid: any) => {
+            data.assets.ethereum.forEach((item, aid: any) => {
                 item.nft.forEach((nft, i) => {
                     this.assets.push({
                         account: aid,
@@ -296,7 +299,7 @@ export default class Home extends Vue {
         if (!taggedElement.tags) {
             return -1;
         }
-        const orderPattern = /^order:(-?\d+)$/i;
+        const orderPattern = /^pass:order:(-?\d+)$/i;
         for (const tag of taggedElement.tags) {
             if (orderPattern.test(tag)) {
                 return parseInt(orderPattern.exec(tag)?.[1] || '-1');
