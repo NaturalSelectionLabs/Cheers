@@ -108,6 +108,10 @@ export default class RNS extends Vue {
     async mounted() {
         console.log('atlas addr:', await RNSUtils.name2Addr('atlas.pass3.me'));
         console.log('rss3 addr:', await RNSUtils.name2Addr('rss3.pass3.me'));
+        console.log(
+            'name of 0x8c23B96f2fb77AaE1ac2832debEE30f09da7af3C:',
+            await RNSUtils.addr2Name('0x8c23B96f2fb77AaE1ac2832debEE30f09da7af3C'),
+        );
         // if (!(await RSS3.reconnect())) {
         //     localStorage.setItem('redirectFrom', this.$route.fullPath);
         //     await this.$router.push('/');

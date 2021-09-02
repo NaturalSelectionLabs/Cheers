@@ -1,7 +1,7 @@
 import { ethers } from 'ethers';
 import axios from 'axios';
 import config from '@/config';
-import { namehash } from 'ethers/lib/utils';
+import { utils } from 'ethers/lib';
 
 type SPEED = 'fast' | 'average' | 'fastest' | 'safeLow' | undefined;
 type CNAME = 'resolver' | 'token';
@@ -30,7 +30,7 @@ async function callRNSContract(
         signer ? signer : provider,
     );
     let isView = false;
-    const abi = config.rns.contract[cname].find((item: any) => item.name === 'view');
+    const abi = config.rns.contract[cname].find((item: any) => item.name === method);
     if (abi) {
         isView = abi.stateMutability === 'view';
     }
@@ -62,15 +62,29 @@ function getRNSContract(cname: CNAME) {
     }
 }
 
+// sha3HexAddress https://eips.ethereum.org/EIPS/eip-181
+function sha3HexAddress(addr: string) {
+    addr = '00' + addr.slice(2);
+    const lookup = '3031323334353637383961626364656600000000000000000000000000000000';
+    let res = '';
+    for (let i = 40; i > 0; i--) {
+        const bit = Number('0x' + addr.slice(i, i + 2)) & 0xf;
+        res = lookup.slice(2 * bit, 2 * bit + 2) + res;
+    }
+    return utils.keccak256('0x' + res);
+}
+
 export default {
     async register(name: string, speed: SPEED = 'average') {
         return callRNSContract('token', 'web3', speed, 'register', name);
     },
     addr2Name(addr: string, speed: SPEED = 'average') {
-        //TODO
-        return callRNSContract('resolver', 'web3', speed, 'getName', addr);
+        const reverseNode = '0x91d1777781884d03a6757a803996e38de2a42967fb37eeaca72729271025a9e2';
+        const addrHex = sha3HexAddress(addr.toLowerCase());
+        const node = utils.keccak256(utils.defaultAbiCoder.encode(['bytes32', 'bytes32'], [reverseNode, addrHex]));
+        return callRNSContract('resolver', 'web3', speed, 'name', node);
     },
     name2Addr(name: string, speed: SPEED = 'average') {
-        return callRNSContract('resolver', 'infura', speed, 'addr', namehash(name));
+        return callRNSContract('resolver', 'infura', speed, 'addr', utils.namehash(name));
     },
 };

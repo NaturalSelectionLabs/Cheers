@@ -1,7 +1,7 @@
 export default {
     rns: {
         test: true,
-        infuraProjectId: '8118c8ed6c6749eb8b449eaf5e580719',
+        infuraProjectId: '76af1228cdf345d2bff6a9c0f35112e1',
         contractNetworks: {
             ropsten: {
                 resolver: '0x2AfC2dbB401F2f3d1b86e20058b2452BBbea975b',
