@@ -7,7 +7,9 @@
             <span class="username">
                 {{ $props.name }}
             </span>
-            <span class="address"> {{ $props.address.slice(0, 6) }}...{{ $props.address.slice(-4) }} </span>
+            <span class="address">
+                {{ $props.address }}
+            </span>
         </div>
     </div>
 </template>

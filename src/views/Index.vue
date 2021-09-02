@@ -69,6 +69,35 @@ export default class Index extends Vue {
 
     async mounted() {
         if (await RSS3.reconnect()) {
+            this.rss3 = await RSS3.get();
+            await this.initRedirect();
+        }
+    }
+
+    async initRedirect() {
+        let profile: RSS3Profile | null = null;
+        let address: string = '';
+        try {
+            profile = await (<IRSS3>this.rss3).profile.get();
+            address = (<IRSS3>this.rss3).account.address;
+            console.log(profile);
+        } catch (e) {
+            console.error(e);
+        }
+        this.$gtag.config(address);
+
+        // Check if setup RNS
+        if ((await RNSUtils.addr2Name(address)).toString() === '') {
+            // Setup RNS
+            // this.$gtag.event('rns', { userid: address });
+            await this.$router.push('/rns');
+        } else if (!profile) {
+            // Setup Profile
+            this.$gtag.event('sign_up', { userid: address });
+            await this.$router.push('/setup');
+        } else {
+            // Login
+            this.$gtag.event('login', { userid: address });
             const redirectFrom = localStorage.getItem('redirectFrom');
             localStorage.removeItem('redirectFrom');
             await this.$router.push(redirectFrom || '/home');
@@ -96,30 +125,8 @@ export default class Index extends Vue {
     }
 
     async verifyProfile() {
-        if (!this.rss3) {
-            return;
-        }
-        // Check if setup RNS
-
-        let profile;
-        let address: string = '';
-        try {
-            profile = await this.rss3.profile.get();
-            address = this.rss3.account.address;
-            console.log(profile);
-        } catch (e) {
-            console.error(e);
-        }
-        if (profile) {
-            this.$gtag.config(address);
-            this.$gtag.event('login', { userid: address });
-            const redirectFrom = localStorage.getItem('redirectFrom');
-            localStorage.removeItem('redirectFrom');
-            await this.$router.push(redirectFrom || '/home');
-        } else {
-            this.$gtag.config(address);
-            this.$gtag.event('sign_up', { userid: address });
-            await this.$router.push('/setup');
+        if (this.rss3) {
+            await this.initRedirect();
         }
     }
 }

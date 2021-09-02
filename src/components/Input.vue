@@ -3,6 +3,9 @@
         v-if="isSingleLine"
         type="text"
         class="input"
+        :class="{
+            error: $props.isError,
+        }"
         :placeholder="placeholder"
         :value="modelValue"
         @input="$emit('update:modelValue', $event.target.value)"
@@ -10,6 +13,9 @@
     <textarea
         v-else
         class="input textarea"
+        :class="{
+            error: $props.isError,
+        }"
         :placeholder="placeholder"
         :value="modelValue"
         @input="$emit('update:modelValue', $event.target.value)"
@@ -24,6 +30,7 @@ import { Options, Vue } from 'vue-class-component';
         modelValue: String,
         placeholder: String,
         isSingleLine: Boolean,
+        isError: Boolean,
     },
     emits: ['update:modelValue'],
 })
@@ -38,6 +45,10 @@ export default class Input extends Vue {}
 
     .textarea {
         @apply h-40;
+    }
+
+    .error {
+        @apply bg-red-100;
     }
 }
 </style>

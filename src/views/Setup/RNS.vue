@@ -13,6 +13,7 @@
                     class="input"
                     :is-single-line="true"
                     placeholder="Enter an RNS"
+                    :is-error="notice !== ''"
                     v-model="rns"
                     @keyup.enter.native="verifyRNS"
                 />
@@ -106,18 +107,33 @@ export default class RNS extends Vue {
     $gtag: any;
 
     async mounted() {
-        console.log('atlas addr:', await RNSUtils.name2Addr('atlas.pass3.me'));
-        console.log('rss3 addr:', await RNSUtils.name2Addr('rss3.pass3.me'));
-        console.log(
-            'name of 0x8c23B96f2fb77AaE1ac2832debEE30f09da7af3C:',
-            await RNSUtils.addr2Name('0x8c23B96f2fb77AaE1ac2832debEE30f09da7af3C'),
-        );
-        // if (!(await RSS3.reconnect())) {
-        //     localStorage.setItem('redirectFrom', this.$route.fullPath);
-        //     await this.$router.push('/');
-        // } else {
-        //     this.rss3 = await RSS3.get();
-        // }
+        // console.log('atlas addr:', await RNSUtils.name2Addr('atlas.pass3.me'));
+        // console.log('rss3 addr:', await RNSUtils.name2Addr('rss3.pass3.me'));
+        // console.log(
+        //     'name of 0x8c23B96f2fb77AaE1ac2832debEE30f09da7af3C:',
+        //     await RNSUtils.addr2Name('0x8c23B96f2fb77AaE1ac2832debEE30f09da7af3C'),
+        // );
+        if (!(await RSS3.reconnect())) {
+            localStorage.setItem('redirectFrom', this.$route.fullPath);
+            await this.$router.push('/');
+        } else {
+            this.rss3 = await RSS3.get();
+            if ((await RNSUtils.addr2Name((<IRSS3>this.rss3).account.address)).toString() !== '') {
+                // Already setup RNS
+                const profile = await (<IRSS3>this.rss3).profile.get();
+                if (!profile) {
+                    // Setup Profile
+                    this.$gtag.event('sign_up', { userid: (<IRSS3>this.rss3).account.address });
+                    await this.$router.push('/setup');
+                } else {
+                    // Login
+                    this.$gtag.event('login', { userid: (<IRSS3>this.rss3).account.address });
+                    const redirectFrom = localStorage.getItem('redirectFrom');
+                    localStorage.removeItem('redirectFrom');
+                    await this.$router.push(redirectFrom || '/home');
+                }
+            }
+        }
     }
 
     async back() {
@@ -134,10 +150,7 @@ export default class RNS extends Vue {
         }
         this.isLoading = true;
         // Check if is used
-        if (
-            (await RNSUtils.name2Addr(`${this.rns}.pass3.me`)).toString() !==
-            '0x0000000000000000000000000000000000000000'
-        ) {
+        if (parseInt((await RNSUtils.name2Addr(`${this.rns}.pass3.me`)).toString()) !== 0) {
             // Already taken
             this.notice = 'Sorry, but this RNS has already been taken.';
             this.isLoading = false;
@@ -151,6 +164,7 @@ export default class RNS extends Vue {
     async confirm() {
         await RNSUtils.register(this.rns);
         this.isShowingConfirm = false;
+        // Redirect to waiting page
     }
 }
 </script>

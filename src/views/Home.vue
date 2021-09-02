@@ -3,7 +3,7 @@
         <Profile
             :avatar="rss3Profile.avatar"
             :username="rss3Profile.username"
-            :address="rss3Profile.address"
+            :address="rns"
             :followers="rss3Relations.followers"
             :followings="rss3Relations.followings"
             :bio="rss3Profile.bio"
@@ -37,9 +37,6 @@
             :is-having-content="true"
             :is-single-line="true"
         >
-            <template #accessibility>
-                <!-- <i class="bx bx-info-circle" style="color: rgba(0, 0, 0, 0.2)" /> -->
-            </template>
             <template #header-button>
                 <div v-if="isOwner" class="flex flex-row gap-2">
                     <Button
@@ -128,9 +125,6 @@
             class="w-auto"
             :is-having-content="true"
         >
-            <template #accessibility>
-                <!-- <i class="bx bx-info-circle" style="color: rgba(0, 0, 0, 0.2)" /> -->
-            </template>
             <template #content>
                 <Button
                     size="sm"
@@ -209,6 +203,7 @@ interface Relations {
     components: { Button, Card, Profile, AccountItem, NFTItem, Modal },
 })
 export default class Home extends Vue {
+    rns: string = '';
     public rss3?: IRSS3;
     public isFollowing: boolean = true;
     public isOwner: boolean = false;
@@ -235,18 +230,20 @@ export default class Home extends Vue {
         this.rss3 = await RSS3.visitor();
         const owner: string = <string>this.rss3.account.address;
 
-        let address: string;
+        let address: string = '';
         if (this.$route.params.address) {
             address = <string>this.$route.params.address;
-            if (address.startsWith('0x')) {
+            if (!address.endsWith('.pass3.me')) {
                 // Might be address type
                 // Get RNS and redirect
+                this.rns = (await RNSUtils.addr2Name(address)).toString();
+                if (this.rns !== '') {
+                    await this.$router.push(`/${this.rns}`);
+                }
             } else {
                 // RNS
-                const ethAddress = (await RNSUtils.name2Addr(`${address}.pass3.me`)).toString();
-                if (ethAddress === '0x0000000000000000000000000000000000000000') {
-                    // Not found
-                } else {
+                const ethAddress = (await RNSUtils.name2Addr(address)).toString();
+                if (parseInt(ethAddress) !== 0) {
                     if (ethAddress === owner) {
                         this.isOwner = true;
                     }
@@ -257,9 +254,15 @@ export default class Home extends Vue {
             if (!isValidRSS3) {
                 localStorage.setItem('redirectFrom', this.$route.fullPath);
                 await this.$router.push('/');
+            } else {
+                this.rns = (await RNSUtils.addr2Name(owner)).toString();
+                if (this.rns === '') {
+                    await this.$router.push('/rns');
+                } else {
+                    address = owner;
+                    this.isOwner = true;
+                }
             }
-            address = owner;
-            this.isOwner = true;
         }
 
         const data = await RSS3.getAssetProfile(address);

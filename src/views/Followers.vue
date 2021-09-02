@@ -21,7 +21,7 @@
                 :key="index"
                 :avatar="item.avatar"
                 :name="item.username"
-                :address="item.address"
+                :address="item.rns"
                 @click="toPublicPage(item.address)"
             />
         </div>
@@ -34,6 +34,7 @@ import Button from '@/components/Button.vue';
 import ImgHolder from '@/components/ImgHolder.vue';
 import FollowerCard from '@/components/FollowerCard.vue';
 import RSS3, { defaultAvatar } from '@/common/rss3';
+import RNSUtils from '@/common/rns';
 
 interface Profile {
     avatar: string;
@@ -71,6 +72,7 @@ export default class Followers extends Vue {
                     avatar: profile.avatar?.[0] || '',
                     username: profile.name || '',
                     address: item,
+                    rns: (await RNSUtils.addr2Name(item)).toString(),
                 });
             }
         }
