@@ -439,7 +439,7 @@
         <Button size="lg" class="w-80 bg-danger text-white" @click="disconnect"> Disconnect </Button>
 
         <Button size="lg" class="w-80 bg-primary text-white shadow-primary" @click="loadingModal"> Loading </Button>
-        <Modal v-show="isLoading">
+        <!-- <Modal v-show="isLoading">
             <template #body>
                 <span
                     class="
@@ -456,7 +456,14 @@
                     <i class="bx bx-loader-alt bx-spin"></i>
                 </span>
             </template>
-        </Modal>
+        </Modal> -->
+        <div
+            v-show="isLoading"
+            class="fixed w-screen h-screen m-0 p-0 top-0 left-0 bg-black bg-opacity-50 flex justify-center items-center"
+        >
+            <Loading size="200" />
+        </div>
+        <Loading size="200" />
     </div>
 </template>
 
@@ -476,6 +483,8 @@ import RSS3 from '@/common/rss3';
 
 import draggable from 'vuedraggable';
 
+import Loading from '@/components/Loading.vue';
+
 @Options({
     components: {
         ScanTag,
@@ -489,6 +498,7 @@ import draggable from 'vuedraggable';
         NFTItem,
         NFTBadges,
         draggable,
+        Loading,
     },
 })
 export default class Test extends Vue {

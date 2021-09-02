@@ -13,6 +13,7 @@ import SetupAccounts from '@/views/Setup/SetupAccounts.vue';
 import SetupNFTs from '@/views/Setup/SetupNFTs.vue';
 import RNS from '@/views/Setup/RNS.vue';
 import EditProfile from '@/views/EditProfile.vue';
+import RNSPending from '@/views/Setup/RNSPending.vue';
 
 const routes = [
     {
@@ -75,6 +76,10 @@ const routes = [
     {
         path: '/profile',
         component: EditProfile,
+    },
+    {
+        path: '/pending',
+        component: RNSPending,
     },
 ];
 
