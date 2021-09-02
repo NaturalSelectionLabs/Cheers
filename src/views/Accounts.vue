@@ -59,7 +59,7 @@ import { Options, Vue } from 'vue-class-component';
 import Button from '@/components/Button.vue';
 import ImgHolder from '@/components/ImgHolder.vue';
 import AccountItem from '@/components/AccountItem.vue';
-import RSS3 from '@/common/rss3';
+import RSS3, { defaultAvatar } from '@/common/rss3';
 import { RSS3Account } from 'rss3-next/types/rss3';
 
 interface Profile {
@@ -93,7 +93,7 @@ export default class Accounts extends Vue {
         }
 
         const profile = await rss3.profile.get(address);
-        this.rss3Profile.avatar = profile?.avatar?.[0] || '';
+        this.rss3Profile.avatar = profile?.avatar?.[0] || defaultAvatar;
         this.rss3Profile.username = profile?.name?.[0] || '';
         this.rss3Profile.address = address;
 

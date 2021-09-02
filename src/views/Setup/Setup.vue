@@ -149,7 +149,7 @@ import NFTItem from '@/components/NFT/NFTItem.vue';
 import Input from '@/components/Input.vue';
 import Modal from '@/components/Modal.vue';
 import { RSS3Account, RSS3Asset, RSS3Profile } from 'rss3-next/types/rss3';
-import RSS3, { IRSS3 } from '@/common/rss3';
+import RSS3, { defaultAvatar, IRSS3 } from '@/common/rss3';
 
 import { DetailedNFT, RSS3AssetShow } from '@/common/types';
 
@@ -170,7 +170,7 @@ export default class Setup extends Vue {
         name: string;
         bio: string;
     } = {
-        avatar: '',
+        avatar: defaultAvatar,
         name: '',
         bio: '',
     };
@@ -194,7 +194,7 @@ export default class Setup extends Vue {
         if (!this.loadEdited()) {
             const profile = await (<IRSS3>this.rss3).profile.get();
             console.log(profile);
-            this.profile.avatar = profile?.avatar?.[0] || '';
+            this.profile.avatar = profile?.avatar?.[0] || defaultAvatar;
             this.profile.name = profile?.name || '';
             this.profile.bio = profile?.bio || '';
         }

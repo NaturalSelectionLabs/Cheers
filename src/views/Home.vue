@@ -187,7 +187,7 @@ import Card from '@/components/Card.vue';
 import Profile from '@/components/Profile.vue';
 import AccountItem from '@/components/AccountItem.vue';
 import NFTItem from '@/components/NFT/NFTItem.vue';
-import RSS3, { IRSS3 } from '@/common/rss3';
+import RSS3, { IRSS3, defaultAvatar } from '@/common/rss3';
 import { RSS3Account, RSS3Asset, RSS3Backlink, RSS3ID } from 'rss3-next/types/rss3';
 import { DetailedNFT, RSS3AssetShow } from '@/common/types';
 import Modal from '@/components/Modal.vue';
@@ -216,7 +216,7 @@ export default class Home extends Vue {
     public dialogChain: string = '';
 
     public rss3Profile: ProfileInfo = {
-        avatar: '',
+        avatar: defaultAvatar,
         username: '',
         address: '',
         bio: '',
@@ -259,7 +259,7 @@ export default class Home extends Vue {
         const profile = data.rss3File.profile;
         await this.checkIsFollowing();
 
-        this.rss3Profile.avatar = profile?.avatar?.[0] || '';
+        this.rss3Profile.avatar = profile?.avatar?.[0] || defaultAvatar;
         this.rss3Profile.username = profile?.name || '';
         this.rss3Profile.bio = profile?.bio || '';
         this.rss3Profile.address = address;

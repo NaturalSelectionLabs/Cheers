@@ -121,7 +121,7 @@ import Button from '@/components/Button.vue';
 import Card from '@/components/Card.vue';
 import NFTItem from '@/components/NFT/NFTItem.vue';
 import { RSS3Asset } from 'rss3-next/types/rss3';
-import RSS3, { IRSS3 } from '@/common/rss3';
+import RSS3, { defaultAvatar, IRSS3 } from '@/common/rss3';
 
 import { DetailedNFT, RSS3AssetShow, RSS3AssetWithInfo } from '@/common/types';
 import draggable from 'vuedraggable';
@@ -165,7 +165,7 @@ export default class SetupNFTs extends Vue {
             this.avatar = profile.avatar;
         } else {
             const profile = await (<IRSS3>this.rss3).profile.get();
-            this.avatar = profile?.avatar?.[0] || '';
+            this.avatar = profile?.avatar?.[0] || defaultAvatar;
         }
 
         this.nfts = await Promise.all(
