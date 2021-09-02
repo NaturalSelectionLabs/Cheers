@@ -8,7 +8,12 @@
                 <h1 class="text-xl text-primary font-bold inline">Manage Accounts</h1>
             </span>
             <span class="avatar">
-                <img :src="avatar" class="rounded-full w-10 h-10 inline-block" alt="avatar" />
+                <img
+                    :src="avatar"
+                    class="rounded-full w-10 h-10 inline-block cursor-pointer"
+                    alt="avatar"
+                    @click="toEtherScan()"
+                />
             </span>
         </div>
         <Card
@@ -400,6 +405,10 @@ export default class Setup extends Vue {
         await RSS3.getAssetProfile((<IRSS3>this.rss3).account.address, true);
         this.isLoading = false;
         window.history.back(); // Back
+    }
+
+    public toEtherScan() {
+        window.open(`https://etherscan.io/address/${(<IRSS3>this.rss3).account.address}`);
     }
 }
 </script>

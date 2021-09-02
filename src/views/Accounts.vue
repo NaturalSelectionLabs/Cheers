@@ -156,7 +156,6 @@ export default class Accounts extends Vue {
     }
 
     public toEtherScan(address: string) {
-        // this.$router.push(`/${address}`);
         window.open(`https://etherscan.io/address/${address}`);
     }
 

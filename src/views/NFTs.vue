@@ -12,7 +12,7 @@
                     :is-border="false"
                     :src="this.rss3Profile.avatar"
                     :alt="this.rss3Profile.username"
-                    @click="toPublicPage(this.rss3Profile.address)"
+                    @click="toEtherScan(this.rss3Profile.address)"
                 />
             </div>
             <div class="nft-list flex flex-wrap justify-between items-center gap-y-4">
@@ -105,8 +105,8 @@ export default class NFTs extends Vue {
         this.$router.push(`/${address}/singlenft/${account}/${index}`);
     }
 
-    public toPublicPage(address: string) {
-        this.$router.push(`/${address}`);
+    public toEtherScan(address: string) {
+        window.open(`https://etherscan.io/address/${address}`);
     }
 
     public toSetupNfts() {
