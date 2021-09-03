@@ -12,7 +12,7 @@
                     :is-border="false"
                     :src="this.rss3Profile.avatar"
                     :alt="this.rss3Profile.username"
-                    @click="toEtherScan(this.rss3Profile.address)"
+                    @click="toPublicPage(this.rss3Profile.address)"
                 />
             </div>
             <div class="account-list">
@@ -163,6 +163,10 @@ export default class Accounts extends Vue {
             }
         }
         return -1;
+    }
+
+    public toPublicPage(address: string) {
+        this.$router.push(`/${address}`);
     }
 
     public toEtherScan(address: string) {

@@ -12,7 +12,7 @@
                     :is-border="false"
                     :src="this.rss3Profile.avatar"
                     :alt="this.rss3Profile.username"
-                    @click="toEtherScan(this.rss3Profile.address)"
+                    @click="toPublicPage(this.rss3Profile.address)"
                 />
             </div>
             <div class="nft-list flex flex-wrap justify-between items-center gap-y-4">
@@ -21,7 +21,7 @@
                         class="cursor-pointer"
                         :size="NFTWidth > 200 ? 200 : NFTWidth"
                         :imageUrl="item.nft.image_url"
-                        @click="toSinglenftPage(item.account, index)"
+                        @click="toSinglenftPage(item.account, item.index)"
                     />
                     <NFTBadges
                         class="absolute top-2.5 right-2.5"
@@ -116,8 +116,8 @@ export default class NFTs extends Vue {
         this.$router.push(`/${this.rns || this.ethAddress}/singlenft/${account}/${index}`);
     }
 
-    public toEtherScan(address: string) {
-        window.open(`https://etherscan.io/address/${address}`);
+    public toPublicPage(address: string) {
+        this.$router.push(`/${address}`);
     }
 
     public toSetupNfts() {

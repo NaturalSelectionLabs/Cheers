@@ -113,7 +113,7 @@
                     :key="index"
                     :imageUrl="item.nft.image_url"
                     :size="70"
-                    @click="toSinglenftPage(item.account, index)"
+                    @click="toSinglenftPage(item.account, item.index)"
                 ></NFTItem>
             </template>
         </Card>
