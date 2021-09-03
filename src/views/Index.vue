@@ -102,7 +102,7 @@ export default class Index extends Vue {
             address = (<IRSS3>this.rss3).account.address;
             console.log(profile);
         } catch (e) {
-            console.error(e);
+            console.log(e);
         }
         this.$gtag.config(address);
 
@@ -110,6 +110,7 @@ export default class Index extends Vue {
         if ((await RNSUtils.addr2Name(address)).toString() === '') {
             // Setup RNS
             // this.$gtag.event('rns', { userid: address });
+            await (<IRSS3>this.rss3).files.sync();
             await this.$router.push('/rns');
         } else if (!profile) {
             // Setup Profile

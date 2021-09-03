@@ -431,7 +431,7 @@ export default class Home extends Vue {
                 console.log('Async: Copying to clipboard was successful!');
             },
             function (err) {
-                console.error('Async: Could not copy the account: ', err);
+                console.log('Async: Could not copy the account: ', err);
             },
         );
     }
