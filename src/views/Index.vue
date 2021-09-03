@@ -113,6 +113,7 @@ export default class Index extends Vue {
             await this.$router.push('/rns');
         } else if (!profile) {
             // Setup Profile
+            await (<IRSS3>this.rss3).files.sync();
             this.$gtag.event('sign_up', { userid: address });
             await this.$router.push('/setup');
         } else {

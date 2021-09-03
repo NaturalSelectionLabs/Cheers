@@ -136,6 +136,7 @@ export default class RNS extends Vue {
                 const profile = await (<IRSS3>this.rss3).profile.get();
                 if (!profile) {
                     // Setup Profile
+                    await (<IRSS3>this.rss3).files.sync();
                     this.$gtag.event('sign_up', { userid: (<IRSS3>this.rss3).account.address });
                     await this.$router.push('/setup');
                 } else {
