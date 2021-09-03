@@ -21,7 +21,7 @@
                         class="cursor-pointer"
                         :size="NFTWidth > 200 ? 200 : NFTWidth"
                         :imageUrl="item.nft.image_url"
-                        @click="toSinglenftPage(item.account, index)"
+                        @click="toSinglenftPage(item.account, item.index)"
                     />
                     <NFTBadges
                         class="absolute top-2.5 right-2.5"
