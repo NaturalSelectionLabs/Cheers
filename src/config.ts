@@ -4,8 +4,8 @@ export default {
         infuraProjectId: '76af1228cdf345d2bff6a9c0f35112e1',
         contractNetworks: {
             ropsten: {
-                resolver: '0x2AfC2dbB401F2f3d1b86e20058b2452BBbea975b',
-                token: '0xc29B4085f84626E8884356A209cf13c3E7566540',
+                resolver: '0x028A03A4E9Af3f5E078938c69b88740E81391A6a',
+                token: '0x63CfEB343975116Ec2fc27125609da236D066615',
             },
         },
         contract: {
@@ -310,6 +310,71 @@ export default {
                 },
                 {
                     inputs: [],
+                    name: 'DOMAIN_SEPARATOR',
+                    outputs: [
+                        {
+                            internalType: 'bytes32',
+                            name: '',
+                            type: 'bytes32',
+                        },
+                    ],
+                    stateMutability: 'view',
+                    type: 'function',
+                },
+                {
+                    inputs: [],
+                    name: 'PERMIT_TYPEHASH',
+                    outputs: [
+                        {
+                            internalType: 'bytes32',
+                            name: '',
+                            type: 'bytes32',
+                        },
+                    ],
+                    stateMutability: 'view',
+                    type: 'function',
+                },
+                {
+                    inputs: [],
+                    name: 'REGISTRATION_COST',
+                    outputs: [
+                        {
+                            internalType: 'uint256',
+                            name: '',
+                            type: 'uint256',
+                        },
+                    ],
+                    stateMutability: 'view',
+                    type: 'function',
+                },
+                {
+                    inputs: [],
+                    name: 'RegistreForOtherTerminated',
+                    outputs: [
+                        {
+                            internalType: 'bool',
+                            name: '',
+                            type: 'bool',
+                        },
+                    ],
+                    stateMutability: 'view',
+                    type: 'function',
+                },
+                {
+                    inputs: [],
+                    name: '_pass3Registrar',
+                    outputs: [
+                        {
+                            internalType: 'address',
+                            name: '',
+                            type: 'address',
+                        },
+                    ],
+                    stateMutability: 'view',
+                    type: 'function',
+                },
+                {
+                    inputs: [],
                     name: 'acceptOwnership',
                     outputs: [],
                     stateMutability: 'nonpayable',
@@ -427,19 +492,6 @@ export default {
                     type: 'function',
                 },
                 {
-                    inputs: [],
-                    name: 'ensRegistrar',
-                    outputs: [
-                        {
-                            internalType: 'address',
-                            name: '',
-                            type: 'address',
-                        },
-                    ],
-                    stateMutability: 'view',
-                    type: 'function',
-                },
-                {
                     inputs: [
                         {
                             internalType: 'address',
@@ -461,32 +513,6 @@ export default {
                         },
                     ],
                     stateMutability: 'nonpayable',
-                    type: 'function',
-                },
-                {
-                    inputs: [],
-                    name: 'isNextOwner',
-                    outputs: [
-                        {
-                            internalType: 'bool',
-                            name: '',
-                            type: 'bool',
-                        },
-                    ],
-                    stateMutability: 'view',
-                    type: 'function',
-                },
-                {
-                    inputs: [],
-                    name: 'isOwner',
-                    outputs: [
-                        {
-                            internalType: 'bool',
-                            name: '',
-                            type: 'bool',
-                        },
-                    ],
-                    stateMutability: 'view',
                     type: 'function',
                 },
                 {
@@ -518,6 +544,81 @@ export default {
                         },
                     ],
                     stateMutability: 'view',
+                    type: 'function',
+                },
+                {
+                    inputs: [
+                        {
+                            internalType: 'address',
+                            name: '',
+                            type: 'address',
+                        },
+                    ],
+                    name: 'nonces',
+                    outputs: [
+                        {
+                            internalType: 'uint256',
+                            name: '',
+                            type: 'uint256',
+                        },
+                    ],
+                    stateMutability: 'view',
+                    type: 'function',
+                },
+                {
+                    inputs: [],
+                    name: 'owner',
+                    outputs: [
+                        {
+                            internalType: 'address',
+                            name: '',
+                            type: 'address',
+                        },
+                    ],
+                    stateMutability: 'view',
+                    type: 'function',
+                },
+                {
+                    inputs: [
+                        {
+                            internalType: 'address',
+                            name: 'owner',
+                            type: 'address',
+                        },
+                        {
+                            internalType: 'address',
+                            name: 'spender',
+                            type: 'address',
+                        },
+                        {
+                            internalType: 'uint256',
+                            name: 'value',
+                            type: 'uint256',
+                        },
+                        {
+                            internalType: 'uint256',
+                            name: 'deadline',
+                            type: 'uint256',
+                        },
+                        {
+                            internalType: 'uint8',
+                            name: 'v',
+                            type: 'uint8',
+                        },
+                        {
+                            internalType: 'bytes32',
+                            name: 'r',
+                            type: 'bytes32',
+                        },
+                        {
+                            internalType: 'bytes32',
+                            name: 's',
+                            type: 'bytes32',
+                        },
+                    ],
+                    name: 'permit',
+                    outputs: [],
+                    stateMutability: 'nonpayable',
                     type: 'function',
                 },
                 {
@@ -566,19 +667,6 @@ export default {
                 },
                 {
                     inputs: [],
-                    name: 'registrationCost',
-                    outputs: [
-                        {
-                            internalType: 'uint256',
-                            name: '',
-                            type: 'uint256',
-                        },
-                    ],
-                    stateMutability: 'pure',
-                    type: 'function',
-                },
-                {
-                    inputs: [],
                     name: 'renounceOwnership',
                     outputs: [],
                     stateMutability: 'nonpayable',
@@ -588,7 +676,7 @@ export default {
                     inputs: [
                         {
                             internalType: 'address',
-                            name: 'ensRegistrar_',
+                            name: '_pass3Registrar_',
                             type: 'address',
                         },
                     ],
@@ -713,6 +801,25 @@ export default {
                     name: 'transferOwnership',
                     outputs: [],
                     stateMutability: 'nonpayable',
+                    type: 'function',
+                },
+                {
+                    inputs: [
+                        {
+                            internalType: 'string',
+                            name: 'name',
+                            type: 'string',
+                        },
+                    ],
+                    name: 'valid',
+                    outputs: [
+                        {
+                            internalType: 'bool',
+                            name: '',
+                            type: 'bool',
+                        },
+                    ],
+                    stateMutability: 'pure',
                     type: 'function',
                 },
             ],

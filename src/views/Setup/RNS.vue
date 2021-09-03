@@ -120,6 +120,12 @@ export default class RNS extends Vue {
         //     'name of 0x8c23B96f2fb77AaE1ac2832debEE30f09da7af3C:',
         //     await RNSUtils.addr2Name('0x8c23B96f2fb77AaE1ac2832debEE30f09da7af3C'),
         // );
+        // console.log('hanabi addr:', await RNSUtils.name2Addr('hanabi.pass3.me'));
+        // console.log(
+        //     'name of 0xc560eb6fd0c2eb80Df50E5e06715295AE1205049:',
+        //     await RNSUtils.addr2Name('0xc560eb6fd0c2eb80Df50E5e06715295AE1205049'),
+        // );
+        // console.log('Balance of PASS3:', await RNSUtils.balanceOfPass3('0x8c23B96f2fb77AaE1ac2832debEE30f09da7af3C'));
         if (!(await RSS3.reconnect())) {
             localStorage.setItem('redirectFrom', this.$route.fullPath);
             await this.$router.push('/');
@@ -151,13 +157,18 @@ export default class RNS extends Vue {
 
     async verifyRNS() {
         this.rns = this.rns.toLowerCase();
-        if (this.rns.length < 3) {
-            this.notice = 'An RNS must have at least 3 characters';
+        if (this.rns.length < 3 || this.rns.length >= 15) {
+            this.notice = 'An RNS must have at least 3 characters and no more than 15';
             return;
         }
         this.isLoading = true;
-        // Check if is used
-        if (parseInt((await RNSUtils.name2Addr(`${this.rns}.pass3.me`)).toString()) !== 0) {
+        // Check $PASS balance
+        const passBalance = await RNSUtils.balanceOfPass3((<IRSS3>this.rss3).account.address);
+        console.log('Your $PASS: ', passBalance);
+        if (passBalance < 1) {
+            this.notice = 'Sorry, but you need 1 $PASS to register an RNS';
+            this.isLoading = false;
+        } else if (parseInt((await RNSUtils.name2Addr(`${this.rns}.pass3.me`)).toString()) !== 0) {
             // Already taken
             this.notice = 'Sorry, but this RNS has already been taken.';
             this.isLoading = false;
