@@ -11,7 +11,7 @@
                 :is-border="false"
                 :src="this.rss3Profile.avatar"
                 :alt="this.rss3Profile.username"
-                @click="toEtherScan(this.rss3Profile.address)"
+                @click="toPublicPage(this.rss3Profile.address)"
             />
         </div>
         <div class="follow-list flex flex-col gap-y-2">
@@ -74,10 +74,6 @@ export default class Followings extends Vue {
                 });
             }
         }
-    }
-
-    public toEtherScan(address: string) {
-        window.open(`https://etherscan.io/address/${address}`);
     }
 
     public toPublicPage(address: string) {

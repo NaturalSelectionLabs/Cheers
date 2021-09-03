@@ -12,7 +12,7 @@
                     :src="avatar"
                     class="rounded-full w-10 h-10 inline-block cursor-pointer"
                     alt="avatar"
-                    @click="toEtherScan()"
+                    @click="toPublicPage()"
                 />
             </span>
         </div>
@@ -407,8 +407,8 @@ export default class Setup extends Vue {
         window.history.back(); // Back
     }
 
-    public toEtherScan() {
-        window.open(`https://etherscan.io/address/${(<IRSS3>this.rss3).account.address}`);
+    public toPublicPage() {
+        this.$router.push(`/${(<IRSS3>this.rss3).account.address}`);
     }
 }
 </script>
