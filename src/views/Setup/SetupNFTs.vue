@@ -46,6 +46,7 @@
                     @start="chooseAsset"
                     @end="nftMoveEnd"
                     data-type="displayed"
+                    item-key="displayed"
                 >
                     <template #item="{ element }">
                         <NFTItem
@@ -83,8 +84,8 @@
                         class="min-h-20"
                         :list="hiddenList[collection]"
                         group="nfts"
-                        @add="dragAddAsset"
                         data-type="hidden"
+                        :item-key="collection"
                     >
                         <template #item="{ element }">
                             <NFTItem
