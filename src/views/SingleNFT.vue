@@ -27,7 +27,7 @@
                     </Button>
                     <NFTBadges
                         class="absolute z-50 right-0"
-                        chain="Ethereum"
+                        :chain="details.chain"
                         location="header"
                         :collectionImg="details.collection.image_url"
                     />
