@@ -104,7 +104,7 @@ export default class Accounts extends Vue {
             tags: ['pass:order:-1'],
         });
 
-        const accounts = await rss3.accounts.get();
+        const accounts = await rss3.accounts.get(address);
         await this.loadAccounts(accounts);
     }
     /**
