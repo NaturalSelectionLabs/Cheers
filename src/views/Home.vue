@@ -207,7 +207,7 @@ export default class Home extends Vue {
     rns: string = '';
     ethAddress: string = '';
     public rss3?: IRSS3;
-    public isFollowing: boolean = true;
+    public isFollowing: boolean = false;
     public isOwner: boolean = false;
     public isdisplaying: boolean = false;
     public dialogAddress: string = '';
@@ -235,7 +235,7 @@ export default class Home extends Vue {
         let address: string = '';
         if (this.$route.params.address) {
             address = <string>this.$route.params.address;
-            if (!address.endsWith('.pass3.me')) {
+            if (address.startsWith('0x')) {
                 // Might be address type
                 // Get RNS and redirect
                 this.ethAddress = address;
@@ -246,7 +246,7 @@ export default class Home extends Vue {
             } else {
                 // RNS
                 this.rns = address;
-                this.ethAddress = (await RNSUtils.name2Addr(address)).toString();
+                this.ethAddress = (await RNSUtils.name2Addr(`${address}.pass3.me`)).toString();
                 if (parseInt(this.ethAddress) !== 0) {
                     if (this.ethAddress === owner) {
                         this.isOwner = true;
@@ -398,18 +398,17 @@ export default class Home extends Vue {
 
     public toAccountsPage() {
         this.$gtag.event('visitAccountsPage', { userid: this.rss3Profile['address'] });
-        this.$router.push(`/${this.rss3Profile['address']}/accounts`);
+        this.$router.push(`/${this.rns || this.ethAddress}/accounts`);
     }
 
     public toNFTsPage() {
         this.$gtag.event('visitNftPage', { userid: this.rss3Profile['address'] });
-        this.$router.push(`/${this.rss3Profile['address']}/nfts`);
+        this.$router.push(`/${this.rns || this.ethAddress}/nfts`);
     }
 
     public toSinglenftPage(account: string, index: number) {
-        const address = <string>this.rss3Profile.address;
-        this.$gtag.event('visitSingleNft', { userid: address, nftid: account, nftindex: index });
-        this.$router.push(`/${address}/singlenft/${account}/${index}`);
+        this.$gtag.event('visitSingleNft', { userid: this.rns || this.ethAddress, nftid: account, nftindex: index });
+        this.$router.push(`/${this.rns || this.ethAddress}/singlenft/${account}/${index}`);
     }
 
     public toSetupPage() {

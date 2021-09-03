@@ -47,6 +47,7 @@ import ImgHolder from '@/components/ImgHolder.vue';
 import NFTItem from '@/components/NFT/NFTItem.vue';
 import NFTBadges from '@/components/NFT/NFTBadges.vue';
 import RSS3, { defaultAvatar } from '@/common/rss3';
+import RNSUtils from '@/common/rns';
 
 interface Profile {
     avatar: string;
@@ -59,6 +60,8 @@ interface Profile {
     components: { ImgHolder, Button, NFTItem, NFTBadges },
 })
 export default class NFTs extends Vue {
+    rns: string = '';
+    ethAddress: string = '';
     public NFTWidth: number = (window.innerWidth - 52) / 2;
     public isOwner: boolean = false;
     public nftList: Array<Object> = [];
@@ -68,18 +71,26 @@ export default class NFTs extends Vue {
         address: '',
         bio: '',
     };
+    $gtag: any;
 
     async mounted() {
+        const address = <string>this.$route.params.address;
+        if (!address.startsWith('0x')) {
+            this.rns = address;
+            this.ethAddress = (await RNSUtils.name2Addr(`${address}.pass3.me`)).toString();
+        } else {
+            this.ethAddress = address;
+            this.rns = (await RNSUtils.addr2Name(address)).toString();
+        }
         const rss3 = await RSS3.visitor();
-        const address: string = <string>this.$route.params.address;
         const owner: string = <string>rss3.account.address;
         // const owner: string = 'RSS3 Address';
 
-        if (owner === address) {
+        if (owner === this.ethAddress) {
             this.isOwner = true;
         }
 
-        const data = await RSS3.getAssetProfile(address);
+        const data = await RSS3.getAssetProfile(this.ethAddress);
         if (!data) {
             return;
         }
@@ -101,8 +112,8 @@ export default class NFTs extends Vue {
         }
     }
     public toSinglenftPage(account: string, index: number) {
-        const address = <string>this.$route.params.address;
-        this.$router.push(`/${address}/singlenft/${account}/${index}`);
+        this.$gtag.event('visitSingleNft', { userid: this.rns || this.ethAddress, nftid: account, nftindex: index });
+        this.$router.push(`/${this.rns || this.ethAddress}/singlenft/${account}/${index}`);
     }
 
     public toEtherScan(address: string) {

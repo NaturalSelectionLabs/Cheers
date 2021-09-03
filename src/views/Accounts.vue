@@ -61,6 +61,7 @@ import ImgHolder from '@/components/ImgHolder.vue';
 import AccountItem from '@/components/AccountItem.vue';
 import RSS3, { defaultAvatar } from '@/common/rss3';
 import { RSS3Account } from 'rss3-next/types/rss3';
+import RNSUtils from '@/common/rns';
 
 interface Profile {
     avatar: string;
@@ -73,38 +74,47 @@ interface Profile {
     components: { ImgHolder, Button, AccountItem },
 })
 export default class Accounts extends Vue {
+    rns: string = '';
+    ethAddress: string = '';
     public isOwner: boolean = false;
     public accounts: RSS3Account[] = [];
     public rss3Profile: Profile = {
-        avatar: '',
+        avatar: defaultAvatar,
         username: '',
         address: '',
         bio: '',
     };
 
     async mounted() {
+        const address = <string>this.$route.params.address;
+        if (!address.startsWith('0x')) {
+            this.rns = address;
+            this.ethAddress = (await RNSUtils.name2Addr(`${address}.pass3.me`)).toString();
+        } else {
+            this.ethAddress = address;
+            this.rns = (await RNSUtils.addr2Name(address)).toString();
+        }
         const rss3 = await RSS3.visitor();
-        const address: string = <string>this.$route.params.address;
         const owner: string = <string>rss3.account.address;
         // const owner: string = 'RSS3 Address';
 
-        if (owner === address) {
+        if (owner === this.ethAddress) {
             this.isOwner = true;
         }
 
-        const profile = await rss3.profile.get(address);
+        const profile = await rss3.profile.get(this.ethAddress);
         this.rss3Profile.avatar = profile?.avatar?.[0] || defaultAvatar;
         this.rss3Profile.username = profile?.name?.[0] || '';
-        this.rss3Profile.address = address;
+        this.rss3Profile.address = this.ethAddress;
 
         this.accounts.push({
             platform: 'Ethereum',
-            identity: <string>this.$route.params.address,
+            identity: this.ethAddress,
             signature: '',
             tags: ['pass:order:-1'],
         });
 
-        const accounts = await rss3.accounts.get(address);
+        const accounts = await rss3.accounts.get(this.ethAddress);
         await this.loadAccounts(accounts);
     }
     /**

@@ -51,11 +51,14 @@ import NFTDetail from '@/components/NFT/NFTDetails.vue';
 import AccountItem from '@/components/AccountItem.vue';
 import NFTBadges from '@/components/NFT/NFTBadges.vue';
 import RSS3 from '@/common/rss3';
+import RNSUtils from '@/common/rns';
 
 @Options({
     components: { Button, NFTDetail, NFTItem, AccountItem, NFTBadges },
 })
 export default class SingleNFT extends Vue {
+    rns: string = '';
+    ethAddress: string = '';
     public NFTWidth: number = window.innerWidth - 32;
     public details?: Object = {
         collection: {
@@ -65,10 +68,18 @@ export default class SingleNFT extends Vue {
     };
 
     async mounted() {
-        const address: string = <string>this.$route.params.address;
+        const address = <string>this.$route.params.address;
+        if (!address.startsWith('0x')) {
+            this.rns = address;
+            this.ethAddress = (await RNSUtils.name2Addr(`${address}.pass3.me`)).toString();
+        } else {
+            this.ethAddress = address;
+            this.rns = (await RNSUtils.addr2Name(address)).toString();
+        }
+
         const aid: number = Number(this.$route.params.aid);
         const id: number = Number(this.$route.params.id);
-        const data = await RSS3.getAssetProfile(address);
+        const data = await RSS3.getAssetProfile(this.ethAddress);
 
         if (data) {
             this.details = data.assets.ethereum[aid].nft[id];
