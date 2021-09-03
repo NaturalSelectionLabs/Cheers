@@ -1738,35 +1738,35 @@
   resolved "https://registry.yarnpkg.com/@vue/shared/-/shared-3.1.5.tgz#74ee3aad995d0a3996a6bb9533d4d280514ede03"
   integrity sha512-oJ4F3TnvpXaQwZJNF3ZK+kLPHKarDmJjJ6jyzVNDKH9md1dptjC7lWR//jrGuLdek/U6iltWxqAnYOu8gCiOvA==
 
-"@walletconnect/browser-utils@^1.6.2":
-  version "1.6.2"
-  resolved "https://registry.nlark.com/@walletconnect/browser-utils/download/@walletconnect/browser-utils-1.6.2.tgz#f86312d712f43e9a3688b58eea16fd792c840702"
-  integrity sha1-+GMS1xL0Ppo2iLWO6hb9eSyEBwI=
+"@walletconnect/browser-utils@^1.6.5":
+  version "1.6.5"
+  resolved "https://registry.nlark.com/@walletconnect/browser-utils/download/@walletconnect/browser-utils-1.6.5.tgz#01180682e90b95384e820191a1c6ad4a78729439"
+  integrity sha1-ARgGgukLlThOggGRocatSnhylDk=
   dependencies:
     "@walletconnect/safe-json" "1.0.0"
-    "@walletconnect/types" "^1.6.2"
+    "@walletconnect/types" "^1.6.5"
     "@walletconnect/window-getters" "1.0.0"
     "@walletconnect/window-metadata" "1.0.0"
     detect-browser "5.2.0"
 
-"@walletconnect/client@^1.6.2":
-  version "1.6.2"
-  resolved "https://registry.nlark.com/@walletconnect/client/download/@walletconnect/client-1.6.2.tgz?cache=0&sync_timestamp=1629289333871&other_urls=https%3A%2F%2Fregistry.nlark.com%2F%40walletconnect%2Fclient%2Fdownload%2F%40walletconnect%2Fclient-1.6.2.tgz#bbb2511ee44311c8a82d63382c2d30204a05ae7d"
-  integrity sha1-u7JRHuRDEcioLWM4LC0wIEoFrn0=
+"@walletconnect/client@^1.6.5":
+  version "1.6.5"
+  resolved "https://registry.nlark.com/@walletconnect/client/download/@walletconnect/client-1.6.5.tgz#6616ae926abc7c87c48a2d3693f2eb697858e685"
+  integrity sha1-Zhaukmq8fIfEii02k/LraXhY5oU=
   dependencies:
-    "@walletconnect/core" "^1.6.2"
-    "@walletconnect/iso-crypto" "^1.6.2"
-    "@walletconnect/types" "^1.6.2"
-    "@walletconnect/utils" "^1.6.2"
+    "@walletconnect/core" "^1.6.5"
+    "@walletconnect/iso-crypto" "^1.6.5"
+    "@walletconnect/types" "^1.6.5"
+    "@walletconnect/utils" "^1.6.5"
 
-"@walletconnect/core@^1.6.2":
-  version "1.6.2"
-  resolved "https://registry.nlark.com/@walletconnect/core/download/@walletconnect/core-1.6.2.tgz#5ac59d7c882fd8a95f3286346667e9b6c558a448"
-  integrity sha1-WsWdfIgv2KlfMoY0ZmfptsVYpEg=
+"@walletconnect/core@^1.6.5":
+  version "1.6.5"
+  resolved "https://registry.nlark.com/@walletconnect/core/download/@walletconnect/core-1.6.5.tgz#acb687fc7c2d71ce2adad6a921ec1b343c4b4dd7"
+  integrity sha1-rLaH/Hwtcc4q2tapIewbNDxLTdc=
   dependencies:
-    "@walletconnect/socket-transport" "^1.6.2"
-    "@walletconnect/types" "^1.6.2"
-    "@walletconnect/utils" "^1.6.2"
+    "@walletconnect/socket-transport" "^1.6.5"
+    "@walletconnect/types" "^1.6.5"
+    "@walletconnect/utils" "^1.6.5"
 
 "@walletconnect/crypto@^1.0.1":
   version "1.0.1"
@@ -1792,24 +1792,24 @@
   resolved "https://registry.nlark.com/@walletconnect/environment/download/@walletconnect/environment-1.0.0.tgz#c4545869fa9c389ec88c364e1a5f8178e8ab5034"
   integrity sha1-xFRYafqcOJ7IjDZOGl+BeOirUDQ=
 
-"@walletconnect/http-connection@^1.6.2":
-  version "1.6.2"
-  resolved "https://registry.nlark.com/@walletconnect/http-connection/download/@walletconnect/http-connection-1.6.2.tgz#ca27e38a1347708fcbde54790ac78ac833d485a2"
-  integrity sha1-yifjihNHcI/L3lR5CseKyDPUhaI=
+"@walletconnect/http-connection@^1.6.5":
+  version "1.6.5"
+  resolved "https://registry.nlark.com/@walletconnect/http-connection/download/@walletconnect/http-connection-1.6.5.tgz#18529b7556bc09d7c794f4adc76ef0742cd500aa"
+  integrity sha1-GFKbdVa8CdfHlPStx27wdCzVAKo=
   dependencies:
-    "@walletconnect/types" "^1.6.2"
-    "@walletconnect/utils" "^1.6.2"
+    "@walletconnect/types" "^1.6.5"
+    "@walletconnect/utils" "^1.6.5"
     eventemitter3 "4.0.7"
     xhr2-cookies "1.1.0"
 
-"@walletconnect/iso-crypto@^1.6.2":
-  version "1.6.2"
-  resolved "https://registry.nlark.com/@walletconnect/iso-crypto/download/@walletconnect/iso-crypto-1.6.2.tgz#39cfc1143e29805d3137ac3402f981d4200dc505"
-  integrity sha1-Oc/BFD4pgF0xN6w0AvmB1CANxQU=
+"@walletconnect/iso-crypto@^1.6.5":
+  version "1.6.5"
+  resolved "https://registry.nlark.com/@walletconnect/iso-crypto/download/@walletconnect/iso-crypto-1.6.5.tgz#1c6471506283817e7e797c5e2e733f6c3d88f8dc"
+  integrity sha1-HGRxUGKDgX5+eXxeLnM/bD2I+Nw=
   dependencies:
     "@walletconnect/crypto" "^1.0.1"
-    "@walletconnect/types" "^1.6.2"
-    "@walletconnect/utils" "^1.6.2"
+    "@walletconnect/types" "^1.6.5"
+    "@walletconnect/utils" "^1.6.5"
 
 "@walletconnect/jsonrpc-types@^1.0.0":
   version "1.0.0"
@@ -1831,14 +1831,14 @@
   resolved "https://registry.npm.taobao.org/@walletconnect/mobile-registry/download/@walletconnect/mobile-registry-1.4.0.tgz#502cf8ab87330841d794819081e748ebdef7aee5"
   integrity sha1-UCz4q4czCEHXlIGQgedI6973ruU=
 
-"@walletconnect/qrcode-modal@^1.6.2":
-  version "1.6.2"
-  resolved "https://registry.nlark.com/@walletconnect/qrcode-modal/download/@walletconnect/qrcode-modal-1.6.2.tgz?cache=0&sync_timestamp=1629289311145&other_urls=https%3A%2F%2Fregistry.nlark.com%2F%40walletconnect%2Fqrcode-modal%2Fdownload%2F%40walletconnect%2Fqrcode-modal-1.6.2.tgz#a5e8c5c19c177322cd22dba462ae9253df06057e"
-  integrity sha1-pejFwZwXcyLNItukYq6SU98GBX4=
+"@walletconnect/qrcode-modal@^1.6.5":
+  version "1.6.5"
+  resolved "https://registry.nlark.com/@walletconnect/qrcode-modal/download/@walletconnect/qrcode-modal-1.6.5.tgz#58974ca8f826bd500121e85694dd342b3535cf2c"
+  integrity sha1-WJdMqPgmvVABIehWlN00KzU1zyw=
   dependencies:
-    "@walletconnect/browser-utils" "^1.6.2"
+    "@walletconnect/browser-utils" "^1.6.5"
     "@walletconnect/mobile-registry" "^1.4.0"
-    "@walletconnect/types" "^1.6.2"
+    "@walletconnect/types" "^1.6.5"
     copy-to-clipboard "^3.3.1"
     preact "10.4.1"
     qrcode "1.4.4"
@@ -1857,43 +1857,43 @@
   resolved "https://registry.nlark.com/@walletconnect/safe-json/download/@walletconnect/safe-json-1.0.0.tgz#12eeb11d43795199c045fafde97e3c91646683b2"
   integrity sha1-Eu6xHUN5UZnARfr96X48kWRmg7I=
 
-"@walletconnect/socket-transport@^1.6.2":
-  version "1.6.2"
-  resolved "https://registry.nlark.com/@walletconnect/socket-transport/download/@walletconnect/socket-transport-1.6.2.tgz#0667abc12cfe619199ee9ce84efd58c2827b1df4"
-  integrity sha1-BmerwSz+YZGZ7pzoTv1YwoJ7HfQ=
+"@walletconnect/socket-transport@^1.6.5":
+  version "1.6.5"
+  resolved "https://registry.nlark.com/@walletconnect/socket-transport/download/@walletconnect/socket-transport-1.6.5.tgz#f190f2d994021287fdeaf071114a5415096b2535"
+  integrity sha1-8ZDy2ZQCEof96vBxEUpUFQlrJTU=
   dependencies:
-    "@walletconnect/types" "^1.6.2"
-    "@walletconnect/utils" "^1.6.2"
+    "@walletconnect/types" "^1.6.5"
+    "@walletconnect/utils" "^1.6.5"
     ws "7.5.3"
 
-"@walletconnect/types@^1.6.2":
-  version "1.6.2"
-  resolved "https://registry.nlark.com/@walletconnect/types/download/@walletconnect/types-1.6.2.tgz#81b0a7dfa3b5cab9240530667e19439663e99d6f"
-  integrity sha1-gbCn36O1yrkkBTBmfhlDlmPpnW8=
+"@walletconnect/types@^1.6.5":
+  version "1.6.5"
+  resolved "https://registry.nlark.com/@walletconnect/types/download/@walletconnect/types-1.6.5.tgz#31ad1415fc6e1e89e25a10ad5fed6958f56cefa8"
+  integrity sha1-Ma0UFfxuHoniWhCtX+1pWPVs76g=
 
-"@walletconnect/utils@^1.6.2":
-  version "1.6.2"
-  resolved "https://registry.nlark.com/@walletconnect/utils/download/@walletconnect/utils-1.6.2.tgz#b8313dcb09ed8edb5d55bd332caec590a8684955"
-  integrity sha1-uDE9ywntjttdVb0zLK7FkKhoSVU=
+"@walletconnect/utils@^1.6.5":
+  version "1.6.5"
+  resolved "https://registry.nlark.com/@walletconnect/utils/download/@walletconnect/utils-1.6.5.tgz#6edd749cb52a363feda117121dc865d7cc6169f7"
+  integrity sha1-bt10nLUqNj/toRcSHchl18xhafc=
   dependencies:
-    "@walletconnect/browser-utils" "^1.6.2"
+    "@walletconnect/browser-utils" "^1.6.5"
     "@walletconnect/encoding" "^1.0.0"
     "@walletconnect/jsonrpc-utils" "^1.0.0"
-    "@walletconnect/types" "^1.6.2"
+    "@walletconnect/types" "^1.6.5"
     bn.js "4.11.8"
     js-sha3 "0.8.0"
     query-string "6.13.5"
 
-"@walletconnect/web3-provider@1.6.2":
-  version "1.6.2"
-  resolved "https://registry.nlark.com/@walletconnect/web3-provider/download/@walletconnect/web3-provider-1.6.2.tgz#d91f4c6dc33800502b785d3cebe37fe0b6cb61a9"
-  integrity sha1-2R9MbcM4AFAreF086+N/4LbLYak=
+"@walletconnect/web3-provider@1.6.5":
+  version "1.6.5"
+  resolved "https://registry.nlark.com/@walletconnect/web3-provider/download/@walletconnect/web3-provider-1.6.5.tgz#7c4ac2f89ddda1a4069d500ed29cc4396e7fdade"
+  integrity sha1-fErC+J3doaQGnVAO0pzEOW5/2t4=
   dependencies:
-    "@walletconnect/client" "^1.6.2"
-    "@walletconnect/http-connection" "^1.6.2"
-    "@walletconnect/qrcode-modal" "^1.6.2"
-    "@walletconnect/types" "^1.6.2"
-    "@walletconnect/utils" "^1.6.2"
+    "@walletconnect/client" "^1.6.5"
+    "@walletconnect/http-connection" "^1.6.5"
+    "@walletconnect/qrcode-modal" "^1.6.5"
+    "@walletconnect/types" "^1.6.5"
+    "@walletconnect/utils" "^1.6.5"
     web3-provider-engine "16.0.1"
 
 "@walletconnect/window-getters@1.0.0", "@walletconnect/window-getters@^1.0.0":
