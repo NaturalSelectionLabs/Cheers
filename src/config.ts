@@ -4,8 +4,8 @@ export default {
         infuraProjectId: '76af1228cdf345d2bff6a9c0f35112e1',
         contractNetworks: {
             ropsten: {
-                resolver: '0x2AfC2dbB401F2f3d1b86e20058b2452BBbea975b',
-                token: '0xc29b4085f84626e8884356a209cf13c3e7566540',
+                resolver: '0x028A03A4E9Af3f5E078938c69b88740E81391A6a',
+                token: '0x63CfEB343975116Ec2fc27125609da236D066615',
             },
         },
         contract: {

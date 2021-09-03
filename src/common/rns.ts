@@ -5,13 +5,13 @@ import { utils } from 'ethers/lib';
 
 type SPEED = 'fast' | 'average' | 'fastest' | 'safeLow' | undefined;
 type CNAME = 'resolver' | 'token';
-async function callRNSContract(
+async function callRNSContract<T>(
     cname: CNAME,
     providerType: 'web3' | 'infura',
     speed: SPEED,
     method: string,
     ...args: any
-): Promise<ethers.providers.TransactionResponse> {
+): Promise<T> {
     (window as any).ethereum.enable();
     let provider: ethers.providers.Web3Provider | ethers.providers.InfuraProvider;
     let signer; // TODO
@@ -76,15 +76,19 @@ function sha3HexAddress(addr: string) {
 
 export default {
     async register(name: string, speed: SPEED = 'average') {
-        return callRNSContract('token', 'web3', speed, 'register', name);
+        return callRNSContract<ethers.providers.TransactionResponse>('token', 'web3', speed, 'register', name);
     },
     addr2Name(addr: string, speed: SPEED = 'average') {
         const reverseNode = '0x91d1777781884d03a6757a803996e38de2a42967fb37eeaca72729271025a9e2';
         const addrHex = sha3HexAddress(addr.toLowerCase());
         const node = utils.keccak256(utils.defaultAbiCoder.encode(['bytes32', 'bytes32'], [reverseNode, addrHex]));
-        return callRNSContract('resolver', 'web3', speed, 'name', node);
+        return callRNSContract<string>('resolver', 'web3', speed, 'name', node);
     },
     name2Addr(name: string, speed: SPEED = 'average') {
-        return callRNSContract('resolver', 'infura', speed, 'addr', utils.namehash(name));
+        return callRNSContract<string>('resolver', 'infura', speed, 'addr', utils.namehash(name));
+    },
+    async balanceOfPass3(addr: string, speed: SPEED = 'average') {
+        const balance = await callRNSContract<ethers.BigNumber>('token', 'web3', speed, 'balanceOf', addr);
+        return Number(ethers.utils.formatUnits(balance, 18));
     },
 };
