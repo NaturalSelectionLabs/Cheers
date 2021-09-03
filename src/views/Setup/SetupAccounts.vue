@@ -321,13 +321,15 @@ export default class Setup extends Vue {
     async addAccount(platform: string) {
         const newAccount = await RSS3.addNewAccount(platform);
         if (newAccount.identity) {
+            const equalDefaultAccount =
+                newAccount.platform === 'Ethereum' && newAccount.identity === (<IRSS3>this.rss3).account.address;
             const showIndex = this.show.findIndex(
                 (account) => account.platform === newAccount.platform && account.identity === newAccount.identity,
             );
             const hideIndex = this.hide.findIndex(
                 (account) => account.platform === newAccount.platform && account.identity === newAccount.identity,
             );
-            if (showIndex !== -1 || hideIndex !== -1) {
+            if (equalDefaultAccount || showIndex !== -1 || hideIndex !== -1) {
                 this.addAccountNotice = 'Account already exist';
                 this.isShowingAddAccountNotice = true;
             } else {
