@@ -402,7 +402,7 @@ export default class Home extends Vue {
             // No following list. Not following
             this.isFollowing = false;
             return false;
-        } else if (followList.list?.includes(<string>this.$route.params.address)) {
+        } else if (followList.list?.includes(this.ethAddress)) {
             this.isFollowing = true;
             return true;
         } else {
@@ -415,7 +415,7 @@ export default class Home extends Vue {
         const rss3 = await RSS3.get();
         if (!(await this.checkIsFollowing())) {
             this.$gtag.event('followFriend', { userid: this.rss3Profile['address'] });
-            await rss3?.link.post('following', <string>this.$route.params.address);
+            await rss3?.link.post('following', this.ethAddress);
         }
         this.isFollowing = true;
     }
@@ -424,7 +424,7 @@ export default class Home extends Vue {
         const rss3 = await RSS3.get();
         if (await this.checkIsFollowing()) {
             this.$gtag.event('unfollowFriend', { userid: this.rss3Profile['address'] });
-            await rss3?.link.delete('following', this.rss3Profile.address);
+            await rss3?.link.delete('following', this.ethAddress);
         }
         this.isFollowing = false;
     }
