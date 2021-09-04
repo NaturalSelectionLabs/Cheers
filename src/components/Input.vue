@@ -9,6 +9,7 @@
         :placeholder="placeholder"
         :value="modelValue"
         @input="$emit('update:modelValue', $event.target.value)"
+        :disabled="$props.isDisabled"
     />
     <textarea
         v-else
@@ -19,6 +20,7 @@
         :placeholder="placeholder"
         :value="modelValue"
         @input="$emit('update:modelValue', $event.target.value)"
+        :disabled="$props.isDisabled"
     />
 </template>
 
@@ -31,6 +33,7 @@ import { Options, Vue } from 'vue-class-component';
         placeholder: String,
         isSingleLine: Boolean,
         isError: Boolean,
+        isDisabled: Boolean,
     },
     emits: ['update:modelValue'],
 })

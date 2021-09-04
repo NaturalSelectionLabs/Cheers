@@ -16,6 +16,7 @@
                     :is-error="notice !== ''"
                     v-model="rns"
                     @keyup.enter.native="verifyRNS"
+                    :is-disabled="isDisabled"
                 />
                 <span class="about">
                     <i class="bx bx-info-circle" />
@@ -111,6 +112,7 @@ export default class RNS extends Vue {
     isErrorNotice: Boolean = true;
     isLoading: Boolean = false;
     isShowingConfirm: Boolean = false;
+    isDisabled: Boolean = false;
     $gtag: any;
 
     async mounted() {
@@ -157,9 +159,18 @@ export default class RNS extends Vue {
     }
 
     async verifyRNS() {
+        if (!(window as any).ethereum) {
+            this.notice = 'You need MetaMask extension to sign';
+            this.isDisabled = true;
+            return;
+        }
         this.rns = this.rns.toLowerCase();
         if (this.rns.length < 3 || this.rns.length >= 15) {
             this.notice = 'An RNS must have at least 3 characters and no more than 15';
+            return;
+        }
+        if (!/^[a-z0-9\-_]+$/.test(this.rns)) {
+            this.notice = 'An RNS should only contain lower case letters, numbers, minus and underlines.';
             return;
         }
         this.isLoading = true;
