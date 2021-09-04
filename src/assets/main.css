@@ -37,20 +37,20 @@
     src: url('../assets/fonts/SF-Compact-Rounded-Bold.otf') format('opentype');
 }
 
-@layer base {
-    body {
-        @apply font-sf-compact-rounded;
-    }
+body {
+    @apply font-sf-compact-rounded;
+}
 
-    ::-webkit-scrollbar {
-        width: 3px;
-        height: 3px;
-    }
-    ::-webkit-scrollbar-thumb {
-        background: #c5c5c7;
-        border-radius: 2px;
-    }
-    ::-webkit-scrollbar-thumb:hover {
-        background: #3c3c43;
-    }
+::-webkit-scrollbar {
+    width: 3px;
+    height: 3px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #c5c5c7;
+    border-radius: 2px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #3c3c43;
 }
