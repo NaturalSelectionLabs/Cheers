@@ -115,6 +115,8 @@ export default class RNS extends Vue {
     isDisabled: Boolean = false;
     $gtag: any;
 
+    isMobile: Boolean = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
     async mounted() {
         // console.log('atlas addr:', await RNSUtils.name2Addr('atlas.pass3.me'));
         // console.log('rss3 addr:', await RNSUtils.name2Addr('rss3.pass3.me'));
@@ -132,6 +134,9 @@ export default class RNS extends Vue {
             sessionStorage.setItem('redirectFrom', this.$route.fullPath);
             await this.$router.push('/');
         } else {
+            if (this.isMobile) {
+                await this.$router.push('/gotopc');
+            }
             this.rss3 = await RSS3.get();
             if ((await RNSUtils.addr2Name((<IRSS3>this.rss3).account.address)).toString() !== '') {
                 // Already setup RNS
