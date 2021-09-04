@@ -103,20 +103,24 @@ export default class NFTs extends Vue {
             this.rss3Profile.username = data.rss3File.profile?.name?.[0] || '';
             this.rss3Profile.address = address;
 
-            const NFTList: Array<RSS3Asset> = await Promise.all(
-                (JSON.parse(JSON.stringify(await data.rss3File.assets)) || []).map(async (nft: RSS3AssetWithInfo) => {
-                    const info = await this.getInfo(nft);
-                    if (info) {
-                        nft.info = info;
-                    }
-                    return nft;
-                }),
-            );
-
-            this.nftList = NFTList.filter((nft) => !nft.tags || nft.tags.indexOf('pass:hidden') === -1).sort(
-                (a, b) => this.getNFTOrder(a) - this.getNFTOrder(b),
-            );
+            await this.loadNFTs(<RSS3Asset[]>data.rss3File.assets);
         }
+    }
+
+    async loadNFTs(NFTs: RSS3Asset[]) {
+        const NFTList: Array<RSS3Asset> = await Promise.all(
+            (JSON.parse(JSON.stringify(await NFTs)) || []).map(async (nft: RSS3AssetWithInfo) => {
+                const info = await this.getInfo(nft);
+                if (info) {
+                    nft.info = info;
+                }
+                return nft;
+            }),
+        );
+
+        this.nftList = NFTList.filter((nft) => !nft.tags || nft.tags.indexOf('pass:hidden') === -1).sort(
+            (a, b) => this.getNFTOrder(a) - this.getNFTOrder(b),
+        );
     }
 
     private async getInfo(nft: RSS3Asset) {

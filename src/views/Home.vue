@@ -182,7 +182,7 @@ import Card from '@/components/Card.vue';
 import Profile from '@/components/Profile.vue';
 import AccountItem from '@/components/AccountItem.vue';
 import NFTItem from '@/components/NFT/NFTItem.vue';
-import RSS3, { IRSS3 } from '@/common/rss3';
+import RSS3, { IAssetProfile, IRSS3 } from '@/common/rss3';
 import { RSS3Account, RSS3Asset, RSS3Backlink, RSS3ID } from 'rss3-next/types/rss3';
 import { DetailedNFT, RSS3AssetShow, RSS3AssetWithInfo } from '@/common/types';
 import Modal from '@/components/Modal.vue';
@@ -254,7 +254,6 @@ export default class Home extends Vue {
                 }
             }
         } else {
-            // address = 'RSS3 Address';
             if (!isValidRSS3) {
                 sessionStorage.setItem('redirectFrom', this.$route.fullPath);
                 await this.$router.push('/');
@@ -275,7 +274,6 @@ export default class Home extends Vue {
             return;
         }
 
-        // const profile = await rss3.profile.get(address);
         const profile = data.rss3File.profile;
         await this.checkIsFollowing();
 
@@ -294,21 +292,9 @@ export default class Home extends Vue {
                 signature: '',
                 tags: ['pass:order:-1'],
             });
+
             await this.loadAccounts(<RSS3Account[]>data.rss3File.accounts);
-
-            const NFTList: Array<RSS3Asset> = await Promise.all(
-                (JSON.parse(JSON.stringify(await data.rss3File.assets)) || []).map(async (nft: RSS3AssetWithInfo) => {
-                    const info = await this.getInfo(nft);
-                    if (info) {
-                        nft.info = info;
-                    }
-                    return nft;
-                }),
-            );
-
-            this.assets = NFTList.filter((nft) => !nft.tags || nft.tags.indexOf('pass:hidden') === -1).sort(
-                (a, b) => this.getNFTOrder(a) - this.getNFTOrder(b),
-            );
+            await this.loadNFTs(<RSS3Asset[]>data.rss3File.assets);
         }
 
         // Split time-consuming methods from main thread, so it won't stuck the page loading progress
@@ -363,6 +349,22 @@ export default class Home extends Vue {
             }
         });
         return order;
+    }
+
+    async loadNFTs(NFTs: RSS3Asset[]) {
+        const NFTList: Array<RSS3Asset> = await Promise.all(
+            (JSON.parse(JSON.stringify(NFTs)) || []).map(async (nft: RSS3AssetWithInfo) => {
+                const info = await this.getInfo(nft);
+                if (info) {
+                    nft.info = info;
+                }
+                return nft;
+            }),
+        );
+
+        this.assets = NFTList.filter((nft) => !nft.tags || nft.tags.indexOf('pass:hidden') === -1).sort(
+            (a, b) => this.getNFTOrder(a) - this.getNFTOrder(b),
+        );
     }
 
     async loadAccounts(accounts: RSS3Account[]) {
