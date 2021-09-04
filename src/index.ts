@@ -18,6 +18,7 @@ app.use(
     VueGtag,
     {
         config: { id: 'G-740EEBM023' },
+        appName: 'Pass3',
         pageTrackerScreenviewEnabled: true,
     },
     router,
