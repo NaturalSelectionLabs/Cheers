@@ -76,12 +76,15 @@ async function metamaskConnect() {
     const metamaskEthereum = (window as any).ethereum;
     web3 = new Web3(metamaskEthereum);
 
-    const accounts = await metamaskEthereum.request({
-        method: 'eth_requestAccounts',
-    });
-    const address = web3.utils.toChecksumAddress(accounts[0]);
-
-    console.log(address);
+    let address: string;
+    if (sessionStorage.getItem('lastConnect') === 'metamask' && sessionStorage.getItem('lastAddress')) {
+        address = <string>sessionStorage.getItem('lastAddress');
+    } else {
+        const accounts = await metamaskEthereum.request({
+            method: 'eth_requestAccounts',
+        });
+        address = web3.utils.toChecksumAddress(accounts[0]);
+    }
 
     rss3 = new RSS3({
         endpoint: config.rss3Endpoint,
@@ -98,11 +101,11 @@ function isValidRSS3() {
 
 export default {
     walletConnect: async () => {
-        localStorage.setItem('lastConnect', 'walletConnect');
+        sessionStorage.setItem('lastConnect', 'walletConnect');
         return await walletConnect();
     },
     metamaskConnect: async () => {
-        localStorage.setItem('lastConnect', 'metamask');
+        sessionStorage.setItem('lastConnect', 'metamask');
         return await metamaskConnect();
     },
     disconnect: async () => {
@@ -111,14 +114,17 @@ export default {
         if (provider) {
             await provider.disconnect();
         }
-        localStorage.removeItem('lastConnect');
+        sessionStorage.removeItem('lastConnect');
     },
     reconnect: async (): Promise<boolean> => {
         if (!isValidRSS3()) {
-            const lastConnect = localStorage.getItem('lastConnect');
+            const lastConnect = sessionStorage.getItem('lastConnect');
             switch (lastConnect) {
                 case 'walletConnect':
                     await walletConnect();
+                    return true;
+                case 'metamask':
+                    await metamaskConnect();
                     return true;
                 default:
                     return false;
