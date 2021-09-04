@@ -104,7 +104,7 @@ export default class NFTs extends Vue {
             this.rss3Profile.address = address;
 
             const NFTList: Array<RSS3Asset> = await Promise.all(
-                (JSON.parse(JSON.stringify(await rss3.assets.get())) || []).map(async (nft: RSS3AssetWithInfo) => {
+                (JSON.parse(JSON.stringify(await data.rss3File.assets)) || []).map(async (nft: RSS3AssetWithInfo) => {
                     const info = await this.getInfo(nft);
                     if (info) {
                         nft.info = info;

@@ -297,15 +297,13 @@ export default class Home extends Vue {
             await this.loadAccounts(<RSS3Account[]>data.rss3File.accounts);
 
             const NFTList: Array<RSS3Asset> = await Promise.all(
-                (JSON.parse(JSON.stringify(await this.rss3?.assets.get())) || []).map(
-                    async (nft: RSS3AssetWithInfo) => {
-                        const info = await this.getInfo(nft);
-                        if (info) {
-                            nft.info = info;
-                        }
-                        return nft;
-                    },
-                ),
+                (JSON.parse(JSON.stringify(await data.rss3File.assets)) || []).map(async (nft: RSS3AssetWithInfo) => {
+                    const info = await this.getInfo(nft);
+                    if (info) {
+                        nft.info = info;
+                    }
+                    return nft;
+                }),
             );
 
             this.assets = NFTList.filter((nft) => !nft.tags || nft.tags.indexOf('pass:hidden') === -1).sort(
@@ -334,7 +332,8 @@ export default class Home extends Vue {
     }
 
     private async getInfo(nft: RSS3Asset) {
-        const assets = (await RSS3.getAssetProfile((<IRSS3>this.rss3).account.address))?.assets;
+        const data = await RSS3.getAssetProfile(this.ethAddress);
+        const assets = data?.assets;
         for (let chain in assets) {
             for (let i = 0; i < assets[chain].length; i++) {
                 const chainInfo = assets[chain][i];
