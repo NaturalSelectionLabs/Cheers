@@ -33,8 +33,9 @@ import { Options, Vue } from 'vue-class-component';
 import Button from '@/components/Button.vue';
 import ImgHolder from '@/components/ImgHolder.vue';
 import FollowerCard from '@/components/FollowerCard.vue';
-import RSS3, { defaultAvatar } from '@/common/rss3';
+import RSS3 from '@/common/rss3';
 import RNSUtils from '@/common/rns';
+import config from '@/config';
 
 interface Profile {
     avatar: string;
@@ -51,7 +52,7 @@ interface Profile {
 export default class Followers extends Vue {
     public followerList: Array<Object> = [];
     public rss3Profile: Profile = {
-        avatar: defaultAvatar,
+        avatar: config.defaultAvatar,
         username: '',
         address: '',
         bio: '',
@@ -74,7 +75,7 @@ export default class Followers extends Vue {
         const profile = await rss3.profile.get(this.ethAddress);
         const followersList = await rss3.backlinks.get(this.ethAddress, 'following');
 
-        this.rss3Profile.avatar = profile?.avatar?.[0] || defaultAvatar;
+        this.rss3Profile.avatar = profile?.avatar?.[0] || config.defaultAvatar;
         this.rss3Profile.username = profile?.name || '';
         this.rss3Profile.address = this.ethAddress;
 

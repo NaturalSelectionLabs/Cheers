@@ -212,7 +212,8 @@ import Modal from '@/components/Modal.vue';
 import Loading from '@/components/Loading.vue';
 
 import { RSS3Account, RSS3Index } from 'rss3-next/types/rss3';
-import RSS3, { defaultAvatar, IRSS3 } from '@/common/rss3';
+import RSS3, { IRSS3 } from '@/common/rss3';
+import config from '@/config';
 
 import draggable from 'vuedraggable';
 
@@ -253,7 +254,7 @@ export default class Setup extends Vue {
             this.avatar = profile.avatar;
         } else {
             const profile = await (<IRSS3>this.rss3).profile.get();
-            this.avatar = profile?.avatar?.[0] || defaultAvatar;
+            this.avatar = profile?.avatar?.[0] || config.defaultAvatar;
         }
 
         const accounts = await (<IRSS3>this.rss3).accounts.get((<IRSS3>this.rss3).account.address);

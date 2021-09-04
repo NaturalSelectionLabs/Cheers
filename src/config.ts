@@ -1,7 +1,9 @@
 export default {
+    infuraId: '76af1228cdf345d2bff6a9c0f35112e1',
+    rss3Endpoint: 'https://rss3-asset-hub-g886a.ondigitalocean.app',
+    defaultAvatar: 'https://rss3.mypinata.cloud/ipfs/QmVFq9qimnudPcs6QkQv8ZVEsvwD3aqETHWtS5yXgdbYY5',
     rns: {
         test: true,
-        infuraProjectId: '76af1228cdf345d2bff6a9c0f35112e1',
         contractNetworks: {
             ropsten: {
                 resolver: '0x028A03A4E9Af3f5E078938c69b88740E81391A6a',

@@ -78,8 +78,8 @@ import Modal from '@/components/Modal.vue';
 import Loading from '@/components/Loading.vue';
 
 import { RSS3Account, RSS3Asset, RSS3Profile } from 'rss3-next/types/rss3';
-import RSS3, { defaultAvatar, IRSS3 } from '@/common/rss3';
-
+import RSS3, { IRSS3 } from '@/common/rss3';
+import config from '@/config';
 import { DetailedNFT, RSS3AssetShow } from '@/common/types';
 
 @Options({
@@ -100,7 +100,7 @@ export default class EditProfile extends Vue {
         name: string;
         bio: string;
     } = {
-        avatar: defaultAvatar,
+        avatar: config.defaultAvatar,
         name: '',
         bio: '',
     };
@@ -124,7 +124,7 @@ export default class EditProfile extends Vue {
         if (!this.loadEdited()) {
             const profile = await (<IRSS3>this.rss3).profile.get();
             console.log(profile);
-            this.profile.avatar = profile?.avatar?.[0] || defaultAvatar;
+            this.profile.avatar = profile?.avatar?.[0] || config.defaultAvatar;
             this.profile.name = profile?.name || '';
             this.profile.bio = profile?.bio || '';
         }

@@ -5,10 +5,7 @@ import { RSS3Index } from 'rss3-next/types/rss3';
 import { RSS3Account, RSS3AccountInput } from 'rss3-next/types/rss3';
 import axios from 'axios';
 import { NFTInfo } from './types';
-
-const infuraId = '76af1228cdf345d2bff6a9c0f35112e1';
-const endpoint = 'https://rss3-asset-hub-g886a.ondigitalocean.app';
-export const defaultAvatar = 'https://rss3.mypinata.cloud/ipfs/QmVFq9qimnudPcs6QkQv8ZVEsvwD3aqETHWtS5yXgdbYY5';
+import config from '@/config';
 
 let rss3: RSS3 | null;
 let web3: Web3 | null;
@@ -29,7 +26,7 @@ export interface IAssetProfile {
 
 async function walletConnect() {
     provider = new WalletConnectProvider({
-        infuraId: infuraId,
+        infuraId: config.infuraId,
     });
 
     //  Enable session (triggers QR Code modal)
@@ -54,7 +51,7 @@ async function walletConnect() {
     console.log(address);
 
     rss3 = new RSS3({
-        endpoint: endpoint,
+        endpoint: config.rss3Endpoint,
         address: address,
         sign: async (data: string) => {
             alert('Ready to sign... You may need to prepare your wallet.');
@@ -70,7 +67,7 @@ async function visitor() {
         return rss3;
     } else {
         return new RSS3({
-            endpoint: endpoint,
+            endpoint: config.rss3Endpoint,
         });
     }
 }
@@ -87,7 +84,7 @@ async function metamaskConnect() {
     console.log(address);
 
     rss3 = new RSS3({
-        endpoint: endpoint,
+        endpoint: config.rss3Endpoint,
         address: address,
         sign: async (data: string) => await (<Web3>web3).eth.personal.sign(data, address, ''),
     });
@@ -140,7 +137,7 @@ export default {
         } else {
             let data: IAssetProfile | null = null;
             try {
-                const res = await axios.get(`${endpoint}/asset-profile/${address}`);
+                const res = await axios.get(`${config.rss3Endpoint}/asset-profile/${address}`);
                 if (res && res.data) {
                     data = res.data;
                     assets.set(address, <IAssetProfile>data);

@@ -46,8 +46,9 @@ import Button from '@/components/Button.vue';
 import ImgHolder from '@/components/ImgHolder.vue';
 import NFTItem from '@/components/NFT/NFTItem.vue';
 import NFTBadges from '@/components/NFT/NFTBadges.vue';
-import RSS3, { defaultAvatar } from '@/common/rss3';
+import RSS3 from '@/common/rss3';
 import RNSUtils from '@/common/rns';
+import config from '@/config';
 
 interface Profile {
     avatar: string;
@@ -66,7 +67,7 @@ export default class NFTs extends Vue {
     public isOwner: boolean = false;
     public nftList: Array<Object> = [];
     public rss3Profile: Profile = {
-        avatar: defaultAvatar,
+        avatar: config.defaultAvatar,
         username: '',
         address: '',
         bio: '',
@@ -96,7 +97,7 @@ export default class NFTs extends Vue {
         }
 
         if (data) {
-            this.rss3Profile.avatar = data.rss3File.profile?.avatar?.[0] || defaultAvatar;
+            this.rss3Profile.avatar = data.rss3File.profile?.avatar?.[0] || config.defaultAvatar;
             this.rss3Profile.username = data.rss3File.profile?.name?.[0] || '';
             this.rss3Profile.address = address;
 

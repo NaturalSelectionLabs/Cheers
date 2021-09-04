@@ -20,7 +20,7 @@ async function callRNSContract<T>(
         signer = provider.getSigner();
     } else {
         provider = new ethers.providers.InfuraProvider(config.rns.test ? 'ropsten' : 'homestead', {
-            projectId: config.rns.infuraProjectId,
+            projectId: config.infuraId,
         });
     }
 
