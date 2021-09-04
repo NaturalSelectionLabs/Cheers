@@ -83,7 +83,7 @@ export default class NFTs extends Vue {
             this.ethAddress = (await RNSUtils.name2Addr(`${address}.pass3.me`)).toString();
         } else {
             this.ethAddress = address;
-            this.rns = (await RNSUtils.addr2Name(address)).toString();
+            this.rns = (await RNSUtils.addr2Name(address)).toString().replace('.pass3.me', '');
         }
         const rss3 = await RSS3.visitor();
         const owner: string = <string>rss3.account.address;
@@ -159,8 +159,7 @@ export default class NFTs extends Vue {
 
     public toSinglenftPage(account: string, index: number) {
         this.$gtag.event('visitSingleNft', { userid: this.rns || this.ethAddress, nftid: account, nftindex: index });
-        let RNSAddress = this.rns.substring(0, this.rns.length - 9);
-        this.$router.push(`/${RNSAddress || this.ethAddress}/singlenft/${account}/${index}`);
+        this.$router.push(`/${this.rns || this.ethAddress}/singlenft/${account}/${index}`);
     }
 
     public toPublicPage(address: string) {

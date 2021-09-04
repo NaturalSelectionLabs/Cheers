@@ -446,9 +446,8 @@ export default class Home extends Vue {
     }
 
     public toSinglenftPage(account: string, index: number) {
-        const address = <string>this.rss3Profile.address;
-        this.$gtag.event('visitSingleNft', { userid: address, nftid: account, nftindex: index });
-        this.$router.push(`/${address}/singlenft/${account}/${index}`);
+        this.$gtag.event('visitSingleNft', { userid: this.rns || this.ethAddress, nftid: account, nftindex: index });
+        this.$router.push(`/${this.rns || this.ethAddress}/singlenft/${account}/${index}`);
     }
 
     public toSetupPage() {
