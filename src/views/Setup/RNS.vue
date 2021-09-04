@@ -55,7 +55,7 @@
             v-show="isLoading"
             class="fixed w-screen h-screen m-0 p-0 top-0 left-0 bg-black bg-opacity-50 flex justify-center items-center"
         >
-            <Loading size="200" />
+            <Loading :size="200" />
         </div>
         <Modal v-if="isShowingConfirm">
             <template #header>

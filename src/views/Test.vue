@@ -197,7 +197,7 @@
                     v-for="id in 8"
                     :key="id"
                     class="shadow-account-sm inline-flex m-0.5 rounded-full"
-                    size="64"
+                    :size="64"
                     chain="Ethereum"
                 />
             </template>
@@ -247,7 +247,7 @@
                     v-for="id in 8"
                     :key="id"
                     class="shadow-account-sm inline-flex m-0.5 rounded-full"
-                    size="64"
+                    :size="64"
                     chain="Ethereum"
                 />
             </template>
@@ -328,7 +328,7 @@
         <AccountItem chain="Ethereum" size="70" :deleteMode="false" />
 
         <div class="relative w-45 h-45">
-            <NFTItem size="180" imageUrl="https://i.imgur.com/GdWEt4z.jpg" />
+            <NFTItem :size="180" imageUrl="https://i.imgur.com/GdWEt4z.jpg" />
             <NFTBadges
                 class="absolute z-50 top-2.5 right-2.5"
                 chain="Ethereum"
@@ -461,9 +461,9 @@
             v-show="isLoading"
             class="fixed w-screen h-screen m-0 p-0 top-0 left-0 bg-black bg-opacity-50 flex justify-center items-center"
         >
-            <Loading size="200" />
+            <Loading :size="200" />
         </div>
-        <Loading size="200" />
+        <Loading :size="200" />
     </div>
 </template>
 

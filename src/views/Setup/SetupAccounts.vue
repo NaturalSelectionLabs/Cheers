@@ -25,7 +25,7 @@
             :is-having-content="true"
         >
             <template #content>
-                <AccountItem class="shadow-account-sm inline-flex m-0.5 rounded-full" size="64" chain="Ethereum" />
+                <AccountItem class="shadow-account-sm inline-flex m-0.5 rounded-full" :size="64" chain="Ethereum" />
             </template>
         </Card>
         <Card
@@ -79,7 +79,7 @@
                         v-for="chain in additionalAccounts"
                         :key="chain"
                         class="shadow-account-sm inline-flex m-0.5 rounded-full"
-                        size="64"
+                        :size="64"
                         :chain="chain"
                         @click="addAccount(chain)"
                     />
@@ -89,7 +89,7 @@
                         <template #item="{ element, index }">
                             <AccountItem
                                 class="shadow-account-sm inline-flex m-0.5 rounded-full"
-                                size="64"
+                                :size="64"
                                 :chain="element.platform"
                                 :delete-mode="mode === 'delete'"
                                 @delete-account="deleteAccount(index)"
@@ -129,7 +129,7 @@
                     <template #item="{ element }">
                         <AccountItem
                             class="shadow-account-sm inline-flex m-0.5 rounded-full"
-                            size="64"
+                            :size="64"
                             :chain="element.platform"
                         />
                     </template>
@@ -177,7 +177,7 @@
             v-show="isLoading"
             class="fixed w-screen h-screen m-0 p-0 top-0 left-0 bg-black bg-opacity-50 flex justify-center items-center"
         >
-            <Loading size="200" />
+            <Loading :size="200" />
         </div>
         <Modal v-if="isShowingAddAccountNotice">
             <template #header>

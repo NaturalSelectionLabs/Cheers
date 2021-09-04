@@ -55,7 +55,7 @@
                     items-center
                 "
             >
-                <Loading size="200" />
+                <Loading :size="200" />
             </div>
         </div>
     </div>

@@ -29,7 +29,7 @@
                     v-for="account in accounts"
                     :key="account.platform + account.identity"
                     class="shadow-account-sm inline-flex m-0.5 rounded-full"
-                    size="64"
+                    :size="64"
                     :chain="account.platform"
                 />
             </template>
@@ -119,7 +119,7 @@
             v-show="isLoading"
             class="fixed w-screen h-screen m-0 p-0 top-0 left-0 bg-black bg-opacity-50 flex justify-center items-center"
         >
-            <Loading size="200" />
+            <Loading :size="200" />
         </div>
         <Modal v-if="isShowingNotice">
             <template #header>

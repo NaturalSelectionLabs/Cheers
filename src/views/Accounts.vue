@@ -22,7 +22,7 @@
                         v-for="(item, index) in accounts"
                         :key="index"
                     >
-                        <AccountItem size="70" :chain="item.platform"></AccountItem>
+                        <AccountItem :size="70" :chain="item.platform"></AccountItem>
                         <span class="address text-2xl font-semibold">{{ filter(item.identity) }}</span>
                         <Button
                             size="sm"

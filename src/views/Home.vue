@@ -67,7 +67,7 @@
             <template #content>
                 <AccountItem
                     class="inline-block mr-1 cursor-pointer"
-                    size="70"
+                    :size="70"
                     :chain="item.platform"
                     v-for="(item, index) in accounts"
                     :key="index"
@@ -158,7 +158,7 @@
             </template>
             <template #body>
                 <div class="flex flex-col gap-y-4 items-center">
-                    <AccountItem class="m-auto mt-4" size="90" :chain="this.dialogChain"></AccountItem>
+                    <AccountItem class="m-auto mt-4" :size="90" :chain="this.dialogChain"></AccountItem>
                     <span class="address text-xl font-semibold break-all text-center mt-4">{{
                         this.dialogAddress
                     }}</span>
