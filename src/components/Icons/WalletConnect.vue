@@ -11,7 +11,7 @@ import { Options, Vue } from 'vue-class-component';
 
 @Options({
     props: {
-        size: String,
+        size: Number,
     },
 })
 export default class WalletConnect extends Vue {}

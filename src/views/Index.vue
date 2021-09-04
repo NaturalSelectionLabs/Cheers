@@ -8,7 +8,7 @@
                     class="bg-primary shadow-primary rounded-3xl w-full h-17.5 mb-9"
                     @click="walletConnect"
                 >
-                    <WalletConnect size="40" />
+                    <WalletConnect :size="40" />
                     <span> Wallet Connect </span>
                 </Button>
                 <Button
@@ -17,7 +17,7 @@
                     v-show="isHavingMetamaskPlugin"
                     @click="metaMask"
                 >
-                    <Metamask size="40" />
+                    <Metamask :size="40" />
                     <span> Metamask </span>
                 </Button>
             </div>
