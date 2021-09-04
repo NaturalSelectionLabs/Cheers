@@ -8,7 +8,7 @@
                 {{ $props.name }}
             </span>
             <span class="address">
-                {{ $props.address }}
+                {{ $props.address.startsWith('0x') ? $props.address : `${$props.address}.pass3.me` }}
             </span>
         </div>
     </div>
