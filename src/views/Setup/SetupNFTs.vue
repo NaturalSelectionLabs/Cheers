@@ -185,16 +185,6 @@ export default class SetupNFTs extends Vue {
                 return nft;
             }),
         );
-        this.nfts.push({
-            platform: 'test',
-            identity: 'test',
-            id: 'test',
-            info: {
-                collection: {
-                    name: 'test',
-                },
-            },
-        });
         this.displayedNFTs = this.nfts
             .filter((nft) => !nft.tags || nft.tags.indexOf('pass:hidden') === -1)
             .sort((a, b) => this.getOrder(a) - this.getOrder(b));
