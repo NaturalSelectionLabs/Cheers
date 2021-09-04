@@ -471,6 +471,28 @@
             avatar="https://rss3.mypinata.cloud/ipfs/QmSkwv6Vg5wWgbFSzuChp11jcpMng7or9Gg7JUG9SYuYmY"
             address="yzhe819.pass3.me"
         ></ShareCard>
+
+        <ShareCard
+            class="max-w-md"
+            name="test"
+            avatar="https://i.imgur.com/GdWEt4z.jpg"
+            address="test.pass3.me"
+        ></ShareCard>
+
+        <ShareCard
+            class="max-w-md"
+            name="test"
+            avatar="https://rss3.mypinata.cloud/ipfs/QmZq1Z6QJoUmkptcVmrqSe3WRamGxuLPuCSrLxHt7qJUwi"
+            address="test.pass3.me"
+        ></ShareCard>
+
+        <ShareCard
+            class="max-w-md"
+            name="test"
+            avatar="https://rss3.mypinata.cloud/ipfs/QmW7hQg4MLH74MsgQnpAQKD26sXwkquMGv1F39QMXYTp5E"
+            address="test.pass3.me"
+        ></ShareCard>
+
         <div
             v-show="isLoading"
             class="fixed w-screen h-screen m-0 p-0 top-0 left-0 bg-black bg-opacity-50 flex justify-center items-center"
