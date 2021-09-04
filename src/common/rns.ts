@@ -12,7 +12,6 @@ async function callRNSContract<T>(
     method: string,
     ...args: any
 ): Promise<T> {
-    (window as any).ethereum?.enable();
     let provider: ethers.providers.Web3Provider | ethers.providers.InfuraProvider;
     let signer; // TODO
     if (providerType === 'web3') {
@@ -76,6 +75,7 @@ function sha3HexAddress(addr: string) {
 
 export default {
     async register(name: string, speed: SPEED = 'average') {
+        await (window as any).ethereum?.enable();
         return callRNSContract<ethers.providers.TransactionResponse>('token', 'web3', speed, 'register', name);
     },
     addr2Name(addr: string, speed: SPEED = 'average') {
@@ -88,6 +88,7 @@ export default {
         return callRNSContract<string>('resolver', 'infura', speed, 'addr', utils.namehash(name));
     },
     async balanceOfPass3(addr: string, speed: SPEED = 'average') {
+        await (window as any).ethereum?.enable();
         const balance = await callRNSContract<ethers.BigNumber>('token', 'web3', speed, 'balanceOf', addr);
         return Number(ethers.utils.formatUnits(balance, 18));
     },
