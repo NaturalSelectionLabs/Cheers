@@ -20,14 +20,14 @@
                     <NFTItem
                         class="cursor-pointer"
                         :size="NFTWidth > 200 ? 200 : NFTWidth"
-                        :imageUrl="item.nft.image_url"
-                        @click="toSinglenftPage(item.account, item.index)"
+                        :imageUrl="item.info.image_url"
+                        @click="toSinglenftPage(item.info.account, item.info.index)"
                     />
                     <NFTBadges
                         class="absolute top-2.5 right-2.5"
-                        :chain="item.nft.chain"
+                        :chain="item.info.chain"
                         location="overlay"
-                        :collectionImg="item.nft.collection.image_url"
+                        :collectionImg="item.info.collection.image_url"
                     />
                 </div>
             </div>
@@ -49,6 +49,8 @@ import NFTBadges from '@/components/NFT/NFTBadges.vue';
 import RSS3 from '@/common/rss3';
 import RNSUtils from '@/common/rns';
 import config from '@/config';
+import { RSS3Asset } from 'rss3-next/types/rss3';
+import { RSS3AssetWithInfo } from '@/common/types';
 
 interface Profile {
     avatar: string;
@@ -101,20 +103,60 @@ export default class NFTs extends Vue {
             this.rss3Profile.username = data.rss3File.profile?.name?.[0] || '';
             this.rss3Profile.address = address;
 
-            data.assets.ethereum.forEach((item: { nft: any[] }, aid: any) => {
-                item.nft.forEach((nft, i) => {
-                    this.nftList.push({
-                        account: aid,
-                        index: i,
-                        nft: nft,
-                    });
-                });
-            });
+            const NFTList: Array<RSS3Asset> = await Promise.all(
+                (JSON.parse(JSON.stringify(await rss3.assets.get())) || []).map(async (nft: RSS3AssetWithInfo) => {
+                    const info = await this.getInfo(nft);
+                    if (info) {
+                        nft.info = info;
+                    }
+                    return nft;
+                }),
+            );
+
+            this.nftList = NFTList.filter((nft) => !nft.tags || nft.tags.indexOf('pass:hidden') === -1).sort(
+                (a, b) => this.getNFTOrder(a) - this.getNFTOrder(b),
+            );
         }
     }
+
+    private async getInfo(nft: RSS3Asset) {
+        const data = await RSS3.getAssetProfile(this.ethAddress);
+        const assets = data?.assets;
+        for (let chain in assets) {
+            for (let i = 0; i < assets[chain].length; i++) {
+                const chainInfo = assets[chain][i];
+                for (let j = 0; j < chainInfo.nft.length; j++) {
+                    const nftInfo = chainInfo.nft[j];
+                    if (
+                        nftInfo.chain === nft.platform &&
+                        nftInfo.token_id === nft.id &&
+                        nftInfo.asset_contract.address === nft.identity
+                    ) {
+                        let res: any = nftInfo;
+                        res.account = i;
+                        res.index = j;
+                        return res;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    private getNFTOrder(nft: RSS3Asset) {
+        let order = -1;
+        nft.tags?.forEach((tag: string) => {
+            if (tag.startsWith('pass:order:')) {
+                order = parseInt(tag.substr(11));
+            }
+        });
+        return order;
+    }
+
     public toSinglenftPage(account: string, index: number) {
         this.$gtag.event('visitSingleNft', { userid: this.rns || this.ethAddress, nftid: account, nftindex: index });
-        this.$router.push(`/${this.rns || this.ethAddress}/singlenft/${account}/${index}`);
+        let RNSAddress = this.rns.substring(0, this.rns.length - 9);
+        this.$router.push(`/${RNSAddress || this.ethAddress}/singlenft/${account}/${index}`);
     }
 
     public toPublicPage(address: string) {

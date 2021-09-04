@@ -111,9 +111,9 @@
                     class="inline-block mr-1 cursor-pointer"
                     v-for="(item, index) in assets"
                     :key="index"
-                    :imageUrl="item.nft.image_url"
+                    :imageUrl="item.info.image_url"
                     :size="70"
-                    @click="toSinglenftPage(item.account, item.index)"
+                    @click="toSinglenftPage(item.info.account, item.info.index)"
                 ></NFTItem>
             </template>
         </Card>
@@ -184,7 +184,7 @@ import AccountItem from '@/components/AccountItem.vue';
 import NFTItem from '@/components/NFT/NFTItem.vue';
 import RSS3, { IRSS3 } from '@/common/rss3';
 import { RSS3Account, RSS3Asset, RSS3Backlink, RSS3ID } from 'rss3-next/types/rss3';
-import { DetailedNFT, RSS3AssetShow } from '@/common/types';
+import { DetailedNFT, RSS3AssetShow, RSS3AssetWithInfo } from '@/common/types';
 import Modal from '@/components/Modal.vue';
 import RNSUtils from '@/common/rns';
 import config from '@/config';
@@ -232,8 +232,7 @@ export default class Home extends Vue {
         const isValidRSS3 = await RSS3.reconnect();
         this.rss3 = await RSS3.visitor();
         const owner: string = <string>this.rss3.account.address;
-
-        let address: string = '';
+        let address: string = <string>this.rss3.account.address;
         if (this.$route.params.address) {
             address = <string>this.$route.params.address;
             if (address.startsWith('0x')) {
@@ -297,16 +296,21 @@ export default class Home extends Vue {
             });
             await this.loadAccounts(<RSS3Account[]>data.rss3File.accounts);
 
-            // await this.loadAssets(data);
-            data.assets.ethereum.forEach((item, aid: any) => {
-                item.nft.forEach((nft, i) => {
-                    this.assets.push({
-                        account: aid,
-                        index: i,
-                        nft: nft,
-                    });
-                });
-            });
+            const NFTList: Array<RSS3Asset> = await Promise.all(
+                (JSON.parse(JSON.stringify(await this.rss3?.assets.get())) || []).map(
+                    async (nft: RSS3AssetWithInfo) => {
+                        const info = await this.getInfo(nft);
+                        if (info) {
+                            nft.info = info;
+                        }
+                        return nft;
+                    },
+                ),
+            );
+
+            this.assets = NFTList.filter((nft) => !nft.tags || nft.tags.indexOf('pass:hidden') === -1).sort(
+                (a, b) => this.getNFTOrder(a) - this.getNFTOrder(b),
+            );
         }
 
         // Split time-consuming methods from main thread, so it won't stuck the page loading progress
@@ -327,6 +331,39 @@ export default class Home extends Vue {
             }
         }
         return -1;
+    }
+
+    private async getInfo(nft: RSS3Asset) {
+        const assets = (await RSS3.getAssetProfile((<IRSS3>this.rss3).account.address))?.assets;
+        for (let chain in assets) {
+            for (let i = 0; i < assets[chain].length; i++) {
+                const chainInfo = assets[chain][i];
+                for (let j = 0; j < chainInfo.nft.length; j++) {
+                    const nftInfo = chainInfo.nft[j];
+                    if (
+                        nftInfo.chain === nft.platform &&
+                        nftInfo.token_id === nft.id &&
+                        nftInfo.asset_contract.address === nft.identity
+                    ) {
+                        let res: any = nftInfo;
+                        res.account = i;
+                        res.index = j;
+                        return res;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    private getNFTOrder(nft: RSS3Asset) {
+        let order = -1;
+        nft.tags?.forEach((tag: string) => {
+            if (tag.startsWith('pass:order:')) {
+                order = parseInt(tag.substr(11));
+            }
+        });
+        return order;
     }
 
     async loadAccounts(accounts: RSS3Account[]) {
@@ -352,7 +389,7 @@ export default class Home extends Vue {
             }
             await (<IRSS3>this.rss3).files.sync();
         } else {
-            sessionStorage.setItem('redirectFrom', this.$route.fullPath);
+            localStorage.setItem('redirectFrom', this.$route.fullPath);
             await this.$router.push('/');
         }
     }
@@ -363,7 +400,7 @@ export default class Home extends Vue {
             // No following list. Not following
             this.isFollowing = false;
             return false;
-        } else if (followList.list?.includes(this.ethAddress)) {
+        } else if (followList.list?.includes(<string>this.$route.params.address)) {
             this.isFollowing = true;
             return true;
         } else {
@@ -376,7 +413,7 @@ export default class Home extends Vue {
         const rss3 = await RSS3.get();
         if (!(await this.checkIsFollowing())) {
             this.$gtag.event('followFriend', { userid: this.rss3Profile['address'] });
-            await rss3?.link.post('following', this.ethAddress);
+            await rss3?.link.post('following', <string>this.$route.params.address);
         }
         this.isFollowing = true;
     }
@@ -385,7 +422,7 @@ export default class Home extends Vue {
         const rss3 = await RSS3.get();
         if (await this.checkIsFollowing()) {
             this.$gtag.event('unfollowFriend', { userid: this.rss3Profile['address'] });
-            await rss3?.link.delete('following', this.ethAddress);
+            await rss3?.link.delete('following', this.rss3Profile.address);
         }
         this.isFollowing = false;
     }
@@ -399,17 +436,18 @@ export default class Home extends Vue {
 
     public toAccountsPage() {
         this.$gtag.event('visitAccountsPage', { userid: this.rss3Profile['address'] });
-        this.$router.push(`/${this.rns || this.ethAddress}/accounts`);
+        this.$router.push(`/${this.rss3Profile['address']}/accounts`);
     }
 
     public toNFTsPage() {
         this.$gtag.event('visitNftPage', { userid: this.rss3Profile['address'] });
-        this.$router.push(`/${this.rns || this.ethAddress}/nfts`);
+        this.$router.push(`/${this.rss3Profile['address']}/nfts`);
     }
 
     public toSinglenftPage(account: string, index: number) {
-        this.$gtag.event('visitSingleNft', { userid: this.rns || this.ethAddress, nftid: account, nftindex: index });
-        this.$router.push(`/${this.rns || this.ethAddress}/singlenft/${account}/${index}`);
+        const address = <string>this.rss3Profile.address;
+        this.$gtag.event('visitSingleNft', { userid: address, nftid: account, nftindex: index });
+        this.$router.push(`/${address}/singlenft/${account}/${index}`);
     }
 
     public toSetupPage() {
@@ -432,7 +470,7 @@ export default class Home extends Vue {
                 console.log('Async: Copying to clipboard was successful!');
             },
             function (err) {
-                console.log('Async: Could not copy the account: ', err);
+                console.error('Async: Could not copy the account: ', err);
             },
         );
     }
