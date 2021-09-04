@@ -86,6 +86,7 @@
                         group="nfts"
                         data-type="hidden"
                         :item-key="collection"
+                        @end="nftMoveEnd"
                     >
                         <template #item="{ element }">
                             <NFTItem
@@ -268,9 +269,7 @@ export default class SetupNFTs extends Vue {
     }
 
     async chooseAsset(ev: any) {
-        console.log(this.activatedGroupID);
         this.activatedGroupID = -1;
-        console.log(this.activatedGroupID);
         await nextTick();
         this.activatedGroupID = this.collections.findIndex(
             (collection) => collection === JSON.parse(ev.item.dataset.info).info?.collection.name,
@@ -306,6 +305,7 @@ export default class SetupNFTs extends Vue {
     async save() {
         this.isLoading = true;
         await this.rss3?.files.sync();
+        await RSS3.getAssetProfile((<IRSS3>this.rss3).account.address, true);
         this.isLoading = false;
         window.history.back();
     }
