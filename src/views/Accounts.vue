@@ -34,7 +34,7 @@
                         <Button
                             size="sm"
                             class="w-10 h-10 bg-account-button text-white shadow-account"
-                            @click="toEtherScan(item.identity)"
+                            @click="toExternalLink(item.identity, item.platform)"
                         >
                             <i class="bx bx-link-external bx-sm"></i>
                         </Button>
@@ -170,8 +170,15 @@ export default class Accounts extends Vue {
         this.$router.push(`/${address}`);
     }
 
-    public toEtherScan(address: string) {
-        window.open(`https://etherscan.io/address/${address}`);
+    public toExternalLink(address: string, platform: string) {
+        switch (platform) {
+            case 'BSC':
+                window.open(`https://bscscan.com/address/${address}`);
+                break;
+            case 'Ethereum':
+                window.open(`https://etherscan.io/address/${address}`);
+                break;
+        }
     }
 
     public toSetupAccounts() {

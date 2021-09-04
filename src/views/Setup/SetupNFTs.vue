@@ -245,13 +245,16 @@ export default class SetupNFTs extends Vue {
         this.collections.forEach((collection) => {
             this.hiddenList[collection] = this.hiddenNFTs.filter((nft) => nft.info?.collection?.name === collection);
         });
+        this.sync();
     }
+
     showAll() {
         this.displayedNFTs = this.nfts;
         this.hiddenNFTs = [];
         this.collections.forEach((collection) => {
             this.hiddenList[collection] = [];
         });
+        this.sync();
     }
 
     findGroupID(asset: RSS3AssetWithInfo): number {
@@ -268,6 +271,10 @@ export default class SetupNFTs extends Vue {
     }
 
     async nftMoveEnd(e: any) {
+        this.sync();
+    }
+
+    sync() {
         this.displayedNFTs.forEach((nft, index) => {
             this.rss3?.assets.patchTags(
                 {
