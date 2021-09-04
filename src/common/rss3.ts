@@ -24,6 +24,18 @@ export interface IAssetProfile {
     };
 }
 
+function validateNetwork(chain: number | null, cb?: (chain: number | null) => void) {
+    if (config.rns.test && chain !== 0x3) {
+        alert('Please switch to ropsten network.');
+        cb ? cb(chain) : '';
+        throw 'Network error';
+    } else if (!config.rns.test && chain !== 0x1) {
+        alert('Please switch to mainnet network.');
+        cb ? cb(chain) : '';
+        throw 'Network error';
+    }
+}
+
 async function walletConnect() {
     provider = new WalletConnectProvider({
         infuraId: config.infuraId,
@@ -48,7 +60,16 @@ async function walletConnect() {
 
     const address = (await web3.eth.getAccounts())[0];
 
-    console.log(address);
+    // Try to subscribe to chainId change
+    // But actually it doesn't work, so we need to
+    // disconnect the user if she uses the wrong network
+    // and ask her to reconnect
+    // provider.on('chainChanged', (chainId: number) => {
+    //     console.log(chainId);
+    // });
+    const chain = await web3.eth.getChainId();
+    console.log(chain);
+    validateNetwork(chain, disconnect);
 
     rss3 = new RSS3({
         endpoint: config.rss3Endpoint,
@@ -80,6 +101,10 @@ async function metamaskConnect() {
     if (sessionStorage.getItem('lastConnect') === 'metamask' && sessionStorage.getItem('lastAddress')) {
         address = <string>sessionStorage.getItem('lastAddress');
     } else {
+        // check chainId
+        const chain: string | null = await metamaskEthereum.request({ method: 'eth_chainId' });
+        validateNetwork(Number(chain));
+
         const accounts = await metamaskEthereum.request({
             method: 'eth_requestAccounts',
         });
@@ -99,6 +124,15 @@ function isValidRSS3() {
     return !!rss3;
 }
 
+async function disconnect() {
+    rss3 = null;
+    web3 = null;
+    if (provider) {
+        await provider.disconnect();
+    }
+    sessionStorage.removeItem('lastConnect');
+}
+
 export default {
     walletConnect: async () => {
         sessionStorage.setItem('lastConnect', 'walletConnect');
@@ -109,12 +143,7 @@ export default {
         return await metamaskConnect();
     },
     disconnect: async () => {
-        rss3 = null;
-        web3 = null;
-        if (provider) {
-            await provider.disconnect();
-        }
-        sessionStorage.removeItem('lastConnect');
+        disconnect();
     },
     reconnect: async (): Promise<boolean> => {
         if (!isValidRSS3()) {

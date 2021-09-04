@@ -128,7 +128,12 @@ export default class Index extends Vue {
 
     async walletConnect() {
         this.$gtag.event('loginWallet', { method: 'WalletConnect' });
-        this.rss3 = await RSS3.walletConnect();
+        try {
+            this.rss3 = await RSS3.walletConnect();
+        } catch (e) {
+            return null;
+        }
+
         await this.verifyProfile();
     }
 
