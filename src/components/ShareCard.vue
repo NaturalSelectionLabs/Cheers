@@ -9,6 +9,7 @@
                     :address="$props.address"
                     @color="getColor"
                 />
+                <div class="absolute bottom-5 right-8"><Passport /></div>
             </div>
         </div>
     </div>
@@ -17,10 +18,11 @@
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
 import FollowerCard from '@/components/FollowerCard.vue';
+import Passport from '@/components/Icons/Passport.vue';
 import { hslToRgb, rgbToHsl } from '@/common/utils';
 
 @Options({
-    components: { FollowerCard },
+    components: { FollowerCard, Passport },
     props: {
         avatar: String,
         name: String,
