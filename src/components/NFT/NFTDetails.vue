@@ -19,8 +19,8 @@
             </div>
         </div>
         <div>
-            <h3>About {{ details.collection.name }}</h3>
-            <p>{{ details.collection.description }}</p>
+            <h3>About {{ details.collection?.name }}</h3>
+            <p>{{ details.collection?.description }}</p>
         </div>
     </div>
 </template>
