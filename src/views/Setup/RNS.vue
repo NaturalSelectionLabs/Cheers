@@ -127,7 +127,7 @@ export default class RNS extends Vue {
         // );
         // console.log('Balance of PASS3:', await RNSUtils.balanceOfPass3('0x8c23B96f2fb77AaE1ac2832debEE30f09da7af3C'));
         if (!(await RSS3.reconnect())) {
-            localStorage.setItem('redirectFrom', this.$route.fullPath);
+            sessionStorage.setItem('redirectFrom', this.$route.fullPath);
             await this.$router.push('/');
         } else {
             this.rss3 = await RSS3.get();
@@ -142,8 +142,8 @@ export default class RNS extends Vue {
                 } else {
                     // Login
                     this.$gtag.event('login', { userid: (<IRSS3>this.rss3).account.address });
-                    const redirectFrom = localStorage.getItem('redirectFrom');
-                    localStorage.removeItem('redirectFrom');
+                    const redirectFrom = sessionStorage.getItem('redirectFrom');
+                    sessionStorage.removeItem('redirectFrom');
                     await this.$router.push(redirectFrom || '/home');
                 }
             }

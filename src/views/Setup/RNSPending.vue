@@ -26,7 +26,7 @@ export default class RNSPending extends Vue {
 
     async mounted() {
         if (!(await RSS3.reconnect())) {
-            localStorage.setItem('redirectFrom', this.$route.fullPath);
+            sessionStorage.setItem('redirectFrom', this.$route.fullPath);
             await this.$router.push('/');
         } else {
             this.rss3 = await RSS3.get();
@@ -47,8 +47,8 @@ export default class RNSPending extends Vue {
             } else {
                 // Login
                 this.$gtag.event('login', { userid: (<IRSS3>this.rss3).account.address });
-                const redirectFrom = localStorage.getItem('redirectFrom');
-                localStorage.removeItem('redirectFrom');
+                const redirectFrom = sessionStorage.getItem('redirectFrom');
+                sessionStorage.removeItem('redirectFrom');
                 await this.$router.push(redirectFrom || '/home');
             }
         }

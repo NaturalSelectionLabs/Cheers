@@ -257,7 +257,7 @@ export default class Home extends Vue {
         } else {
             // address = 'RSS3 Address';
             if (!isValidRSS3) {
-                localStorage.setItem('redirectFrom', this.$route.fullPath);
+                sessionStorage.setItem('redirectFrom', this.$route.fullPath);
                 await this.$router.push('/');
             } else {
                 this.rns = (await RNSUtils.addr2Name(owner)).toString().replace('.pass3.me', '');
@@ -352,7 +352,7 @@ export default class Home extends Vue {
             }
             await (<IRSS3>this.rss3).files.sync();
         } else {
-            localStorage.setItem('redirectFrom', this.$route.fullPath);
+            sessionStorage.setItem('redirectFrom', this.$route.fullPath);
             await this.$router.push('/');
         }
     }

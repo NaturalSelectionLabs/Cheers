@@ -120,8 +120,8 @@ export default class Index extends Vue {
         } else {
             // Login
             this.$gtag.event('login', { userid: address });
-            const redirectFrom = localStorage.getItem('redirectFrom');
-            localStorage.removeItem('redirectFrom');
+            const redirectFrom = sessionStorage.getItem('redirectFrom');
+            sessionStorage.removeItem('redirectFrom');
             await this.$router.push(redirectFrom || '/home');
         }
     }

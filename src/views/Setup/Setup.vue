@@ -195,7 +195,7 @@ export default class Setup extends Vue {
 
     async mounted() {
         if (!(await RSS3.reconnect())) {
-            localStorage.setItem('redirectFrom', this.$route.fullPath);
+            sessionStorage.setItem('redirectFrom', this.$route.fullPath);
             await this.$router.push('/');
         } else {
             this.rss3 = await RSS3.get();
@@ -304,18 +304,18 @@ export default class Setup extends Vue {
     }
 
     loadEdited() {
-        if (localStorage.getItem('profile')) {
-            this.profile = JSON.parse(localStorage.getItem('profile') || '');
+        if (sessionStorage.getItem('profile')) {
+            this.profile = JSON.parse(sessionStorage.getItem('profile') || '');
             return true;
         } else {
             return false;
         }
     }
     saveEdited() {
-        localStorage.setItem('profile', JSON.stringify(this.profile));
+        sessionStorage.setItem('profile', JSON.stringify(this.profile));
     }
     clearEdited() {
-        localStorage.removeItem('profile');
+        sessionStorage.removeItem('profile');
     }
 
     toManageAccounts() {
@@ -369,8 +369,8 @@ export default class Setup extends Vue {
         await RSS3.getAssetProfile((<IRSS3>this.rss3).account.address, true);
         this.$gtag.event('finishEditProfile', { userid: (<IRSS3>this.rss3).account.address });
         this.isLoading = false;
-        const redirectFrom = localStorage.getItem('redirectFrom');
-        localStorage.removeItem('redirectFrom');
+        const redirectFrom = sessionStorage.getItem('redirectFrom');
+        sessionStorage.removeItem('redirectFrom');
         await this.$router.push(redirectFrom || '/home');
     }
 }

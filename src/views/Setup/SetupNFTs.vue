@@ -163,13 +163,13 @@ export default class SetupNFTs extends Vue {
 
     async mounted() {
         if (!(await RSS3.reconnect())) {
-            localStorage.setItem('redirectFrom', this.$route.fullPath);
+            sessionStorage.setItem('redirectFrom', this.$route.fullPath);
             await this.$router.push('/');
             return;
         }
         this.rss3 = await RSS3.get();
-        if (localStorage.getItem('profile')) {
-            const profile = JSON.parse(<string>localStorage.getItem('profile'));
+        if (sessionStorage.getItem('profile')) {
+            const profile = JSON.parse(<string>sessionStorage.getItem('profile'));
             this.avatar = profile.avatar;
         } else {
             const profile = await (<IRSS3>this.rss3).profile.get();
