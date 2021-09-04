@@ -124,5 +124,5 @@ module.exports = {
             translate: ['active'],
         },
     },
-    plugins: [],
+    plugins: [require('@tailwindcss/aspect-ratio')],
 };
