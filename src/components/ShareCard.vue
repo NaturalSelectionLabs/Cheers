@@ -1,5 +1,5 @@
 <template>
-    <div class="relative w-full p-4">
+    <div class="relative w-full p-2">
         <div class="box-border rounded-2xl aspect-w-16 aspect-h-9" ref="card">
             <div class="absolute inset-0 w-full h-full p-8 flex flex-col justify-center">
                 <FollowerCard
@@ -9,7 +9,7 @@
                     :address="$props.address"
                     @color="getColor"
                 />
-                <div class="absolute bottom-5 right-8"><Passport /></div>
+                <div class="absolute bottom-4 md:bottom-5 right-8"><Passport /></div>
             </div>
         </div>
     </div>

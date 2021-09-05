@@ -52,7 +52,7 @@ export default class FollowerCard extends Vue {
 <style scoped lang="postcss">
 @layer components {
     .follower-container {
-        @apply px-9 py-4 flex flex-row items-center justify-start gap-10 rounded bg-white;
+        @apply px-9 py-4 flex flex-row items-center justify-start gap-3 md:gap-10 rounded bg-white;
 
         .avatar > img {
             @apply h-16 w-16 rounded-full object-cover;
