@@ -91,7 +91,11 @@ module.exports = {
             },
             width: {
                 27: '6.75rem', //108px, scan tag width
-                45: '11.25rem', //180px, discard & save button width
+                45: '11.25rem', //180px, discard & save button width,
+                50: '12.5rem', //200px
+            },
+            height: {
+                50: '12.5rem', //200px
             },
             backgroundImage: (theme) => ({
                 BSC: "url('@/assets/images/chains/BSC.png')",
@@ -99,6 +103,10 @@ module.exports = {
                 Ronin: "url('@/assets/images/chains/Ronin.png')",
                 Etherscan: "url('@/assets/images/scans/Etherscan.png')",
                 Roninscan: "url('@/assets/images/scans/Roninscan.png')",
+                pass3gif: 'url(@/assets/images/pass3.gif)',
+                pass3logo: 'url(@/assets/images/pass3logo.svg)',
+                pass3gradient:
+                    'linear-gradient(172.52deg, #0072FF -40.83%, #96C5FF -3.21%, #DDECFF 28.66%, #FFFFFF 44.01%);',
             }),
             backgroundSize: {
                 85: '85%',
