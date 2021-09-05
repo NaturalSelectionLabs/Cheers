@@ -121,7 +121,6 @@ export default class NFTs extends Vue {
         this.nftList = NFTList.filter((nft) => (!nft.tags || nft.tags.indexOf('pass:hidden') === -1) && nft.info).sort(
             (a, b) => this.getNFTOrder(a) - this.getNFTOrder(b),
         );
-        console.log(this.nftList);
     }
 
     private async getInfo(nft: RSS3Asset) {

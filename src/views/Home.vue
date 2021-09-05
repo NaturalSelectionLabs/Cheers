@@ -268,7 +268,7 @@ export default class Home extends Vue {
             }
         }
 
-        console.log(this.ethAddress);
+        // console.log(this.ethAddress);
         const data = await RSS3.getAssetProfile(this.ethAddress);
         if (!data) {
             return;
