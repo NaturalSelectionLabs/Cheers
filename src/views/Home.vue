@@ -391,7 +391,7 @@ export default class Home extends Vue {
             }
             await (<IRSS3>this.rss3).files.sync();
         } else {
-            localStorage.setItem('redirectFrom', this.$route.fullPath);
+            sessionStorage.setItem('redirectFrom', this.$route.fullPath);
             await this.$router.push('/');
         }
     }

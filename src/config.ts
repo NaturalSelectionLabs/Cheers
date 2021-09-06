@@ -1,6 +1,6 @@
 export default {
     infuraId: '76af1228cdf345d2bff6a9c0f35112e1',
-    rss3Endpoint: 'https://rss3-asset-hub-g886a.ondigitalocean.app',
+    rss3Endpoint: 'https://hub-next.pass3.me',
     defaultAvatar: 'https://rss3.mypinata.cloud/ipfs/QmVFq9qimnudPcs6QkQv8ZVEsvwD3aqETHWtS5yXgdbYY5',
     rns: {
         test: true,
