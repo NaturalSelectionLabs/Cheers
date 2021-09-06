@@ -57,7 +57,7 @@ function getRNSContract(cname: CNAME) {
     if (config.rns.test) {
         return config.rns.contractNetworks.ropsten[cname];
     } else {
-        return '';
+        return config.rns.contractNetworks.mainnet[cname];
     }
 }
 

@@ -9,6 +9,10 @@ export default {
                 resolver: '0x028A03A4E9Af3f5E078938c69b88740E81391A6a',
                 token: '0x63CfEB343975116Ec2fc27125609da236D066615',
             },
+            mainnet: {
+                resolver: '0x0000000000000000000000000000000000000000',
+                token: '0x0000000000000000000000000000000000000000',
+            },
         },
         contract: {
             // rns contract abi
