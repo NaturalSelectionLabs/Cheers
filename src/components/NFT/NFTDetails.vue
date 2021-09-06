@@ -1,11 +1,18 @@
 <template>
     <div class="details-container">
         <h2>{{ details.name }} #{{ details.token_id }}</h2>
-        <ScanTag
-            :chain="chain"
-            class="cursor-pointer"
-            @click="toExternalLink(details.asset_contract?.address, details.token_id)"
-        />
+        <div class="tag-container">
+            <ScanTag
+                :chain="chain"
+                class="cursor-pointer"
+                @click="toScan(details.asset_contract?.address, details.token_id)"
+            />
+            <MarketTag
+                :market="market"
+                class="cursor-pointer"
+                @click="toMarket(details.asset_contract?.address, details.token_id)"
+            />
+        </div>
         <div>
             <h3>Description</h3>
             <p>{{ details.description }}</p>
@@ -32,20 +39,40 @@
 import { Vue, Options } from 'vue-class-component';
 import Trait from '@/components/NFT/Trait.vue';
 import ScanTag from '@/components/NFT/ScanTag.vue';
-
+import MarketTag from '@/components/NFT/MarketTag.vue';
 @Options({
-    components: { Trait, ScanTag },
+    components: { Trait, ScanTag, MarketTag },
     props: {
         details: Object,
         chain: String,
+        market: String,
     },
 })
 export default class NFTDetail extends Vue {
     details!: Object;
     chain!: String;
+    market!: String;
 
-    public toExternalLink(address: string, tokenId: string) {
-        window.open(`https://opensea.io/assets/${address}/${tokenId}`);
+    public toMarket(address: string, tokenId: string) {
+        switch (this.market) {
+            case 'opensea':
+                window.open(`https://opensea.io/assets/${address}/${tokenId}`);
+                break;
+            case 'rarible':
+                window.open(`https://rarible.com/token/${address}:${tokenId}`);
+                break;
+        }
+    }
+
+    public toScan(address: string, tokenId: string) {
+        switch (this.chain) {
+            case 'BSC':
+                window.open(`https://bscscan.com/token/${address}?a=${tokenId}`);
+                break;
+            case 'Ethereum':
+                window.open(`https://etherscan.io/token/${address}?a=${tokenId}`);
+                break;
+        }
     }
 }
 </script>
@@ -63,6 +90,9 @@ export default class NFTDetail extends Vue {
     }
     p {
         @apply text-sm leading-normal break-all;
+    }
+    .tag-container {
+        @apply flex flex-row flex-wrap justify-start items-center gap-2.5;
     }
     .traits-container {
         @apply flex flex-row flex-wrap justify-start items-center gap-2.5;

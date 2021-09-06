@@ -37,7 +37,7 @@
                 <div class="image pb-4">
                     <NFTItem :imageUrl="this.details.image_url" :size="NFTWidth > 416 ? 416 : NFTWidth"></NFTItem>
                 </div>
-                <NFTDetail :chain="details.chain" :details="details" />
+                <NFTDetail :chain="details.chain" :details="details" market="opensea" />
             </div>
         </div>
     </div>
