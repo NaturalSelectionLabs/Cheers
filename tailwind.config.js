@@ -103,6 +103,9 @@ module.exports = {
                 Ronin: "url('@/assets/images/chains/Ronin.png')",
                 Etherscan: "url('@/assets/images/scans/Etherscan.png')",
                 Roninscan: "url('@/assets/images/scans/Roninscan.png')",
+                bscscan: "url('@/assets/images/scans/bscscan.png')",
+                opensea: "url('@/assets/images/marketplaces/OpenSea.png')",
+                rarible: "url('@/assets/images/marketplaces/rarible.png')",
                 pass3gif: 'url(@/assets/images/pass3.gif)',
                 pass3logo: 'url(@/assets/images/pass3logo.svg)',
                 pass3gradient:
