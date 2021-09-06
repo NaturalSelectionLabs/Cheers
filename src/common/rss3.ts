@@ -115,6 +115,10 @@ async function metamaskConnect() {
         endpoint: config.rss3Endpoint,
         address: address,
         sign: async (data: string) => await (<Web3>web3).eth.personal.sign(data, address, ''),
+        callback: async () => {
+            rss3?.files.set(await rss3.files.get(address));
+            await rss3?.files.sync();
+        },
     });
 
     return rss3;
