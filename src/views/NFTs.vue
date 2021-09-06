@@ -21,13 +21,13 @@
                         class="cursor-pointer"
                         :size="NFTWidth > 200 ? 200 : NFTWidth"
                         :imageUrl="item.info.image_url"
-                        @click="toSinglenftPage(item.info.account, item.info.index)"
+                        @click="toSinglenftPage(item.info.platform, item.info.account, item.info.index)"
                     />
                     <NFTBadges
                         class="absolute top-2.5 right-2.5"
                         :chain="item.info.chain"
                         location="overlay"
-                        :collectionImg="item.info.collection.image_url"
+                        :collectionImg="item.info.collection?.image_url"
                     />
                 </div>
             </div>
@@ -108,8 +108,8 @@ export default class NFTs extends Vue {
     }
 
     async loadNFTs(NFTs: RSS3Asset[]) {
-        const NFTList: Array<RSS3Asset> = await Promise.all(
-            (JSON.parse(JSON.stringify(await NFTs)) || []).map(async (nft: RSS3AssetWithInfo) => {
+        const NFTList: Array<RSS3AssetWithInfo> = await Promise.all(
+            (JSON.parse(JSON.stringify(NFTs)) || []).map(async (nft: RSS3AssetWithInfo) => {
                 const info = await this.getInfo(nft);
                 if (info) {
                     nft.info = info;
@@ -118,7 +118,7 @@ export default class NFTs extends Vue {
             }),
         );
 
-        this.nftList = NFTList.filter((nft) => !nft.tags || nft.tags.indexOf('pass:hidden') === -1).sort(
+        this.nftList = NFTList.filter((nft) => (!nft.tags || nft.tags.indexOf('pass:hidden') === -1) && nft.info).sort(
             (a, b) => this.getNFTOrder(a) - this.getNFTOrder(b),
         );
     }
@@ -139,6 +139,7 @@ export default class NFTs extends Vue {
                         let res: any = nftInfo;
                         res.account = i;
                         res.index = j;
+                        res.platform = chain;
                         return res;
                     }
                 }
@@ -157,9 +158,14 @@ export default class NFTs extends Vue {
         return order;
     }
 
-    public toSinglenftPage(account: string, index: number) {
-        this.$gtag.event('visitSingleNft', { userid: this.rns || this.ethAddress, nftid: account, nftindex: index });
-        this.$router.push(`/${this.rns || this.ethAddress}/singlenft/${account}/${index}`);
+    public toSinglenftPage(chain: string, account: string, index: number) {
+        this.$gtag.event('visitSingleNft', {
+            userid: this.rns || this.ethAddress,
+            chain: chain,
+            nftid: account,
+            nftindex: index,
+        });
+        this.$router.push(`/${this.rns || this.ethAddress}/singlenft/${chain}/${account}/${index}`);
     }
 
     public toPublicPage(address: string) {

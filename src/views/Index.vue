@@ -1,7 +1,7 @@
 <template>
-    <div class="onboarding h-full text-center bg-cover bg-fixed flex items-center justify-center">
-        <div class="body px-4 h-2/3 flex flex-col justify-between">
-            <h1 class="text-8xl text-primary font-bold">Hello</h1>
+    <div class="onboarding h-full text-center bg-cover bg-fixed flex items-center justify-center bg-pass3gradient">
+        <div class="body px-4 h-2/3 flex flex-col justify-center items-center gap-56">
+            <div class="logo-container w-50 h-50 bg-pass3logo bg-center bg-contain bg-no-repeat"></div>
             <div class="leading-17.5 text-white w-83.5 text-2xl mx-auto">
                 <Button
                     size="lg"
@@ -161,8 +161,8 @@ export default class Index extends Vue {
 
 <style lang="postcss" scoped>
 @layer components {
-    .onboarding {
-        background-image: url('../assets/images/rss3-bg.png');
+    .logo-container {
+        mix-blend-mode: multiply;
     }
 }
 </style>

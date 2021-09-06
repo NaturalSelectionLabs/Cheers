@@ -186,15 +186,15 @@ export default class SetupNFTs extends Vue {
             }),
         );
         this.displayedNFTs = this.nfts
-            .filter((nft) => !nft.tags || nft.tags.indexOf('pass:hidden') === -1)
+            .filter((nft) => (!nft.tags || nft.tags.indexOf('pass:hidden') === -1) && nft.info)
             .sort((a, b) => this.getOrder(a) - this.getOrder(b));
         this.hiddenNFTs = this.nfts
-            .filter((nft) => nft.tags && nft.tags.indexOf('pass:hidden') !== -1)
+            .filter((nft) => nft.tags && nft.tags.indexOf('pass:hidden') !== -1 && nft.info)
             .sort((a, b) => this.getOrder(a) - this.getOrder(b));
         const collections: {
             [key: string]: boolean;
         } = {};
-        this.nfts.forEach(async (nft) => {
+        this.nfts.forEach((nft) => {
             if (nft.info && nft.info.collection && nft.info.collection.name) {
                 collections[nft.info.collection.name] = true;
             }

@@ -113,7 +113,7 @@
                     :key="index"
                     :imageUrl="item.info.image_url"
                     :size="70"
-                    @click="toSinglenftPage(item.info.account, item.info.index)"
+                    @click="toSinglenftPage(item.info.platform, item.info.account, item.info.index)"
                 ></NFTItem>
             </template>
         </Card>
@@ -268,7 +268,7 @@ export default class Home extends Vue {
             }
         }
 
-        console.log(this.ethAddress);
+        // console.log(this.ethAddress);
         const data = await RSS3.getAssetProfile(this.ethAddress);
         if (!data) {
             return;
@@ -333,6 +333,7 @@ export default class Home extends Vue {
                         let res: any = nftInfo;
                         res.account = i;
                         res.index = j;
+                        res.platform = chain;
                         return res;
                     }
                 }
@@ -352,7 +353,7 @@ export default class Home extends Vue {
     }
 
     async loadNFTs(NFTs: RSS3Asset[]) {
-        const NFTList: Array<RSS3Asset> = await Promise.all(
+        const NFTList: Array<RSS3AssetWithInfo> = await Promise.all(
             (JSON.parse(JSON.stringify(NFTs)) || []).map(async (nft: RSS3AssetWithInfo) => {
                 const info = await this.getInfo(nft);
                 if (info) {
@@ -362,7 +363,7 @@ export default class Home extends Vue {
             }),
         );
 
-        this.assets = NFTList.filter((nft) => !nft.tags || nft.tags.indexOf('pass:hidden') === -1).sort(
+        this.assets = NFTList.filter((nft) => (!nft.tags || nft.tags.indexOf('pass:hidden') === -1) && nft.info).sort(
             (a, b) => this.getNFTOrder(a) - this.getNFTOrder(b),
         );
     }
@@ -401,7 +402,7 @@ export default class Home extends Vue {
             // No following list. Not following
             this.isFollowing = false;
             return false;
-        } else if (followList.list?.includes(<string>this.$route.params.address)) {
+        } else if (followList.list?.includes(this.ethAddress)) {
             this.isFollowing = true;
             return true;
         } else {
@@ -414,7 +415,7 @@ export default class Home extends Vue {
         const rss3 = await RSS3.get();
         if (!(await this.checkIsFollowing())) {
             this.$gtag.event('followFriend', { userid: this.rss3Profile['address'] });
-            await rss3?.link.post('following', <string>this.$route.params.address);
+            await rss3?.link.post('following', this.ethAddress);
         }
         this.isFollowing = true;
     }
@@ -423,7 +424,7 @@ export default class Home extends Vue {
         const rss3 = await RSS3.get();
         if (await this.checkIsFollowing()) {
             this.$gtag.event('unfollowFriend', { userid: this.rss3Profile['address'] });
-            await rss3?.link.delete('following', this.rss3Profile.address);
+            await rss3?.link.delete('following', this.ethAddress);
         }
         this.isFollowing = false;
     }
@@ -445,9 +446,14 @@ export default class Home extends Vue {
         this.$router.push(`/${this.rss3Profile['address']}/nfts`);
     }
 
-    public toSinglenftPage(account: string, index: number) {
-        this.$gtag.event('visitSingleNft', { userid: this.rns || this.ethAddress, nftid: account, nftindex: index });
-        this.$router.push(`/${this.rns || this.ethAddress}/singlenft/${account}/${index}`);
+    public toSinglenftPage(chain: string, account: string, index: number) {
+        this.$gtag.event('visitSingleNft', {
+            userid: this.rns || this.ethAddress,
+            chain: chain,
+            nftid: account,
+            nftindex: index,
+        });
+        this.$router.push(`/${this.rns || this.ethAddress}/singlenft/${chain}/${account}/${index}`);
     }
 
     public toSetupPage() {

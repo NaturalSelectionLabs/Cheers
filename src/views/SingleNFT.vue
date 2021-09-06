@@ -19,7 +19,7 @@
                         items-center
                     "
                 >
-                    {{ details.collection.name }}
+                    {{ details.collection?.name }}
                 </div>
                 <div class="flex justify-between items-center">
                     <Button size="sm" class="w-10 h-10 bg-white text-primary shadow-secondary" @click="back">
@@ -29,7 +29,7 @@
                         class="absolute z-50 right-0"
                         :chain="details.chain"
                         location="header"
-                        :collectionImg="details.collection.image_url"
+                        :collectionImg="details.collection?.image_url"
                     />
                 </div>
             </div>
@@ -77,12 +77,13 @@ export default class SingleNFT extends Vue {
             this.rns = (await RNSUtils.addr2Name(address)).toString();
         }
 
+        const chain: string = String(this.$route.params.chain);
         const aid: number = Number(this.$route.params.aid);
         const id: number = Number(this.$route.params.id);
         const data = await RSS3.getAssetProfile(this.ethAddress);
 
         if (data) {
-            this.details = data.assets.ethereum[aid].nft[id];
+            this.details = data.assets[chain][aid].nft[id];
         }
     }
     public back() {

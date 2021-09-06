@@ -1,8 +1,11 @@
--5
 <template>
     <div class="details-container">
         <h2>{{ details.name }} #{{ details.token_id }}</h2>
-        <ScanTag :chain="chain" />
+        <ScanTag
+            :chain="chain"
+            class="cursor-pointer"
+            @click="toExternalLink(details.asset_contract?.address, details.token_id)"
+        />
         <div>
             <h3>Description</h3>
             <p>{{ details.description }}</p>
@@ -19,8 +22,8 @@
             </div>
         </div>
         <div>
-            <h3>About {{ details.collection.name }}</h3>
-            <p>{{ details.collection.description }}</p>
+            <h3>About {{ details.collection?.name }}</h3>
+            <p>{{ details.collection?.description }}</p>
         </div>
     </div>
 </template>
@@ -40,6 +43,10 @@ import ScanTag from '@/components/NFT/ScanTag.vue';
 export default class NFTDetail extends Vue {
     details!: Object;
     chain!: String;
+
+    public toExternalLink(address: string, tokenId: string) {
+        window.open(`https://opensea.io/assets/${address}/${tokenId}`);
+    }
 }
 </script>
 
