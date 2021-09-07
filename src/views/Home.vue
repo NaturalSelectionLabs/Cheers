@@ -111,7 +111,7 @@
                     class="inline-block mr-1 cursor-pointer"
                     v-for="(item, index) in assets"
                     :key="index"
-                    :imageUrl="item.info.image_url"
+                    :imageUrl="item.info.animation_url || item.info.image_url"
                     :size="70"
                     @click="toSinglenftPage(item.info.platform, item.info.account, item.info.index)"
                 ></NFTItem>

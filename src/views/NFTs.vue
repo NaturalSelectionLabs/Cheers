@@ -20,7 +20,7 @@
                     <NFTItem
                         class="cursor-pointer"
                         :size="NFTWidth > 200 ? 200 : NFTWidth"
-                        :imageUrl="item.info.image_url"
+                        :imageUrl="item.info.animation_url || item.info.image_url"
                         @click="toSinglenftPage(item.info.platform, item.info.account, item.info.index)"
                     />
                     <NFTBadges
