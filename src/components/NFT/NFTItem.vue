@@ -1,12 +1,26 @@
 <template>
-    <div
-        class="nft-item"
+    <img
+        v-if="!(imageUrl?.endsWith('mp4') || imageUrl?.endsWith('mov'))"
         :style="{
             width: size + 'px',
             height: size + 'px',
-            backgroundImage: `url(${imageUrl})`,
         }"
+        :src="imageUrl"
+        class="nft-item"
     />
+    <video
+        v-else
+        :style="{
+            width: size + 'px',
+            height: size + 'px',
+        }"
+        class="nft-item"
+        autoplay
+        loop
+        muted
+    >
+        <source :src="imageUrl" :type="`video/${imageUrl.substring(imageUrl.lastIndexOf('.') + 1)}`" />
+    </video>
 </template>
 
 <script lang="ts">
