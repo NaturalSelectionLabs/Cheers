@@ -34,7 +34,7 @@ export default class FollowerCard extends Vue {
         const img = <HTMLImageElement>this.$refs.avatar;
 
         if (this.name.length > 20) {
-            this.name = this.name.slice(0, 20) + '...';
+            this.name = this.name.slice(0, 17) + '...';
         }
 
         if (img.complete) {
@@ -57,7 +57,7 @@ export default class FollowerCard extends Vue {
 <style scoped lang="postcss">
 @layer components {
     .follower-container {
-        @apply px-6 py-4 flex flex-row items-center justify-start gap-4 md:gap-10 rounded bg-white shadow-primary-card;
+        @apply px-6 py-4 flex flex-row items-center justify-start gap-6 md:gap-10 rounded bg-white shadow-primary-card;
 
         .avatar > img {
             @apply h-16 w-16 rounded-full object-cover;
