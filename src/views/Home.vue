@@ -30,15 +30,7 @@
             <i class="bx bx-pencil bx-sm"></i>
         </Button>
 
-        <Card
-            title="Accounts"
-            color-title="text-account-title"
-            color-tips="text-account-title"
-            color-background="bg-account-bg"
-            class="w-auto"
-            :is-having-content="true"
-            :is-single-line="true"
-        >
+        <AccountCard>
             <template #header-button>
                 <div v-if="isOwner" class="flex flex-row gap-2">
                     <Button
@@ -68,14 +60,14 @@
             <template #content>
                 <AccountItem
                     class="inline-block mr-1 cursor-pointer"
-                    :size="70"
+                    :size="40"
                     :chain="item.platform"
                     v-for="(item, index) in accounts"
                     :key="index"
                     @click="displayDialog(item.identity, item.platform)"
                 />
             </template>
-        </Card>
+        </AccountCard>
 
         <Card
             title="NFTs"
@@ -215,6 +207,7 @@ import { DetailedNFT, RSS3AssetShow, RSS3AssetWithInfo } from '@/common/types';
 import Modal from '@/components/Modal.vue';
 import RNSUtils from '@/common/rns';
 import config from '@/config';
+import AccountCard from '@/components/AccountCard.vue';
 
 interface ProfileInfo {
     avatar: string;
@@ -229,7 +222,7 @@ interface Relations {
 }
 
 @Options({
-    components: { Button, Card, Profile, AccountItem, NFTItem, Modal },
+    components: { Button, Card, Profile, AccountItem, NFTItem, Modal, AccountCard },
 })
 export default class Home extends Vue {
     rns: string = '';
