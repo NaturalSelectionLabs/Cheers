@@ -50,7 +50,7 @@ interface Profile {
     components: { ImgHolder, Button, FollowerCard },
 })
 export default class Followings extends Vue {
-    public followingList: Array<Object> = [];
+    public followingList: Array<Profile> = [];
     public rss3Profile: Profile = {
         avatar: config.defaultAvatar,
         username: '',
@@ -85,11 +85,17 @@ export default class Followings extends Vue {
                 this.followingList.push({
                     avatar: profile?.avatar?.[0] || config.defaultAvatar,
                     username: profile?.name || '',
+                    bio: profile.bio || '',
                     address: item,
                     displayAddress: this.filter(item),
-                    rns: (await RNSUtils.addr2Name(item)).toString().replace('.pass3.me', ''),
+                    rns: '',
                 });
             }
+            setTimeout(async () => {
+                for (const item of this.followingList) {
+                    item.rns = (await RNSUtils.addr2Name(item.address)).toString().replace('.pass3.me', '');
+                }
+            });
         }
     }
 
