@@ -27,9 +27,15 @@ import { hslToRgb, rgbToHsl } from '@/common/utils';
     },
 })
 export default class FollowerCard extends Vue {
+    name!: string;
+
     mounted() {
         const colorThief = new ColorThief();
         const img = <HTMLImageElement>this.$refs.avatar;
+
+        if (this.name.length > 20) {
+            this.name = this.name.slice(0, 20) + '...';
+        }
 
         if (img.complete) {
             this.setBGColor(colorThief.getColor(img));
@@ -51,7 +57,7 @@ export default class FollowerCard extends Vue {
 <style scoped lang="postcss">
 @layer components {
     .follower-container {
-        @apply px-9 py-4 flex flex-row items-center justify-start gap-10 rounded bg-white shadow-primary-card;
+        @apply px-6 py-4 flex flex-row items-center justify-start gap-4 md:gap-10 rounded bg-white shadow-primary-card;
 
         .avatar > img {
             @apply h-16 w-16 rounded-full object-cover;
@@ -62,11 +68,11 @@ export default class FollowerCard extends Vue {
         }
 
         .username {
-            @apply font-bold text-2xl;
+            @apply font-bold text-xl md:text-2xl;
         }
 
         .address {
-            @apply font-medium text-lg;
+            @apply font-medium md:text-lg;
         }
     }
 }

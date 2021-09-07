@@ -7,6 +7,7 @@
             :rns="rns"
             :followers="rss3Relations.followers"
             :followings="rss3Relations.followings"
+            :NFTs="assets.length"
             :bio="rss3Profile.bio"
         ></Profile>
         <Button
