@@ -315,6 +315,14 @@ export default class Home extends Vue {
         this.rss3Profile.bio = profile?.bio || '';
         this.rss3Profile.address = this.ethAddress;
 
+        if (profile?.avatar?.[0]) {
+            const favicon = <HTMLLinkElement>document.getElementById('favicon');
+            favicon.href = profile.avatar[0];
+        }
+        if (profile?.name) {
+            document.title = profile.name;
+        }
+
         if (data) {
             this.accounts.push({
                 platform: 'Ethereum',
