@@ -14,13 +14,12 @@
             width: size + 'px',
             height: size + 'px',
         }"
+        :src="imageUrl"
         class="nft-item"
         autoplay
         loop
         muted
-    >
-        <source :src="imageUrl" :type="`video/${imageUrl.substring(imageUrl.lastIndexOf('.') + 1)}`" />
-    </video>
+    />
 </template>
 
 <script lang="ts">
