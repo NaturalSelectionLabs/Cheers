@@ -81,9 +81,9 @@ export default class Followers extends Vue {
 
         if (rss3 && followersList) {
             for (const item of followersList) {
-                const profile = await rss3.profile.get(item);
+                const profile = (await rss3.profile.get(item)) || {};
                 this.followerList.push({
-                    avatar: profile.avatar?.[0] || '',
+                    avatar: profile.avatar?.[0] || config.defaultAvatar,
                     username: profile.name || '',
                     address: item,
                     displayAddress: this.filter(item),
