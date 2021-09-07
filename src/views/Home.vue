@@ -315,9 +315,6 @@ export default class Home extends Vue {
         this.rss3Profile.bio = profile?.bio || '';
         this.rss3Profile.address = this.ethAddress;
 
-        this.rss3Relations.followers = (await this.rss3?.backlinks.get(this.ethAddress, 'following')) || [];
-        this.rss3Relations.followings = (await this.rss3?.links.get(this.ethAddress, 'following'))?.list || [];
-
         if (data) {
             this.accounts.push({
                 platform: 'Ethereum',
@@ -419,8 +416,13 @@ export default class Home extends Vue {
         if (RSS3.isValidRSS3()) {
             if (this.isFollowing) {
                 await this.unfollow();
+                this.rss3Relations.followers.splice(
+                    this.rss3Relations.followers.indexOf((<IRSS3>this.rss3).account.address),
+                    1,
+                );
             } else {
                 await this.follow();
+                this.rss3Relations.followers.push((<IRSS3>this.rss3).account.address);
             }
             await (<IRSS3>this.rss3).files.sync();
         } else {
