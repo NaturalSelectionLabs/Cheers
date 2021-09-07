@@ -97,6 +97,18 @@ import RNSUtils from '@/common/rns';
 import Modal from '@/components/Modal.vue';
 import Input from '@/components/Input.vue';
 import Loading from '@/components/Loading.vue';
+import config from '@/config';
+function validateNetwork(chain: number | null, cb?: (chain: number | null) => void) {
+    if (config.rns.test && chain !== 0x3) {
+        alert('Please switch to ropsten network.');
+        cb ? cb(chain) : '';
+        throw 'Network error';
+    } else if (!config.rns.test && chain !== 0x1) {
+        alert('Please switch to mainnet network.');
+        cb ? cb(chain) : '';
+        throw 'Network error';
+    }
+}
 @Options({
     components: {
         Input,
@@ -117,25 +129,16 @@ export default class RNS extends Vue {
 
     isMobile: Boolean = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
-    async mounted() {
-        // console.log('atlas addr:', await RNSUtils.name2Addr('atlas.pass3.me'));
-        // console.log('rss3 addr:', await RNSUtils.name2Addr('rss3.pass3.me'));
-        // console.log(
-        //     'name of 0x8c23B96f2fb77AaE1ac2832debEE30f09da7af3C:',
-        //     await RNSUtils.addr2Name('0x8c23B96f2fb77AaE1ac2832debEE30f09da7af3C'),
-        // );
-        // console.log('hanabi addr:', await RNSUtils.name2Addr('hanabi.pass3.me'));
-        // console.log(
-        //     'name of 0xc560eb6fd0c2eb80Df50E5e06715295AE1205049:',
-        //     await RNSUtils.addr2Name('0xc560eb6fd0c2eb80Df50E5e06715295AE1205049'),
-        // );
-        // console.log('Balance of PASS3:', await RNSUtils.balanceOfPass3('0x8c23B96f2fb77AaE1ac2832debEE30f09da7af3C'));
+    // If redirect, return true. Otherwise return false.
+    async tryRedirect() {
         if (!(await RSS3.reconnect())) {
             sessionStorage.setItem('redirectFrom', this.$route.fullPath);
             await this.$router.push('/');
+            return true;
         } else {
             if (this.isMobile) {
                 await this.$router.push('/gotopc');
+                return true;
             }
             this.rss3 = await RSS3.get();
             if ((await RNSUtils.addr2Name((<IRSS3>this.rss3).account.address)).toString() !== '') {
@@ -153,8 +156,26 @@ export default class RNS extends Vue {
                     sessionStorage.removeItem('redirectFrom');
                     await this.$router.push(redirectFrom || '/home');
                 }
+                return true;
             }
         }
+        return false;
+    }
+
+    async refreshAccount() {
+        if (!(await this.tryRedirect())) {
+            const metamaskEthereum = (window as any).ethereum;
+            // this.rss3 object exists, doens't necessarily mean the account is connected
+            await metamaskEthereum.request({
+                method: 'eth_requestAccounts',
+            });
+            const chain: string | null = await metamaskEthereum.request({ method: 'eth_chainId' });
+            validateNetwork(Number(chain));
+        }
+    }
+
+    async mounted() {
+        await this.refreshAccount();
     }
 
     async back() {
@@ -169,6 +190,7 @@ export default class RNS extends Vue {
             this.isDisabled = true;
             return;
         }
+        await this.refreshAccount();
         this.rns = this.rns.toLowerCase();
         if (this.rns.length < 3 || this.rns.length >= 15) {
             this.notice = 'An RNS must have at least 3 characters and no more than 15';
