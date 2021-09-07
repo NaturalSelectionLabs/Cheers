@@ -1,5 +1,5 @@
 <template>
-    <div class="main px-4 py-8 flex flex-col gap-y-2 max-w-md m-auto">
+    <div v-if="isRNSExist" class="main px-4 py-8 flex flex-col gap-y-2 max-w-md m-auto">
         <Profile
             :avatar="rss3Profile.avatar"
             :username="rss3Profile.username"
@@ -173,6 +173,32 @@
             </template>
         </Modal>
     </div>
+    <div
+        v-else
+        class="onboarding h-full text-center bg-cover bg-fixed flex items-center justify-center bg-pass3gradient"
+    >
+        <div class="body px-4 h-2/3 flex flex-col justify-center items-center justify-between">
+            <div class="logo-container w-50 h-50 bg-pass3logo bg-center bg-contain bg-no-repeat"></div>
+            <div class="text-primary text-2xl max-w-md">
+                <p>
+                    This RNS is not claimed yet. <br />
+                    Grab it as yours or claim your own!
+                </p>
+            </div>
+            <div class="leading-17.5 text-white w-83.5 text-2xl mx-auto">
+                <Button size="lg" class="bg-primary shadow-primary rounded-3xl w-full h-17.5 mb-9" @click="toSetupRNS">
+                    <span> Claim an RNS </span>
+                </Button>
+                <Button
+                    size="lg"
+                    class="text-primary bg-white shadow-primary rounded-3xl w-full h-17.5"
+                    @click="toHomePage"
+                >
+                    <span> Go Home </span>
+                </Button>
+            </div>
+        </div>
+    </div>
 </template>
 
 <script lang="ts">
@@ -213,6 +239,7 @@ export default class Home extends Vue {
     public isdisplaying: boolean = false;
     public dialogAddress: string = '';
     public dialogChain: string = '';
+    isRNSExist: boolean = true;
 
     public rss3Profile: ProfileInfo = {
         avatar: config.defaultAvatar,
@@ -229,6 +256,10 @@ export default class Home extends Vue {
     $gtag: any;
 
     async mounted() {
+        await this.initLoad();
+    }
+
+    async initLoad() {
         const isValidRSS3 = await RSS3.reconnect();
         this.rss3 = await RSS3.visitor();
         const owner: string = <string>this.rss3.account.address;
@@ -251,6 +282,8 @@ export default class Home extends Vue {
                     if (this.ethAddress === owner) {
                         this.isOwner = true;
                     }
+                } else {
+                    this.isRNSExist = false;
                 }
             }
         } else {
@@ -282,7 +315,7 @@ export default class Home extends Vue {
         this.rss3Profile.bio = profile?.bio || '';
         this.rss3Profile.address = this.ethAddress;
 
-        this.rss3Relations.followers = await this.rss3?.backlinks.get(this.ethAddress, 'following');
+        this.rss3Relations.followers = (await this.rss3?.backlinks.get(this.ethAddress, 'following')) || [];
         this.rss3Relations.followings = (await this.rss3?.links.get(this.ethAddress, 'following'))?.list || [];
 
         if (data) {
@@ -458,6 +491,16 @@ export default class Home extends Vue {
 
     public toSetupPage() {
         this.$router.push(`/profile`);
+    }
+
+    toSetupRNS() {
+        this.$router.push('/rns');
+    }
+
+    async toHomePage() {
+        await this.$router.push('/home');
+        this.isRNSExist = true;
+        await this.initLoad();
     }
 
     public displayDialog(address: string, chain: string) {
