@@ -178,10 +178,16 @@ export default class SetupNFTs extends Vue {
 
         this.nfts = await Promise.all(
             (JSON.parse(JSON.stringify(await this.rss3?.assets.get())) || []).map(async (nft: RSS3AssetWithInfo) => {
-                const info = await this.getInfo(nft);
-                if (info) {
-                    nft.info = info;
-                }
+                let info: any = await this.getInfo(nft);
+                info = Object.assign(
+                    {
+                        collection: {
+                            name: 'Others',
+                        },
+                    },
+                    info || {},
+                );
+                nft.info = info;
                 return nft;
             }),
         );
