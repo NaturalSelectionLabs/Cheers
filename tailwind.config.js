@@ -31,6 +31,11 @@ module.exports = {
                     title: '#0070E0',
                     bg: '#F5FAFF',
                 },
+                gitcoin: {
+                    button: '#02E2AC',
+                    title: '#11BC92',
+                    bg: '#F4FFFB',
+                },
                 gray: {
                     bg: '#F4F7F8',
                 },
@@ -43,6 +48,14 @@ module.exports = {
                 error: '#D75F5F',
                 pending: {
                     bg: '#DDECFF',
+                },
+                top: {
+                    title: '#FFDB4C',
+                    bg: '#FFDB4C1A',
+                },
+                earliest: {
+                    title: '#F579A6',
+                    bg: '#F579A61A',
                 },
             },
             boxShadow: {
@@ -57,6 +70,9 @@ module.exports = {
                 content: '0px 9px 35px -7px rgba(55, 155, 255, 0.94)', //solid blue button shadow for contents
                 'content-sm': '-2px 2px 4px rgba(36, 146, 255, 0.13)', //content item card shadow
                 'content-md': '0px 2px 13px -5px rgba(23, 139, 255, 0.76)', //content white small button shadow
+                gitcoin: '0px 9px 35px -7px rgba(71, 228, 191, 1)',
+                'gitcoin-sm': '-1px 2px 7px 0px rgba(17, 188, 146, 0.21)',
+                'gitcoin-md': '0px 3px 8px 1px rgba(17, 188, 146, 0.2)',
             },
             dropShadow: {
                 account: '-4px 4px 5px rgba(17, 170, 0, 0.12)', //account item shadow

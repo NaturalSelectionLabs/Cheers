@@ -15,6 +15,9 @@ import RNS from '@/views/Setup/RNS.vue';
 import EditProfile from '@/views/EditProfile.vue';
 import RNSPending from '@/views/Setup/RNSPending.vue';
 import GoToPC from '@/views/Setup/GoToPC.vue';
+import Gitcoins from '@/views/Gitcoins.vue';
+import SetupGitcoins from '@/views/Setup/SetupGitcoins.vue';
+import SingleGitcoin from '@/views/SingleGitcoin.vue';
 
 const routes = [
     {
@@ -59,6 +62,14 @@ const routes = [
         component: SingleNFT,
     },
     {
+        path: '/gitcoins',
+        component: Gitcoins,
+    },
+    {
+        path: '/singlegitcoin',
+        component: SingleGitcoin,
+    },
+    {
         path: '/setup',
         component: Setup,
     },
@@ -69,6 +80,11 @@ const routes = [
     {
         path: '/setup/nfts',
         component: SetupNFTs,
+    },
+
+    {
+        path: '/setup/gitcoins',
+        component: SetupGitcoins,
     },
     {
         path: '/rns',

@@ -83,12 +83,7 @@
             </template>
             <template #header-button>
                 <div v-if="isOwner" class="flex flex-row gap-2">
-                    <Button
-                        size="sm"
-                        class="w-8 h-8 bg-white text-nft-button shadow-nft-sm"
-                        v-if="isOwner"
-                        @click="toManageNFTs"
-                    >
+                    <Button size="sm" class="w-8 h-8 bg-white text-nft-button shadow-nft-sm" @click="toManageNFTs">
                         <i class="bx bxs-pencil bx-xs" />
                     </Button>
                     <Button size="sm" class="w-8 h-8 bg-white text-nft-button shadow-nft-sm" @click="toNFTsPage">
@@ -108,6 +103,52 @@
                     :size="70"
                     @click="toSinglenftPage(item.info.platform, item.info.account, item.info.index)"
                 ></NFTItem>
+            </template>
+        </Card>
+
+        <Card
+            title="Donations"
+            color-title="text-gitcoin-title"
+            color-tips="text-gitcoin-title"
+            color-background="bg-gitcoin-bg"
+            class="w-auto"
+            :is-having-content="true"
+            :is-single-line="true"
+        >
+            <template #header-button>
+                <div v-if="isOwner" class="flex flex-row gap-2">
+                    <Button
+                        size="sm"
+                        class="w-8 h-8 bg-white text-gitcoin-button shadow-gitcoin-sm"
+                        @click="toManageGitcoins"
+                    >
+                        <i class="bx bxs-pencil bx-xs" />
+                    </Button>
+                    <Button
+                        size="sm"
+                        class="w-8 h-8 bg-white text-gitcoin-button shadow-gitcoin-sm"
+                        @click="toGitcoinsPage"
+                    >
+                        <i class="bx bx-expand-alt bx-xs" />
+                    </Button>
+                </div>
+                <Button
+                    v-else
+                    size="sm"
+                    class="w-10 h-10 text-gitcoin-button bg-white shadow-gitcoin-sm"
+                    @click="toGitcoinsPage"
+                >
+                    <i class="bx bx-expand-alt bx-xs"></i>
+                </Button>
+            </template>
+            <template #content>
+                <GitcoinItem
+                    v-for="id in 4"
+                    :key="id"
+                    class="inline-flex m-0.5"
+                    :size="64"
+                    imageUrl="https://i.imgur.com/GdWEt4z.jpg"
+                />
             </template>
         </Card>
 
@@ -208,6 +249,7 @@ import Modal from '@/components/Modal.vue';
 import RNSUtils from '@/common/rns';
 import config from '@/config';
 import AccountCard from '@/components/AccountCard.vue';
+import GitcoinItem from '@/components/GitcoinItem.vue';
 
 interface ProfileInfo {
     avatar: string;
@@ -222,7 +264,7 @@ interface Relations {
 }
 
 @Options({
-    components: { Button, Card, Profile, AccountItem, NFTItem, Modal, AccountCard },
+    components: { Button, Card, Profile, AccountItem, NFTItem, Modal, AccountCard, GitcoinItem },
 })
 export default class Home extends Vue {
     rns: string = '';
@@ -472,6 +514,9 @@ export default class Home extends Vue {
     toManageNFTs() {
         this.$router.push('/setup/nfts');
     }
+    toManageGitcoins() {
+        this.$router.push('/setup/gitcoins');
+    }
 
     public toAccountsPage() {
         this.$gtag.event('visitAccountsPage', { userid: this.rss3Profile['address'] });
@@ -481,6 +526,10 @@ export default class Home extends Vue {
     public toNFTsPage() {
         this.$gtag.event('visitNftPage', { userid: this.rss3Profile['address'] });
         this.$router.push(`/${this.rss3Profile['address']}/nfts`);
+    }
+
+    public toGitcoinsPage() {
+        this.$router.push('/gitcoins');
     }
 
     public toSinglenftPage(chain: string, account: string, index: number) {
