@@ -15,25 +15,85 @@
             </div>
             <GitcoinItem imageUrl="https://i.imgur.com/GdWEt4z.jpg" :size="Width > 416 ? 416 : Width"></GitcoinItem>
             <div
-                class="w-full px-5 py-4 bg-white rounded flex flex-col justify-start items-start gap-5 text-black mt-4"
+                class="
+                    w-full
+                    px-5
+                    py-4
+                    bg-white
+                    shadow-gitcoin-sm
+                    rounded
+                    flex flex-col
+                    justify-start
+                    items-start
+                    gap-4
+                    text-black
+                    mt-4
+                "
             >
-                <div>
-                    <h2 class="text-xl font-semibold break-all">Crypto Disciple Tutorials on Youtube</h2>
-                    <p class="text-sm leading-normal text-gitcoin-title">
-                        https://www.youtube.com/channel/UCI-mQ-o0...
+                <div class="w-full">
+                    <h2 class="text-xl font-semibold truncate">
+                        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Blanditiisitaquequodpraesentium
+                    </h2>
+                    <p class="text-sm leading-normal text-gitcoin-title truncate">
+                        https://Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+                        Blanditiisitaquequodpraesentium
                     </p>
                 </div>
-                <div>
-                    <span class="font-medium text-sm rounded-sm px-4 py-1 bg-top-bg text-top-title mr-2"
-                        >Top 10 Funders</span
-                    >
-                    <span class="font-medium text-sm rounded-sm px-4 py-1 bg-earliest-bg text-earliest-title mr-2">
-                        Top 10 Funders
+                <div class="flex flex-wrap">
+                    <span class="font-medium text-sm rounded-sm px-2 py-1 bg-top-bg text-top-title mr-2 mb-2">
+                        <i class="bx bx-medal bx-xs mr-1" />Top 10 Funders
+                    </span>
+                    <span class="font-medium text-sm rounded-sm px-2 py-1 bg-earliest-bg text-earliest-title mr-2 mb-2">
+                        <i class="bx bx-medal bx-xs mr-1" />Earliest 10 Funders
                     </span>
                 </div>
                 <div>
                     <h2 class="text-xl font-semibold">Contributions</h2>
                     <h1 class="text-2xl font-semibold text-gitcoin-title">2</h1>
+                </div>
+                <div class="w-full flex flex-col gap-y-2">
+                    <div class="flex flex-row justify-start gap-x-2">
+                        <div
+                            class="
+                                flex-1
+                                bg-gitcoin-bg
+                                text-black
+                                rounded rounded-xl
+                                flex flex-row
+                                justify-between
+                                items-center
+                                px-4
+                                py-2
+                            "
+                        >
+                            <div class="text-gitcoin-title">0.0175 ETH</div>
+                            <div>3 days, 12 hours ago</div>
+                        </div>
+                        <Button size="sm" class="w-9 h-9 ml-1 bg-gitcoin-button text-white shadow-gitcoin-sm">
+                            <i class="bx bx-link-external bx-xs" />
+                        </Button>
+                    </div>
+                    <div class="flex flex-row justify-start gap-x-2">
+                        <div
+                            class="
+                                flex-1
+                                bg-gitcoin-bg
+                                text-black
+                                rounded rounded-xl
+                                flex flex-row
+                                justify-between
+                                items-center
+                                px-4
+                                py-2
+                            "
+                        >
+                            <div class="text-gitcoin-title">0.0175 ETH</div>
+                            <div>3 days, 2 hours ago</div>
+                        </div>
+                        <Button size="sm" class="w-9 h-9 ml-1 bg-gitcoin-button text-white shadow-gitcoin-sm">
+                            <i class="bx bx-link-external bx-xs" />
+                        </Button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -48,6 +108,7 @@ import GitcoinItem from '@/components/GitcoinItem.vue';
 
 @Options({
     components: { ImgHolder, Button, GitcoinItem },
+    prop: {},
 })
 export default class SingleGitcoin extends Vue {
     public Width: number = window.innerWidth - 32;

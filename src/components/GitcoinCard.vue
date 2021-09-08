@@ -1,5 +1,16 @@
 <template>
-    <div class="w-full flex flex-row justify-start items-center rounded rounded-2xl bg-white shadow-gitcoin-md">
+    <div
+        class="
+            w-full
+            flex flex-row
+            justify-start
+            items-center
+            rounded rounded-2xl
+            bg-white
+            shadow-gitcoin-md
+            cursor-pointer
+        "
+    >
         <img :src="imageUrl" class="w-28 h-28 rounded rounded-2xl m-2" />
         <div class="w-45 md:w-60 pl-10">
             <div class="mb-2 font-semibold text-lg">{{ name }}</div>
