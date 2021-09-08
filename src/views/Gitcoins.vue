@@ -38,7 +38,7 @@
             </div>
             <div
                 class="px-4 py-4 flex gap-5 fixed bottom-0 left-0 right-0 max-w-md m-auto w-full"
-                v-if="list.length == 0"
+                v-if="list.length === 0"
             >
                 <Button size="lg" class="m-auto text-lg bg-gitcoin-button text-white shadow-gitcoin">
                     Go to Gitcoin
