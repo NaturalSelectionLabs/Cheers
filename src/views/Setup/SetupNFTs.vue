@@ -25,19 +25,6 @@
             :is-having-content="true"
             :tips="displayedNFTs.length === 0 ? 'Add additional NFTs' : 'Drag here to show and reorder'"
         >
-            <template #header-button>
-                <Button
-                    size="sm"
-                    class="text-xs bg-white text-nft-button shadow-nft-sm ml-auto"
-                    :class="{
-                        'bg-gray-100 cursor-not-allowed': displayedNFTs.length === 0,
-                    }"
-                    :disabled="displayedNFTs.length === 0"
-                    @click="hideAll"
-                >
-                    Hide All
-                </Button>
-            </template>
             <template #content>
                 <draggable
                     class="min-h-20"
@@ -58,7 +45,19 @@
                     </template>
                 </draggable>
             </template>
-            <template #footer-button> </template>
+            <template #footer-button>
+                <Button
+                    size="sm"
+                    class="text-xs bg-white text-nft-button shadow-nft-sm ml-auto"
+                    :class="{
+                        'bg-gray-100 cursor-not-allowed': displayedNFTs.length === 0,
+                    }"
+                    :disabled="displayedNFTs.length === 0"
+                    @click="hideAll"
+                >
+                    Hide All
+                </Button>
+            </template>
         </Card>
         <Card
             title="No-show collections"

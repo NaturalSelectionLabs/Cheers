@@ -124,18 +124,7 @@
             <template #accessibility>
                 <i class="bx bx-info-circle" style="color: rgba(0, 0, 0, 0.2)" />
             </template>
-            <template #content>
-                <draggable class="min-h-20" :list="hide" group="accounts" itemKey="chain">
-                    <template #item="{ element }">
-                        <AccountItem
-                            class="shadow-account-sm inline-flex m-0.5 rounded-full"
-                            :size="64"
-                            :chain="element.platform"
-                        />
-                    </template>
-                </draggable>
-            </template>
-            <template #footer-button>
+            <template #header-button>
                 <Button
                     size="sm"
                     class="text-xs bg-white text-account-button shadow-account-sm"
@@ -147,6 +136,17 @@
                 >
                     Show All
                 </Button>
+            </template>
+            <template #content>
+                <draggable class="min-h-20" :list="hide" group="accounts" itemKey="chain">
+                    <template #item="{ element }">
+                        <AccountItem
+                            class="shadow-account-sm inline-flex m-0.5 rounded-full"
+                            :size="64"
+                            :chain="element.platform"
+                        />
+                    </template>
+                </draggable>
             </template>
         </Card>
         <div class="px-4 py-4 flex gap-5 fixed bottom-0 left-0 right-0 max-w-md m-auto w-full">
