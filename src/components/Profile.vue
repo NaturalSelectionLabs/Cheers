@@ -17,17 +17,17 @@
             <div class="w-24 h-24">
                 <ImgHolder class="w-24 h-24" :is-rounded="true" :is-border="false" :src="avatar" />
             </div>
-            <div class="cursor-pointer mb-4" @click="toFollowersPage">
-                <div>{{ followers.length }}</div>
-                <div>Followers</div>
+            <div class="stats-container" @click="toFollowersPage">
+                <div class="stats-number">{{ followers.length }}</div>
+                <div class="stats-type">Followers</div>
             </div>
-            <div class="cursor-pointer mb-4" @click="toFollowingsPage">
-                <div>{{ followings.length }}</div>
-                <div>Followings</div>
+            <div class="stats-container" @click="toFollowingsPage">
+                <div class="stats-number">{{ followings.length }}</div>
+                <div class="stats-type">Followings</div>
             </div>
-            <div class="cursor-pointer mb-4" @click="toNFTsPage">
-                <div>{{ NFTs }}</div>
-                <div>NFTs</div>
+            <div class="stats-container" @click="toNFTsPage">
+                <div class="stats-number">{{ NFTs }}</div>
+                <div class="stats-type">NFTs</div>
             </div>
         </div>
         <span class="font-bold text-2xl px-4">{{ username }}</span>
@@ -90,4 +90,17 @@ export default class Profile extends Vue {
 }
 </script>
 
-<style></style>
+<style lang="postcss" scoped>
+@layer components {
+    .stats-container {
+        @apply cursor-pointer mb-2;
+        .stats-number {
+            @apply text-lg font-medium;
+        }
+
+        .stats-type {
+            @apply text-base font-normal leading-none;
+        }
+    }
+}
+</style>
