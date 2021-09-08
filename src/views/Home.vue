@@ -434,6 +434,9 @@ export default class Home extends Vue {
     }
 
     public async checkIsFollowing() {
+        if (!this.ethAddress) {
+            this.ethAddress = (await RNSUtils.name2Addr(`${this.rns}.pass3.me`)).toString();
+        }
         const followList = await this.rss3?.links.get(this.rss3.account.address, 'following');
         if (typeof followList === 'undefined') {
             // No following list. Not following
