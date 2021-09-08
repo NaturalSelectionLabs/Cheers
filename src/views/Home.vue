@@ -237,9 +237,9 @@ export default class Home extends Vue {
 
     public rss3Profile: ProfileInfo = {
         avatar: config.defaultAvatar,
-        username: '',
+        username: '...',
         address: '',
-        bio: '',
+        bio: '...',
     };
     public rss3Relations: Relations = {
         followers: [],
