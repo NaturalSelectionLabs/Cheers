@@ -14,7 +14,7 @@
                 @click="toPublicPage(this.rns || this.ethAddress)"
             />
         </div>
-        <div class="follow-list flex flex-col gap-y-2">
+        <div class="follow-list flex flex-col gap-y-4">
             <FollowerCard
                 class="w-auto cursor-pointer"
                 v-for="(item, index) in followerList"
