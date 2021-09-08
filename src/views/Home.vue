@@ -145,9 +145,10 @@
                 <GitcoinItem
                     v-for="id in 4"
                     :key="id"
-                    class="inline-flex m-0.5"
+                    class="inline-flex m-0.5 cursor-pointer"
                     :size="64"
                     imageUrl="https://i.imgur.com/GdWEt4z.jpg"
+                    @click="toSingleGitcoin()"
                 />
             </template>
         </Card>
@@ -554,6 +555,10 @@ export default class Home extends Vue {
         await this.$router.push('/home');
         this.isRNSExist = true;
         await this.initLoad();
+    }
+
+    public toSingleGitcoin() {
+        this.$router.push('singlegitcoin');
     }
 
     public displayDialog(address: string, chain: string) {
