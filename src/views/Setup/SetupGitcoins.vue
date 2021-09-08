@@ -23,6 +23,8 @@
             color-tips="text-gitcoin-title"
             color-background="bg-gitcoin-bg"
             class="w-full mb-4"
+            :is-having-content="true"
+            :tips="show.length === 0 ? 'Drag to reorder' : ''"
         >
             <template #content> </template>
             <template #footer-button>
@@ -45,14 +47,14 @@
             color-tips="text-gitcoin-title"
             color-background="bg-gray-bg"
             class="w-full mb-4"
-            :is-having-content="hide.length !== 0"
+            :is-having-content="true"
             :tips="hide.length === 0 ? 'Drag here to hide' : ''"
         >
             <template #accessibility>
                 <i class="bx bx-info-circle" style="color: rgba(0, 0, 0, 0.2)" />
             </template>
-            <template #header-button
-                ><Button
+            <template #header-button>
+                <Button
                     size="sm"
                     class="text-xs bg-white text-gitcoin-button shadow-gitcoin-sm ml-auto"
                     :class="{
@@ -62,8 +64,8 @@
                     @click="showAll"
                 >
                     Show All
-                </Button></template
-            >
+                </Button>
+            </template>
             <template #content> </template>
         </Card>
 
@@ -92,8 +94,8 @@ import ImgHolder from '@/components/ImgHolder.vue';
     },
 })
 export default class SetupGitcoins extends Vue {
-    public show: Array<Object> = [{}];
-    public hide: Array<Object> = [{}];
+    public show: Array<Object> = [];
+    public hide: Array<Object> = [];
 
     showAll() {}
 
