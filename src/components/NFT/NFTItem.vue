@@ -16,6 +16,8 @@
             autoplay
             loop
             muted
+            webkit-playsinline
+            playsinline
         />
         <model-viewer
             v-else-if="imageUrl?.endsWith('glb')"
