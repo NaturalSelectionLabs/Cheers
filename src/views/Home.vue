@@ -477,13 +477,13 @@ export default class Home extends Vue {
     }
 
     public toAccountsPage() {
-        this.$gtag.event('visitAccountsPage', { userid: this.rss3Profile['address'] });
-        this.$router.push(`/${this.rss3Profile['address']}/accounts`);
+        this.$gtag.event('visitAccountsPage', { userid: this.rns });
+        this.$router.push(`/${this.rns}/accounts`);
     }
 
     public toNFTsPage() {
-        this.$gtag.event('visitNftPage', { userid: this.rss3Profile['address'] });
-        this.$router.push(`/${this.rss3Profile['address']}/nfts`);
+        this.$gtag.event('visitNftPage', { userid: this.rns });
+        this.$router.push(`/${this.rns}/nfts`);
     }
 
     public toSinglenftPage(chain: string, account: string, index: number) {
