@@ -117,6 +117,8 @@
             >
             <Button size="lg" class="flex-1 text-lg bg-primary text-white shadow-primary" @click="save">Save</Button>
         </div>
+
+        <LoadingContainer v-show="isLoading" />
     </div>
 </template>
 
@@ -132,6 +134,7 @@ import config from '@/config';
 
 import { DetailedNFT, RSS3AssetShow, RSS3AssetWithInfo } from '@/common/types';
 import draggable from 'vuedraggable';
+import LoadingContainer from '@/components/LoadingContainer.vue';
 
 interface RSS3AssetCollectionShow {
     collection_name: string;
@@ -141,6 +144,7 @@ interface RSS3AssetCollectionShow {
 
 @Options({
     components: {
+        LoadingContainer,
         Button,
         Card,
         NFTItem,

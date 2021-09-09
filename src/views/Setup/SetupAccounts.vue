@@ -155,30 +155,8 @@
             >
             <Button size="lg" class="flex-1 text-lg bg-primary text-white shadow-primary" @click="save">Save</Button>
         </div>
-        <!-- <Modal v-show="isLoading">
-            <template #body>
-                <span
-                    class="
-                        text-9xl text-primary
-                        opacity-50
-                        block
-                        absolute
-                        top-1/2
-                        left-1/2
-                        transform
-                        -translate-x-1/2 -translate-y-1/2
-                    "
-                >
-                    <i class="bx bx-loader-alt bx-spin"></i>
-                </span>
-            </template>
-        </Modal> -->
-        <div
-            v-show="isLoading"
-            class="fixed w-screen h-screen m-0 p-0 top-0 left-0 bg-black bg-opacity-50 flex justify-center items-center"
-        >
-            <Loading :size="200" />
-        </div>
+        <LoadingContainer v-show="isLoading" />
+
         <Modal v-if="isShowingAddAccountNotice">
             <template #header>
                 <h1>Oops!</h1>
@@ -210,7 +188,7 @@ import Card from '@/components/Card.vue';
 import AccountItem from '@/components/AccountItem.vue';
 import Modal from '@/components/Modal.vue';
 import Loading from '@/components/Loading.vue';
-
+import LoadingContainer from '@/components/LoadingContainer.vue';
 import { RSS3Account, RSS3Index } from 'rss3-next/types/rss3';
 import RSS3, { IRSS3 } from '@/common/rss3';
 import config from '@/config';
@@ -225,6 +203,7 @@ import draggable from 'vuedraggable';
         AccountItem,
         draggable,
         Loading,
+        LoadingContainer,
     },
 })
 export default class Setup extends Vue {

@@ -81,15 +81,19 @@ export default class Followers extends Vue {
 
         if (rss3 && followersList) {
             for (const item of followersList) {
-                const profile = (await rss3.profile.get(item)) || {};
-                this.followerList.push({
-                    avatar: profile.avatar?.[0] || config.defaultAvatar,
-                    username: profile.name || '',
-                    bio: profile.bio || '',
-                    address: item,
-                    displayAddress: this.filter(item),
-                    rns: '',
-                });
+                try {
+                    const profile = (await rss3.profile.get(item)) || {};
+                    this.followerList.push({
+                        avatar: profile.avatar?.[0] || config.defaultAvatar,
+                        username: profile.name || '',
+                        bio: profile.bio || '',
+                        address: item,
+                        displayAddress: this.filter(item),
+                        rns: '',
+                    });
+                } catch (e) {
+                    console.log(item, e);
+                }
             }
             setTimeout(async () => {
                 for (const item of this.followerList) {

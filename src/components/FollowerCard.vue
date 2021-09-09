@@ -4,12 +4,12 @@
             <img :src="$props.avatar" ref="avatar" crossorigin="anonymous" />
         </div>
         <div class="info">
-            <span class="username">
+            <p class="username">
                 {{ $props.name }}
-            </span>
-            <span class="address">
+            </p>
+            <p class="address">
                 {{ $props.address.startsWith('0x') ? $props.address : `${$props.address}.pass3.me` }}
-            </span>
+            </p>
         </div>
     </div>
 </template>
@@ -33,10 +33,6 @@ export default class FollowerCard extends Vue {
         const colorThief = new ColorThief();
         const img = <HTMLImageElement>this.$refs.avatar;
 
-        if (this.name.length > 20) {
-            this.name = this.name.slice(0, 17) + '...';
-        }
-
         if (img.complete) {
             this.setBGColor(colorThief.getColor(img));
         } else {
@@ -57,22 +53,22 @@ export default class FollowerCard extends Vue {
 <style scoped lang="postcss">
 @layer components {
     .follower-container {
-        @apply px-6 py-4 flex flex-row items-center justify-start gap-6 md:gap-10 rounded bg-white shadow-primary-card;
+        @apply px-8 md:px-10 py-4 flex flex-row items-center justify-start gap-6 md:gap-10 rounded bg-white shadow-primary-card;
 
         .avatar > img {
-            @apply h-16 w-16 rounded-full object-cover;
+            @apply flex-shrink h-16 w-16 flex-grow-0 rounded-full object-cover;
         }
 
         .info {
-            @apply w-max h-full flex flex-col justify-around items-start;
+            @apply flex-1 w-0;
         }
 
         .username {
-            @apply font-bold text-xl md:text-2xl;
+            @apply font-bold text-2xl truncate;
         }
 
         .address {
-            @apply font-medium md:text-lg;
+            @apply font-medium text-lg truncate;
         }
     }
 }

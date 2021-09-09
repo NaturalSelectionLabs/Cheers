@@ -280,9 +280,9 @@ export default class Home extends Vue {
 
     public rss3Profile: ProfileInfo = {
         avatar: config.defaultAvatar,
-        username: '',
+        username: '...',
         address: '',
-        bio: '',
+        bio: '...',
     };
     public rss3Relations: Relations = {
         followers: [],
@@ -477,6 +477,9 @@ export default class Home extends Vue {
     }
 
     public async checkIsFollowing() {
+        if (!this.ethAddress) {
+            this.ethAddress = (await RNSUtils.name2Addr(`${this.rns}.pass3.me`)).toString();
+        }
         const followList = await this.rss3?.links.get(this.rss3.account.address, 'following');
         if (typeof followList === 'undefined') {
             // No following list. Not following
@@ -520,13 +523,13 @@ export default class Home extends Vue {
     }
 
     public toAccountsPage() {
-        this.$gtag.event('visitAccountsPage', { userid: this.rss3Profile['address'] });
-        this.$router.push(`/${this.rss3Profile['address']}/accounts`);
+        this.$gtag.event('visitAccountsPage', { userid: this.rns });
+        this.$router.push(`/${this.rns}/accounts`);
     }
 
     public toNFTsPage() {
-        this.$gtag.event('visitNftPage', { userid: this.rss3Profile['address'] });
-        this.$router.push(`/${this.rss3Profile['address']}/nfts`);
+        this.$gtag.event('visitNftPage', { userid: this.rns });
+        this.$router.push(`/${this.rns}/nfts`);
     }
 
     public toGitcoinsPage() {

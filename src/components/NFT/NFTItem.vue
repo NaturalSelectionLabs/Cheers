@@ -35,7 +35,7 @@
         />
         <img
             v-else
-            :src="imageUrl"
+            :src="imageUrl || defaultImage"
             class="nft-item"
             :style="{
                 width: size + 'px',
@@ -48,6 +48,7 @@
 <script lang="ts">
 import { Vue, Options } from 'vue-class-component';
 import * as viewer from '@google/model-viewer';
+import config from '@/config';
 
 @Options({
     props: {
@@ -61,6 +62,7 @@ import * as viewer from '@google/model-viewer';
 export default class NFTItem extends Vue {
     size!: Number;
     imageUrl!: String;
+    defaultImage: String = config.defaultAvatar;
 }
 </script>
 
