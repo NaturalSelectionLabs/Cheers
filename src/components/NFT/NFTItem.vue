@@ -4,6 +4,7 @@
             width: size + 'px',
             height: size + 'px',
         }"
+        class="rounded"
     >
         <video
             v-if="imageUrl?.endsWith('mp4') || imageUrl?.endsWith('mov')"
