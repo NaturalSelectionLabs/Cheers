@@ -1,5 +1,5 @@
 <template>
-    <div v-if="isRNSExist" class="main px-4 py-8 flex flex-col gap-y-2 max-w-md m-auto">
+    <div v-if="isRNSExist" class="main px-4 py-8 flex flex-col gap-y-2 max-w-md m-auto overflow-y-auto">
         <Profile
             :avatar="rss3Profile.avatar"
             :username="rss3Profile.username"
@@ -76,7 +76,7 @@
             color-background="bg-nft-bg"
             class="w-auto"
             :is-having-content="true"
-            :is-single-line="true"
+            :is-single-line="assets.length != 0"
         >
             <template #accessibility>
                 <!-- <i class="bx bx-info-circle" style="color: rgba(0, 0, 0, 0.2)" /> -->
@@ -95,14 +95,19 @@
                 </Button>
             </template>
             <template #content>
-                <NFTItem
-                    class="inline-block mr-1 cursor-pointer"
-                    v-for="(item, index) in assets"
-                    :key="index"
-                    :imageUrl="item.info.animation_url || item.info.image_url"
-                    :size="70"
-                    @click="toSinglenftPage(item.info.platform, item.info.account, item.info.index)"
-                ></NFTItem>
+                <template v-if="assets.length != 0">
+                    <NFTItem
+                        class="inline-block mr-1 cursor-pointer"
+                        v-for="(item, index) in assets"
+                        :key="index"
+                        :imageUrl="item.info.animation_url || item.info.image_url"
+                        :size="70"
+                        @click="toSinglenftPage(item.info.platform, item.info.account, item.info.index)"
+                    ></NFTItem>
+                </template>
+                <template v-else>
+                    <div class="text-nft-title m-auto text-center mt-4">You don’t have any NFTs yet :(</div>
+                </template>
             </template>
         </Card>
 
@@ -113,7 +118,7 @@
             color-background="bg-gitcoin-bg"
             class="w-auto"
             :is-having-content="true"
-            :is-single-line="true"
+            :is-single-line="gitcoins.length != 0"
         >
             <template #header-button>
                 <div v-if="isOwner" class="flex flex-row gap-2">
@@ -142,14 +147,19 @@
                 </Button>
             </template>
             <template #content>
-                <GitcoinItem
-                    v-for="id in 4"
-                    :key="id"
-                    class="inline-flex m-0.5 cursor-pointer"
-                    :size="64"
-                    imageUrl="https://i.imgur.com/GdWEt4z.jpg"
-                    @click="toSingleGitcoin()"
-                />
+                <template v-if="gitcoins.length != 0">
+                    <GitcoinItem
+                        v-for="(item, index) in gitcoins"
+                        :key="index"
+                        class="inline-flex m-0.5 cursor-pointer"
+                        :size="64"
+                        :imageUrl="item.info.image_preview_url"
+                        @click="toSingleGitcoin()"
+                    />
+                </template>
+                <template v-else>
+                    <div class="text-gitcoin-title m-auto text-center mt-4">You don’t have any donations yet :(</div>
+                </template>
             </template>
         </Card>
 
@@ -251,6 +261,7 @@ import RNSUtils from '@/common/rns';
 import config from '@/config';
 import AccountCard from '@/components/AccountCard.vue';
 import GitcoinItem from '@/components/GitcoinItem.vue';
+import axios from 'axios';
 
 interface ProfileInfo {
     avatar: string;
@@ -290,6 +301,7 @@ export default class Home extends Vue {
     };
     accounts: RSS3Account[] = [];
     assets: Object[] = [];
+    gitcoins: Object[] = [];
     $gtag: any;
 
     async mounted() {
@@ -338,7 +350,6 @@ export default class Home extends Vue {
             }
         }
 
-        // console.log(this.ethAddress);
         const data = await RSS3.getAssetProfile(this.ethAddress);
         if (!data) {
             return;
@@ -370,6 +381,7 @@ export default class Home extends Vue {
 
             await this.loadAccounts(<RSS3Account[]>data.rss3File.accounts);
             await this.loadNFTs(<RSS3Asset[]>data.rss3File.assets);
+            await this.loadGitcoins();
         }
 
         // Split time-consuming methods from main thread, so it won't stuck the page loading progress
@@ -457,6 +469,20 @@ export default class Home extends Vue {
         }
     }
 
+    async loadGitcoins() {
+        const res = await axios({
+            method: 'get',
+            url: `http://localhost:3000/asset-profile/${this.ethAddress}`,
+        });
+        const data: Array<any> = res.data.assets;
+
+        data.forEach((element) => {
+            if (element.type == 'Gitcoin-Donation') {
+                this.gitcoins.push(element);
+            }
+        });
+    }
+
     public async action() {
         if (RSS3.isValidRSS3()) {
             if (this.isFollowing) {
@@ -533,7 +559,8 @@ export default class Home extends Vue {
     }
 
     public toGitcoinsPage() {
-        this.$router.push('/gitcoins');
+        this.$gtag.event('visitGitcoinPage', { userid: this.rns });
+        this.$router.push(`/${this.rns}/gitcoins`);
     }
 
     public toSinglenftPage(chain: string, account: string, index: number) {

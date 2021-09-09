@@ -10,35 +10,37 @@
                     class="w-10 h-10 inline-flex my-auto cursor-pointer"
                     :is-rounded="true"
                     :is-border="false"
-                    src="https://i.imgur.com/GdWEt4z.jpg"
-                    alt="nya"
+                    :src="this.rss3Profile.avatar"
+                    :alt="this.rss3Profile.username"
                     @click="toPublicPage(this.rss3Profile.address)"
                 />
             </div>
-            <div class="gitcoin-list flex flex-col gap-y-4">
-                <GitcoinTitle :grants="1" :contributions="1"></GitcoinTitle>
+            <div class="gitcoin-gitcoins flex flex-col gap-y-4" v-show="gitcoins.length !== 0">
+                <GitcoinTitle :grants="grants" :contributions="contribs"></GitcoinTitle>
                 <GitcoinCard
-                    imageUrl="https://i.imgur.com/GdWEt4z.jpg"
-                    name="testing"
-                    :contrib="1"
+                    v-for="(item, index) in gitcoins"
+                    :key="index"
+                    :imageUrl="item.info.image_preview_url"
+                    :name="item.info.title"
+                    :contrib="item.info.total_contribs"
                     @click="toSingleGitcoin"
                 ></GitcoinCard>
             </div>
             <div
                 class="px-4 py-4 flex gap-5 fixed bottom-0 left-0 right-0 max-w-md m-auto w-full"
-                v-if="isOwner && list.length > 0"
+                v-if="isOwner && gitcoins.length !== 0"
             >
                 <Button
                     size="lg"
                     class="m-auto text-lg bg-gitcoin-button text-white shadow-gitcoin"
-                    @click="toSetupGitcoins"
+                    @click="toSetupGitcoins()"
                 >
                     Manage Contribs
                 </Button>
             </div>
             <div
                 class="px-4 py-4 flex gap-5 fixed bottom-0 left-0 right-0 max-w-md m-auto w-full"
-                v-if="list.length === 0"
+                v-show="gitcoins.length === 0"
             >
                 <Button size="lg" class="m-auto text-lg bg-gitcoin-button text-white shadow-gitcoin">
                     Go to Gitcoin
@@ -54,13 +56,74 @@ import Button from '@/components/Button.vue';
 import ImgHolder from '@/components/ImgHolder.vue';
 import GitcoinTitle from '@/components/GitcoinTitle.vue';
 import GitcoinCard from '@/components/GitcoinCard.vue';
+import axios from 'axios';
+import config from '@/config';
+import RNSUtils from '@/common/rns';
+import RSS3 from '@/common/rss3';
+
+interface Profile {
+    avatar: string;
+    username: string;
+    address: string;
+    bio: string;
+}
 
 @Options({
     components: { ImgHolder, Button, GitcoinTitle, GitcoinCard },
 })
 export default class Gitcoins extends Vue {
-    public list: Array<Object> = [{}];
-    public isOwner: boolean = true;
+    rns: string = '';
+    ethAddress: string = '';
+    public grants: number = 0;
+    public contribs: number = 0;
+    public gitcoins: Array<Object> = [];
+    public isOwner: boolean = false;
+    public rss3Profile: Profile = {
+        avatar: config.defaultAvatar,
+        username: '',
+        address: '',
+        bio: '',
+    };
+
+    async mounted() {
+        const address = <string>this.$route.params.address;
+        if (!address.startsWith('0x')) {
+            this.rns = address;
+            this.ethAddress = (await RNSUtils.name2Addr(`${address}.pass3.me`)).toString();
+        } else {
+            this.ethAddress = address;
+            this.rns = (await RNSUtils.addr2Name(address)).toString();
+        }
+        const rss3 = await RSS3.visitor();
+        const owner: string = <string>rss3.account.address;
+
+        if (owner === this.ethAddress) {
+            this.isOwner = true;
+        }
+
+        const profile = await rss3.profile.get(this.ethAddress);
+        this.rss3Profile.avatar = profile?.avatar?.[0] || config.defaultAvatar;
+        this.rss3Profile.username = profile?.name?.[0] || '';
+        this.rss3Profile.address = this.ethAddress;
+
+        await this.loadGitcoin();
+    }
+
+    async loadGitcoin() {
+        const res = await axios({
+            method: 'get',
+            url: `http://localhost:3000/asset-profile/${this.ethAddress}`,
+        });
+        const data: Array<any> = res.data.assets;
+        data.forEach((element) => {
+            if (element.type == 'Gitcoin-Donation') {
+                this.contribs += element.info.total_contribs;
+                this.gitcoins.push(element);
+            }
+        });
+
+        this.grants = this.gitcoins.length;
+    }
 
     public toPublicPage(address: string) {
         this.$router.push(`/${address}`);

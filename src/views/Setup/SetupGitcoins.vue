@@ -12,8 +12,7 @@
                     class="w-10 h-10 inline-flex my-auto cursor-pointer"
                     :is-rounded="true"
                     :is-border="false"
-                    src="https://i.imgur.com/GdWEt4z.jpg"
-                    alt="nya"
+                    :src="avatar"
                 />
             </span>
         </div>
@@ -84,6 +83,8 @@ import Button from '@/components/Button.vue';
 import Card from '@/components/Card.vue';
 import draggable from 'vuedraggable';
 import ImgHolder from '@/components/ImgHolder.vue';
+import RSS3, { IRSS3 } from '@/common/rss3';
+import config from '@/config';
 
 @Options({
     components: {
@@ -94,8 +95,27 @@ import ImgHolder from '@/components/ImgHolder.vue';
     },
 })
 export default class SetupGitcoins extends Vue {
+    avatar: String = '';
+    rss3: IRSS3 | null = null;
+
     public show: Array<Object> = [];
     public hide: Array<Object> = [];
+
+    async mounted() {
+        if (!(await RSS3.reconnect())) {
+            sessionStorage.setItem('redirectFrom', this.$route.fullPath);
+            await this.$router.push('/');
+            return;
+        }
+        this.rss3 = await RSS3.get();
+        if (sessionStorage.getItem('profile')) {
+            const profile = JSON.parse(<string>sessionStorage.getItem('profile'));
+            this.avatar = profile.avatar;
+        } else {
+            const profile = await (<IRSS3>this.rss3).profile.get();
+            this.avatar = profile?.avatar?.[0] || config.defaultAvatar;
+        }
+    }
 
     showAll() {}
 

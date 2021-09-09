@@ -62,7 +62,7 @@ const routes = [
         component: SingleNFT,
     },
     {
-        path: '/gitcoins',
+        path: '/:address/gitcoins',
         component: Gitcoins,
     },
     {
