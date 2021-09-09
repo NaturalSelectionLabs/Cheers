@@ -37,7 +37,9 @@
                 <div class="image pb-4">
                     <NFTItem
                         :imageUrl="this.details.animation_url || this.details.image_url"
+                        :poster-url="this.details.image_url"
                         :size="NFTWidth > 416 ? 416 : NFTWidth"
+                        :is-showing-details="true"
                     ></NFTItem>
                 </div>
                 <NFTDetail :chain="details.chain" :details="details" market="opensea" />

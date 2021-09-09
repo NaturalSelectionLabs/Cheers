@@ -7,27 +7,20 @@
         class="rounded"
     >
         <video
-            v-if="imageUrl?.endsWith('.mp4') || imageUrl?.endsWith('.mov')"
+            v-if="imageUrl?.endsWith('.mp4') || imageUrl?.endsWith('.mov') || imageUrl?.endsWith('.mp3')"
             :src="imageUrl"
+            :poster="posterUrl"
             class="nft-item"
             :style="{
                 width: size + 'px',
                 height: size + 'px',
             }"
-            autoplay
+            :autoplay="isShowingDetails || !imageUrl?.endsWith('.mp3')"
             loop
-            muted
+            :muted="!isShowingDetails"
             webkit-playsinline
             playsinline
-        />
-        <audio
-            v-else-if="imageUrl?.endsWith('.mp3')"
-            :src="imageUrl"
-            class="nft-item"
-            :style="{
-                width: size + 'px',
-                height: size + 'px',
-            }"
+            :controls="isShowingDetails"
         />
         <iframe
             v-else-if="imageUrl?.endsWith('embed')"
@@ -72,7 +65,9 @@ import config from '@/config';
 @Options({
     props: {
         size: Number,
+        posterUrl: String,
         imageUrl: String,
+        isShowingDetails: Boolean,
     },
     components: {
         viewer,
