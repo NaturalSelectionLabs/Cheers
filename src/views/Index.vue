@@ -1,6 +1,6 @@
 <template>
     <div class="onboarding h-full text-center bg-cover bg-fixed flex items-center justify-center bg-pass3gradient">
-        <div class="body px-4 h-2/3 flex flex-col justify-center items-center gap-56">
+        <div class="body px-4 h-2/3 flex flex-col justify-start items-center gap-56">
             <div class="logo-container w-50 h-50 bg-pass3logo bg-center bg-contain bg-no-repeat"></div>
             <div class="leading-17.5 text-white w-83.5 text-2xl mx-auto">
                 <Button
@@ -21,42 +21,7 @@
                     <span> Metamask </span>
                 </Button>
             </div>
-            <!-- <Modal v-show="isLoading">
-                <template #body>
-                    <span
-                        class="
-                            text-9xl text-primary
-                            opacity-50
-                            block
-                            absolute
-                            top-1/2
-                            left-1/2
-                            transform
-                            -translate-x-1/2 -translate-y-1/2
-                        "
-                    >
-                        <i class="bx bx-loader-alt bx-spin"></i>
-                    </span>
-                </template>
-            </Modal> -->
-            <div
-                v-show="isLoading"
-                class="
-                    fixed
-                    w-screen
-                    h-screen
-                    m-0
-                    p-0
-                    top-0
-                    left-0
-                    bg-black bg-opacity-50
-                    flex
-                    justify-center
-                    items-center
-                "
-            >
-                <Loading :size="200" />
-            </div>
+            <LoadingContainer v-show="isLoading" />
         </div>
     </div>
 </template>
@@ -71,7 +36,7 @@ import RNSUtils from '@/common/rns';
 import WalletConnect from '@/components/Icons/WalletConnect.vue';
 import Metamask from '@/components/Icons/Metamask.vue';
 import Loading from '@/components/Loading.vue';
-
+import LoadingContainer from '@/components/LoadingContainer.vue';
 @Options({
     components: {
         Metamask,
@@ -79,6 +44,7 @@ import Loading from '@/components/Loading.vue';
         Modal,
         Button,
         Loading,
+        LoadingContainer,
     },
 })
 export default class Index extends Vue {

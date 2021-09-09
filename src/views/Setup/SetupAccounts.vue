@@ -124,18 +124,7 @@
             <template #accessibility>
                 <i class="bx bx-info-circle" style="color: rgba(0, 0, 0, 0.2)" />
             </template>
-            <template #content>
-                <draggable class="min-h-20" :list="hide" group="accounts" itemKey="chain">
-                    <template #item="{ element }">
-                        <AccountItem
-                            class="shadow-account-sm inline-flex m-0.5 rounded-full"
-                            :size="64"
-                            :chain="element.platform"
-                        />
-                    </template>
-                </draggable>
-            </template>
-            <template #footer-button>
+            <template #header-button>
                 <Button
                     size="sm"
                     class="text-xs bg-white text-account-button shadow-account-sm"
@@ -148,6 +137,17 @@
                     Show All
                 </Button>
             </template>
+            <template #content>
+                <draggable class="min-h-20" :list="hide" group="accounts" itemKey="chain">
+                    <template #item="{ element }">
+                        <AccountItem
+                            class="shadow-account-sm inline-flex m-0.5 rounded-full"
+                            :size="64"
+                            :chain="element.platform"
+                        />
+                    </template>
+                </draggable>
+            </template>
         </Card>
         <div class="px-4 py-4 flex gap-5 fixed bottom-0 left-0 right-0 max-w-md m-auto w-full">
             <Button size="lg" class="flex-1 text-lg bg-white text-primary shadow-secondary" @click="back"
@@ -155,30 +155,8 @@
             >
             <Button size="lg" class="flex-1 text-lg bg-primary text-white shadow-primary" @click="save">Save</Button>
         </div>
-        <!-- <Modal v-show="isLoading">
-            <template #body>
-                <span
-                    class="
-                        text-9xl text-primary
-                        opacity-50
-                        block
-                        absolute
-                        top-1/2
-                        left-1/2
-                        transform
-                        -translate-x-1/2 -translate-y-1/2
-                    "
-                >
-                    <i class="bx bx-loader-alt bx-spin"></i>
-                </span>
-            </template>
-        </Modal> -->
-        <div
-            v-show="isLoading"
-            class="fixed w-screen h-screen m-0 p-0 top-0 left-0 bg-black bg-opacity-50 flex justify-center items-center"
-        >
-            <Loading :size="200" />
-        </div>
+        <LoadingContainer v-show="isLoading" />
+
         <Modal v-if="isShowingAddAccountNotice">
             <template #header>
                 <h1>Oops!</h1>
@@ -210,7 +188,7 @@ import Card from '@/components/Card.vue';
 import AccountItem from '@/components/AccountItem.vue';
 import Modal from '@/components/Modal.vue';
 import Loading from '@/components/Loading.vue';
-
+import LoadingContainer from '@/components/LoadingContainer.vue';
 import { RSS3Account, RSS3Index } from 'rss3-next/types/rss3';
 import RSS3, { IRSS3 } from '@/common/rss3';
 import config from '@/config';
@@ -225,6 +203,7 @@ import draggable from 'vuedraggable';
         AccountItem,
         draggable,
         Loading,
+        LoadingContainer,
     },
 })
 export default class Setup extends Vue {

@@ -14,7 +14,7 @@
                 @click="toPublicPage(this.rns || this.ethAddress)"
             />
         </div>
-        <div class="follow-list flex flex-col gap-y-2">
+        <div class="follow-list flex flex-col gap-y-4">
             <FollowerCard
                 class="w-auto cursor-pointer"
                 v-for="(item, index) in followerList"
@@ -50,7 +50,7 @@ interface Profile {
     components: { ImgHolder, Button, FollowerCard },
 })
 export default class Followers extends Vue {
-    public followerList: Array<Object> = [];
+    public followerList: Array<Profile> = [];
     public rss3Profile: Profile = {
         avatar: config.defaultAvatar,
         username: '',
@@ -81,15 +81,21 @@ export default class Followers extends Vue {
 
         if (rss3 && followersList) {
             for (const item of followersList) {
-                const profile = await rss3.profile.get(item);
+                const profile = (await rss3.profile.get(item)) || {};
                 this.followerList.push({
-                    avatar: profile.avatar?.[0] || '',
+                    avatar: profile.avatar?.[0] || config.defaultAvatar,
                     username: profile.name || '',
+                    bio: profile.bio || '',
                     address: item,
                     displayAddress: this.filter(item),
-                    rns: (await RNSUtils.addr2Name(item)).toString().replace('.pass3.me', ''),
+                    rns: '',
                 });
             }
+            setTimeout(async () => {
+                for (const item of this.followerList) {
+                    item.rns = (await RNSUtils.addr2Name(item.address)).toString().replace('.pass3.me', '');
+                }
+            });
         }
     }
 

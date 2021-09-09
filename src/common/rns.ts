@@ -74,8 +74,8 @@ function sha3HexAddress(addr: string) {
 }
 
 export default {
+    // We have checked network and account in verifyRNS method in RNS.vue, so we don't need to check it here.
     async register(name: string, speed: SPEED = 'average') {
-        await (window as any).ethereum?.enable();
         return callRNSContract<ethers.providers.TransactionResponse>('token', 'web3', speed, 'register', name);
     },
     addr2Name(addr: string, speed: SPEED = 'average') {

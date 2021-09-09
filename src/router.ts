@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router';
 
 import Index from '@/views/Index.vue';
-import Test from '@/views/Test.vue';
+// import Test from '@/views/Test.vue';
 import Home from '@/views/Home.vue';
 import Followings from '@/views/Followings.vue';
 import Followers from '@/views/Followers.vue';
@@ -21,10 +21,10 @@ const routes = [
         path: '/',
         component: Index,
     },
-    {
-        path: '/test',
-        component: Test,
-    },
+    // {
+    //     path: '/test',
+    //     component: Test,
+    // },
     {
         path: '/:address',
         component: Home,

@@ -1410,6 +1410,11 @@
     "@ethersproject/properties" "^5.4.0"
     "@ethersproject/strings" "^5.4.0"
 
+"@google/model-viewer@1.8.0":
+  version "1.8.0"
+  resolved "https://registry.yarnpkg.com/@google/model-viewer/-/model-viewer-1.8.0.tgz#398c0d9bbd3281933a3a4e6ed8f02da6789df768"
+  integrity sha512-qUwlu4q+sEFs2XOztZpaT5sGdv9G76jyLzEOdttcfAFb0/ZE0HnXU1KPN3Pq5gvdg+jW7fDUUHhsMxM1OBnpUQ==
+
 "@metamask/safe-event-emitter@^2.0.0":
   version "2.0.0"
   resolved "https://registry.npm.taobao.org/@metamask/safe-event-emitter/download/@metamask/safe-event-emitter-2.0.0.tgz#af577b477c683fad17c619a78208cede06f9605c"
@@ -7653,10 +7658,10 @@ rlp@^2.0.0, rlp@^2.2.3, rlp@^2.2.4:
   dependencies:
     bn.js "^4.11.1"
 
-rss3-next@0.6.9:
-  version "0.6.9"
-  resolved "https://registry.yarnpkg.com/rss3-next/-/rss3-next-0.6.9.tgz#80ebf0431eebca641ec310eec0dbf7209332c737"
-  integrity sha512-IkgMNRZz+x3k8YAyoVvGV6od8/6pI3JBtOr0ab7+gmHPjQRBwsafVA3GsQrV5E6YkqFccvZp1pmd6+SkupN5ZA==
+rss3-next@0.6.10:
+  version "0.6.10"
+  resolved "https://registry.yarnpkg.com/rss3-next/-/rss3-next-0.6.10.tgz#b154afcf85efbcee76ee426159903ab56a90c2d1"
+  integrity sha512-bfv5buFR90/qMixqexPJshuVeWq//tHDe7K9Ubo/RUNKRR0AaNb2E7izM3obd1A+yqgRbYes9IZ053HT0M6Nbg==
   dependencies:
     axios "0.21.1"
     ethers "5.4.1"

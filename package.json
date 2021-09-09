@@ -26,6 +26,7 @@
     },
     "homepage": "https://github.com/NaturalSelectionLabs/RSS3-Page#readme",
     "dependencies": {
+        "@google/model-viewer": "1.8.0",
         "@sentry/tracing": "6.11.0",
         "@sentry/vue": "6.11.0",
         "@walletconnect/web3-provider": "1.6.5",
@@ -42,7 +43,7 @@
         "moment": "2.29.1",
         "os-browserify": "0.3.0",
         "postcss-nested": "5.0.6",
-        "rss3-next": "0.6.9",
+        "rss3-next": "0.6.10",
         "stream-browserify": "3.0.0",
         "stream-http": "3.2.0",
         "typescript": "4.3.5",

@@ -25,19 +25,6 @@
             :is-having-content="true"
             :tips="displayedNFTs.length === 0 ? 'Add additional NFTs' : 'Drag here to show and reorder'"
         >
-            <template #header-button>
-                <Button
-                    size="sm"
-                    class="text-xs bg-white text-nft-button shadow-nft-sm ml-auto"
-                    :class="{
-                        'bg-gray-100 cursor-not-allowed': displayedNFTs.length === 0,
-                    }"
-                    :disabled="displayedNFTs.length === 0"
-                    @click="hideAll"
-                >
-                    Hide All
-                </Button>
-            </template>
             <template #content>
                 <draggable
                     class="min-h-20"
@@ -58,7 +45,19 @@
                     </template>
                 </draggable>
             </template>
-            <template #footer-button> </template>
+            <template #footer-button>
+                <Button
+                    size="sm"
+                    class="text-xs bg-white text-nft-button shadow-nft-sm ml-auto"
+                    :class="{
+                        'bg-gray-100 cursor-not-allowed': displayedNFTs.length === 0,
+                    }"
+                    :disabled="displayedNFTs.length === 0"
+                    @click="hideAll"
+                >
+                    Hide All
+                </Button>
+            </template>
         </Card>
         <Card
             title="No-show collections"
@@ -118,6 +117,8 @@
             >
             <Button size="lg" class="flex-1 text-lg bg-primary text-white shadow-primary" @click="save">Save</Button>
         </div>
+
+        <LoadingContainer v-show="isLoading" />
     </div>
 </template>
 
@@ -133,6 +134,7 @@ import config from '@/config';
 
 import { DetailedNFT, RSS3AssetShow, RSS3AssetWithInfo } from '@/common/types';
 import draggable from 'vuedraggable';
+import LoadingContainer from '@/components/LoadingContainer.vue';
 
 interface RSS3AssetCollectionShow {
     collection_name: string;
@@ -142,6 +144,7 @@ interface RSS3AssetCollectionShow {
 
 @Options({
     components: {
+        LoadingContainer,
         Button,
         Card,
         NFTItem,
@@ -178,10 +181,16 @@ export default class SetupNFTs extends Vue {
 
         this.nfts = await Promise.all(
             (JSON.parse(JSON.stringify(await this.rss3?.assets.get())) || []).map(async (nft: RSS3AssetWithInfo) => {
-                const info = await this.getInfo(nft);
-                if (info) {
-                    nft.info = info;
-                }
+                let info: any = await this.getInfo(nft);
+                info = Object.assign(
+                    {
+                        collection: {
+                            name: 'Others',
+                        },
+                    },
+                    info || {},
+                );
+                nft.info = info;
                 return nft;
             }),
         );

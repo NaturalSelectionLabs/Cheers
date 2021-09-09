@@ -91,7 +91,7 @@ module.exports = (env, argv) => ({
             chunks: ['index'],
             filename: 'index.html',
             title: 'RSS3 Page',
-            favicon: 'public/favicon.ico',
+            // favicon: 'public/favicon.ico',
             hash: true,
             template: 'src/assets/index.ejs',
         }),

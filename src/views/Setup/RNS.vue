@@ -34,30 +34,8 @@
                 </div>
             </div>
         </div>
-        <!-- <Modal v-show="isLoading">
-            <template #body>
-                <span
-                    class="
-                        text-9xl text-primary
-                        opacity-50
-                        block
-                        absolute
-                        top-1/2
-                        left-1/2
-                        transform
-                        -translate-x-1/2 -translate-y-1/2
-                    "
-                >
-                    <i class="bx bx-loader-alt bx-spin"></i>
-                </span>
-            </template>
-        </Modal> -->
-        <div
-            v-show="isLoading"
-            class="fixed w-screen h-screen m-0 p-0 top-0 left-0 bg-black bg-opacity-50 flex justify-center items-center"
-        >
-            <Loading :size="200" />
-        </div>
+        <LoadingContainer v-show="isLoading" />
+
         <Modal v-if="isShowingConfirm">
             <template #header>
                 <h1>Confirm your RNS</h1>
@@ -97,12 +75,26 @@ import RNSUtils from '@/common/rns';
 import Modal from '@/components/Modal.vue';
 import Input from '@/components/Input.vue';
 import Loading from '@/components/Loading.vue';
+import LoadingContainer from '@/components/LoadingContainer.vue';
+import config from '@/config';
+function validateNetwork(chain: number | null, cb?: (chain: number | null) => void) {
+    if (config.rns.test && chain !== 0x3) {
+        alert('Please switch to ropsten network.');
+        cb ? cb(chain) : '';
+        throw 'Network error';
+    } else if (!config.rns.test && chain !== 0x1) {
+        alert('Please switch to mainnet network.');
+        cb ? cb(chain) : '';
+        throw 'Network error';
+    }
+}
 @Options({
     components: {
         Input,
         Modal,
         Button,
         Loading,
+        LoadingContainer,
     },
 })
 export default class RNS extends Vue {
@@ -117,25 +109,16 @@ export default class RNS extends Vue {
 
     isMobile: Boolean = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
-    async mounted() {
-        // console.log('atlas addr:', await RNSUtils.name2Addr('atlas.pass3.me'));
-        // console.log('rss3 addr:', await RNSUtils.name2Addr('rss3.pass3.me'));
-        // console.log(
-        //     'name of 0x8c23B96f2fb77AaE1ac2832debEE30f09da7af3C:',
-        //     await RNSUtils.addr2Name('0x8c23B96f2fb77AaE1ac2832debEE30f09da7af3C'),
-        // );
-        // console.log('hanabi addr:', await RNSUtils.name2Addr('hanabi.pass3.me'));
-        // console.log(
-        //     'name of 0xc560eb6fd0c2eb80Df50E5e06715295AE1205049:',
-        //     await RNSUtils.addr2Name('0xc560eb6fd0c2eb80Df50E5e06715295AE1205049'),
-        // );
-        // console.log('Balance of PASS3:', await RNSUtils.balanceOfPass3('0x8c23B96f2fb77AaE1ac2832debEE30f09da7af3C'));
+    // If redirect, return true. Otherwise return false.
+    async tryRedirect() {
         if (!(await RSS3.reconnect())) {
             sessionStorage.setItem('redirectFrom', this.$route.fullPath);
             await this.$router.push('/');
+            return true;
         } else {
             if (this.isMobile) {
                 await this.$router.push('/gotopc');
+                return true;
             }
             this.rss3 = await RSS3.get();
             if ((await RNSUtils.addr2Name((<IRSS3>this.rss3).account.address)).toString() !== '') {
@@ -153,8 +136,26 @@ export default class RNS extends Vue {
                     sessionStorage.removeItem('redirectFrom');
                     await this.$router.push(redirectFrom || '/home');
                 }
+                return true;
             }
         }
+        return false;
+    }
+
+    async refreshAccount() {
+        if (!(await this.tryRedirect())) {
+            const metamaskEthereum = (window as any).ethereum;
+            // this.rss3 object exists, doens't necessarily mean the account is connected
+            await metamaskEthereum.request({
+                method: 'eth_requestAccounts',
+            });
+            const chain: string | null = await metamaskEthereum.request({ method: 'eth_chainId' });
+            validateNetwork(Number(chain));
+        }
+    }
+
+    async mounted() {
+        await this.refreshAccount();
     }
 
     async back() {
@@ -169,6 +170,7 @@ export default class RNS extends Vue {
             this.isDisabled = true;
             return;
         }
+        await this.refreshAccount();
         this.rns = this.rns.toLowerCase();
         if (this.rns.length < 3 || this.rns.length >= 15) {
             this.notice = 'An RNS must have at least 3 characters and no more than 15';

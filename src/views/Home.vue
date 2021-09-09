@@ -1,5 +1,5 @@
 <template>
-    <div class="main px-4 py-8 flex flex-col gap-y-2 max-w-md m-auto">
+    <div v-if="isRNSExist" class="main px-4 py-8 flex flex-col gap-y-2 max-w-md m-auto">
         <Profile
             :avatar="rss3Profile.avatar"
             :username="rss3Profile.username"
@@ -7,6 +7,7 @@
             :rns="rns"
             :followers="rss3Relations.followers"
             :followings="rss3Relations.followings"
+            :NFTs="assets.length"
             :bio="rss3Profile.bio"
         ></Profile>
         <Button
@@ -29,15 +30,7 @@
             <i class="bx bx-pencil bx-sm"></i>
         </Button>
 
-        <Card
-            title="Accounts"
-            color-title="text-account-title"
-            color-tips="text-account-title"
-            color-background="bg-account-bg"
-            class="w-auto"
-            :is-having-content="true"
-            :is-single-line="true"
-        >
+        <AccountCard>
             <template #header-button>
                 <div v-if="isOwner" class="flex flex-row gap-2">
                     <Button
@@ -67,14 +60,14 @@
             <template #content>
                 <AccountItem
                     class="inline-block mr-1 cursor-pointer"
-                    :size="70"
+                    :size="40"
                     :chain="item.platform"
                     v-for="(item, index) in accounts"
                     :key="index"
                     @click="displayDialog(item.identity, item.platform)"
                 />
             </template>
-        </Card>
+        </AccountCard>
 
         <Card
             title="NFTs"
@@ -111,7 +104,7 @@
                     class="inline-block mr-1 cursor-pointer"
                     v-for="(item, index) in assets"
                     :key="index"
-                    :imageUrl="item.info.image_url"
+                    :imageUrl="item.info.animation_url || item.info.image_url"
                     :size="70"
                     @click="toSinglenftPage(item.info.platform, item.info.account, item.info.index)"
                 ></NFTItem>
@@ -173,6 +166,32 @@
             </template>
         </Modal>
     </div>
+    <div
+        v-else
+        class="onboarding h-full text-center bg-cover bg-fixed flex items-center justify-center bg-pass3gradient"
+    >
+        <div class="body px-4 h-2/3 flex flex-col justify-center items-center justify-between">
+            <div class="logo-container w-50 h-50 bg-pass3logo bg-center bg-contain bg-no-repeat"></div>
+            <div class="text-primary text-2xl max-w-md">
+                <p>
+                    This RNS is not claimed yet. <br />
+                    Grab it as yours or claim your own!
+                </p>
+            </div>
+            <div class="leading-17.5 text-white w-83.5 text-2xl mx-auto">
+                <Button size="lg" class="bg-primary shadow-primary rounded-3xl w-full h-17.5 mb-9" @click="toSetupRNS">
+                    <span> Claim an RNS </span>
+                </Button>
+                <Button
+                    size="lg"
+                    class="text-primary bg-white shadow-primary rounded-3xl w-full h-17.5"
+                    @click="toHomePage"
+                >
+                    <span> Go Home </span>
+                </Button>
+            </div>
+        </div>
+    </div>
 </template>
 
 <script lang="ts">
@@ -188,6 +207,7 @@ import { DetailedNFT, RSS3AssetShow, RSS3AssetWithInfo } from '@/common/types';
 import Modal from '@/components/Modal.vue';
 import RNSUtils from '@/common/rns';
 import config from '@/config';
+import AccountCard from '@/components/AccountCard.vue';
 
 interface ProfileInfo {
     avatar: string;
@@ -202,7 +222,7 @@ interface Relations {
 }
 
 @Options({
-    components: { Button, Card, Profile, AccountItem, NFTItem, Modal },
+    components: { Button, Card, Profile, AccountItem, NFTItem, Modal, AccountCard },
 })
 export default class Home extends Vue {
     rns: string = '';
@@ -213,12 +233,13 @@ export default class Home extends Vue {
     public isdisplaying: boolean = false;
     public dialogAddress: string = '';
     public dialogChain: string = '';
+    isRNSExist: boolean = true;
 
     public rss3Profile: ProfileInfo = {
         avatar: config.defaultAvatar,
-        username: '',
+        username: '...',
         address: '',
-        bio: '',
+        bio: '...',
     };
     public rss3Relations: Relations = {
         followers: [],
@@ -229,6 +250,10 @@ export default class Home extends Vue {
     $gtag: any;
 
     async mounted() {
+        await this.initLoad();
+    }
+
+    async initLoad() {
         const isValidRSS3 = await RSS3.reconnect();
         this.rss3 = await RSS3.visitor();
         const owner: string = <string>this.rss3.account.address;
@@ -251,6 +276,8 @@ export default class Home extends Vue {
                     if (this.ethAddress === owner) {
                         this.isOwner = true;
                     }
+                } else {
+                    this.isRNSExist = false;
                 }
             }
         } else {
@@ -282,8 +309,13 @@ export default class Home extends Vue {
         this.rss3Profile.bio = profile?.bio || '';
         this.rss3Profile.address = this.ethAddress;
 
-        this.rss3Relations.followers = await this.rss3?.backlinks.get(this.ethAddress, 'following');
-        this.rss3Relations.followings = (await this.rss3?.links.get(this.ethAddress, 'following'))?.list || [];
+        if (profile?.avatar?.[0]) {
+            const favicon = <HTMLLinkElement>document.getElementById('favicon');
+            favicon.href = profile.avatar[0];
+        }
+        if (profile?.name) {
+            document.title = profile.name;
+        }
 
         if (data) {
             this.accounts.push({
@@ -386,8 +418,13 @@ export default class Home extends Vue {
         if (RSS3.isValidRSS3()) {
             if (this.isFollowing) {
                 await this.unfollow();
+                this.rss3Relations.followers.splice(
+                    this.rss3Relations.followers.indexOf((<IRSS3>this.rss3).account.address),
+                    1,
+                );
             } else {
                 await this.follow();
+                this.rss3Relations.followers.push((<IRSS3>this.rss3).account.address);
             }
             await (<IRSS3>this.rss3).files.sync();
         } else {
@@ -397,6 +434,9 @@ export default class Home extends Vue {
     }
 
     public async checkIsFollowing() {
+        if (!this.ethAddress) {
+            this.ethAddress = (await RNSUtils.name2Addr(`${this.rns}.pass3.me`)).toString();
+        }
         const followList = await this.rss3?.links.get(this.rss3.account.address, 'following');
         if (typeof followList === 'undefined') {
             // No following list. Not following
@@ -437,13 +477,13 @@ export default class Home extends Vue {
     }
 
     public toAccountsPage() {
-        this.$gtag.event('visitAccountsPage', { userid: this.rss3Profile['address'] });
-        this.$router.push(`/${this.rss3Profile['address']}/accounts`);
+        this.$gtag.event('visitAccountsPage', { userid: this.rns });
+        this.$router.push(`/${this.rns}/accounts`);
     }
 
     public toNFTsPage() {
-        this.$gtag.event('visitNftPage', { userid: this.rss3Profile['address'] });
-        this.$router.push(`/${this.rss3Profile['address']}/nfts`);
+        this.$gtag.event('visitNftPage', { userid: this.rns });
+        this.$router.push(`/${this.rns}/nfts`);
     }
 
     public toSinglenftPage(chain: string, account: string, index: number) {
@@ -458,6 +498,16 @@ export default class Home extends Vue {
 
     public toSetupPage() {
         this.$router.push(`/profile`);
+    }
+
+    toSetupRNS() {
+        this.$router.push('/rns');
+    }
+
+    async toHomePage() {
+        await this.$router.push('/home');
+        this.isRNSExist = true;
+        await this.initLoad();
     }
 
     public displayDialog(address: string, chain: string) {
