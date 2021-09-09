@@ -7,7 +7,7 @@
         class="rounded"
     >
         <video
-            v-if="imageUrl?.endsWith('mp4') || imageUrl?.endsWith('mov')"
+            v-if="imageUrl?.endsWith('.mp4') || imageUrl?.endsWith('.mov')"
             :src="imageUrl"
             class="nft-item"
             :style="{
@@ -20,8 +20,26 @@
             webkit-playsinline
             playsinline
         />
+        <audio
+            v-else-if="imageUrl?.endsWith('.mp3')"
+            :src="imageUrl"
+            class="nft-item"
+            :style="{
+                width: size + 'px',
+                height: size + 'px',
+            }"
+        />
+        <iframe
+            v-else-if="imageUrl?.endsWith('embed')"
+            :src="imageUrl"
+            class="nft-item"
+            :style="{
+                width: size + 'px',
+                height: size + 'px',
+            }"
+        />
         <model-viewer
-            v-else-if="imageUrl?.endsWith('glb')"
+            v-else-if="imageUrl?.endsWith('.glb')"
             :src="imageUrl"
             class="nft-item"
             :style="{
