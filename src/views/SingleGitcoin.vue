@@ -13,7 +13,7 @@
                     alt="nya"
                 />
             </div>
-            <GitcoinItem :imageUrl="this.grant?.logo" :size="Width > 416 ? 416 : Width"></GitcoinItem>
+            <GitcoinItem :imageUrl="this.grant.logo" :size="Width > 416 ? 416 : Width"></GitcoinItem>
             <div
                 class="
                     w-full
@@ -32,23 +32,18 @@
             >
                 <div class="w-full">
                     <h2 class="text-xl font-semibold truncate">
-                        {{ this.grant?.slug }}
+                        {{ this.grant.slug }}
                     </h2>
-                    <p class="text-sm leading-normal text-gitcoin-title truncate">
-                        {{ this.grant?.reference_url }}
-                    </p>
-                </div>
-                <div class="flex flex-wrap">
-                    <span class="font-medium text-sm rounded-sm px-2 py-1 bg-top-bg text-top-title mr-2 mb-2">
-                        <i class="bx bx-medal bx-xs mr-1" />Top 10 Funders
-                    </span>
-                    <span class="font-medium text-sm rounded-sm px-2 py-1 bg-earliest-bg text-earliest-title mr-2 mb-2">
-                        <i class="bx bx-medal bx-xs mr-1" />Earliest 10 Funders
-                    </span>
+                    <div
+                        class="text-sm leading-normal text-gitcoin-title truncate cursor-pointer"
+                        @click="toExternalLink(this.grant.reference_url)"
+                    >
+                        {{ this.grant.reference_url }}
+                    </div>
                 </div>
                 <div>
                     <h2 class="text-xl font-semibold">Contributions</h2>
-                    <h1 class="text-2xl font-semibold text-gitcoin-title">{{ this.donationInfo?.length }}</h1>
+                    <h1 class="text-2xl font-semibold text-gitcoin-title">{{ this.donationInfo.length }}</h1>
                 </div>
                 <div class="w-full flex flex-col gap-y-2">
                     <div class="flex flex-row justify-start gap-x-2" v-for="(item, index) in donationInfo" :key="index">
@@ -66,9 +61,13 @@
                             "
                         >
                             <div class="text-gitcoin-title">{{ item.formatedAmount + ' ' + item.symbol }}</div>
-                            <div>{{ item.timeStamp }}</div>
+                            <div>{{ timeDifferent(item.timeStamp) }}</div>
                         </div>
-                        <Button size="sm" class="w-9 h-9 ml-1 bg-gitcoin-button text-white shadow-gitcoin-sm">
+                        <Button
+                            size="sm"
+                            class="w-9 h-9 ml-1 bg-gitcoin-button text-white shadow-gitcoin-sm"
+                            @click="toEtherscan(item.txHash)"
+                        >
                             <i class="bx bx-link-external bx-xs" />
                         </Button>
                     </div>
@@ -133,8 +132,13 @@ export default class SingleGitcoin extends Vue {
         bio: '',
     };
 
-    public grant?: GrantInfo;
-    public donationInfo?: DonationInfo[];
+    public grant?: GrantInfo = {
+        active: true,
+        logo: config.defaultAvatar,
+        slug: '...',
+        reference_url: '...',
+    };
+    public donationInfo?: DonationInfo[] = [];
 
     async mounted() {
         const address = <string>this.$route.params.address;
@@ -170,13 +174,31 @@ export default class SingleGitcoin extends Vue {
             },
         });
 
-        console.log(res.data);
+        this.grant = res.data.data.grant;
+        this.donationInfo = res.data.data.txs;
+    }
 
-        // this.grant = res.data.data.grant;
-        // this.donationInfo = res.data.data.txs;
+    public timeDifferent(timeStamp: number) {
+        const date1: any = new Date(timeStamp * 1000);
+        const date2: any = Date.now();
+        const diffTime = Math.abs(date2 - date1);
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        const diffHours = Math.ceil((diffTime % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        if (diffDays == 0) {
+            return diffHours + ' hours ago';
+        } else if (diffHours == 0) {
+            return diffDays + ' days ago';
+        } else {
+            return diffDays + ' days ' + diffHours + ' hours ago';
+        }
+    }
 
-        // console.log(this.donationInfo);
-        // console.log(this.grant);
+    public toExternalLink(address: string) {
+        window.open(address);
+    }
+
+    public toEtherscan(txHash: string) {
+        window.open(`https://etherscan.io/tx/${txHash}`);
     }
 
     public back() {

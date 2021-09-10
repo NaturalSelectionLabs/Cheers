@@ -23,27 +23,17 @@
                     :imageUrl="item.info.image_preview_url"
                     :name="item.info.title"
                     :contrib="item.info.total_contribs"
+                    :amount="item.info.token_contribs"
                     @click="toSingleGitcoin(item.platform, item.identity, item.id)"
                 ></GitcoinCard>
             </div>
-            <div
-                class="px-4 py-4 flex gap-5 fixed bottom-0 left-0 right-0 max-w-md m-auto w-full"
-                v-if="isOwner && gitcoins.length !== 0"
-            >
+            <div class="px-4 py-4 flex gap-5 fixed bottom-0 left-0 right-0 max-w-md m-auto w-full" v-if="isOwner">
                 <Button
                     size="lg"
                     class="m-auto text-lg bg-gitcoin-button text-white shadow-gitcoin"
                     @click="toSetupGitcoins()"
                 >
                     Manage Contribs
-                </Button>
-            </div>
-            <div
-                class="px-4 py-4 flex gap-5 fixed bottom-0 left-0 right-0 max-w-md m-auto w-full"
-                v-show="gitcoins.length === 0"
-            >
-                <Button size="lg" class="m-auto text-lg bg-gitcoin-button text-white shadow-gitcoin">
-                    Go to Gitcoin
                 </Button>
             </div>
         </div>
@@ -135,6 +125,10 @@ export default class Gitcoins extends Vue {
 
     public toSetupGitcoins() {
         this.$router.push(`/setup/gitcoins`);
+    }
+
+    public toGitcoin() {
+        window.open(`https://gitcoin.co/`);
     }
 
     public toSingleGitcoin(platform: string, identity: string, id: string) {

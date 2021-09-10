@@ -154,7 +154,7 @@
                         class="inline-flex m-0.5 cursor-pointer"
                         :size="64"
                         :imageUrl="item.info.image_preview_url"
-                        @click="toSingleGitcoin()"
+                        @click="toSingleGitcoin(item.platform, item.identity, item.id)"
                     />
                 </template>
                 <template v-else>
@@ -587,8 +587,14 @@ export default class Home extends Vue {
         await this.initLoad();
     }
 
-    public toSingleGitcoin() {
-        this.$router.push('singlegitcoin');
+    public toSingleGitcoin(platform: string, identity: string, id: string) {
+        this.$gtag.event('visitSingleGitcoin', {
+            userid: this.rns || this.ethAddress,
+            platform: platform,
+            identity: identity,
+            id: id,
+        });
+        this.$router.push(`/${this.rns || this.ethAddress}/singlegitcoin/${platform}/${identity}/${id}`);
     }
 
     public displayDialog(address: string, chain: string) {

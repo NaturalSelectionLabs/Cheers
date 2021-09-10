@@ -22,6 +22,10 @@
                     <div class="font-medium">{{ contrib }}</div>
                     <div>Contrib</div>
                 </div>
+                <div v-for="(item, index) in amount" :key="index">
+                    <div class="font-medium">{{ item.amount }}</div>
+                    <div>{{ item.token }}</div>
+                </div>
             </div>
         </div>
     </div>
@@ -35,6 +39,7 @@ import { Vue, Options } from 'vue-class-component';
         imageUrl: String,
         name: String,
         contrib: String,
+        amount: Array,
     },
 })
 export default class GitcoinCard extends Vue {}
