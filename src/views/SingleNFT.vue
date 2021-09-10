@@ -79,7 +79,7 @@ export default class SingleNFT extends Vue {
             this.ethAddress = (await RNSUtils.name2Addr(`${address}.pass3.me`)).toString();
         } else {
             this.ethAddress = address;
-            this.rns = (await RNSUtils.addr2Name(address)).toString();
+            this.rns = await RNSUtils.addr2Name(address);
         }
 
         const chain: string = String(this.$route.params.chain);

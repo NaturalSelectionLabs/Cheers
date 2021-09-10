@@ -69,7 +69,7 @@ export default class Followings extends Vue {
             this.ethAddress = (await RNSUtils.name2Addr(`${address}.pass3.me`)).toString();
         } else {
             this.ethAddress = address;
-            this.rns = (await RNSUtils.addr2Name(address)).toString();
+            this.rns = await RNSUtils.addr2Name(address);
         }
         const rss3 = await RSS3.visitor();
         const profile = await rss3.profile.get(this.ethAddress);
@@ -97,7 +97,7 @@ export default class Followings extends Vue {
             }
             setTimeout(async () => {
                 for (const item of this.followingList) {
-                    item.rns = (await RNSUtils.addr2Name(item.address)).toString().replace('.pass3.me', '');
+                    item.rns = (await RNSUtils.addr2Name(item.address)).replace('.pass3.me', '');
                 }
             });
         }

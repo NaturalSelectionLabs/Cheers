@@ -265,7 +265,7 @@ export default class Home extends Vue {
                 // Might be address type
                 // Get RNS and redirect
                 this.ethAddress = address;
-                this.rns = (await RNSUtils.addr2Name(address)).toString().replace('.pass3.me', '');
+                this.rns = (await RNSUtils.addr2Name(address)).replace('.pass3.me', '');
                 if (this.rns !== '') {
                     await this.$router.push(`/${this.rns}`);
                 }
@@ -286,7 +286,7 @@ export default class Home extends Vue {
                 sessionStorage.setItem('redirectFrom', this.$route.fullPath);
                 await this.$router.push('/');
             } else {
-                this.rns = (await RNSUtils.addr2Name(owner)).toString().replace('.pass3.me', '');
+                this.rns = (await RNSUtils.addr2Name(owner)).replace('.pass3.me', '');
                 if (this.rns === '') {
                     await this.$router.push('/rns');
                 } else {

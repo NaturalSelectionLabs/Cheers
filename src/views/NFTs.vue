@@ -84,7 +84,7 @@ export default class NFTs extends Vue {
             this.ethAddress = (await RNSUtils.name2Addr(`${address}.pass3.me`)).toString();
         } else {
             this.ethAddress = address;
-            this.rns = (await RNSUtils.addr2Name(address)).toString().replace('.pass3.me', '');
+            this.rns = (await RNSUtils.addr2Name(address)).replace('.pass3.me', '');
         }
         const rss3 = await RSS3.visitor();
         const owner: string = <string>rss3.account.address;
