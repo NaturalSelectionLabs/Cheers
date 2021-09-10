@@ -230,7 +230,7 @@ import RNSUtils from '@/common/rns';
 import config from '@/config';
 import AccountCard from '@/components/AccountCard.vue';
 import ShareCard from '@/components/ShareCard.vue';
-import html2canvas from 'html2canvas';
+import html2canvas from '@/common/html2canvas.js';
 
 interface ProfileInfo {
     avatar: string;
@@ -565,6 +565,7 @@ export default class Home extends Vue {
             const canvas = await html2canvas(shareCard, {
                 useCORS: true,
                 logging: false,
+                scale: 3,
             });
             const link = document.createElement('a');
             link.download = `${this.rns}.png`;
