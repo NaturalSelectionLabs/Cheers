@@ -23,7 +23,7 @@
                     :imageUrl="item.info.image_preview_url"
                     :name="item.info.title"
                     :contrib="item.info.total_contribs"
-                    @click="toSingleGitcoin"
+                    @click="toSingleGitcoin(item.platform, item.identity, item.id)"
                 ></GitcoinCard>
             </div>
             <div
@@ -137,8 +137,8 @@ export default class Gitcoins extends Vue {
         this.$router.push(`/setup/gitcoins`);
     }
 
-    public toSingleGitcoin() {
-        this.$router.push('singlegitcoin');
+    public toSingleGitcoin(platform: string, identity: string, id: string) {
+        this.$router.push(`/${this.rns}/singlegitcoin/${platform}/${identity}/${id}`);
     }
 }
 </script>

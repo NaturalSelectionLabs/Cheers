@@ -66,7 +66,7 @@ const routes = [
         component: Gitcoins,
     },
     {
-        path: '/singlegitcoin',
+        path: '/:address/singlegitcoin/:platform/:identity/:id',
         component: SingleGitcoin,
     },
     {
