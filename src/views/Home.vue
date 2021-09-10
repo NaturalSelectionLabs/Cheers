@@ -105,6 +105,7 @@
                     v-for="(item, index) in assets"
                     :key="index"
                     :imageUrl="item.info.animation_url || item.info.image_url"
+                    :poster-url="item.info.image_url"
                     :size="70"
                     @click="toSinglenftPage(item.info.platform, item.info.account, item.info.index)"
                 ></NFTItem>
