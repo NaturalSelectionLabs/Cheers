@@ -150,14 +150,12 @@
             </template>
             <template #body>
                 <div class="flex flex-col gap-y-4 items-center">
-                    <AccountItem class="m-auto mt-4" :size="90" :chain="this.dialogChain"></AccountItem>
-                    <span class="address text-xl font-semibold break-all text-center mt-4">{{
-                        this.dialogAddress
-                    }}</span>
+                    <AccountItem class="m-auto mt-4" :size="90" :chain="dialogChain"></AccountItem>
+                    <span class="address text-xl font-semibold break-all text-center mt-4">{{ dialogAddress }}</span>
                     <Button
                         size="sm"
                         class="text-md bg-account-button text-white shadow-account m-auto mt-4"
-                        @click="copyToClipboard(this.dialogAddress)"
+                        @click="copyToClipboard(dialogAddress)"
                     >
                         Copy
                     </Button>
@@ -181,9 +179,14 @@
                 :id="`share-card-${rns}`"
             />
 
-            <Button size="sm" class="w-12 h-12 bg-primary text-white shadow-primary mt-8" @click="saveShareCard">
-                <i class="bx bx-download bx-sm" />
-            </Button>
+            <div class="flex flex-row gap-7">
+                <Button size="sm" class="w-12 h-12 bg-primary text-white shadow-primary mt-8" @click="saveShareCard">
+                    <i class="bx bx-download bx-sm" />
+                </Button>
+                <Button size="sm" class="w-12 h-12 bg-primary text-white shadow-primary mt-8" @click="shareShareCard">
+                    <i class="bx bx-share-alt bx-sm" />
+                </Button>
+            </div>
         </div>
     </div>
     <div
@@ -215,7 +218,6 @@
 </template>
 
 <script lang="ts">
-import { onMounted, Ref, ref } from 'vue';
 import { Options, Vue } from 'vue-class-component';
 import Button from '@/components/Button.vue';
 import Card from '@/components/Card.vue';
@@ -571,6 +573,16 @@ export default class Home extends Vue {
             link.download = `${this.rns}.png`;
             link.href = canvas.toDataURL();
             link.click();
+        }
+    }
+
+    async shareShareCard() {
+        if (navigator.share) {
+            await navigator.share({
+                title: this.rss3Profile.username,
+                text: this.rss3Profile.bio,
+                url: `https://pass3.me/${this.rns}`, // Todo: Change to one's own RNS after SSR done
+            });
         }
     }
 }
