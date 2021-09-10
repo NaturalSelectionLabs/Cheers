@@ -40,10 +40,20 @@ module.exports = (env, argv) => ({
         rules: [
             {
                 test: /\.tsx?$/,
-                loader: 'ts-loader',
-                options: {
-                    appendTsSuffixTo: [/\.vue$/],
-                },
+                use: [
+                    {
+                        loader: 'ts-loader',
+                        options: {
+                            appendTsSuffixTo: [/\.vue$/],
+                        },
+                    },
+                    {
+                        loader: 'js-conditional-compile-loader',
+                        options: {
+                            isDevelop: process.env.NODE_ENV !== 'production',
+                        },
+                    },
+                ],
                 exclude: /node_modules/,
             },
             {

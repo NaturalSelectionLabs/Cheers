@@ -365,7 +365,7 @@
             </template>
             <template #content>
                 <draggable class="min-h-20" :list="accounts.array1" group="accounts" itemKey="chain">
-                    <template #item="{ element, index }">
+                    <template #item="{ element }">
                         <AccountItem
                             class="shadow-account-sm inline-flex m-0.5 rounded-full"
                             :size="64"
@@ -393,7 +393,7 @@
             </template>
             <template #content>
                 <draggable class="min-h-20" :list="accounts.array2" group="accounts" itemKey="chain">
-                    <template #item="{ element, index }">
+                    <template #item="{ element }">
                         <AccountItem
                             class="shadow-account-sm inline-flex m-0.5 rounded-full"
                             :size="64"
@@ -439,6 +439,8 @@
         <Button size="lg" class="w-80 bg-danger text-white" @click="disconnect"> Disconnect </Button>
 
         <Button size="lg" class="w-80 bg-primary text-white shadow-primary" @click="loadingModal"> Loading </Button>
+
+        <Button size="lg" class="w-80 bg-primary text-white shadow-primary" @click="shareModal"> Share </Button>
         <!-- <Modal v-show="isLoading">
             <template #body>
                 <span
@@ -457,6 +459,43 @@
                 </span>
             </template>
         </Modal> -->
+
+        <div class="w-80">
+            <div
+                class="box-border rounded-2xl aspect-w-16 aspect-h-9"
+                style="background: linear-gradient(107.57deg, #34816e 18.23%, #eae195 99.85%, #9ab85a 99.9%)"
+            ></div>
+        </div>
+
+        <ShareCard
+            class="max-w-md"
+            name="yzhe819"
+            avatar="https://rss3.mypinata.cloud/ipfs/QmSkwv6Vg5wWgbFSzuChp11jcpMng7or9Gg7JUG9SYuYmY"
+            address="yzhe819.pass3.me"
+            id="myCanvas"
+        ></ShareCard>
+
+        <ShareCard
+            class="max-w-md"
+            name="test"
+            avatar="https://i.imgur.com/GdWEt4z.jpg"
+            address="test.pass3.me"
+        ></ShareCard>
+
+        <ShareCard
+            class="max-w-md"
+            name="test"
+            avatar="https://rss3.mypinata.cloud/ipfs/QmZq1Z6QJoUmkptcVmrqSe3WRamGxuLPuCSrLxHt7qJUwi"
+            address="test.pass3.me"
+        ></ShareCard>
+
+        <ShareCard
+            class="max-w-md"
+            name="test"
+            avatar="https://rss3.mypinata.cloud/ipfs/QmW7hQg4MLH74MsgQnpAQKD26sXwkquMGv1F39QMXYTp5E"
+            address="test.pass3.me"
+        ></ShareCard>
+
         <div
             v-show="isLoading"
             class="fixed w-screen h-screen m-0 p-0 top-0 left-0 bg-black bg-opacity-50 flex justify-center items-center"
@@ -464,6 +503,20 @@
             <Loading :size="200" />
         </div>
         <Loading :size="200" />
+
+        <div
+            v-show="isShareing"
+            class="fixed w-screen h-screen m-0 p-0 top-0 left-0 bg-black bg-opacity-50 flex justify-center items-center"
+        >
+            <ShareCard
+                class="max-w-md"
+                name="yzhe819"
+                avatar="https://rss3.mypinata.cloud/ipfs/QmSkwv6Vg5wWgbFSzuChp11jcpMng7or9Gg7JUG9SYuYmY"
+                address="yzhe819.pass3.me"
+            ></ShareCard>
+        </div>
+
+        <Button size="lg" class="w-80 bg-danger text-white" @click="downloadVisualReport"> screenshot </Button>
     </div>
 </template>
 
@@ -480,6 +533,8 @@ import NFTBadges from '@/components/NFT/NFTBadges.vue';
 import ScanTag from '@/components/NFT/ScanTag.vue';
 import Modal from '@/components/Modal.vue';
 import RSS3 from '@/common/rss3';
+import ShareCard from '@/components/ShareCard.vue';
+import html2canvas from 'html2canvas';
 
 import draggable from 'vuedraggable';
 
@@ -499,6 +554,7 @@ import Loading from '@/components/Loading.vue';
         NFTBadges,
         draggable,
         Loading,
+        ShareCard,
     },
 })
 export default class Test extends Vue {
@@ -523,6 +579,7 @@ export default class Test extends Vue {
     };
     isShowingModal: Boolean = false;
     isLoading: Boolean = false;
+    isShareing: Boolean = false;
 
     async walletConnect() {
         await RSS3.walletConnect();
@@ -541,6 +598,25 @@ export default class Test extends Vue {
         setTimeout(() => {
             this.isLoading = false;
         }, 2000);
+    }
+
+    async shareModal() {
+        this.isShareing = true;
+        setTimeout(() => {
+            this.isShareing = false;
+        }, 8000);
+    }
+
+    downloadVisualReport() {
+        html2canvas(<HTMLElement>document.getElementById('myCanvas'), {
+            useCORS: true,
+            logging: false,
+        }).then((canvas) => {
+            var link = document.createElement('a');
+            link.download = 'filename.png';
+            link.href = canvas.toDataURL();
+            link.click();
+        });
     }
 }
 </script>

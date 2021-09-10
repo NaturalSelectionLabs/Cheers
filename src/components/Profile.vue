@@ -58,13 +58,19 @@
             </div>
         </div>
         <span class="font-bold text-2xl px-4">{{ username }}</span>
-        <span class="font-medium text-lg rounded-sm px-4 bg-content-bg text-primary" v-if="rns">
+        <span
+            class="font-medium text-lg rounded-sm px-4 bg-content-bg text-primary cursor-pointer"
+            v-if="rns"
+            @click="emitShare"
+        >
+            <i class="bx bx-upload mr-1" />
             {{ rns + '.pass3.me' }}
         </span>
         <span class="font-medium text-lg rounded-sm px-4 bg-content-bg text-primary" v-else>
             {{ filter(address) }}
         </span>
         <span class="font-medium text-lg rounded-sm px-4 bg-content-bg text-primary cursor-pointer" v-if="website">
+            <i class="bx bx-link mr-1" />
             {{ website }}
         </span>
         <div class="bio w-full font-medium text-lg break-all px-4">
@@ -91,6 +97,7 @@ import Vue3Autocounter from 'vue3-autocounter';
         bio: String,
         rns: String,
     },
+    emits: ['share'],
 })
 export default class Profile extends Vue {
     address!: String;
@@ -114,6 +121,10 @@ export default class Profile extends Vue {
 
     public toExternalLink() {
         window.open(`${this.website}`);
+    }
+
+    emitShare() {
+        this.$emit('share');
     }
 }
 </script>

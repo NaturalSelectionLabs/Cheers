@@ -15,9 +15,8 @@
                 width: size + 'px',
                 height: size + 'px',
             }"
-            :autoplay="isShowingDetails || !imageUrl?.endsWith('.mp3')"
+            :autoplay="isShowingDetails"
             loop
-            :muted="!isShowingDetails"
             webkit-playsinline
             playsinline
             :controls="isShowingDetails"
