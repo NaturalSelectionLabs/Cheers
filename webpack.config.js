@@ -5,6 +5,13 @@ const CopyPlugin = require('copy-webpack-plugin');
 const { VueLoaderPlugin } = require('vue-loader');
 const TerserPlugin = require('terser-webpack-plugin');
 
+const confditionalCompiler = {
+    loader: 'js-conditional-compile-loader',
+    options: {
+        isDevelop: process.env.NODE_ENV !== 'production',
+    },
+};
+
 module.exports = (env, argv) => ({
     devtool: argv.mode === 'production' ? false : 'inline-cheap-module-source-map',
 
@@ -40,6 +47,7 @@ module.exports = (env, argv) => ({
         rules: [
             {
                 test: /\.tsx?$/,
+                use: [confditionalCompiler],
                 loader: 'ts-loader',
                 options: {
                     appendTsSuffixTo: [/\.vue$/],
