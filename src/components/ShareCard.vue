@@ -1,6 +1,6 @@
 <template>
     <div class="relative w-full p-2">
-        <div class="box-border rounded-2xl aspect-w-16 aspect-h-9" ref="card">
+        <div class="box-border rounded-2xl aspect-w-16 aspect-h-9 shadow-share-card" ref="card">
             <div class="absolute inset-0 w-full h-full p-8 flex flex-col justify-center">
                 <FollowerCard
                     class="shadow-blank"
