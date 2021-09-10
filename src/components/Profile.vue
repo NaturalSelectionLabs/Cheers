@@ -76,9 +76,10 @@
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
 import ImgHolder from '@/components/ImgHolder.vue';
+import Vue3Autocounter from 'vue3-autocounter';
 
 @Options({
-    components: { ImgHolder },
+    components: { ImgHolder, Vue3Autocounter },
     props: {
         avatar: String,
         username: String,
