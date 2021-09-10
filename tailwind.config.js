@@ -46,6 +46,7 @@ module.exports = {
                 },
             },
             boxShadow: {
+                blank: '5px 10px 22px rgba(0, 0, 0, 0.25);', // using on the share card
                 primary: '0px 9px 35px -7px rgba(0, 114, 255, 0.94)', //primary blue button shadow
                 secondary: '0px 9px 35px -7px rgba(55, 155, 255, 0.72)', //white button shadow with primary blue text
                 'primary-card': '0px 9px 18px -9px rgba(55, 155, 255, 0.25);', //follower card shadow
@@ -135,5 +136,5 @@ module.exports = {
             translate: ['active'],
         },
     },
-    plugins: [],
+    plugins: [require('@tailwindcss/aspect-ratio')],
 };
