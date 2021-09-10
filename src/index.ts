@@ -9,11 +9,10 @@ import VueGtag from 'vue-gtag';
 import Hotjar from 'vue-hotjar';
 import * as Sentry from '@sentry/vue';
 import { Integrations } from '@sentry/tracing';
-
-const app = createApp(App);
+import Vue3Autocounter from 'vue3-autocounter';
+const app = createApp(App).component('vue3-autocounter', Vue3Autocounter);
 
 app.use(router);
-
 app.use(
     VueGtag,
     {

@@ -18,15 +18,42 @@
                 <ImgHolder class="w-24 h-24" :is-rounded="true" :is-border="false" :src="avatar" />
             </div>
             <div class="stats-container" @click="toFollowersPage">
-                <div class="stats-number">{{ followers.length }}</div>
+                <div class="stats-number">
+                    <vue3-autocounter
+                        ref="counter"
+                        :startAmount="0"
+                        :endAmount="followers.length"
+                        :duration="1"
+                        separator=","
+                        :autoinit="true"
+                    />
+                </div>
                 <div class="stats-type">Followers</div>
             </div>
             <div class="stats-container" @click="toFollowingsPage">
-                <div class="stats-number">{{ followings.length }}</div>
+                <div class="stats-number">
+                    <vue3-autocounter
+                        ref="counter"
+                        :startAmount="0"
+                        :endAmount="followings.length"
+                        :duration="1"
+                        separator=","
+                        :autoinit="true"
+                    />
+                </div>
                 <div class="stats-type">Followings</div>
             </div>
             <div class="stats-container" @click="toNFTsPage">
-                <div class="stats-number">{{ NFTs }}</div>
+                <div class="stats-number">
+                    <vue3-autocounter
+                        ref="counter"
+                        :startAmount="0"
+                        :endAmount="NFTs"
+                        :duration="1"
+                        separator=","
+                        :autoinit="true"
+                    />
+                </div>
                 <div class="stats-type">NFTs</div>
             </div>
         </div>
