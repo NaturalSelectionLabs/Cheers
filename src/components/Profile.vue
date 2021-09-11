@@ -73,8 +73,8 @@
             <i class="bx bx-link mr-1" />
             {{ website }}
         </span>
-        <div class="bio w-full font-medium text-lg break-all px-4">
-            <pre>{{ bio }}</pre>
+        <div class="bio w-full font-medium text-lg px-4 whitespace-pre-line">
+            {{ bio }}
         </div>
     </div>
 </template>
