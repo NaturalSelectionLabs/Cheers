@@ -280,30 +280,34 @@ export default class SetupNFTs extends Vue {
         this.sync();
     }
 
-    sync() {
-        this.displayedNFTs.forEach((nft, index) => {
-            this.rss3?.assets.patchTags(
-                {
-                    type: nft.type,
-                    platform: nft.platform,
-                    identity: nft.identity,
-                    id: nft.id,
-                },
-                [`pass:order:${index}`],
-            );
-        });
-        for (const collection in this.hiddenList) {
-            this.hiddenList[collection].forEach((nft, index) => {
-                this.rss3?.assets.patchTags(
+    async sync() {
+        await Promise.all(
+            this.displayedNFTs.map((nft, index) => {
+                return this.rss3?.assets.patchTags(
                     {
                         type: nft.type,
                         platform: nft.platform,
                         identity: nft.identity,
                         id: nft.id,
                     },
-                    ['pass:hidden'],
+                    [`pass:order:${index}`],
                 );
-            });
+            }),
+        );
+        for (const collection in this.hiddenList) {
+            await Promise.all(
+                this.hiddenList[collection].map((nft, index) => {
+                    return this.rss3?.assets.patchTags(
+                        {
+                            type: nft.type,
+                            platform: nft.platform,
+                            identity: nft.identity,
+                            id: nft.id,
+                        },
+                        ['pass:hidden'],
+                    );
+                }),
+            );
         }
     }
 

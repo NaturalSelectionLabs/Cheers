@@ -216,28 +216,32 @@ export default class SetupGitcoins extends Vue {
 
     async save() {
         this.isLoading = true;
-        this.show.forEach((gitcoin, index) => {
-            this.rss3?.assets.patchTags(
-                {
-                    type: gitcoin.type,
-                    platform: gitcoin.platform,
-                    identity: gitcoin.identity,
-                    id: gitcoin.id,
-                },
-                [`pass:order:${index}`],
-            );
-        });
-        this.hide.forEach((gitcoin) => {
-            this.rss3?.assets.patchTags(
-                {
-                    type: gitcoin.type,
-                    platform: gitcoin.platform,
-                    identity: gitcoin.identity,
-                    id: gitcoin.id,
-                },
-                ['pass:hidden'],
-            );
-        });
+        await Promise.all(
+            this.show.map((gitcoin, index) => {
+                return this.rss3?.assets.patchTags(
+                    {
+                        type: gitcoin.type,
+                        platform: gitcoin.platform,
+                        identity: gitcoin.identity,
+                        id: gitcoin.id,
+                    },
+                    [`pass:order:${index}`],
+                );
+            }),
+        );
+        await Promise.all(
+            this.hide.map((gitcoin) => {
+                return this.rss3?.assets.patchTags(
+                    {
+                        type: gitcoin.type,
+                        platform: gitcoin.platform,
+                        identity: gitcoin.identity,
+                        id: gitcoin.id,
+                    },
+                    ['pass:hidden'],
+                );
+            }),
+        );
         await this.rss3?.files.sync();
         // await RSS3.getAssetProfile((<IRSS3>this.rss3).account.address, true);
         this.isLoading = false;
