@@ -67,7 +67,7 @@ export default class NFTs extends Vue {
     ethAddress: string = '';
     public NFTWidth: number = (window.innerWidth - 52) / 2;
     public isOwner: boolean = false;
-    private nfts: GeneralAssetWithTags[] = [];
+    nfts: GeneralAssetWithTags[] = [];
     public rss3Profile: Profile = {
         avatar: config.defaultAvatar,
         username: '',
