@@ -21,6 +21,7 @@
                         class="cursor-pointer"
                         :size="NFTWidth > 200 ? 200 : NFTWidth"
                         :imageUrl="item.info.animation_url || item.info.image_preview_url"
+                        :poster-url="item.info.image_preview_url"
                         @click="toSingleNFTPage(item.platform, item.identity, item.id)"
                     />
                     <NFTBadges

@@ -46,7 +46,7 @@
         />
         <img
             v-else
-            :src="imageUrl?.endsWith('.glb') ? posterUrl : imageUrl || defaultImage"
+            :src="(imageUrl?.endsWith('.glb') ? posterUrl : imageUrl) || defaultImage"
             class="nft-item"
             :style="{
                 width: size + 'px',

@@ -87,6 +87,11 @@ module.exports = (env, argv) => ({
             {
                 test: /\.vue$/,
                 loader: 'vue-loader',
+                options: {
+                    compilerOptions: {
+                        isCustomElement: (tag) => tag === 'model-viewer',
+                    },
+                },
             },
             {
                 test: /\.mjs$/,
