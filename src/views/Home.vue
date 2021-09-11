@@ -77,7 +77,7 @@
             color-background="bg-nft-bg"
             class="w-auto"
             :is-having-content="true"
-            :is-single-line="nfts.length != 0"
+            :is-single-line="nfts.length !== 0"
         >
             <template #header-button>
                 <div v-if="isOwner" class="flex flex-row gap-2">
@@ -105,7 +105,9 @@
                     />
                 </template>
                 <template v-else>
-                    <div class="text-nft-title m-auto text-center mt-4">You don’t have any NFTs yet :(</div>
+                    <div class="text-nft-title m-auto text-center mt-4">
+                        {{ isLoadingAssets ? 'Loading...' : 'No NFTs to show :(' }}
+                    </div>
                 </template>
             </template>
         </Card>
@@ -157,7 +159,9 @@
                     />
                 </template>
                 <template v-else>
-                    <div class="text-gitcoin-title m-auto text-center mt-4">You don’t have any donations yet :(</div>
+                    <div class="text-gitcoin-title m-auto text-center mt-4">
+                        {{ isLoadingAssets ? 'Loading...' : 'No donations to show :(' }}
+                    </div>
                 </template>
             </template>
         </Card>
@@ -276,8 +280,8 @@ import Card from '@/components/Card.vue';
 import Profile from '@/components/Profile.vue';
 import AccountItem from '@/components/AccountItem.vue';
 import NFTItem from '@/components/NFT/NFTItem.vue';
-import RSS3, { IAssetProfile, IRSS3 } from '@/common/rss3';
-import { RSS3Account, RSS3Asset, RSS3Backlink, RSS3ID } from 'rss3-next/types/rss3';
+import RSS3, { IRSS3 } from '@/common/rss3';
+import { RSS3Account, RSS3Asset, RSS3ID } from 'rss3-next/types/rss3';
 import Modal from '@/components/Modal.vue';
 import RNSUtils from '@/common/rns';
 import config from '@/config';
@@ -313,6 +317,7 @@ export default class Home extends Vue {
     public dialogChain: string = '';
     isRNSExist: boolean = true;
     isShowingShareCard: boolean = false;
+    isLoadingAssets: boolean = true;
 
     public rss3Profile: ProfileInfo = {
         avatar: config.defaultAvatar,
@@ -375,44 +380,50 @@ export default class Home extends Vue {
             }
         }
 
-        const data = await RSS3.getAssetProfile(this.ethAddress);
-        if (!data) {
-            return;
-        }
-
-        const profile = await this.rss3.profile.get(this.ethAddress);
-        await this.checkIsFollowing();
-
-        this.rss3Profile.avatar = profile?.avatar?.[0] || config.defaultAvatar;
-        this.rss3Profile.username = profile?.name || '';
-        this.rss3Profile.bio = profile?.bio || '';
-        this.rss3Profile.address = this.ethAddress;
-
-        if (profile?.avatar?.[0]) {
-            const favicon = <HTMLLinkElement>document.getElementById('favicon');
-            favicon.href = profile.avatar[0];
-        }
-        if (profile?.name) {
-            document.title = profile.name;
-        }
-
-        if (data) {
-            // Push original account
-            this.accounts.push({
-                platform: 'Ethereum',
-                identity: this.ethAddress,
-                signature: '',
-                tags: ['pass:order:-1'],
-            });
-
-            await this.loadAccounts(await this.rss3.accounts.get(this.ethAddress));
-            await this.loadAssets(await this.rss3.assets.get(this.ethAddress), <GeneralAsset[]>data.assets);
-        }
-
         // Split time-consuming methods from main thread, so it won't stuck the page loading progress
         setTimeout(async () => {
-            this.rss3Relations.followers = (await this.rss3?.backlinks.get(this.ethAddress, 'following')) || [];
-            this.rss3Relations.followings = (await this.rss3?.links.get(this.ethAddress, 'following'))?.list || [];
+            const profile = await (<IRSS3>this.rss3).profile.get(this.ethAddress);
+            await this.checkIsFollowing();
+
+            this.rss3Profile.avatar = profile?.avatar?.[0] || config.defaultAvatar;
+            this.rss3Profile.username = profile?.name || '';
+            this.rss3Profile.bio = profile?.bio || '';
+            this.rss3Profile.address = this.ethAddress;
+
+            if (profile?.avatar?.[0]) {
+                const favicon = <HTMLLinkElement>document.getElementById('favicon');
+                favicon.href = profile.avatar[0];
+            }
+            if (profile?.name) {
+                document.title = profile.name;
+            }
+        }, 0);
+
+        setTimeout(async () => {
+            const data = await RSS3.getAssetProfile(this.ethAddress);
+
+            if (data) {
+                // Push original account
+                this.accounts.push({
+                    platform: 'Ethereum',
+                    identity: this.ethAddress,
+                    signature: '',
+                    tags: ['pass:order:-1'],
+                });
+
+                await this.loadAccounts(await (<IRSS3>this.rss3).accounts.get(this.ethAddress));
+                await this.loadAssets(
+                    await (<IRSS3>this.rss3).assets.get(this.ethAddress),
+                    <GeneralAsset[]>data.assets,
+                );
+                this.isLoadingAssets = false;
+            }
+        }, 0);
+
+        setTimeout(async () => {
+            this.rss3Relations.followers = (await (<IRSS3>this.rss3).backlinks.get(this.ethAddress, 'following')) || [];
+            this.rss3Relations.followings =
+                (await (<IRSS3>this.rss3).links.get(this.ethAddress, 'following'))?.list || [];
         }, 0);
     }
 
