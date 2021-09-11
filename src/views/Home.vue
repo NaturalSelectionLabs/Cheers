@@ -9,7 +9,8 @@
             :followings="rss3Relations.followings"
             :NFTs="nfts.length"
             :bio="rss3Profile.bio"
-        ></Profile>
+            @share="showShareCard"
+        />
         <Button
             size="sm"
             class="w-auto text-lg shadow-secondary mb-4 duration-200"
@@ -78,9 +79,6 @@
             :is-having-content="true"
             :is-single-line="nfts.length != 0"
         >
-            <template #accessibility>
-                <!-- <i class="bx bx-info-circle" style="color: rgba(0, 0, 0, 0.2)" /> -->
-            </template>
             <template #header-button>
                 <div v-if="isOwner" class="flex flex-row gap-2">
                     <Button size="sm" class="w-8 h-8 bg-white text-nft-button shadow-nft-sm" @click="toManageNFTs">
@@ -203,20 +201,44 @@
             </template>
             <template #body>
                 <div class="flex flex-col gap-y-4 items-center">
-                    <AccountItem class="m-auto mt-4" :size="90" :chain="this.dialogChain"></AccountItem>
-                    <span class="address text-xl font-semibold break-all text-center mt-4">{{
-                        this.dialogAddress
-                    }}</span>
+                    <AccountItem class="m-auto mt-4" :size="90" :chain="dialogChain"></AccountItem>
+                    <span class="address text-xl font-semibold break-all text-center mt-4">{{ dialogAddress }}</span>
                     <Button
                         size="sm"
                         class="text-md bg-account-button text-white shadow-account m-auto mt-4"
-                        @click="copyToClipboard(this.dialogAddress)"
+                        @click="copyToClipboard(dialogAddress)"
                     >
                         Copy
                     </Button>
                 </div>
             </template>
         </Modal>
+
+        <!-- Share Card -->
+        <div
+            v-show="isShowingShareCard"
+            class="fixed w-screen h-screen m-0 p-0 top-0 left-0 flex justify-center items-center flex-col"
+        >
+            <div class="fixed w-screen h-screen bg-share-bg bg-opacity-70" @click="isShowingShareCard = false" />
+
+            <ShareCard
+                class="max-w-md"
+                :name="rss3Profile.username"
+                :avatar="rss3Profile.avatar"
+                :address="`${rns}`"
+                ref="shareCard"
+                :id="`share-card-${rns}`"
+            />
+
+            <div class="flex flex-row gap-7">
+                <Button size="sm" class="w-12 h-12 bg-primary text-white shadow-primary mt-8" @click="saveShareCard">
+                    <i class="bx bx-download bx-sm" />
+                </Button>
+                <Button size="sm" class="w-12 h-12 bg-primary text-white shadow-primary mt-8" @click="shareShareCard">
+                    <i class="bx bx-share-alt bx-sm" />
+                </Button>
+            </div>
+        </div>
     </div>
     <div
         v-else
@@ -261,6 +283,8 @@ import config from '@/config';
 import AccountCard from '@/components/AccountCard.vue';
 import GitcoinItem from '@/components/GitcoinItem.vue';
 import { GeneralAsset, GeneralAssetWithTags } from '@/common/types';
+import ShareCard from '@/components/ShareCard.vue';
+import html2canvas from '@/common/html2canvas.js';
 
 interface ProfileInfo {
     avatar: string;
@@ -275,7 +299,7 @@ interface Relations {
 }
 
 @Options({
-    components: { Button, Card, Profile, AccountItem, NFTItem, Modal, AccountCard, GitcoinItem },
+    components: { Button, Card, Profile, AccountItem, NFTItem, Modal, AccountCard, GitcoinItem, ShareCard },
 })
 export default class Home extends Vue {
     rns: string = '';
@@ -287,6 +311,7 @@ export default class Home extends Vue {
     public dialogAddress: string = '';
     public dialogChain: string = '';
     isRNSExist: boolean = true;
+    isShowingShareCard: boolean = false;
 
     public rss3Profile: ProfileInfo = {
         avatar: config.defaultAvatar,
@@ -318,7 +343,7 @@ export default class Home extends Vue {
                 // Might be address type
                 // Get RNS and redirect
                 this.ethAddress = address;
-                this.rns = (await RNSUtils.addr2Name(address)).toString().replace('.pass3.me', '');
+                this.rns = (await RNSUtils.addr2Name(address)).replace('.pass3.me', '');
                 if (this.rns !== '') {
                     await this.$router.push(`/${this.rns}`);
                 }
@@ -339,7 +364,7 @@ export default class Home extends Vue {
                 sessionStorage.setItem('redirectFrom', this.$route.fullPath);
                 await this.$router.push('/');
             } else {
-                this.rns = (await RNSUtils.addr2Name(owner)).toString().replace('.pass3.me', '');
+                this.rns = (await RNSUtils.addr2Name(owner)).replace('.pass3.me', '');
                 if (this.rns === '') {
                     await this.$router.push('/rns');
                 } else {
@@ -603,6 +628,35 @@ export default class Home extends Vue {
                 console.error('Async: Could not copy the account: ', err);
             },
         );
+    }
+
+    showShareCard() {
+        this.isShowingShareCard = true;
+    }
+
+    async saveShareCard() {
+        const shareCard = document.getElementById(`share-card-${this.rns}`);
+        if (shareCard) {
+            const canvas = await html2canvas(shareCard, {
+                useCORS: true,
+                logging: false,
+                scale: 3,
+            });
+            const link = document.createElement('a');
+            link.download = `${this.rns}.png`;
+            link.href = canvas.toDataURL();
+            link.click();
+        }
+    }
+
+    async shareShareCard() {
+        if (navigator.share) {
+            await navigator.share({
+                title: this.rss3Profile.username,
+                text: this.rss3Profile.bio,
+                url: `https://pass3.me/${this.rns}`, // Todo: Change to one's own RNS after SSR done
+            });
+        }
     }
 }
 </script>

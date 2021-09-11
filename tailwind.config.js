@@ -57,8 +57,12 @@ module.exports = {
                     title: '#F579A6',
                     bg: '#F579A61A',
                 },
+                share: {
+                    bg: '#FFF8F8',
+                },
             },
             boxShadow: {
+                blank: '5px 10px 22px rgba(0, 0, 0, 0.25);', // using on the share card
                 primary: '0px 9px 35px -7px rgba(0, 114, 255, 0.94)', //primary blue button shadow
                 secondary: '0px 9px 35px -7px rgba(55, 155, 255, 0.72)', //white button shadow with primary blue text
                 'primary-card': '0px 9px 18px -9px rgba(55, 155, 255, 0.25);', //follower card shadow
@@ -73,6 +77,7 @@ module.exports = {
                 gitcoin: '0px 9px 35px -7px rgba(71, 228, 191, 1)',
                 'gitcoin-sm': '-1px 2px 7px 0px rgba(17, 188, 146, 0.21)',
                 'gitcoin-md': '0px 3px 8px 1px rgba(17, 188, 146, 0.2)',
+                'share-card': '9px 19px 22px rgba(0, 0, 0, 0.25)', // share card shadow
             },
             dropShadow: {
                 account: '-4px 4px 5px rgba(17, 170, 0, 0.12)', //account item shadow
@@ -151,5 +156,5 @@ module.exports = {
             translate: ['active'],
         },
     },
-    plugins: [],
+    plugins: [require('@tailwindcss/aspect-ratio')],
 };

@@ -9,11 +9,9 @@ import VueGtag from 'vue-gtag';
 import Hotjar from 'vue-hotjar';
 import * as Sentry from '@sentry/vue';
 import { Integrations } from '@sentry/tracing';
-
 const app = createApp(App);
 
 app.use(router);
-
 app.use(
     VueGtag,
     {

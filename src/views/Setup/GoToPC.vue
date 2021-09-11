@@ -41,7 +41,7 @@ export default class GoToPC extends Vue {
     }
 
     async checkAndRedirect() {
-        if ((await RNSUtils.addr2Name((<IRSS3>this.rss3).account.address)).toString() !== '') {
+        if ((await RNSUtils.addr2Name((<IRSS3>this.rss3).account.address)) !== '') {
             // Already setup RNS
             const profile = await (<IRSS3>this.rss3).profile.get();
             if (!profile) {

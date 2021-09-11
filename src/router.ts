@@ -1,7 +1,9 @@
 import { createRouter, createWebHistory } from 'vue-router';
 
 import Index from '@/views/Index.vue';
-// import Test from '@/views/Test.vue';
+/* IFTRUE_isDevelop */
+import Test from '@/views/Test.vue';
+/* FITRUE_isDevelop */
 import Home from '@/views/Home.vue';
 import Followings from '@/views/Followings.vue';
 import Followers from '@/views/Followers.vue';
@@ -24,10 +26,12 @@ const routes = [
         path: '/',
         component: Index,
     },
-    // {
-    //     path: '/test',
-    //     component: Test,
-    // },
+    /* IFTRUE_isDevelop */
+    {
+        path: '/test',
+        component: Test,
+    },
+    /* FITRUE_isDevelop */
     {
         path: '/:address',
         component: Home,

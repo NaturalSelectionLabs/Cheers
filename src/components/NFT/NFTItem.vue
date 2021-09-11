@@ -4,23 +4,34 @@
             width: size + 'px',
             height: size + 'px',
         }"
+        class="rounded"
     >
         <video
-            v-if="imageUrl?.endsWith('mp4') || imageUrl?.endsWith('mov')"
+            v-if="imageUrl?.endsWith('.mp4') || imageUrl?.endsWith('.mov') || imageUrl?.endsWith('.mp3')"
+            :src="imageUrl"
+            :poster="posterUrl"
+            class="nft-item"
+            :style="{
+                width: size + 'px',
+                height: size + 'px',
+            }"
+            :autoplay="isShowingDetails"
+            loop
+            webkit-playsinline
+            playsinline
+            :controls="isShowingDetails"
+        />
+        <iframe
+            v-else-if="imageUrl?.endsWith('embed')"
             :src="imageUrl"
             class="nft-item"
             :style="{
                 width: size + 'px',
                 height: size + 'px',
             }"
-            autoplay
-            loop
-            muted
-            webkit-playsinline
-            playsinline
         />
         <model-viewer
-            v-else-if="imageUrl?.endsWith('glb')"
+            v-else-if="imageUrl?.endsWith('.glb') && isShowingDetails"
             :src="imageUrl"
             class="nft-item"
             :style="{
@@ -35,7 +46,7 @@
         />
         <img
             v-else
-            :src="imageUrl || defaultImage"
+            :src="imageUrl?.endsWith('.glb') ? posterUrl : imageUrl || defaultImage"
             class="nft-item"
             :style="{
                 width: size + 'px',
@@ -53,7 +64,9 @@ import config from '@/config';
 @Options({
     props: {
         size: Number,
-        imageUrl: String,
+        posterUrl: String, // This should be image URL
+        imageUrl: String, // This should be detailed URL
+        isShowingDetails: Boolean,
     },
     components: {
         viewer,

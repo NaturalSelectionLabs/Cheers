@@ -37,7 +37,9 @@
                 <div class="image pb-4">
                     <NFTItem
                         :imageUrl="this.details.animation_url || this.details.image_url"
+                        :poster-url="this.details.image_url"
                         :size="NFTWidth > 416 ? 416 : NFTWidth"
+                        :is-showing-details="true"
                     />
                 </div>
                 <NFTDetail :chain="details.chain" :details="details" market="opensea" />
@@ -73,7 +75,7 @@ export default class SingleNFT extends Vue {
             this.ethAddress = (await RNSUtils.name2Addr(`${address}.pass3.me`)).toString();
         } else {
             this.ethAddress = address;
-            this.rns = (await RNSUtils.addr2Name(address)).toString();
+            this.rns = await RNSUtils.addr2Name(address);
         }
 
         const platform: string = String(this.$route.params.chain);

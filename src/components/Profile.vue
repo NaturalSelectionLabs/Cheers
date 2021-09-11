@@ -18,26 +18,59 @@
                 <ImgHolder class="w-24 h-24" :is-rounded="true" :is-border="false" :src="avatar" />
             </div>
             <div class="stats-container" @click="toFollowersPage">
-                <div class="stats-number">{{ followers.length }}</div>
+                <div class="stats-number">
+                    <vue3-autocounter
+                        ref="counter"
+                        :startAmount="0"
+                        :endAmount="followers.length"
+                        :duration="1"
+                        separator=","
+                        :autoinit="true"
+                    />
+                </div>
                 <div class="stats-type">Followers</div>
             </div>
             <div class="stats-container" @click="toFollowingsPage">
-                <div class="stats-number">{{ followings.length }}</div>
+                <div class="stats-number">
+                    <vue3-autocounter
+                        ref="counter"
+                        :startAmount="0"
+                        :endAmount="followings.length"
+                        :duration="1"
+                        separator=","
+                        :autoinit="true"
+                    />
+                </div>
                 <div class="stats-type">Followings</div>
             </div>
             <div class="stats-container" @click="toNFTsPage">
-                <div class="stats-number">{{ NFTs }}</div>
+                <div class="stats-number">
+                    <vue3-autocounter
+                        ref="counter"
+                        :startAmount="0"
+                        :endAmount="NFTs"
+                        :duration="1"
+                        separator=","
+                        :autoinit="true"
+                    />
+                </div>
                 <div class="stats-type">NFTs</div>
             </div>
         </div>
         <span class="font-bold text-2xl px-4">{{ username }}</span>
-        <span class="font-medium text-lg rounded-sm px-4 bg-content-bg text-primary" v-if="rns">
+        <span
+            class="font-medium text-lg rounded-sm px-4 bg-content-bg text-primary cursor-pointer"
+            v-if="rns"
+            @click="emitShare"
+        >
+            <i class="bx bx-upload mr-1" />
             {{ rns + '.pass3.me' }}
         </span>
         <span class="font-medium text-lg rounded-sm px-4 bg-content-bg text-primary" v-else>
             {{ filter(address) }}
         </span>
         <span class="font-medium text-lg rounded-sm px-4 bg-content-bg text-primary cursor-pointer" v-if="website">
+            <i class="bx bx-link mr-1" />
             {{ website }}
         </span>
         <div class="bio w-full font-medium text-lg break-all px-4">
@@ -49,9 +82,10 @@
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
 import ImgHolder from '@/components/ImgHolder.vue';
+import Vue3Autocounter from 'vue3-autocounter';
 
 @Options({
-    components: { ImgHolder },
+    components: { ImgHolder, Vue3Autocounter },
     props: {
         avatar: String,
         username: String,
@@ -63,6 +97,7 @@ import ImgHolder from '@/components/ImgHolder.vue';
         bio: String,
         rns: String,
     },
+    emits: ['share'],
 })
 export default class Profile extends Vue {
     address!: String;
@@ -86,6 +121,10 @@ export default class Profile extends Vue {
 
     public toExternalLink() {
         window.open(`${this.website}`);
+    }
+
+    emitShare() {
+        this.$emit('share');
     }
 }
 </script>

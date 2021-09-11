@@ -57,7 +57,7 @@ function getRNSContract(cname: CNAME) {
     if (config.rns.test) {
         return config.rns.contractNetworks.ropsten[cname];
     } else {
-        return '';
+        return config.rns.contractNetworks.mainnet[cname];
     }
 }
 
@@ -78,13 +78,14 @@ export default {
     async register(name: string, speed: SPEED = 'average') {
         return callRNSContract<ethers.providers.TransactionResponse>('token', 'web3', speed, 'register', name);
     },
-    addr2Name(addr: string, speed: SPEED = 'average') {
+    async addr2Name(addr: string, speed: SPEED = 'average') {
         const reverseNode = '0x91d1777781884d03a6757a803996e38de2a42967fb37eeaca72729271025a9e2';
         const addrHex = sha3HexAddress(addr.toLowerCase());
         const node = utils.keccak256(utils.defaultAbiCoder.encode(['bytes32', 'bytes32'], [reverseNode, addrHex]));
-        return callRNSContract<string>('resolver', 'infura', speed, 'name', node);
+        return (await callRNSContract<string>('resolver', 'infura', speed, 'name', node)).toLowerCase();
     },
     name2Addr(name: string, speed: SPEED = 'average') {
+        name = name.toLowerCase();
         return callRNSContract<string>('resolver', 'infura', speed, 'addr', utils.namehash(name));
     },
     async balanceOfPass3(addr: string, speed: SPEED = 'average') {
