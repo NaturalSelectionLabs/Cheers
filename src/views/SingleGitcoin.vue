@@ -43,7 +43,16 @@
                 </div>
                 <div>
                     <h2 class="text-xl font-semibold">Contributions</h2>
-                    <h1 class="text-2xl font-semibold text-gitcoin-title">{{ donationInfo.length }}</h1>
+                    <h1 class="text-2xl font-semibold text-gitcoin-title">
+                        <vue3-autocounter
+                            ref="counter"
+                            :startAmount="0"
+                            :endAmount="parseInt(donationInfo.length)"
+                            :duration="1"
+                            separator=","
+                            :autoinit="true"
+                        />
+                    </h1>
                 </div>
                 <div class="w-full flex flex-col gap-y-2">
                     <div class="flex flex-row justify-start gap-x-2" v-for="(item, index) in donationInfo" :key="index">
@@ -60,7 +69,18 @@
                                 py-2
                             "
                         >
-                            <div class="text-gitcoin-title">{{ item.formatedAmount + ' ' + item.symbol }}</div>
+                            <div class="text-gitcoin-title">
+                                <vue3-autocounter
+                                    ref="counter"
+                                    :startAmount="0"
+                                    :endAmount="parseFloat(item.formatedAmount)"
+                                    :duration="1"
+                                    separator=","
+                                    :decimals="5"
+                                    :suffix="item.symbol"
+                                    :autoinit="true"
+                                />
+                            </div>
                             <div>{{ timeDifferent(item.timeStamp) }}</div>
                         </div>
                         <Button
@@ -86,6 +106,7 @@ import config from '@/config';
 import RNSUtils from '@/common/rns';
 import RSS3 from '@/common/rss3';
 import axios from 'axios';
+import Vue3Autocounter from 'vue3-autocounter';
 
 interface Profile {
     avatar: string;
@@ -119,7 +140,7 @@ export interface DonationInfo {
 }
 
 @Options({
-    components: { ImgHolder, Button, GitcoinItem },
+    components: { ImgHolder, Button, GitcoinItem, Vue3Autocounter },
 })
 export default class SingleGitcoin extends Vue {
     public Width: number = window.innerWidth - 32;
