@@ -40,15 +40,15 @@
             color-tips="text-nft-title"
             color-background="bg-nft-bg"
             class="mb-4 w-full"
-            :is-having-content="assets.length !== 0"
-            :is-single-line="assets.length !== 0"
-            :tips="assets.length === 0 ? 'You don’t have any NFTs yet : {' : ''"
+            :is-having-content="nfts.length !== 0"
+            :is-single-line="nfts.length !== 0"
+            :tips="nfts.length === 0 ? 'You don’t have any NFTs yet : {' : ''"
         >
             <template #header-button>
                 <Button
                     size="sm"
                     class="w-10 h-10 bg-nft-button text-white shadow-nft"
-                    v-if="assets.length !== 0"
+                    v-if="nfts.length !== 0"
                     @click="toManageNFTs"
                 >
                     <i class="bx bx-pencil bx-sm" />
@@ -56,7 +56,37 @@
             </template>
             <template #content>
                 <NFTItem
-                    v-for="asset in assets"
+                    v-for="asset in nfts"
+                    :key="asset.platform + asset.identity + asset.id"
+                    class="shadow-nft-sm inline-flex m-0.5"
+                    :size="64"
+                    :image-url="asset.info.animation_url || asset.info.image_preview_url"
+                />
+            </template>
+        </Card>
+        <Card
+            title="Donations"
+            color-title="text-gitcoin-title"
+            color-tips="text-gitcoin-title"
+            color-background="bg-gitcoin-bg"
+            class="mb-4 w-full"
+            :is-having-content="gitcoins.length !== 0"
+            :is-single-line="gitcoins.length !== 0"
+            :tips="gitcoins.length === 0 ? 'You don’t have any donations yet :(' : ''"
+        >
+            <template #header-button>
+                <Button
+                    size="sm"
+                    class="w-10 h-10 bg-gitcoin-button text-white shadow-nft"
+                    v-if="gitcoins.length !== 0"
+                    @click="toManageGitcoins"
+                >
+                    <i class="bx bx-pencil bx-sm" />
+                </Button>
+            </template>
+            <template #content>
+                <NFTItem
+                    v-for="asset in gitcoins"
                     :key="asset.platform + asset.identity + asset.id"
                     class="shadow-nft-sm inline-flex m-0.5"
                     :size="64"
@@ -138,7 +168,7 @@ import { RSS3Account, RSS3Asset, RSS3Profile } from 'rss3-next/types/rss3';
 import RSS3, { IRSS3 } from '@/common/rss3';
 import config from '@/config';
 
-import { DetailedNFT, RSS3AssetShow } from '@/common/types';
+import { GeneralAsset, GeneralAssetWithTags } from '@/common/types';
 
 @Options({
     components: {
@@ -164,7 +194,8 @@ export default class Setup extends Vue {
         bio: '',
     };
     accounts: RSS3Account[] = [];
-    assets: RSS3AssetShow[] = [];
+    nfts: GeneralAssetWithTags[] = [];
+    gitcoins: GeneralAssetWithTags[] = [];
     rss3: IRSS3 | null = null;
     isLoading: Boolean = false;
     maxValueLength: Number = 280;
@@ -188,8 +219,33 @@ export default class Setup extends Vue {
             this.profile.bio = profile?.bio || '';
         }
 
-        await this.loadAccounts();
-        await this.loadAssets();
+        const data = await RSS3.getAssetProfile((<IRSS3>this.rss3).account.address);
+        if (!data) {
+            return;
+        }
+
+        const profile = data.rss3File.profile;
+
+        if (profile?.avatar?.[0]) {
+            const favicon = <HTMLLinkElement>document.getElementById('favicon');
+            favicon.href = profile.avatar[0];
+        }
+        if (profile?.name) {
+            document.title = profile.name;
+        }
+
+        if (data) {
+            // Push original account
+            this.accounts.push({
+                platform: 'Ethereum',
+                identity: (<IRSS3>this.rss3).account.address,
+                signature: '',
+                tags: ['pass:order:-1'],
+            });
+
+            await this.loadAccounts(<RSS3Account[]>data.rss3File.accounts);
+            await this.loadAssets(<RSS3Asset[]>data.rss3File.assets, <GeneralAsset[]>data.assets);
+        }
     }
 
     getTaggedOrder(taggedElement: RSS3Account | RSS3Asset): number {
@@ -205,16 +261,18 @@ export default class Setup extends Vue {
         return -1;
     }
 
-    async loadAccounts() {
-        // Add original account
-        this.accounts.push({
-            platform: 'Ethereum',
-            identity: (<IRSS3>this.rss3).account.address,
-            signature: '',
-            tags: ['pass:order:-1'],
+    private getAssetOrder(nft: RSS3Asset) {
+        let order = -1;
+        nft.tags?.forEach((tag: string) => {
+            if (tag.startsWith('pass:order:')) {
+                order = parseInt(tag.substr(11));
+            }
         });
+        return order;
+    }
+
+    async loadAccounts(accounts: RSS3Account[]) {
         // Get accounts
-        const accounts = await (<IRSS3>this.rss3).accounts.get((<IRSS3>this.rss3).account.address);
         if (accounts) {
             accounts.forEach((account: RSS3Account) => {
                 if (!account.tags?.includes('hidden')) {
@@ -227,60 +285,47 @@ export default class Setup extends Vue {
         }
     }
 
-    async loadAssets() {
-        const data = await RSS3.getAssetProfile((<IRSS3>this.rss3).account.address);
-        if (!data) {
-            return;
-        }
-        const queriedAssets: RSS3AssetShow[] = []; // Real-time NFTs queried from asset
-        for (const key in data.assets) {
-            // key: ethereum / bsc / ...
-            data.assets[key].forEach((account: any) => {
-                account.nft?.forEach((nft: DetailedNFT) => {
-                    const aNFT: RSS3AssetShow = {
-                        tags: [],
-                        platform: nft.chain,
-                        identity: nft.asset_contract.address,
-                        id: nft.token_id,
-                        image_url: nft.image_url,
-                        order: 0,
-                    };
-                    queriedAssets.push(aNFT);
-                });
-            });
-        }
-
-        const filedAssets: RSS3Asset[] = data.rss3File.assets || []; // NFTs cached in RSS3 file `asset`
-
-        queriedAssets.forEach((nft: RSS3AssetShow) => {
-            const i = filedAssets.findIndex(
-                (fn) => nft.platform === fn.platform && nft.identity === fn.identity && nft.id === fn.id,
-            );
-            if (i !== -1) {
-                if (!nft.tags) {
-                    nft.tags = [];
-                }
-                nft.tags.push(...(filedAssets[i].tags || []));
-                nft.tags.forEach((tag: string) => {
-                    if (tag.startsWith('pass:order:')) {
-                        nft.order = parseInt(tag.substr(11), 10);
+    async loadAssets(assetsInRSS3File: RSS3Asset[], assetsGrabbed: GeneralAsset[]) {
+        const assetsMerge: GeneralAssetWithTags[] = await Promise.all(
+            (assetsGrabbed || []).map(async (ag: GeneralAssetWithTags) => {
+                const origType = ag.type;
+                ag.type = 'Invalid'; // Using as a match mark
+                for (const airf of assetsInRSS3File) {
+                    if (
+                        airf.platform === ag.platform &&
+                        airf.identity === ag.identity &&
+                        airf.id === ag.id &&
+                        airf.type === origType
+                    ) {
+                        // Matched
+                        ag.type = origType; // Recover type
+                        if (airf.tags) {
+                            ag.tags = airf.tags;
+                        }
+                        break;
                     }
-                });
-                if (!nft.tags.includes('hidden')) {
-                    // Show
-                    this.assets.push(nft);
                 }
-                filedAssets.splice(i, 1); // Remains are gone NFTs
-            } else {
-                // Newly added
-                nft.order = -1;
-                this.assets.push(nft);
-            }
-        });
+                return ag;
+            }),
+        );
 
-        this.assets.sort((a, b) => {
-            return a.order - b.order;
-        });
+        const NFTList: GeneralAssetWithTags[] = [];
+        const GitcoinList: GeneralAssetWithTags[] = [];
+
+        for (const am of assetsMerge) {
+            if (am.type === 'NFT') {
+                NFTList.push(am);
+            } else if (am.type === 'Gitcoin-Donation') {
+                GitcoinList.push(am);
+            } // else Invalid
+        }
+
+        this.nfts = NFTList.filter((asset) => !asset.tags || asset.tags.indexOf('pass:hidden') === -1).sort(
+            (a, b) => this.getAssetOrder(a) - this.getAssetOrder(b),
+        );
+        this.gitcoins = GitcoinList.filter((asset) => !asset.tags || asset.tags.indexOf('pass:hidden') === -1).sort(
+            (a, b) => this.getAssetOrder(a) - this.getAssetOrder(b),
+        );
     }
 
     loadEdited() {
@@ -305,6 +350,9 @@ export default class Setup extends Vue {
     toManageNFTs() {
         this.saveEdited();
         this.$router.push('/setup/nfts');
+    }
+    toManageGitcoins() {
+        this.$router.push('/setup/gitcoins');
     }
     async back() {
         this.clearEdited();

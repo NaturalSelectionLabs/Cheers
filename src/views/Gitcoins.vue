@@ -50,6 +50,7 @@ import axios from 'axios';
 import config from '@/config';
 import RNSUtils from '@/common/rns';
 import RSS3 from '@/common/rss3';
+import { data } from 'autoprefixer';
 
 interface Profile {
     avatar: string;
@@ -100,14 +101,10 @@ export default class Gitcoins extends Vue {
     }
 
     async loadGitcoin() {
-        const res = await axios({
-            method: 'get',
-            url: `http://localhost:3000/asset-profile/${this.ethAddress}`,
-        });
-        const data: Array<any> = res.data.assets;
-        data.forEach((element) => {
-            if (element.type == 'Gitcoin-Donation') {
-                this.contribs += element.info.total_contribs;
+        const data = await RSS3.getAssetProfile(this.ethAddress);
+        data?.assets.forEach((element) => {
+            if (element.type === 'Gitcoin-Donation') {
+                this.contribs += <number>element.info.total_contribs;
                 this.gitcoins.push(element);
             }
         });

@@ -16,18 +16,18 @@
                 />
             </div>
             <div class="nft-list flex flex-wrap justify-between items-center gap-y-4">
-                <div class="relative" v-for="(item, index) in nftList" :key="index">
+                <div class="relative" v-for="(item, index) in nfts" :key="index">
                     <NFTItem
                         class="cursor-pointer"
                         :size="NFTWidth > 200 ? 200 : NFTWidth"
-                        :imageUrl="item.info.animation_url || item.info.image_url"
-                        @click="toSinglenftPage(item.info.platform, item.info.account, item.info.index)"
+                        :imageUrl="item.info.animation_url || item.info.image_preview_url"
+                        @click="toSingleNFTPage(item.platform, item.identity, item.id)"
                     />
                     <NFTBadges
                         class="absolute top-2.5 right-2.5"
-                        :chain="item.info.chain"
+                        :chain="item.platform"
                         location="overlay"
-                        :collectionImg="item.info.collection?.image_url"
+                        :collectionImg="item.info.collection_icon"
                     />
                 </div>
             </div>
@@ -50,7 +50,7 @@ import RSS3 from '@/common/rss3';
 import RNSUtils from '@/common/rns';
 import config from '@/config';
 import { RSS3Asset } from 'rss3-next/types/rss3';
-import { RSS3AssetWithInfo } from '@/common/types';
+import { GeneralAsset, GeneralAssetWithTags } from '@/common/types';
 
 interface Profile {
     avatar: string;
@@ -67,7 +67,7 @@ export default class NFTs extends Vue {
     ethAddress: string = '';
     public NFTWidth: number = (window.innerWidth - 52) / 2;
     public isOwner: boolean = false;
-    public nftList: Array<Object> = [];
+    private nfts: GeneralAssetWithTags[] = [];
     public rss3Profile: Profile = {
         avatar: config.defaultAvatar,
         username: '',
@@ -103,52 +103,11 @@ export default class NFTs extends Vue {
             this.rss3Profile.username = data.rss3File.profile?.name?.[0] || '';
             this.rss3Profile.address = address;
 
-            await this.loadNFTs(<RSS3Asset[]>data.rss3File.assets);
+            await this.loadNFTs(<RSS3Asset[]>data.rss3File.assets, <GeneralAsset[]>data.assets);
         }
     }
 
-    async loadNFTs(NFTs: RSS3Asset[]) {
-        const NFTList: Array<RSS3AssetWithInfo> = await Promise.all(
-            (JSON.parse(JSON.stringify(NFTs)) || []).map(async (nft: RSS3AssetWithInfo) => {
-                const info = await this.getInfo(nft);
-                if (info) {
-                    nft.info = info;
-                }
-                return nft;
-            }),
-        );
-
-        this.nftList = NFTList.filter((nft) => (!nft.tags || nft.tags.indexOf('pass:hidden') === -1) && nft.info).sort(
-            (a, b) => this.getNFTOrder(a) - this.getNFTOrder(b),
-        );
-    }
-
-    private async getInfo(nft: RSS3Asset) {
-        const data = await RSS3.getAssetProfile(this.ethAddress);
-        const assets = data?.assets;
-        for (let chain in assets) {
-            for (let i = 0; i < assets[chain].length; i++) {
-                const chainInfo = assets[chain][i];
-                for (let j = 0; j < chainInfo.nft.length; j++) {
-                    const nftInfo = chainInfo.nft[j];
-                    if (
-                        nftInfo.chain === nft.platform &&
-                        nftInfo.token_id === nft.id &&
-                        nftInfo.asset_contract.address === nft.identity
-                    ) {
-                        let res: any = nftInfo;
-                        res.account = i;
-                        res.index = j;
-                        res.platform = chain;
-                        return res;
-                    }
-                }
-            }
-        }
-        return null;
-    }
-
-    private getNFTOrder(nft: RSS3Asset) {
+    private getAssetOrder(nft: RSS3Asset) {
         let order = -1;
         nft.tags?.forEach((tag: string) => {
             if (tag.startsWith('pass:order:')) {
@@ -158,14 +117,51 @@ export default class NFTs extends Vue {
         return order;
     }
 
-    public toSinglenftPage(chain: string, account: string, index: number) {
+    async loadNFTs(assetsInRSS3File: RSS3Asset[], assetsGrabbed: GeneralAsset[]) {
+        const assetsMerge: GeneralAssetWithTags[] = await Promise.all(
+            (assetsGrabbed || []).map(async (ag: GeneralAssetWithTags) => {
+                const origType = ag.type;
+                ag.type = 'Invalid'; // Using as a match mark
+                for (const airf of assetsInRSS3File) {
+                    if (
+                        airf.platform === ag.platform &&
+                        airf.identity === ag.identity &&
+                        airf.id === ag.id &&
+                        airf.type === origType
+                    ) {
+                        // Matched
+                        ag.type = origType; // Recover type
+                        if (airf.tags) {
+                            ag.tags = airf.tags;
+                        }
+                        break;
+                    }
+                }
+                return ag;
+            }),
+        );
+
+        const NFTList: GeneralAssetWithTags[] = [];
+
+        for (const am of assetsMerge) {
+            if (am.type === 'NFT') {
+                NFTList.push(am);
+            }
+        }
+
+        this.nfts = NFTList.filter((asset) => !asset.tags || asset.tags.indexOf('pass:hidden') === -1).sort(
+            (a, b) => this.getAssetOrder(a) - this.getAssetOrder(b),
+        );
+    }
+
+    public toSingleNFTPage(platform: string, identity: string, id: string) {
         this.$gtag.event('visitSingleNft', {
             userid: this.rns || this.ethAddress,
-            chain: chain,
-            nftid: account,
-            nftindex: index,
+            platform: platform,
+            nftidentity: identity,
+            nftid: id,
         });
-        this.$router.push(`/${this.rns || this.ethAddress}/singlenft/${chain}/${account}/${index}`);
+        this.$router.push(`/${this.rns || this.ethAddress}/singlenft/${platform}/${identity}/${id}`);
     }
 
     public toPublicPage(address: string) {

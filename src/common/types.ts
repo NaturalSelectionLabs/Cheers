@@ -1,42 +1,19 @@
-import { RSS3Asset } from 'rss3-next/types/rss3';
-
-export interface DetailedNFT {
+interface Asset {
     chain: string;
-    token_id: string;
-    name: string;
-    description: string | null;
-    image_url: string;
-    image_preview_url: string;
-    image_thumbnail_url: string;
-    animation_url: string | null;
-    animation_original_url: string | null;
-    asset_contract: {
-        address: string;
-        created_date: string;
-        symbol: string;
-    };
-    collection: {
-        name: string;
-        description: string;
-        image_url: string;
-    };
-    traits: {
-        trait_type: string;
-        value: string;
-        display_type: string | null;
-        max_value: string | null;
-        trait_count: number;
-        order: string | null;
-    }[];
 }
 
-export interface RSS3AssetShow extends RSS3Asset {
-    image_url: string;
-    order: number;
+export interface NFTResponse {
+    data: NFT;
 }
 
-export interface NFTInfo {
-    chain: string;
+export interface GitcoinResponse {
+    data: {
+        grant: GrantInfo;
+        txs: DonationInfo[];
+    };
+}
+
+export interface NFT extends Asset {
     token_id: string;
     name?: string;
     description?: string | null;
@@ -54,7 +31,6 @@ export interface NFTInfo {
         name: string | null;
         description: string | null;
         image_url: string | null;
-        created_at: string;
     };
     traits?: {
         trait_type: string | null;
@@ -62,6 +38,56 @@ export interface NFTInfo {
     }[];
 }
 
-export interface RSS3AssetWithInfo extends RSS3Asset {
-    info?: NFTInfo;
+export interface GrantInfo {
+    active: boolean;
+    title?: string;
+    slug?: string;
+    description?: string;
+    reference_url?: string;
+    logo?: string;
+    admin_address?: string;
+    amount_received?: string;
+    token_address?: string;
+    token_symbol?: string;
+    contract_address?: string;
+}
+
+export interface DonationInfo {
+    donor: string;
+    tokenAddr: string;
+    amount: string;
+    symbol?: string;
+    formatedAmount?: string;
+    timeStamp: string;
+    txHash: string;
+}
+
+export interface DonationDetailByGrant {
+    grant: GrantInfo;
+    txs: DonationInfo[];
+}
+
+// used in api response
+export interface GeneralAsset {
+    platform: string;
+    identity: string;
+    id: string; // contractAddress-id or admin_address
+    type: string;
+    info: {
+        collection?: string;
+        collection_icon?: string;
+        image_preview_url?: string | null;
+        animation_url?: string | null;
+        animation_original_url?: string | null;
+        title?: string;
+        total_contribs?: number;
+        token_contribs: {
+            token: string;
+            amount: string;
+        }[];
+    };
+}
+
+export interface GeneralAssetWithTags extends GeneralAsset {
+    tags?: string[];
 }

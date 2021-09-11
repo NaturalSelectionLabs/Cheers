@@ -4,7 +4,7 @@ import RSS3 from 'rss3-next';
 import { RSS3Index } from 'rss3-next/types/rss3';
 import { RSS3Account, RSS3AccountInput } from 'rss3-next/types/rss3';
 import axios from 'axios';
-import { NFTInfo } from './types';
+import { GitcoinResponse, GeneralAsset, NFTResponse } from './types';
 import config from '@/config';
 
 let rss3: RSS3 | null;
@@ -16,12 +16,7 @@ export type IRSS3 = RSS3;
 
 export interface IAssetProfile {
     rss3File: RSS3Index;
-    assets: {
-        [key: string]: {
-            account: string;
-            nft: NFTInfo[];
-        }[];
-    };
+    assets: GeneralAsset[];
 }
 
 async function walletConnect() {
@@ -159,6 +154,46 @@ export default {
             }
             return data;
         }
+    },
+    getNFTDetails: async (address: string, platform: string, identity: string, id: string) => {
+        let data: NFTResponse | null = null;
+        try {
+            const res = await axios({
+                method: 'get',
+                url: `${config.rss3Endpoint}/asset-profile/${address}/nft/`,
+                params: {
+                    platform: platform,
+                    id: id,
+                    identity: identity,
+                },
+            });
+            if (res && res.data) {
+                data = res.data;
+            }
+        } catch (error) {
+            data = null;
+        }
+        return data;
+    },
+    getGitcoinDonation: async (address: string, platform: string, identity: string, id: string) => {
+        let data: GitcoinResponse | null = null;
+        try {
+            const res = await axios({
+                method: 'get',
+                url: `${config.rss3Endpoint}/asset-profile/${address}/gitcoin-donation/`,
+                params: {
+                    platform: platform,
+                    id: id,
+                    identity: identity,
+                },
+            });
+            if (res && res.data) {
+                data = res.data;
+            }
+        } catch (error) {
+            data = null;
+        }
+        return data;
     },
     addNewAccount: async (platform: string): Promise<RSS3Account> => {
         // js don't support multiple return values,

@@ -57,7 +57,7 @@ const routes = [
         component: NFTs,
     },
     {
-        path: '/:address/singlenft/:chain/:aid/:id',
+        path: '/:address/singlenft/:platform/:identity/:id',
         name: 'SingleNFT',
         component: SingleNFT,
     },
