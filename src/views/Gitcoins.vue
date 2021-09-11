@@ -10,9 +10,9 @@
                     class="w-10 h-10 inline-flex my-auto cursor-pointer"
                     :is-rounded="true"
                     :is-border="false"
-                    :src="this.rss3Profile.avatar"
-                    :alt="this.rss3Profile.username"
-                    @click="toPublicPage(this.rss3Profile.address)"
+                    :src="rss3Profile.avatar"
+                    :alt="rss3Profile.username"
+                    @click="toPublicPage(rss3Profile.address)"
                 />
             </div>
             <div class="gitcoin-gitcoins flex flex-col gap-y-4" v-show="gitcoins.length !== 0">
@@ -51,6 +51,8 @@ import config from '@/config';
 import RNSUtils from '@/common/rns';
 import RSS3 from '@/common/rss3';
 import { data } from 'autoprefixer';
+import { GeneralAsset, GeneralAssetWithTags } from '@/common/types';
+import { RSS3Asset } from 'rss3-next/types/rss3';
 
 interface Profile {
     avatar: string;
@@ -97,17 +99,56 @@ export default class Gitcoins extends Vue {
         this.rss3Profile.username = profile?.name?.[0] || '';
         this.rss3Profile.address = this.ethAddress;
 
-        await this.loadGitcoin();
+        const data = await RSS3.getAssetProfile(this.ethAddress);
+        if (data) {
+            await this.loadGitcoin(await rss3.assets.get(this.ethAddress), data.assets);
+        }
     }
 
-    async loadGitcoin() {
-        const data = await RSS3.getAssetProfile(this.ethAddress);
-        data?.assets.forEach((element) => {
-            if (element.type === 'Gitcoin-Donation') {
-                this.contribs += <number>element.info.total_contribs;
-                this.gitcoins.push(element);
+    private getAssetOrder(nft: RSS3Asset) {
+        let order = -1;
+        nft.tags?.forEach((tag: string) => {
+            if (tag.startsWith('pass:order:')) {
+                order = parseInt(tag.substr(11));
             }
         });
+        return order;
+    }
+
+    async loadGitcoin(assetsInRSS3File: RSS3Asset[], assetsGrabbed: GeneralAsset[]) {
+        const assetsMerge: GeneralAssetWithTags[] = await Promise.all(
+            (assetsGrabbed || []).map(async (ag: GeneralAssetWithTags) => {
+                const origType = ag.type;
+                ag.type = 'Invalid'; // Using as a match mark
+                for (const airf of assetsInRSS3File) {
+                    if (
+                        airf.platform === ag.platform &&
+                        airf.identity === ag.identity &&
+                        airf.id === ag.id &&
+                        airf.type === origType
+                    ) {
+                        // Matched
+                        ag.type = origType; // Recover type
+                        if (airf.tags) {
+                            ag.tags = airf.tags;
+                        }
+                        break;
+                    }
+                }
+                return ag;
+            }),
+        );
+
+        const GitcoinList: GeneralAssetWithTags[] = [];
+
+        for (const am of assetsMerge) {
+            if (am.type === 'Gitcoin-Donation' && !am.tags?.includes('pass:hidden')) {
+                this.contribs += <number>am.info.total_contribs;
+                GitcoinList.push(am);
+            }
+        }
+
+        this.gitcoins = GitcoinList.sort((a, b) => this.getAssetOrder(a) - this.getAssetOrder(b));
 
         this.grants = this.gitcoins.length;
     }
