@@ -23,7 +23,7 @@
                         <vue3-autocounter
                             ref="counter"
                             :startAmount="0"
-                            :endAmount="contrib"
+                            :endAmount="parseInt(contrib)"
                             :duration="1"
                             separator=","
                             :autoinit="true"
@@ -36,7 +36,7 @@
                         <vue3-autocounter
                             ref="counter"
                             :startAmount="0"
-                            :endAmount="item.amount"
+                            :endAmount="parseFloat(item.amount)"
                             :duration="1"
                             separator=","
                             :decimals="5"

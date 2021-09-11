@@ -47,7 +47,7 @@
                         <vue3-autocounter
                             ref="counter"
                             :startAmount="0"
-                            :endAmount="donationInfo.length"
+                            :endAmount="parseInt(donationInfo.length)"
                             :duration="1"
                             separator=","
                             :autoinit="true"
@@ -73,7 +73,7 @@
                                 <vue3-autocounter
                                     ref="counter"
                                     :startAmount="0"
-                                    :endAmount="item.formatedAmount"
+                                    :endAmount="parseFloat(item.formatedAmount)"
                                     :duration="1"
                                     separator=","
                                     :decimals="5"

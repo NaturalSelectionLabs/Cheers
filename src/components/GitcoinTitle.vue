@@ -7,7 +7,7 @@
                     <vue3-autocounter
                         ref="counter"
                         :startAmount="0"
-                        :endAmount="grants"
+                        :endAmount="parseInt(grants)"
                         :duration="1"
                         separator=","
                         :autoinit="true"
@@ -20,7 +20,7 @@
                     <vue3-autocounter
                         ref="counter"
                         :startAmount="0"
-                        :endAmount="contributions"
+                        :endAmount="parseInt(contributions)"
                         :duration="1"
                         separator=","
                         :autoinit="true"
