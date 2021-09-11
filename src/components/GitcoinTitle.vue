@@ -1,6 +1,6 @@
 <template>
     <div class="w-full flex flex-col gap-y-2 text-gitcoin-title">
-        <div class="font-bold text-2xl">Totel</div>
+        <div class="font-bold text-2xl">Total</div>
         <div class="w-full flex flex-row justify-start gap-x-12 text-lg font-normal">
             <div>
                 <div class="font-medium text-xl">
