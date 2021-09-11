@@ -61,6 +61,7 @@
                     class="shadow-nft-sm inline-flex m-0.5"
                     :size="64"
                     :image-url="asset.info.animation_url || asset.info.image_preview_url"
+                    :poster-url="asset.info.image_preview_url"
                 />
             </template>
         </Card>
@@ -90,7 +91,7 @@
                     :key="asset.platform + asset.identity + asset.id"
                     class="shadow-nft-sm inline-flex m-0.5"
                     :size="64"
-                    imageUrl=""
+                    :image-url="asset.info.image_preview_url"
                 />
             </template>
         </Card>
@@ -217,21 +218,19 @@ export default class Setup extends Vue {
             this.profile.avatar = profile?.avatar?.[0] || config.defaultAvatar;
             this.profile.name = profile?.name || '';
             this.profile.bio = profile?.bio || '';
+
+            if (profile?.avatar?.[0]) {
+                const favicon = <HTMLLinkElement>document.getElementById('favicon');
+                favicon.href = profile.avatar[0];
+            }
+            if (profile?.name) {
+                document.title = profile.name;
+            }
         }
 
         const data = await RSS3.getAssetProfile((<IRSS3>this.rss3).account.address);
         if (!data) {
             return;
-        }
-
-        const profile = data.rss3File.profile;
-
-        if (profile?.avatar?.[0]) {
-            const favicon = <HTMLLinkElement>document.getElementById('favicon');
-            favicon.href = profile.avatar[0];
-        }
-        if (profile?.name) {
-            document.title = profile.name;
         }
 
         if (data) {
@@ -243,8 +242,8 @@ export default class Setup extends Vue {
                 tags: ['pass:order:-1'],
             });
 
-            await this.loadAccounts(<RSS3Account[]>data.rss3File.accounts);
-            await this.loadAssets(<RSS3Asset[]>data.rss3File.assets, <GeneralAsset[]>data.assets);
+            await this.loadAccounts(await (<IRSS3>this.rss3).accounts.get());
+            await this.loadAssets(await (<IRSS3>this.rss3).assets.get(), <GeneralAsset[]>data.assets);
         }
     }
 

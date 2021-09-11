@@ -99,9 +99,10 @@
                         v-for="item in nfts"
                         :key="item.platform + item.identity + item.id"
                         :image-url="item.info.animation_url || item.info.image_preview_url"
+                        :poster-url="item.info.image_preview_url"
                         :size="70"
                         @click="toSingleNFTPage(item.platform, item.identity, item.id)"
-                    ></NFTItem>
+                    />
                 </template>
                 <template v-else>
                     <div class="text-nft-title m-auto text-center mt-4">You don’t have any NFTs yet :(</div>
@@ -379,7 +380,7 @@ export default class Home extends Vue {
             return;
         }
 
-        const profile = data.rss3File.profile;
+        const profile = await this.rss3.profile.get(this.ethAddress);
         await this.checkIsFollowing();
 
         this.rss3Profile.avatar = profile?.avatar?.[0] || config.defaultAvatar;
@@ -404,8 +405,8 @@ export default class Home extends Vue {
                 tags: ['pass:order:-1'],
             });
 
-            await this.loadAccounts(<RSS3Account[]>data.rss3File.accounts);
-            await this.loadAssets(<RSS3Asset[]>data.rss3File.assets, <GeneralAsset[]>data.assets);
+            await this.loadAccounts(await this.rss3.accounts.get(this.ethAddress));
+            await this.loadAssets(await this.rss3.assets.get(this.ethAddress), <GeneralAsset[]>data.assets);
         }
 
         // Split time-consuming methods from main thread, so it won't stuck the page loading progress

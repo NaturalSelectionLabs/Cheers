@@ -15,7 +15,6 @@ let provider: WalletConnectProvider;
 export type IRSS3 = RSS3;
 
 export interface IAssetProfile {
-    rss3File: RSS3Index;
     assets: GeneralAsset[];
 }
 

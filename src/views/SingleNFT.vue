@@ -36,8 +36,8 @@
             <div class="content">
                 <div class="image pb-4">
                     <NFTItem
-                        :imageUrl="this.details.animation_url || this.details.image_url"
-                        :poster-url="this.details.image_url"
+                        :imageUrl="details.animation_url || details.image_url"
+                        :poster-url="details.image_url"
                         :size="NFTWidth > 416 ? 416 : NFTWidth"
                         :is-showing-details="true"
                     />
@@ -66,7 +66,13 @@ export default class SingleNFT extends Vue {
     rns: string = '';
     ethAddress: string = '';
     public NFTWidth: number = window.innerWidth - 32;
-    private details: NFT | null = null;
+    private details: NFT = {
+        chain: '',
+        token_id: '',
+        asset_contract: {
+            address: '',
+        },
+    };
 
     async mounted() {
         const address = <string>this.$route.params.address;
@@ -78,9 +84,10 @@ export default class SingleNFT extends Vue {
             this.rns = await RNSUtils.addr2Name(address);
         }
 
-        const platform: string = String(this.$route.params.chain);
-        const identity: string = String(this.$route.params.aid);
+        const platform: string = String(this.$route.params.platform);
+        const identity: string = String(this.$route.params.identity);
         const id: string = String(this.$route.params.id);
+
         const data = await RSS3.getAssetProfile(this.ethAddress);
 
         if (data) {
@@ -88,7 +95,10 @@ export default class SingleNFT extends Vue {
                 (ag) => ag.platform === platform && ag.identity === identity && ag.id === id,
             );
             if (asset) {
-                this.details = (await RSS3.getNFTDetails(this.ethAddress, platform, identity, id))?.data || null;
+                const detail = (await RSS3.getNFTDetails(this.ethAddress, platform, identity, id))?.data;
+                if (detail) {
+                    this.details = detail;
+                }
             }
         }
     }

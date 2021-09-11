@@ -9,11 +9,11 @@
                     class="w-10 h-10 inline-flex my-auto cursor-pointer"
                     :is-rounded="true"
                     :is-border="false"
-                    :src="this.rss3Profile.avatar"
+                    :src="rss3Profile.avatar"
                     alt="nya"
                 />
             </div>
-            <GitcoinItem :imageUrl="this.grant.logo" :size="Width > 416 ? 416 : Width"></GitcoinItem>
+            <GitcoinItem :imageUrl="grant.logo" :size="Width > 416 ? 416 : Width"></GitcoinItem>
             <div
                 class="
                     w-full
@@ -32,18 +32,18 @@
             >
                 <div class="w-full">
                     <h2 class="text-xl font-semibold truncate">
-                        {{ this.grant.slug }}
+                        {{ grant.title }}
                     </h2>
                     <div
                         class="text-sm leading-normal text-gitcoin-title truncate cursor-pointer"
-                        @click="toExternalLink(this.grant.reference_url)"
+                        @click="toExternalLink(grant.reference_url)"
                     >
-                        {{ this.grant.reference_url }}
+                        {{ grant.reference_url }}
                     </div>
                 </div>
                 <div>
                     <h2 class="text-xl font-semibold">Contributions</h2>
-                    <h1 class="text-2xl font-semibold text-gitcoin-title">{{ this.donationInfo.length }}</h1>
+                    <h1 class="text-2xl font-semibold text-gitcoin-title">{{ donationInfo.length }}</h1>
                 </div>
                 <div class="w-full flex flex-col gap-y-2">
                     <div class="flex flex-row justify-start gap-x-2" v-for="(item, index) in donationInfo" :key="index">

@@ -39,7 +39,7 @@
                         <NFTItem
                             class="shadow-nft-sm inline-flex m-0.5"
                             :size="64"
-                            :image-url="element.info?.image_url"
+                            :image-url="element.info?.image_preview_url"
                             :data-info="JSON.stringify(element)"
                         />
                     </template>
@@ -91,7 +91,7 @@
                             <NFTItem
                                 class="shadow-nft-sm inline-flex m-0.5"
                                 :size="64"
-                                :image-url="element.info?.image_url"
+                                :image-url="element.info?.image_preview_url"
                             />
                         </template>
                     </draggable>
@@ -283,6 +283,7 @@ export default class SetupNFTs extends Vue {
         this.displayedNFTs.forEach((nft, index) => {
             this.rss3?.assets.patchTags(
                 {
+                    type: nft.type,
                     platform: nft.platform,
                     identity: nft.identity,
                     id: nft.id,
@@ -294,6 +295,7 @@ export default class SetupNFTs extends Vue {
             this.hiddenList[collection].forEach((nft, index) => {
                 this.rss3?.assets.patchTags(
                     {
+                        type: nft.type,
                         platform: nft.platform,
                         identity: nft.identity,
                         id: nft.id,
@@ -307,7 +309,7 @@ export default class SetupNFTs extends Vue {
     async save() {
         this.isLoading = true;
         await this.rss3?.files.sync();
-        await RSS3.getAssetProfile((<IRSS3>this.rss3).account.address, true);
+        // await RSS3.getAssetProfile((<IRSS3>this.rss3).account.address, true);
         this.isLoading = false;
         window.history.back();
     }

@@ -22,7 +22,7 @@
             :controls="isShowingDetails"
         />
         <iframe
-            v-else-if="imageUrl?.endsWith('embed')"
+            v-else-if="imageUrl?.endsWith('embed') || imageUrl?.includes('farmhero.io')"
             :src="imageUrl"
             class="nft-item"
             :style="{

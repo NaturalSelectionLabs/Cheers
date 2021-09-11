@@ -93,17 +93,15 @@ export default class NFTs extends Vue {
             this.isOwner = true;
         }
 
+        const profile = await rss3.profile.get(this.ethAddress);
+
+        this.rss3Profile.avatar = profile.avatar?.[0] || config.defaultAvatar;
+        this.rss3Profile.username = profile.name?.[0] || '';
+
         const data = await RSS3.getAssetProfile(this.ethAddress);
-        if (!data) {
-            return;
-        }
 
         if (data) {
-            this.rss3Profile.avatar = data.rss3File.profile?.avatar?.[0] || config.defaultAvatar;
-            this.rss3Profile.username = data.rss3File.profile?.name?.[0] || '';
-            this.rss3Profile.address = address;
-
-            await this.loadNFTs(<RSS3Asset[]>data.rss3File.assets, <GeneralAsset[]>data.assets);
+            await this.loadNFTs(await rss3.assets.get(this.ethAddress), <GeneralAsset[]>data.assets);
         }
     }
 
