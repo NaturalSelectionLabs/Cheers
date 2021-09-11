@@ -1,29 +1,35 @@
 <template>
-    <div class="main px-4 py-8 max-w-md m-auto">
-        <div class="header flex justify-between items-center pb-4">
-            <Button size="sm" class="w-10 h-10 bg-white text-primary shadow-secondary" @click="back">
-                <i class="bx bx-chevron-left bx-sm"></i>
-            </Button>
-            <div class="section-title text-2xl text-primary font-bold text-center">Followers</div>
-            <ImgHolder
-                class="w-10 h-10 inline-flex my-auto cursor-pointer"
-                :is-rounded="true"
-                :is-border="false"
-                :src="this.rss3Profile.avatar"
-                :alt="this.rss3Profile.username"
-                @click="toPublicPage(this.rns || this.ethAddress)"
-            />
-        </div>
-        <div class="follow-list flex flex-col gap-y-4">
-            <FollowerCard
-                class="w-auto cursor-pointer"
-                v-for="(item, index) in followerList"
-                :key="index"
-                :avatar="item.avatar"
-                :name="item.username"
-                :address="item.rns || item.displayAddress"
-                @click="toPublicPage(item.rns || item.address)"
-            />
+    <div class="h-screen bg-body-bg overflow-y-auto">
+        <div class="main px-4 py-8 max-w-md m-auto">
+            <div class="header flex justify-between items-center pb-4">
+                <Button
+                    size="sm"
+                    class="w-10 h-10 bg-secondary-btn text-secondary-btn-text shadow-secondary-btn"
+                    @click="back"
+                >
+                    <i class="bx bx-chevron-left bx-sm"></i>
+                </Button>
+                <div class="section-title text-2xl text-primary-text font-bold text-center">Followers</div>
+                <ImgHolder
+                    class="w-10 h-10 inline-flex my-auto cursor-pointer"
+                    :is-rounded="true"
+                    :is-border="false"
+                    :src="this.rss3Profile.avatar"
+                    :alt="this.rss3Profile.username"
+                    @click="toPublicPage(this.rns || this.ethAddress)"
+                />
+            </div>
+            <div class="follow-list flex flex-col gap-y-4">
+                <FollowerCard
+                    class="w-auto cursor-pointer"
+                    v-for="(item, index) in followerList"
+                    :key="index"
+                    :avatar="item.avatar"
+                    :name="item.username"
+                    :address="item.rns || item.displayAddress"
+                    @click="toPublicPage(item.rns || item.address)"
+                />
+            </div>
         </div>
     </div>
 </template>

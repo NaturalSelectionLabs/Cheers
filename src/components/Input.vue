@@ -43,7 +43,10 @@ export default class Input extends Vue {}
 <style scoped lang="postcss">
 @layer components {
     .input {
-        @apply box-border font-extralight pl-5 pr-5 pt-3 pb-3 rounded-xl border-none resize-none outline-none bg-gray-bg;
+        @apply box-border font-extralight pl-5 pr-5 pt-3 pb-3 rounded-xl border-input border-input-border resize-none outline-none bg-input-bg placeholder-black placeholder-opacity-20;
+    }
+    .input::placeholder {
+        font-weight: 500;
     }
 
     .textarea {

@@ -22,7 +22,11 @@
                     {{ details.collection?.name }}
                 </div>
                 <div class="flex justify-between items-center">
-                    <Button size="sm" class="w-10 h-10 bg-white text-primary shadow-secondary" @click="back">
+                    <Button
+                        size="sm"
+                        class="w-10 h-10 bg-secondary-btn text-secondary-btn-text shadow-secondary-btn"
+                        @click="back"
+                    >
                         <i class="bx bx-chevron-left bx-sm"></i>
                     </Button>
                     <NFTBadges

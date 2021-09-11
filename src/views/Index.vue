@@ -5,7 +5,7 @@
             <div class="leading-17.5 text-white w-83.5 text-2xl mx-auto">
                 <Button
                     size="lg"
-                    class="bg-primary shadow-primary rounded-3xl w-full h-17.5 mb-9"
+                    class="bg-primary-btn shadow-primary-btn text-primary-btn-text rounded-3xl w-full h-17.5 mb-9"
                     @click="walletConnect"
                 >
                     <WalletConnect :size="40" />

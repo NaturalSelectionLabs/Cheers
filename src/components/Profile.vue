@@ -1,19 +1,6 @@
 <template>
     <div class="profile-container flex flex-col justify-start items-start gap-y-2">
-        <div
-            class="
-                flex flex-row
-                font-medium
-                text-lg
-                justify-start
-                items-end
-                text-primary
-                gap-x-2
-                md:gap-x-8
-                leading-5
-                px-4
-            "
-        >
+        <div class="flex flex-row font-medium text-lg justify-start items-end gap-x-2 md:gap-x-8 leading-5 px-4">
             <div class="w-24 h-24">
                 <ImgHolder class="w-24 h-24" :is-rounded="true" :is-border="false" :src="avatar" />
             </div>
@@ -25,21 +12,21 @@
                 <div class="stats-number">{{ followings.length }}</div>
                 <div class="stats-type">Followings</div>
             </div>
-            <div class="stats-container" @click="toNFTsPage">
+            <!-- <div class="stats-container" @click="toNFTsPage">
                 <div class="stats-number">{{ NFTs }}</div>
                 <div class="stats-type">NFTs</div>
-            </div>
+            </div> -->
         </div>
         <span class="font-bold text-2xl px-4">{{ username }}</span>
-        <span class="font-medium text-lg rounded-sm px-4 bg-content-bg text-primary" v-if="rns">
+        <LinkButton v-if="rns">
             {{ rns + '.pass3.me' }}
-        </span>
-        <span class="font-medium text-lg rounded-sm px-4 bg-content-bg text-primary" v-else>
+        </LinkButton>
+        <LinkButton v-else>
             {{ filter(address) }}
-        </span>
-        <span class="font-medium text-lg rounded-sm px-4 bg-content-bg text-primary cursor-pointer" v-if="website">
+        </LinkButton>
+        <LinkButton v-if="website">
             {{ website }}
-        </span>
+        </LinkButton>
         <div class="bio w-full font-medium text-lg break-all px-4">
             <pre>{{ bio }}</pre>
         </div>
@@ -49,9 +36,10 @@
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
 import ImgHolder from '@/components/ImgHolder.vue';
+import LinkButton from '@/components/LinkButton.vue';
 
 @Options({
-    components: { ImgHolder },
+    components: { ImgHolder, LinkButton },
     props: {
         avatar: String,
         username: String,
@@ -93,7 +81,7 @@ export default class Profile extends Vue {
 <style lang="postcss" scoped>
 @layer components {
     .stats-container {
-        @apply cursor-pointer mb-2;
+        @apply cursor-pointer mb-2 text-primary-text;
         .stats-number {
             @apply text-lg font-medium;
         }

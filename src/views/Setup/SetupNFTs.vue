@@ -1,11 +1,15 @@
 <template>
     <div class="px-4 py-9 max-w-md m-auto">
         <div class="flex justify-between items-center mb-4">
-            <Button size="sm" class="w-10 h-10 bg-white text-primary shadow-secondary" @click="back">
+            <Button
+                size="sm"
+                class="w-10 h-10 bg-secondary-btn text-secondary-btn-text shadow-secondary-btn"
+                @click="back"
+            >
                 <i class="bx bx-chevron-left bx-sm" />
             </Button>
             <span class="text-center">
-                <h1 class="text-xl text-primary font-bold inline">Manage NFTs</h1>
+                <h1 class="text-xl text-primary-text font-bold inline">Manage NFTs</h1>
             </span>
             <span class="avatar">
                 <img
@@ -21,7 +25,7 @@
             color-title="text-nft-title"
             color-tips="text-nft-title"
             color-background="bg-nft-bg"
-            class="w-full mb-4"
+            class="w-full mb-4 border-nft-border"
             :is-having-content="true"
             :tips="displayedNFTs.length === 0 ? 'Add additional NFTs' : 'Drag here to show and reorder'"
         >
@@ -37,7 +41,7 @@
                 >
                     <template #item="{ element }">
                         <NFTItem
-                            class="shadow-nft-sm inline-flex m-0.5"
+                            class="inline-flex m-0.5"
                             :size="64"
                             :image-url="element.info?.image_url"
                             :data-info="JSON.stringify(element)"
@@ -48,9 +52,9 @@
             <template #footer-button>
                 <Button
                     size="sm"
-                    class="text-xs bg-white text-nft-button shadow-nft-sm ml-auto"
+                    class="text-xs bg-nft-btn-s text-nft-btn-s-text shadow-nft-btn-s ml-auto"
                     :class="{
-                        'bg-gray-100 cursor-not-allowed': displayedNFTs.length === 0,
+                        'bg-btn-disabled cursor-not-allowed text-opacity-20': displayedNFTs.length === 0,
                     }"
                     :disabled="displayedNFTs.length === 0"
                     @click="hideAll"
@@ -63,8 +67,8 @@
             title="No-show collections"
             color-title="text-nft-title"
             color-tips="text-nft-title"
-            color-background="bg-gray-bg"
-            class="w-full mb-4"
+            color-background="bg-card-hide"
+            class="w-full mb-4 border-nft-border"
             :is-having-content="true"
             tips="Drag here to hide"
         >
@@ -78,7 +82,7 @@
                     :open="activatedGroupID === index"
                     @click.prevent="activatedGroupID = index"
                 >
-                    <summary class="text-nft-button">{{ collection }}</summary>
+                    <summary class="text-nft-btn-s-text">{{ collection }}</summary>
                     <draggable
                         class="min-h-20"
                         :list="hiddenList[collection]"
@@ -88,11 +92,7 @@
                         @end="nftMoveEnd"
                     >
                         <template #item="{ element }">
-                            <NFTItem
-                                class="shadow-nft-sm inline-flex m-0.5"
-                                :size="64"
-                                :image-url="element.info?.image_url"
-                            />
+                            <NFTItem class="inline-flex m-0.5" :size="64" :image-url="element.info?.image_url" />
                         </template>
                     </draggable>
                 </details>
@@ -100,9 +100,9 @@
             <template #header-button>
                 <Button
                     size="sm"
-                    class="text-xs bg-white text-nft-button shadow-nft-sm ml-auto"
+                    class="text-xs bg-nft-btn-s text-nft-btn-s-text shadow-nft-btn-s ml-auto"
                     :class="{
-                        'bg-gray-100 cursor-not-allowed': hiddenNFTs.length === 0,
+                        'bg-btn-disabled cursor-not-allowed text-opacity-20': hiddenNFTs.length === 0,
                     }"
                     :disabled="hiddenNFTs.length === 0"
                     @click="showAll"
@@ -112,10 +112,18 @@
             </template>
         </Card>
         <div class="px-4 py-4 flex gap-5 fixed bottom-0 left-0 right-0 max-w-md m-auto w-full">
-            <Button size="lg" class="flex-1 text-lg bg-white text-primary shadow-secondary" @click="back"
+            <Button
+                size="lg"
+                class="flex-1 text-lg bg-secondary-btn text-secondary-btn-text shadow-secondary-btn"
+                @click="back"
                 >Discard</Button
             >
-            <Button size="lg" class="flex-1 text-lg bg-primary text-white shadow-primary" @click="save">Save</Button>
+            <Button
+                size="lg"
+                class="flex-1 text-lg bg-primary-btn text-primary-btn-text shadow-primary-btn"
+                @click="save"
+                >Save</Button
+            >
         </div>
 
         <LoadingContainer v-show="isLoading" />

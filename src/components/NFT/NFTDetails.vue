@@ -80,7 +80,7 @@ export default class NFTDetail extends Vue {
 <style scoped lang="postcss">
 @layer components {
     .details-container {
-        @apply w-full px-5 py-4 bg-white rounded filter drop-shadow-nft text-black flex flex-col justify-start items-start gap-5;
+        @apply w-full px-5 py-4 bg-body-bg rounded filter drop-shadow-nft text-body-text flex flex-col justify-start items-start gap-5;
     }
     h2 {
         @apply text-xl font-semibold capitalize overflow-ellipsis overflow-hidden break-all;

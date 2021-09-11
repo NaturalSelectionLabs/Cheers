@@ -69,7 +69,7 @@ export default class NFTItem extends Vue {
 <style scoped lang="postcss">
 @layer components {
     .nft-item {
-        @apply rounded border border-white filter drop-shadow-nft bg-white object-contain;
+        @apply rounded border border-item-border filter shadow-nft-item bg-item-bg object-contain;
     }
 }
 </style>

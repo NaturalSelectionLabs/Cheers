@@ -1,194 +1,213 @@
 <template>
-    <div v-if="isRNSExist" class="main px-4 py-8 flex flex-col gap-y-2 max-w-md m-auto">
-        <Profile
-            :avatar="rss3Profile.avatar"
-            :username="rss3Profile.username"
-            :address="rss3Profile.address"
-            :rns="rns"
-            :followers="rss3Relations.followers"
-            :followings="rss3Relations.followings"
-            :NFTs="assets.length"
-            :bio="rss3Profile.bio"
-        ></Profile>
-        <Button
-            size="sm"
-            class="w-auto text-lg shadow-secondary mb-4 duration-200"
-            v-if="!isOwner"
-            v-bind:class="[isFollowing ? 'bg-white text-primary' : 'bg-primary text-white']"
-            @click="action()"
-        >
-            <span>{{ isFollowing ? 'Following' : 'Follow' }}</span>
-            <i class="bx bx-sm" v-bind:class="[isFollowing ? 'bx-check' : 'bx-plus']"></i>
-        </Button>
-        <Button
-            size="sm"
-            class="w-auto text-lg bg-white text-primary shadow-secondary mb-4"
-            v-if="isOwner"
-            @click="toSetupPage"
-        >
-            <span>Edit Profile</span>
-            <i class="bx bx-pencil bx-sm"></i>
-        </Button>
+    <div class="h-screen bg-body-bg overflow-y-auto">
+        <div v-if="isRNSExist" class="main px-4 py-8 flex flex-col gap-y-2 max-w-md m-auto">
+            <Profile
+                :avatar="rss3Profile.avatar"
+                :username="rss3Profile.username"
+                :address="rss3Profile.address"
+                :rns="rns"
+                :followers="rss3Relations.followers"
+                :followings="rss3Relations.followings"
+                :NFTs="assets.length"
+                :bio="rss3Profile.bio"
+            ></Profile>
+            <Button
+                size="sm"
+                class="w-auto text-lg mb-4 duration-200"
+                v-if="!isOwner"
+                v-bind:class="[
+                    isFollowing
+                        ? 'bg-secondary-btn text-secondary-btn-text shadow-secondary-btn'
+                        : 'bg-primary-btn text-primary-btn-text shadow-primary-btn',
+                ]"
+                @click="action()"
+            >
+                <span>{{ isFollowing ? 'Following' : 'Follow' }}</span>
+                <i class="bx bx-sm" v-bind:class="[isFollowing ? 'bx-check' : 'bx-plus']"></i>
+            </Button>
+            <Button
+                size="sm"
+                class="w-auto text-lg bg-secondary-btn text-secondary-btn-text shadow-secondary-btn mb-4"
+                v-if="isOwner"
+                @click="toSetupPage"
+            >
+                <span>Edit Profile</span>
+                <i class="bx bx-pencil bx-sm"></i>
+            </Button>
 
-        <AccountCard>
-            <template #header-button>
-                <div v-if="isOwner" class="flex flex-row gap-2">
+            <AccountCard>
+                <template #header-button>
+                    <div v-if="isOwner" class="flex flex-row gap-2">
+                        <Button
+                            size="sm"
+                            class="w-8 h-8 bg-account-btn-s text-account-btn-s-text shadow-account-btn-s"
+                            @click="toManageAccounts"
+                        >
+                            <i class="bx bxs-pencil bx-xs" />
+                        </Button>
+                        <Button
+                            size="sm"
+                            class="w-8 h-8 bg-account-btn-s text-account-btn-s-text shadow-account-btn-s"
+                            @click="toAccountsPage"
+                        >
+                            <i class="bx bx-expand-alt bx-xs" />
+                        </Button>
+                    </div>
                     <Button
+                        v-else
                         size="sm"
-                        class="w-8 h-8 bg-white text-account-button shadow-account-sm"
-                        @click="toManageAccounts"
-                    >
-                        <i class="bx bxs-pencil bx-xs" />
-                    </Button>
-                    <Button
-                        size="sm"
-                        class="w-8 h-8 bg-white text-account-button shadow-account-sm"
+                        class="w-10 h-10 bg-account-btn-s text-account-btn-s-text shadow-account-btn-s"
                         @click="toAccountsPage"
                     >
-                        <i class="bx bx-expand-alt bx-xs" />
+                        <i class="bx bx-expand-alt bx-xs"></i>
                     </Button>
-                </div>
-                <Button
-                    v-else
-                    size="sm"
-                    class="w-10 h-10 text-account-button bg-white shadow-account-sm"
-                    @click="toAccountsPage"
-                >
-                    <i class="bx bx-expand-alt bx-xs"></i>
-                </Button>
-            </template>
-            <template #content>
-                <AccountItem
-                    class="inline-block mr-1 cursor-pointer"
-                    :size="40"
-                    :chain="item.platform"
-                    v-for="(item, index) in accounts"
-                    :key="index"
-                    @click="displayDialog(item.identity, item.platform)"
-                />
-            </template>
-        </AccountCard>
+                </template>
+                <template #content>
+                    <AccountItem
+                        class="inline-block mr-1 cursor-pointer"
+                        :size="40"
+                        :chain="item.platform"
+                        v-for="(item, index) in accounts"
+                        :key="index"
+                        @click="displayDialog(item.identity, item.platform)"
+                    />
+                </template>
+            </AccountCard>
 
-        <Card
-            title="NFTs"
-            color-title="text-nft-title"
-            color-tips="text-nft-title"
-            color-background="bg-nft-bg"
-            class="w-auto"
-            :is-having-content="true"
-            :is-single-line="true"
-        >
-            <template #accessibility>
-                <!-- <i class="bx bx-info-circle" style="color: rgba(0, 0, 0, 0.2)" /> -->
-            </template>
-            <template #header-button>
-                <div v-if="isOwner" class="flex flex-row gap-2">
+            <Card
+                title="NFTs"
+                color-title="text-nft-title"
+                color-tips="text-nft-title"
+                color-background="bg-nft-bg"
+                class="w-auto border-nft-border"
+                :is-having-content="true"
+                :is-single-line="true"
+            >
+                <template #accessibility>
+                    <!-- <i class="bx bx-info-circle" style="color: rgba(0, 0, 0, 0.2)" /> -->
+                </template>
+                <template #header-button>
+                    <div v-if="isOwner" class="flex flex-row gap-2">
+                        <Button
+                            size="sm"
+                            class="w-8 h-8 bg-nft-btn-s text-nft-btn-s-text shadow-nft-btn-s"
+                            v-if="isOwner"
+                            @click="toManageNFTs"
+                        >
+                            <i class="bx bxs-pencil bx-xs" />
+                        </Button>
+                        <Button
+                            size="sm"
+                            class="w-8 h-8 bg-nft-btn-s text-nft-btn-s-text shadow-nft-btn-s"
+                            @click="toNFTsPage"
+                        >
+                            <i class="bx bx-expand-alt bx-xs" />
+                        </Button>
+                    </div>
+                    <Button
+                        v-else
+                        size="sm"
+                        class="w-10 h-10 bg-nft-btn-s text-nft-btn-s-text shadow-nft-btn-s"
+                        @click="toNFTsPage"
+                    >
+                        <i class="bx bx-expand-alt bx-xs"></i>
+                    </Button>
+                </template>
+                <template #content>
+                    <NFTItem
+                        class="inline-block mr-1 cursor-pointer"
+                        v-for="(item, index) in assets"
+                        :key="index"
+                        :imageUrl="item.info.animation_url || item.info.image_url"
+                        :size="70"
+                        @click="toSinglenftPage(item.info.platform, item.info.account, item.info.index)"
+                    ></NFTItem>
+                </template>
+            </Card>
+
+            <Card
+                title="Contents"
+                color-title="text-content-title"
+                color-tips="text-content-title"
+                color-background="bg-content-bg"
+                class="w-auto border-content-border"
+                :is-having-content="true"
+            >
+                <template #content>
                     <Button
                         size="sm"
-                        class="w-8 h-8 bg-white text-nft-button shadow-nft-sm"
-                        v-if="isOwner"
-                        @click="toManageNFTs"
+                        class="
+                            text-xs
+                            bg-content-btn-m
+                            opacity-35
+                            text-content-btn-m-text
+                            shadow-content-btn-m
+                            cursor-not-allowed
+                            m-auto
+                            mt-4
+                        "
+                        disabled
                     >
-                        <i class="bx bxs-pencil bx-xs" />
+                        Coming Soon
                     </Button>
-                    <Button size="sm" class="w-8 h-8 bg-white text-nft-button shadow-nft-sm" @click="toNFTsPage">
-                        <i class="bx bx-expand-alt bx-xs" />
-                    </Button>
-                </div>
-                <Button v-else size="sm" class="w-10 h-10 text-nft-button bg-white shadow-nft-sm" @click="toNFTsPage">
-                    <i class="bx bx-expand-alt bx-xs"></i>
-                </Button>
-            </template>
-            <template #content>
-                <NFTItem
-                    class="inline-block mr-1 cursor-pointer"
-                    v-for="(item, index) in assets"
-                    :key="index"
-                    :imageUrl="item.info.animation_url || item.info.image_url"
-                    :size="70"
-                    @click="toSinglenftPage(item.info.platform, item.info.account, item.info.index)"
-                ></NFTItem>
-            </template>
-        </Card>
+                </template>
+            </Card>
 
-        <Card
-            title="Contents"
-            color-title="text-content-title"
-            color-tips="text-content-title"
-            color-background="bg-content-bg"
-            class="w-auto"
-            :is-having-content="true"
-        >
-            <template #content>
-                <Button
-                    size="sm"
-                    class="
-                        text-xs
-                        bg-content-button
-                        opacity-35
-                        text-white
-                        shadow-content
-                        cursor-not-allowed
-                        m-auto
-                        mt-4
-                    "
-                    disabled
-                >
-                    Coming Soon
-                </Button>
-            </template>
-        </Card>
-
-        <Modal v-show="isdisplaying">
-            <template #header>
-                <Button
-                    size="sm"
-                    class="absolute left-4 w-10 h-10 bg-white text-primary shadow-secondary"
-                    @click="closeDialog"
-                >
-                    <i class="bx bx-chevron-left bx-sm"></i>
-                </Button>
-            </template>
-            <template #body>
-                <div class="flex flex-col gap-y-4 items-center">
-                    <AccountItem class="m-auto mt-4" :size="90" :chain="this.dialogChain"></AccountItem>
-                    <span class="address text-xl font-semibold break-all text-center mt-4">{{
-                        this.dialogAddress
-                    }}</span>
+            <Modal v-show="isdisplaying">
+                <template #header>
                     <Button
                         size="sm"
-                        class="text-md bg-account-button text-white shadow-account m-auto mt-4"
-                        @click="copyToClipboard(this.dialogAddress)"
+                        class="absolute left-4 w-10 h-10 bg-secondary-btn text-secondary-btn-text shadow-secondary-btn"
+                        @click="closeDialog"
                     >
-                        Copy
+                        <i class="bx bx-chevron-left bx-sm"></i>
+                    </Button>
+                </template>
+                <template #body>
+                    <div class="flex flex-col gap-y-4 items-center">
+                        <AccountItem class="m-auto mt-4" :size="90" :chain="this.dialogChain"></AccountItem>
+                        <span class="address text-xl font-semibold break-all text-center mt-4">{{
+                            this.dialogAddress
+                        }}</span>
+                        <Button
+                            size="sm"
+                            class="text-md bg-account-btn-m text-account-btn-m-text shadow-account-btn-m m-auto mt-4"
+                            @click="copyToClipboard(this.dialogAddress)"
+                        >
+                            Copy
+                        </Button>
+                    </div>
+                </template>
+            </Modal>
+        </div>
+        <div
+            v-else
+            class="onboarding h-full text-center bg-cover bg-fixed flex items-center justify-center bg-pass3gradient"
+        >
+            <div class="body px-4 h-2/3 flex flex-col justify-center items-center justify-between">
+                <div class="logo-container w-50 h-50 bg-pass3logo bg-center bg-contain bg-no-repeat"></div>
+                <div class="text-primary text-2xl max-w-md">
+                    <p>
+                        This RNS is not claimed yet. <br />
+                        Grab it as yours or claim your own!
+                    </p>
+                </div>
+                <div class="leading-17.5 text-white w-83.5 text-2xl mx-auto">
+                    <Button
+                        size="lg"
+                        class="bg-primary shadow-primary rounded-3xl w-full h-17.5 mb-9"
+                        @click="toSetupRNS"
+                    >
+                        <span> Claim an RNS </span>
+                    </Button>
+                    <Button
+                        size="lg"
+                        class="text-primary bg-white shadow-primary rounded-3xl w-full h-17.5"
+                        @click="toHomePage"
+                    >
+                        <span> Go Home </span>
                     </Button>
                 </div>
-            </template>
-        </Modal>
-    </div>
-    <div
-        v-else
-        class="onboarding h-full text-center bg-cover bg-fixed flex items-center justify-center bg-pass3gradient"
-    >
-        <div class="body px-4 h-2/3 flex flex-col justify-center items-center justify-between">
-            <div class="logo-container w-50 h-50 bg-pass3logo bg-center bg-contain bg-no-repeat"></div>
-            <div class="text-primary text-2xl max-w-md">
-                <p>
-                    This RNS is not claimed yet. <br />
-                    Grab it as yours or claim your own!
-                </p>
-            </div>
-            <div class="leading-17.5 text-white w-83.5 text-2xl mx-auto">
-                <Button size="lg" class="bg-primary shadow-primary rounded-3xl w-full h-17.5 mb-9" @click="toSetupRNS">
-                    <span> Claim an RNS </span>
-                </Button>
-                <Button
-                    size="lg"
-                    class="text-primary bg-white shadow-primary rounded-3xl w-full h-17.5"
-                    @click="toHomePage"
-                >
-                    <span> Go Home </span>
-                </Button>
             </div>
         </div>
     </div>

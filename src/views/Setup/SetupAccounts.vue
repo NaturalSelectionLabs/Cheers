@@ -1,11 +1,22 @@
 <template>
     <div class="px-4 py-9 max-w-md m-auto">
         <div class="flex justify-between items-center mb-4">
-            <Button size="sm" class="w-10 h-10 bg-white text-primary shadow-secondary" @click="back">
+            <Button
+                size="sm"
+                class="
+                    w-10
+                    h-10
+                    bg-secondary-btn
+                    text-secondary-btn-text
+                    shadow-secondary-btn
+                    border-secondary-btn-border
+                "
+                @click="back"
+            >
                 <i class="bx bx-chevron-left bx-sm"></i>
             </Button>
             <span class="text-center">
-                <h1 class="text-xl text-primary font-bold inline">Manage Accounts</h1>
+                <h1 class="text-xl text-primary-text font-bold inline">Manage Accounts</h1>
             </span>
             <span class="avatar">
                 <img
@@ -20,8 +31,8 @@
             title="Default ETH Account"
             color-title="text-account-title"
             color-tips="text-account-title"
-            color-background="bg-white"
-            class="w-full mb-4"
+            color-background="bg-body-bg"
+            class="w-full mb-4 border-account-border"
             :is-having-content="true"
         >
             <template #content>
@@ -32,8 +43,8 @@
             title="Additional Accounts"
             color-title="text-account-title"
             color-tips="text-account-title"
-            :color-background="mode === 'normal' ? 'bg-account-bg' : 'bg-gray-300'"
-            class="w-full mb-4"
+            :color-background="mode === 'normal' ? 'bg-account-bg' : 'bg-card-overlay'"
+            class="w-full mb-4 border-account-border"
             :is-having-content="true"
             :tips="mode !== 'delete' ? 'Drag here to show and reorder' : 'Delete unwanted accounts'"
         >
@@ -42,7 +53,7 @@
                     <Button
                         v-if="mode === 'delete'"
                         size="sm"
-                        class="w-8 h-8 bg-white text-account-button shadow-account-sm"
+                        class="w-8 h-8 bg-account-btn-s text-account-btn-s-text shadow-account-btn-s"
                         @click="mode = 'normal'"
                     >
                         <i class="bx bx-check bx-xs" />
@@ -50,7 +61,7 @@
                     <Button
                         v-else
                         size="sm"
-                        class="w-8 h-8 bg-white text-account-button shadow-account-sm"
+                        class="w-8 h-8 bg-account-btn-s text-account-btn-s-text shadow-account-btn-s"
                         @click="mode = 'delete'"
                     >
                         <i class="bx bx-minus bx-xs" />
@@ -58,7 +69,7 @@
                     <Button
                         v-if="mode === 'add'"
                         size="sm"
-                        class="w-8 h-8 bg-white text-account-button shadow-account-sm"
+                        class="w-8 h-8 bg-account-btn-s text-account-btn-s-text shadow-account-btn-s"
                         @click="mode = 'normal'"
                     >
                         <i class="bx bx-x bx-xs" />
@@ -66,7 +77,7 @@
                     <Button
                         v-else
                         size="sm"
-                        class="w-8 h-8 bg-account-button text-white shadow-account-sm"
+                        class="w-8 h-8 bg-account-btn-m text-account-btn-m-text shadow-account-btn-s"
                         @click="addAccountPreTest"
                     >
                         <i class="bx bx-plus bx-xs" />
@@ -78,7 +89,7 @@
                     <AccountItem
                         v-for="chain in additionalAccounts"
                         :key="chain"
-                        class="shadow-account-sm inline-flex m-0.5 rounded-full"
+                        class="inline-flex m-0.5 rounded-full"
                         :size="64"
                         :chain="chain"
                         @click="addAccount(chain)"
@@ -88,7 +99,7 @@
                     <draggable class="min-h-20" :list="show" group="accounts" itemKey="chain">
                         <template #item="{ element, index }">
                             <AccountItem
-                                class="shadow-account-sm inline-flex m-0.5 rounded-full"
+                                class="shadow-account-item inline-flex m-0.5 rounded-full"
                                 :size="64"
                                 :chain="element.platform"
                                 :delete-mode="mode === 'delete'"
@@ -101,9 +112,9 @@
             <template #footer-button>
                 <Button
                     size="sm"
-                    class="text-xs bg-white text-account-button shadow-account-sm"
+                    class="text-xs bg-account-btn-s text-account-btn-s-text shadow-account-btn-s"
                     :class="{
-                        'bg-gray-100 cursor-not-allowed': show.length === 0,
+                        'bg-btn-disabled cursor-not-allowed text-opacity-20': show.length === 0,
                     }"
                     :disabled="show.length === 0"
                     @click="hideAll"
@@ -116,20 +127,20 @@
             title="No-show Accounts"
             color-title="text-account-title"
             color-tips="text-account-title"
-            color-background="bg-gray-bg"
-            class="w-full mb-4"
+            color-background="bg-card-hide"
+            class="w-full mb-4 border-account-border"
             :is-having-content="true"
             tips="Drag here to hide"
         >
-            <template #accessibility>
+            <!-- <template #accessibility>
                 <i class="bx bx-info-circle" style="color: rgba(0, 0, 0, 0.2)" />
-            </template>
+            </template> -->
             <template #header-button>
                 <Button
                     size="sm"
-                    class="text-xs bg-white text-account-button shadow-account-sm"
+                    class="text-xs bg-account-btn-s text-account-btn-s-text shadow-account-btn-s"
                     :class="{
-                        'bg-gray-100 cursor-not-allowed': hide.length === 0,
+                        'bg-btn-disabled cursor-not-allowed text-opacity-20': hide.length === 0,
                     }"
                     :disabled="hide.length === 0"
                     @click="showAll"
@@ -140,20 +151,24 @@
             <template #content>
                 <draggable class="min-h-20" :list="hide" group="accounts" itemKey="chain">
                     <template #item="{ element }">
-                        <AccountItem
-                            class="shadow-account-sm inline-flex m-0.5 rounded-full"
-                            :size="64"
-                            :chain="element.platform"
-                        />
+                        <AccountItem class="inline-flex m-0.5 rounded-full" :size="64" :chain="element.platform" />
                     </template>
                 </draggable>
             </template>
         </Card>
         <div class="px-4 py-4 flex gap-5 fixed bottom-0 left-0 right-0 max-w-md m-auto w-full">
-            <Button size="lg" class="flex-1 text-lg bg-white text-primary shadow-secondary" @click="back"
+            <Button
+                size="lg"
+                class="flex-1 text-lg bg-secondary-btn text-secondary-btn-text shadow-secondary-btn"
+                @click="back"
                 >Discard</Button
             >
-            <Button size="lg" class="flex-1 text-lg bg-primary text-white shadow-primary" @click="save">Save</Button>
+            <Button
+                size="lg"
+                class="flex-1 text-lg bg-primary-btn text-primary-btn-text shadow-primary-btn"
+                @click="save"
+                >Save</Button
+            >
         </div>
         <LoadingContainer v-show="isLoading" />
 
@@ -170,7 +185,7 @@
                 <div class="flex flex-row gap-5">
                     <Button
                         size="sm"
-                        class="w-72 bg-primary text-white shadow-primary"
+                        class="w-72 bg-primary-btn text-primary-btn-text shadow-primary-btn"
                         @click="isShowingAddAccountNotice = false"
                     >
                         OK

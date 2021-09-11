@@ -1,7 +1,7 @@
 <template>
     <div class="px-4 py-9 max-w-md m-auto pb-20">
         <div class="text-center mb-4">
-            <h1 class="text-5xl text-primary font-bold">Setup</h1>
+            <h1 class="text-5xl text-primary-text font-bold">Setup</h1>
         </div>
         <AvatarEditor class="m-auto mb-4" size="lg" :url="profile.avatar" ref="avatar" />
         <Input class="mb-4 w-full" :is-single-line="true" placeholder="Username" v-model="profile.name" />
@@ -94,8 +94,18 @@
             </template>
         </Card>
         <div class="px-4 py-4 flex gap-5 fixed bottom-0 left-0 right-0 max-w-md m-auto w-full">
-            <Button size="lg" class="flex-1 text-lg bg-white text-primary shadow-secondary" @click="back">Back</Button>
-            <Button size="lg" class="flex-1 text-lg bg-primary text-white shadow-primary" @click="save">Done</Button>
+            <Button
+                size="lg"
+                class="flex-1 text-lg bg-seconadry-btn text-seconadry-btn-text shadow-seconadry-btn"
+                @click="back"
+                >Back</Button
+            >
+            <Button
+                size="lg"
+                class="flex-1 text-lg bg-primary-btn text-primary-btn-text shadow-primary-btn"
+                @click="save"
+                >Done</Button
+            >
         </div>
         <LoadingContainer v-show="isLoading" />
 
@@ -112,7 +122,7 @@
                 <div class="flex flex-row gap-5">
                     <Button
                         size="sm"
-                        class="w-72 bg-primary text-white shadow-primary"
+                        class="w-72 bg-primary-btn text-primary-btn-text shadow-primary-btn"
                         @click="isShowingNotice = false"
                     >
                         OK
