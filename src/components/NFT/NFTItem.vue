@@ -9,20 +9,20 @@
         <video
             v-if="imageUrl?.endsWith('.mp4') || imageUrl?.endsWith('.mov') || imageUrl?.endsWith('.mp3')"
             :src="imageUrl"
-            :poster="posterUrl"
+            :poster="posterUrl?.endsWith('.mp4') || posterUrl?.endsWith('.mov') ? undefined : posterUrl"
             class="nft-item"
             :style="{
                 width: size + 'px',
                 height: size + 'px',
             }"
-            :autoplay="isShowingDetails"
+            :autoplay="isShowingDetails || posterUrl?.endsWith('.mp4') || posterUrl?.endsWith('.mov')"
             loop
             webkit-playsinline
             playsinline
             :controls="isShowingDetails"
         />
         <iframe
-            v-else-if="imageUrl?.endsWith('embed')"
+            v-else-if="imageUrl?.endsWith('embed') || imageUrl?.includes('farmhero.io')"
             :src="imageUrl"
             class="nft-item"
             :style="{

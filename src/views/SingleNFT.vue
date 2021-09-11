@@ -36,11 +36,11 @@
             <div class="content">
                 <div class="image pb-4">
                     <NFTItem
-                        :imageUrl="this.details.animation_url || this.details.image_url"
-                        :poster-url="this.details.image_url"
+                        :imageUrl="details.animation_url || details.image_url"
+                        :poster-url="details.image_url"
                         :size="NFTWidth > 416 ? 416 : NFTWidth"
                         :is-showing-details="true"
-                    ></NFTItem>
+                    />
                 </div>
                 <NFTDetail :chain="details.chain" :details="details" market="opensea" />
             </div>
@@ -57,6 +57,7 @@ import AccountItem from '@/components/AccountItem.vue';
 import NFTBadges from '@/components/NFT/NFTBadges.vue';
 import RSS3 from '@/common/rss3';
 import RNSUtils from '@/common/rns';
+import { NFT } from '@/common/types';
 
 @Options({
     components: { Button, NFTDetail, NFTItem, AccountItem, NFTBadges },
@@ -65,10 +66,11 @@ export default class SingleNFT extends Vue {
     rns: string = '';
     ethAddress: string = '';
     public NFTWidth: number = window.innerWidth - 32;
-    public details?: Object = {
-        collection: {
-            name: '',
-            image_url: '',
+    private details: NFT = {
+        chain: '',
+        token_id: '',
+        asset_contract: {
+            address: '',
         },
     };
 
@@ -82,15 +84,25 @@ export default class SingleNFT extends Vue {
             this.rns = await RNSUtils.addr2Name(address);
         }
 
-        const chain: string = String(this.$route.params.chain);
-        const aid: number = Number(this.$route.params.aid);
-        const id: number = Number(this.$route.params.id);
+        const platform: string = String(this.$route.params.platform);
+        const identity: string = String(this.$route.params.identity);
+        const id: string = String(this.$route.params.id);
+
         const data = await RSS3.getAssetProfile(this.ethAddress);
 
         if (data) {
-            this.details = data.assets[chain][aid].nft[id];
+            const asset = data.assets.find(
+                (ag) => ag.platform === platform && ag.identity === identity && ag.id === id,
+            );
+            if (asset) {
+                const detail = (await RSS3.getNFTDetails(this.ethAddress, platform, identity, id))?.data;
+                if (detail) {
+                    this.details = detail;
+                }
+            }
         }
     }
+
     public back() {
         window.history.back();
     }

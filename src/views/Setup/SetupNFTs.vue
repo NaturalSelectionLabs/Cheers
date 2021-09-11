@@ -39,7 +39,7 @@
                         <NFTItem
                             class="shadow-nft-sm inline-flex m-0.5"
                             :size="64"
-                            :image-url="element.info?.image_url"
+                            :image-url="element.info?.image_preview_url"
                             :data-info="JSON.stringify(element)"
                         />
                     </template>
@@ -91,7 +91,7 @@
                             <NFTItem
                                 class="shadow-nft-sm inline-flex m-0.5"
                                 :size="64"
-                                :image-url="element.info?.image_url"
+                                :image-url="element.info?.image_preview_url"
                             />
                         </template>
                     </draggable>
@@ -132,14 +132,14 @@ import { RSS3Asset } from 'rss3-next/types/rss3';
 import RSS3, { IRSS3 } from '@/common/rss3';
 import config from '@/config';
 
-import { DetailedNFT, RSS3AssetShow, RSS3AssetWithInfo } from '@/common/types';
 import draggable from 'vuedraggable';
 import LoadingContainer from '@/components/LoadingContainer.vue';
+import { GeneralAsset, GeneralAssetWithTags } from '@/common/types';
 
 interface RSS3AssetCollectionShow {
     collection_name: string;
     contract_address: string;
-    assets: RSS3AssetShow[];
+    assets: GeneralAsset[];
 }
 
 @Options({
@@ -156,11 +156,11 @@ export default class SetupNFTs extends Vue {
     rss3: IRSS3 | null = null;
     activatedGroupID: Number = 0;
     isLoading: Boolean = false;
-    nfts: any[] = [];
-    displayedNFTs: RSS3AssetWithInfo[] = [];
-    hiddenNFTs: RSS3AssetWithInfo[] = [];
+    nfts: GeneralAssetWithTags[] = [];
+    displayedNFTs: GeneralAssetWithTags[] = [];
+    hiddenNFTs: GeneralAssetWithTags[] = [];
     hiddenList: {
-        [collection: string]: RSS3AssetWithInfo[];
+        [collection: string]: GeneralAssetWithTags[];
     } = {};
     collections: string[] = [];
 
@@ -179,59 +179,59 @@ export default class SetupNFTs extends Vue {
             this.avatar = profile?.avatar?.[0] || config.defaultAvatar;
         }
 
-        this.nfts = await Promise.all(
-            (JSON.parse(JSON.stringify(await this.rss3?.assets.get())) || []).map(async (nft: RSS3AssetWithInfo) => {
-                let info: any = await this.getInfo(nft);
-                info = Object.assign(
-                    {
-                        collection: {
-                            name: 'Others',
-                        },
-                    },
-                    info || {},
-                );
-                nft.info = info;
-                return nft;
-            }),
-        );
-        this.displayedNFTs = this.nfts
-            .filter((nft) => (!nft.tags || nft.tags.indexOf('pass:hidden') === -1) && nft.info)
-            .sort((a, b) => this.getOrder(a) - this.getOrder(b));
-        this.hiddenNFTs = this.nfts
-            .filter((nft) => nft.tags && nft.tags.indexOf('pass:hidden') !== -1 && nft.info)
-            .sort((a, b) => this.getOrder(a) - this.getOrder(b));
-        const collections: {
-            [key: string]: boolean;
-        } = {};
-        this.nfts.forEach((nft) => {
-            if (nft.info && nft.info.collection && nft.info.collection.name) {
-                collections[nft.info.collection.name] = true;
-            }
-        });
-        this.collections = Object.keys(collections);
-        this.collections.forEach((collection) => {
-            this.hiddenList[collection] = this.hiddenNFTs.filter((nft) => nft.info?.collection?.name === collection);
-        });
-    }
+        const assetsInRSS3File = await (<IRSS3>this.rss3).assets.get();
+        const assetsGrabbed = (await RSS3.getAssetProfile((<IRSS3>this.rss3).account.address))?.assets;
 
-    private async getInfo(nft: RSS3Asset) {
-        const assets = (await RSS3.getAssetProfile((<IRSS3>this.rss3).account.address))?.assets;
-        for (let chain in assets) {
-            for (let i = 0; i < assets[chain].length; i++) {
-                const chainInfo = assets[chain][i];
-                for (let j = 0; j < chainInfo.nft.length; j++) {
-                    const nftInfo = chainInfo.nft[j];
-                    if (
-                        nftInfo.chain === nft.platform &&
-                        nftInfo.token_id === nft.id &&
-                        nftInfo.asset_contract.address === nft.identity
-                    ) {
-                        return nftInfo;
+        if (assetsGrabbed) {
+            const assetsMatch = await Promise.all(
+                (assetsGrabbed || []).map(async (ag: GeneralAssetWithTags) => {
+                    const origType = ag.type;
+                    ag.type = 'Invalid'; // Using as a match mark
+                    for (const airf of assetsInRSS3File) {
+                        if (
+                            airf.platform === ag.platform &&
+                            airf.identity === ag.identity &&
+                            airf.id === ag.id &&
+                            airf.type === origType
+                        ) {
+                            // Matched
+                            ag.type = origType; // Recover type
+                            if (airf.tags) {
+                                ag.tags = airf.tags;
+                            }
+                            if (!ag.info.collection) {
+                                ag.info.collection = 'Other';
+                            }
+                            break;
+                        }
                     }
+                    return ag;
+                }),
+            );
+            for (const am of assetsMatch) {
+                if (am.type === 'NFT') {
+                    this.nfts.push(am);
                 }
             }
+            this.displayedNFTs = this.nfts
+                .filter((nft) => !nft.tags || nft.tags.indexOf('pass:hidden') === -1)
+                .sort((a, b) => this.getOrder(a) - this.getOrder(b));
+            this.hiddenNFTs = this.nfts
+                .filter((nft) => nft.tags && nft.tags.indexOf('pass:hidden') !== -1)
+                .sort((a, b) => this.getOrder(a) - this.getOrder(b));
+            const collections: {
+                [key: string]: boolean;
+            } = {};
+            this.nfts.forEach((nft) => {
+                if (nft.info.collection) {
+                    collections[nft.info.collection] = true;
+                }
+            });
+            this.collections = Object.keys(collections);
+            this.collections.forEach((collection) => {
+                this.hiddenList[collection] = this.hiddenNFTs.filter((nft) => nft.info.collection === collection);
+            });
         }
-        return null;
     }
 
     private getOrder(nft: RSS3Asset) {
@@ -244,7 +244,8 @@ export default class SetupNFTs extends Vue {
         return order;
     }
 
-    back() {
+    async back() {
+        await (<IRSS3>this.rss3).files.get((<IRSS3>this.rss3).account.address, true);
         window.history.back();
     }
 
@@ -252,7 +253,7 @@ export default class SetupNFTs extends Vue {
         this.displayedNFTs = [];
         this.hiddenNFTs = this.nfts;
         this.collections.forEach((collection) => {
-            this.hiddenList[collection] = this.hiddenNFTs.filter((nft) => nft.info?.collection?.name === collection);
+            this.hiddenList[collection] = this.hiddenNFTs.filter((nft) => nft.info?.collection === collection);
         });
         this.sync();
     }
@@ -266,15 +267,11 @@ export default class SetupNFTs extends Vue {
         this.sync();
     }
 
-    findGroupID(asset: RSS3AssetWithInfo): number {
-        return this.collections.findIndex((collection) => collection === asset.info?.collection?.name);
-    }
-
     async chooseAsset(ev: any) {
         this.activatedGroupID = -1;
         await nextTick();
         this.activatedGroupID = this.collections.findIndex(
-            (collection) => collection === JSON.parse(ev.item.dataset.info).info?.collection.name,
+            (collection) => collection === JSON.parse(ev.item.dataset.info).info?.collection,
         );
         console.log(this.activatedGroupID);
     }
@@ -287,6 +284,7 @@ export default class SetupNFTs extends Vue {
         this.displayedNFTs.forEach((nft, index) => {
             this.rss3?.assets.patchTags(
                 {
+                    type: nft.type,
                     platform: nft.platform,
                     identity: nft.identity,
                     id: nft.id,
@@ -298,6 +296,7 @@ export default class SetupNFTs extends Vue {
             this.hiddenList[collection].forEach((nft, index) => {
                 this.rss3?.assets.patchTags(
                     {
+                        type: nft.type,
                         platform: nft.platform,
                         identity: nft.identity,
                         id: nft.id,
@@ -311,7 +310,7 @@ export default class SetupNFTs extends Vue {
     async save() {
         this.isLoading = true;
         await this.rss3?.files.sync();
-        await RSS3.getAssetProfile((<IRSS3>this.rss3).account.address, true);
+        // await RSS3.getAssetProfile((<IRSS3>this.rss3).account.address, true);
         this.isLoading = false;
         window.history.back();
     }
