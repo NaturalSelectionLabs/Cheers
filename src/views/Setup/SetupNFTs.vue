@@ -244,7 +244,8 @@ export default class SetupNFTs extends Vue {
         return order;
     }
 
-    back() {
+    async back() {
+        await (<IRSS3>this.rss3).files.get((<IRSS3>this.rss3).account.address, true);
         window.history.back();
     }
 
