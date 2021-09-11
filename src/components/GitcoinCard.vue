@@ -19,11 +19,30 @@
             <p class="w-full mb-2 font-semibold text-lg truncate">{{ name }}</p>
             <div class="w-full flex flex-row gap-x-6 overflow-y-auto">
                 <div>
-                    <div class="font-medium">{{ contrib }}</div>
+                    <div class="font-medium">
+                        <vue3-autocounter
+                            ref="counter"
+                            :startAmount="0"
+                            :endAmount="contrib"
+                            :duration="1"
+                            separator=","
+                            :autoinit="true"
+                        />
+                    </div>
                     <div>Contrib</div>
                 </div>
                 <div v-for="(item, index) in amount" :key="index">
-                    <div class="font-medium">{{ item.amount }}</div>
+                    <div class="font-medium">
+                        <vue3-autocounter
+                            ref="counter"
+                            :startAmount="0"
+                            :endAmount="item.amount"
+                            :duration="1"
+                            separator=","
+                            :decimals="5"
+                            :autoinit="true"
+                        />
+                    </div>
                     <div>{{ item.token }}</div>
                 </div>
             </div>
@@ -33,8 +52,10 @@
 
 <script lang="ts">
 import { Vue, Options } from 'vue-class-component';
+import Vue3Autocounter from 'vue3-autocounter';
 
 @Options({
+    components: { Vue3Autocounter },
     props: {
         imageUrl: String,
         name: String,
