@@ -15,7 +15,7 @@
                     @click="toPublicPage(this.rss3Profile.address)"
                 />
             </div>
-            <div class="nft-list flex flex-wrap justify-between items-center gap-y-4">
+            <div class="nft-list flex flex-wrap justify-between items-center gap-y-4" :class="{ 'pb-16': isOwner }">
                 <div class="relative" v-for="(item, index) in nfts" :key="index">
                     <NFTItem
                         class="cursor-pointer"
@@ -32,7 +32,7 @@
                     />
                 </div>
             </div>
-            <div class="px-4 py-4 flex gap-5 fixed bottom-0 left-0 right-0 max-w-md m-auto w-full z-50" v-if="isOwner">
+            <div class="px-4 py-4 flex gap-5 fixed bottom-2 left-0 right-0 max-w-md m-auto w-full z-50" v-if="isOwner">
                 <Button size="lg" class="m-auto text-lg bg-nft-button text-white shadow-nft" @click="toSetupNfts">
                     Manage NFTs
                 </Button>
