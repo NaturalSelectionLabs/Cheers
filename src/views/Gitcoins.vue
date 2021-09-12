@@ -12,7 +12,7 @@
                     :is-border="false"
                     :src="rss3Profile.avatar"
                     :alt="rss3Profile.username"
-                    @click="toPublicPage(rss3Profile.address)"
+                    @click="toPublicPage(rns || ethAddress)"
                 />
             </div>
             <div class="gitcoin-gitcoins flex flex-col gap-y-4" v-show="gitcoins.length !== 0">

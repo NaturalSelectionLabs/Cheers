@@ -10,7 +10,8 @@
                     :is-rounded="true"
                     :is-border="false"
                     :src="rss3Profile.avatar"
-                    alt="nya"
+                    :alt="rss3Profile.username"
+                    @click="toPublicPage(rns || ethAddress)"
                 />
             </div>
             <GitcoinItem :imageUrl="grant.logo" :size="Width > 416 ? 416 : Width"></GitcoinItem>
@@ -215,6 +216,10 @@ export default class SingleGitcoin extends Vue {
 
     public toEtherscan(txHash: string) {
         window.open(`https://etherscan.io/tx/${txHash}`);
+    }
+
+    toPublicPage(address: string) {
+        this.$router.push(`/${address}`);
     }
 
     public back() {

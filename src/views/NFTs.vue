@@ -10,9 +10,9 @@
                     class="w-10 h-10 inline-flex my-auto cursor-pointer"
                     :is-rounded="true"
                     :is-border="false"
-                    :src="this.rss3Profile.avatar"
-                    :alt="this.rss3Profile.username"
-                    @click="toPublicPage(this.rss3Profile.address)"
+                    :src="rss3Profile.avatar"
+                    :alt="rss3Profile.username"
+                    @click="toPublicPage(rns || ethAddress)"
                 />
             </div>
             <div class="nft-list flex flex-wrap justify-between items-center gap-y-4">
