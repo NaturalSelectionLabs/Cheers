@@ -43,27 +43,9 @@
                 </div>
                 <div class="stats-type">Followings</div>
             </div>
-            <div class="stats-container" @click="toNFTsPage">
-                <div class="stats-number">
-                    <vue3-autocounter
-                        ref="counter"
-                        :startAmount="0"
-                        :endAmount="NFTs"
-                        :duration="1"
-                        separator=","
-                        :autoinit="true"
-                    />
-                </div>
-                <div class="stats-type">NFTs</div>
-            </div>
         </div>
         <span class="font-bold text-2xl px-4">{{ username }}</span>
-        <span
-            class="font-medium text-lg rounded-sm px-4 bg-content-bg text-primary cursor-pointer"
-            v-if="rns"
-            @click="emitShare"
-        >
-            <i class="bx bx-upload mr-1" />
+        <span class="font-medium text-lg rounded-sm px-4 bg-content-bg text-primary" v-if="rns" @click="emitShare">
             {{ rns + '.pass3.me' }}
         </span>
         <span class="font-medium text-lg rounded-sm px-4 bg-content-bg text-primary" v-else>
@@ -92,7 +74,6 @@ import Vue3Autocounter from 'vue3-autocounter';
         address: String,
         followers: Array,
         followings: Array,
-        NFTs: Number,
         website: String,
         bio: String,
         rns: String,

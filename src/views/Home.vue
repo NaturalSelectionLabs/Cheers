@@ -7,9 +7,7 @@
             :rns="rns"
             :followers="rss3Relations.followers"
             :followings="rss3Relations.followings"
-            :NFTs="nfts.length"
             :bio="rss3Profile.bio"
-            @share="showShareCard"
         />
         <Button
             size="sm"
