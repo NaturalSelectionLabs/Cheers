@@ -32,7 +32,7 @@
                 "
             >
                 <div class="w-full">
-                    <h2 class="text-xl font-semibold truncate">
+                    <h2 class="text-xl font-semibold break-words">
                         {{ grant.title }}
                     </h2>
                     <div
@@ -40,6 +40,12 @@
                         @click="toExternalLink(grant.reference_url)"
                     >
                         {{ grant.reference_url }}
+                    </div>
+                </div>
+                <div class="w-full">
+                    <h2 class="text-xl font-semibold break-words">Description</h2>
+                    <div class="text-sm leading-normal break-all line-clamp-3">
+                        {{ grant.description }}
                     </div>
                 </div>
                 <div>
@@ -159,6 +165,7 @@ export default class SingleGitcoin extends Vue {
         logo: config.defaultAvatar,
         slug: '...',
         reference_url: '...',
+        description: '...',
     };
     public donationInfo?: DonationInfo[] = [];
 

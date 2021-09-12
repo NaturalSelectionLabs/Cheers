@@ -15,7 +15,11 @@
                     @click="toPublicPage(rns || ethAddress)"
                 />
             </div>
-            <div class="gitcoin-gitcoins flex flex-col gap-y-4" v-show="gitcoins.length !== 0">
+            <div
+                class="gitcoin-gitcoins flex flex-col gap-y-4"
+                :class="{ 'pb-16': isOwner }"
+                v-show="gitcoins.length !== 0"
+            >
                 <GitcoinTitle :grants="grants" :contributions="contribs"></GitcoinTitle>
                 <GitcoinCard
                     v-for="(item, index) in gitcoins"
@@ -27,7 +31,7 @@
                     @click="toSingleGitcoin(item.platform, item.identity, item.id)"
                 ></GitcoinCard>
             </div>
-            <div class="px-4 py-4 flex gap-5 fixed bottom-0 left-0 right-0 max-w-md m-auto w-full" v-if="isOwner">
+            <div class="px-4 py-4 flex gap-5 fixed bottom-2 left-0 right-0 max-w-md m-auto w-full" v-if="isOwner">
                 <Button
                     size="lg"
                     class="m-auto text-lg bg-gitcoin-button text-white shadow-gitcoin"

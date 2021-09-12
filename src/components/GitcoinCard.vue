@@ -12,10 +12,10 @@
         "
     >
         <div
-            class="w-32 h-32 bg-cover bg-center bg-no-repeat rounded rounded-2xl m-0.5"
+            class="w-32 h-32 bg-cover bg-center bg-no-repeat rounded rounded-2xl m-0.5 flex-shrink"
             :style="{ backgroundImage: `url(${imageUrl})` }"
         ></div>
-        <div class="w-45 md:w-60 pl-8">
+        <div class="w-45 flex-1 px-8">
             <p class="w-full mb-2 font-semibold text-lg truncate">{{ name }}</p>
             <div class="w-full flex flex-row gap-x-6 overflow-y-auto">
                 <div>
