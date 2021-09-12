@@ -182,13 +182,15 @@ export default class SingleGitcoin extends Vue {
 
     public async loadGitcoin() {
         const platform: string = <string>this.$route.params.platform;
-        const id: string = <string>this.$route.params.id;
         const identity: string = <string>this.$route.params.identity;
+        const id: string = <string>this.$route.params.id;
 
         const res = await RSS3.getGitcoinDonation(this.ethAddress, platform, identity, id);
         if (res) {
             this.grant = res.data.grant;
-            this.donationInfo = res.data.txs;
+            this.donationInfo = res.data.txs.sort((a, b) => {
+                return parseInt(b.timeStamp) - parseInt(a.timeStamp);
+            });
         }
     }
 

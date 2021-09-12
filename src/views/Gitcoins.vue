@@ -31,7 +31,7 @@
                 <Button
                     size="lg"
                     class="m-auto text-lg bg-gitcoin-button text-white shadow-gitcoin"
-                    @click="toSetupGitcoins()"
+                    @click="toSetupGitcoins"
                 >
                     Manage Contribs
                 </Button>
