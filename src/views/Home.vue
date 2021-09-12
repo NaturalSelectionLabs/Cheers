@@ -106,7 +106,7 @@
                 </template>
                 <template v-else>
                     <div class="text-nft-title m-auto text-center mt-4">
-                        {{ isLoadingAssets ? 'Loading...' : 'No NFTs to show :(' }}
+                        {{ isLoadingAssets ? 'Loading...' : "Haven't found anything yet..." }}
                     </div>
                 </template>
             </template>
@@ -162,7 +162,7 @@
                 </template>
                 <template v-else>
                     <div class="text-gitcoin-title m-auto text-center mt-4">
-                        {{ isLoadingAssets ? 'Loading...' : 'No donations to show :(' }}
+                        {{ isLoadingAssets ? 'Loading...' : "Haven't found anything yet..." }}
                     </div>
                 </template>
             </template>
