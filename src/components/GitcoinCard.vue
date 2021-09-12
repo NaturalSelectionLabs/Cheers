@@ -39,7 +39,7 @@
                             :endAmount="parseFloat(item.amount)"
                             :duration="1"
                             separator=","
-                            :decimals="5"
+                            :decimals="item.amount.split('.')[1].length"
                             :autoinit="true"
                         />
                     </div>

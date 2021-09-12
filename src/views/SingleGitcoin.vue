@@ -76,7 +76,7 @@
                                     :endAmount="parseFloat(item.formatedAmount)"
                                     :duration="1"
                                     separator=","
-                                    :decimals="5"
+                                    :decimals="item.formatedAmount.split('.')[1].length"
                                     :suffix="item.symbol"
                                     :autoinit="true"
                                 />
