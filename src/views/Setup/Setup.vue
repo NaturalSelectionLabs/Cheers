@@ -15,6 +15,7 @@
             :is-having-content="true"
             :is-single-line="true"
         >
+            <template #title-icon><AccountIcon /></template>
             <template #header-button>
                 <Button
                     size="sm"
@@ -44,6 +45,7 @@
             :is-single-line="nfts.length !== 0"
             :tips="nfts.length === 0 ? 'You don’t have any NFTs yet : {' : ''"
         >
+            <template #title-icon><NFTIcon /></template>
             <template #header-button>
                 <Button
                     size="sm"
@@ -75,6 +77,7 @@
             :is-single-line="gitcoins.length !== 0"
             :tips="gitcoins.length === 0 ? 'You don’t have any donations yet :(' : ''"
         >
+            <template #title-icon><GitcoinIcon /></template>
             <template #header-button>
                 <Button
                     size="sm"
@@ -103,6 +106,7 @@
             class="mb-4 w-full"
             :is-having-content="true"
         >
+            <template #title-icon><ContentIcon /></template>
             <template #content>
                 <div class="flex justify-center">
                     <Button
@@ -169,6 +173,11 @@ import { RSS3Account, RSS3Asset, RSS3Profile } from 'rss3-next/types/rss3';
 import RSS3, { IRSS3 } from '@/common/rss3';
 import config from '@/config';
 
+import NFTIcon from '@/components/Icons/NFTIcon.vue';
+import GitcoinIcon from '@/components/Icons/GitcoinIcon.vue';
+import ContentIcon from '@/components/Icons/ContentIcon.vue';
+import AccountIcon from '@/components/Icons/AccountIcon.vue';
+
 import { GeneralAsset, GeneralAssetWithTags } from '@/common/types';
 
 @Options({
@@ -182,6 +191,10 @@ import { GeneralAsset, GeneralAssetWithTags } from '@/common/types';
         Input,
         Loading,
         LoadingContainer,
+        AccountIcon,
+        NFTIcon,
+        GitcoinIcon,
+        ContentIcon,
     },
 })
 export default class Setup extends Vue {

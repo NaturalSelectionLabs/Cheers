@@ -77,6 +77,8 @@
             :is-having-content="true"
             :is-single-line="nfts.length !== 0"
         >
+            <template #title-icon><NFTIcon /></template>
+
             <template #header-button>
                 <div v-if="isOwner" class="flex flex-row gap-2">
                     <Button size="sm" class="w-8 h-8 bg-white text-nft-button shadow-nft-sm" @click="toManageNFTs">
@@ -119,6 +121,8 @@
             :is-having-content="true"
             :is-single-line="gitcoins.length !== 0"
         >
+            <template #title-icon><GitcoinIcon /></template>
+
             <template #header-button>
                 <div v-if="isOwner" class="flex flex-row gap-2">
                     <Button
@@ -172,6 +176,7 @@
             class="w-auto"
             :is-having-content="true"
         >
+            <template #title-icon><ContentIcon /></template>
             <template #content>
                 <Button
                     size="sm"
@@ -289,6 +294,10 @@ import { GeneralAsset, GeneralAssetWithTags } from '@/common/types';
 import ShareCard from '@/components/ShareCard.vue';
 import html2canvas from '@/common/html2canvas.js';
 
+import NFTIcon from '@/components/Icons/NFTIcon.vue';
+import GitcoinIcon from '@/components/Icons/GitcoinIcon.vue';
+import ContentIcon from '@/components/Icons/ContentIcon.vue';
+
 interface ProfileInfo {
     avatar: string;
     username: string;
@@ -302,7 +311,20 @@ interface Relations {
 }
 
 @Options({
-    components: { Button, Card, Profile, AccountItem, NFTItem, Modal, AccountCard, GitcoinItem, ShareCard },
+    components: {
+        Button,
+        Card,
+        Profile,
+        AccountItem,
+        NFTItem,
+        Modal,
+        AccountCard,
+        GitcoinItem,
+        ShareCard,
+        NFTIcon,
+        ContentIcon,
+        GitcoinIcon,
+    },
 })
 export default class Home extends Vue {
     rns: string = '';
