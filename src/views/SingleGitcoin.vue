@@ -44,7 +44,7 @@
                 </div>
                 <div class="w-full">
                     <h2 class="text-xl font-semibold break-words">Description</h2>
-                    <div class="text-sm leading-normal break-all line-clamp-3">
+                    <div class="text-sm leading-normal break-words line-clamp-3">
                         {{ grant.description }}
                     </div>
                 </div>
