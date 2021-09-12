@@ -7700,10 +7700,10 @@ rlp@^2.0.0, rlp@^2.2.3, rlp@^2.2.4:
   dependencies:
     bn.js "^4.11.1"
 
-rss3-next@0.6.11:
-  version "0.6.11"
-  resolved "https://registry.yarnpkg.com/rss3-next/-/rss3-next-0.6.11.tgz#511bee4f9c5751a4fdcd1bb3a31fa73b49f77ada"
-  integrity sha512-u54nF6nKt9dDN9tmohDyidYb1KRgFakygVAmUt8DsRLGAu6rzXq22E3ucZv0TSpDPy74h5XDKQIffzBhDJaYrg==
+rss3-next@0.6.12:
+  version "0.6.12"
+  resolved "https://registry.yarnpkg.com/rss3-next/-/rss3-next-0.6.12.tgz#7851f8e2c892ced401e2286ffe520aa71a81f2fa"
+  integrity sha512-acAwsCramBjy/5W4g8zVAn1L34+h2EB+A1XyTHUcDOg9TgZqFzDbmhkUGYCRWJl+6hE3J42CBP1el9DfnI4XMw==
   dependencies:
     axios "0.21.1"
     ethers "5.4.1"
