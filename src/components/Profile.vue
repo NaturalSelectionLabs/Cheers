@@ -19,27 +19,13 @@
             </div>
             <div class="stats-container" @click="toFollowersPage">
                 <div class="stats-number">
-                    <vue3-autocounter
-                        ref="counter"
-                        :startAmount="0"
-                        :endAmount="followers.length"
-                        :duration="1"
-                        separator=","
-                        :autoinit="true"
-                    />
+                    {{ followers.length }}
                 </div>
                 <div class="stats-type">Followers</div>
             </div>
             <div class="stats-container" @click="toFollowingsPage">
                 <div class="stats-number">
-                    <vue3-autocounter
-                        ref="counter"
-                        :startAmount="0"
-                        :endAmount="followings.length"
-                        :duration="1"
-                        separator=","
-                        :autoinit="true"
-                    />
+                    {{ followings.length }}
                 </div>
                 <div class="stats-type">Followings</div>
             </div>
