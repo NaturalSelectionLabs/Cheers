@@ -19,6 +19,7 @@
             loop
             webkit-playsinline
             playsinline
+            :muted="!isShowingDetails"
             :controls="isShowingDetails"
         />
         <iframe
