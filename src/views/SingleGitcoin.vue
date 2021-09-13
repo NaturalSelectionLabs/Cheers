@@ -76,7 +76,7 @@
                                 py-2
                             "
                         >
-                            <div class="text-gitcoin-title">
+                            <div class="text-gitcoin-title flex-shrink pr-2">
                                 <vue3-autocounter
                                     ref="counter"
                                     :startAmount="0"
@@ -88,7 +88,7 @@
                                     :autoinit="true"
                                 />
                             </div>
-                            <div>{{ timeDifferent(item.timeStamp) }}</div>
+                            <div class="flex-1 truncate w-0 text-right">{{ timeDifferent(item.timeStamp) }}</div>
                         </div>
                         <Button
                             size="sm"

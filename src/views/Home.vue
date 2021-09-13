@@ -1,5 +1,5 @@
 <template>
-    <div v-if="isRNSExist" class="main px-4 py-8 flex flex-col gap-y-2 max-w-md m-auto overflow-y-auto">
+    <div v-if="isRNSExist" class="main px-4 py-8 flex flex-col gap-y-2 max-w-md m-auto overflow-y-auto select-none">
         <Profile
             :avatar="rss3Profile.avatar"
             :username="rss3Profile.username"
