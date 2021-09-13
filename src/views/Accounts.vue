@@ -63,7 +63,7 @@ import { Options, Vue } from 'vue-class-component';
 import Button from '@/components/Button.vue';
 import ImgHolder from '@/components/ImgHolder.vue';
 import AccountItem from '@/components/AccountItem.vue';
-import RSS3 from '@/common/rss3';
+import RSS3, { IRSS3 } from '@/common/rss3';
 import { RSS3Account } from 'rss3-next/types/rss3';
 import RNSUtils from '@/common/rns';
 import config from '@/config';
@@ -111,6 +111,14 @@ export default class Accounts extends Vue {
         this.rss3Profile.avatar = profile?.avatar?.[0] || config.defaultAvatar;
         this.rss3Profile.username = profile?.name?.[0] || '';
         this.rss3Profile.address = this.ethAddress;
+
+        // Setup theme
+        const themes = RSS3.getAvailableThemes(await rss3.assets.get(this.ethAddress));
+        if (themes[0]) {
+            document.body.classList.add(themes[0].class);
+        } else {
+            document.body.classList.remove(...document.body.classList);
+        }
 
         this.accounts.push({
             platform: 'Ethereum',

@@ -6,7 +6,7 @@ export default {
         {
             name: 'loot',
             class: 'theme-loot',
-            nftIdPrefix: '',
+            nftIdPrefix: '0xe8227e29d61889dd04a4f0f87cf609936ad70d76-', // Using color for test
         },
     ],
     rns: {

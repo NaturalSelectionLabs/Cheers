@@ -235,7 +235,11 @@ export default {
         const availableThemes: Theme[] = [];
         for (const theme of config.theme) {
             for (const asset of assets) {
-                if (asset.type === 'NFT' && asset.id.startsWith(theme.nftIdPrefix)) {
+                if (
+                    asset.type === 'NFT' &&
+                    !asset.tags?.includes('pass:hidden') &&
+                    asset.id.startsWith(theme.nftIdPrefix)
+                ) {
                     availableThemes.push(theme);
                     break;
                 }

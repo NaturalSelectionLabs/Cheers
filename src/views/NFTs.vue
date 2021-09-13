@@ -55,7 +55,7 @@ import Button from '@/components/Button.vue';
 import ImgHolder from '@/components/ImgHolder.vue';
 import NFTItem from '@/components/NFT/NFTItem.vue';
 import NFTBadges from '@/components/NFT/NFTBadges.vue';
-import RSS3 from '@/common/rss3';
+import RSS3, { IRSS3 } from '@/common/rss3';
 import RNSUtils from '@/common/rns';
 import config from '@/config';
 import { RSS3Asset } from 'rss3-next/types/rss3';
@@ -106,6 +106,14 @@ export default class NFTs extends Vue {
 
         this.rss3Profile.avatar = profile.avatar?.[0] || config.defaultAvatar;
         this.rss3Profile.username = profile.name?.[0] || '';
+
+        // Setup theme
+        const themes = RSS3.getAvailableThemes(await rss3.assets.get(this.ethAddress));
+        if (themes[0]) {
+            document.body.classList.add(themes[0].class);
+        } else {
+            document.body.classList.remove(...document.body.classList);
+        }
 
         const data = await RSS3.getAssetProfile(this.ethAddress);
 

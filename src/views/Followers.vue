@@ -39,7 +39,7 @@ import { Options, Vue } from 'vue-class-component';
 import Button from '@/components/Button.vue';
 import ImgHolder from '@/components/ImgHolder.vue';
 import FollowerCard from '@/components/FollowerCard.vue';
-import RSS3 from '@/common/rss3';
+import RSS3, { IRSS3 } from '@/common/rss3';
 import RNSUtils from '@/common/rns';
 import config from '@/config';
 
@@ -84,6 +84,14 @@ export default class Followers extends Vue {
         this.rss3Profile.avatar = profile?.avatar?.[0] || config.defaultAvatar;
         this.rss3Profile.username = profile?.name || '';
         this.rss3Profile.address = this.ethAddress;
+
+        // Setup theme
+        const themes = RSS3.getAvailableThemes(await rss3.assets.get(this.ethAddress));
+        if (themes[0]) {
+            document.body.classList.add(themes[0].class);
+        } else {
+            document.body.classList.remove(...document.body.classList);
+        }
 
         if (rss3 && followersList) {
             for (const item of followersList) {
