@@ -24,8 +24,8 @@
                 <GitcoinCard
                     v-for="(item, index) in gitcoins"
                     :key="index"
-                    :imageUrl="item.info.image_preview_url"
-                    :name="item.info.title"
+                    :imageUrl="item.info.image_preview_url || defaultAvatar"
+                    :name="item.info.title || 'Inactive Project'"
                     :contrib="item.info.total_contribs"
                     :amount="item.info.token_contribs"
                     @click="toSingleGitcoin(item.platform, item.identity, item.id)"
@@ -50,11 +50,9 @@ import Button from '@/components/Button.vue';
 import ImgHolder from '@/components/ImgHolder.vue';
 import GitcoinTitle from '@/components/GitcoinTitle.vue';
 import GitcoinCard from '@/components/GitcoinCard.vue';
-import axios from 'axios';
 import config from '@/config';
 import RNSUtils from '@/common/rns';
 import RSS3 from '@/common/rss3';
-import { data } from 'autoprefixer';
 import { GeneralAsset, GeneralAssetWithTags } from '@/common/types';
 import { RSS3Asset } from 'rss3-next/types/rss3';
 
@@ -81,6 +79,7 @@ export default class Gitcoins extends Vue {
         address: '',
         bio: '',
     };
+    private defaultAvatar = config.defaultAvatar;
 
     async mounted() {
         const address = <string>this.$route.params.address;

@@ -14,7 +14,7 @@
                     @click="toPublicPage(rns || ethAddress)"
                 />
             </div>
-            <GitcoinItem :imageUrl="grant.logo" :size="Width > 416 ? 416 : Width"></GitcoinItem>
+            <GitcoinItem :imageUrl="grant.logo || defaultAvatar" :size="Width > 416 ? 416 : Width"></GitcoinItem>
             <div
                 class="
                     w-full
@@ -33,7 +33,7 @@
             >
                 <div class="w-full">
                     <h2 class="text-xl font-semibold break-words">
-                        {{ grant.title }}
+                        {{ grant.title || 'Inactive Project' }}
                     </h2>
                     <div
                         class="text-sm leading-normal text-gitcoin-title truncate cursor-pointer"
@@ -45,7 +45,7 @@
                 <div class="w-full">
                     <h2 class="text-xl font-semibold break-words">Description</h2>
                     <div class="text-sm leading-normal break-words line-clamp-3">
-                        {{ grant.description }}
+                        {{ grant.description || 'No information provided by Gitcoin.' }}
                     </div>
                 </div>
                 <div>
@@ -112,7 +112,6 @@ import GitcoinItem from '@/components/GitcoinItem.vue';
 import config from '@/config';
 import RNSUtils from '@/common/rns';
 import RSS3 from '@/common/rss3';
-import axios from 'axios';
 import Vue3Autocounter from 'vue3-autocounter';
 
 interface Profile {
@@ -159,6 +158,7 @@ export default class SingleGitcoin extends Vue {
         address: '',
         bio: '',
     };
+    private defaultAvatar = config.defaultAvatar;
 
     public grant?: GrantInfo = {
         active: true,
