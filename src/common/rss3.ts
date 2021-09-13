@@ -1,7 +1,7 @@
 import WalletConnectProvider from '@walletconnect/web3-provider';
 import Web3 from 'web3';
 import RSS3 from 'rss3-next';
-import { RSS3Index } from 'rss3-next/types/rss3';
+import { RSS3Asset, RSS3Index } from 'rss3-next/types/rss3';
 import { RSS3Account, RSS3AccountInput } from 'rss3-next/types/rss3';
 import axios from 'axios';
 import { NFTInfo } from './types';
@@ -22,6 +22,12 @@ export interface IAssetProfile {
             nft: NFTInfo[];
         }[];
     };
+}
+
+export interface Theme {
+    name: string;
+    class: string;
+    nftIdPrefix: string;
 }
 
 async function walletConnect() {
@@ -190,5 +196,17 @@ export default {
             signature: signature,
         };
         // await rss3.files.sync();
+    },
+    getAvailableThemes(assets: RSS3Asset[]) {
+        const availableThemes: Theme[] = [];
+        for (const theme of config.theme) {
+            for (const asset of assets) {
+                if (asset.type === 'NFT' && asset.id.startsWith(theme.nftIdPrefix)) {
+                    availableThemes.push(theme);
+                    break;
+                }
+            }
+        }
+        return availableThemes;
     },
 };
