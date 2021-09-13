@@ -150,21 +150,28 @@
                 </Button>
             </template>
             <template #content>
-                <template v-if="gitcoins.length !== 0">
-                    <GitcoinItem
-                        v-for="item in gitcoins"
-                        :key="item.platform + item.identity + item.id"
-                        class="inline-flex m-0.5 cursor-pointer"
-                        :size="64"
-                        :imageUrl="item.info.image_preview_url"
-                        @click="toSingleGitcoin(item.platform, item.identity, item.id)"
-                    />
-                </template>
-                <template v-else>
-                    <div class="text-gitcoin-title m-auto text-center mt-4">
-                        {{ isLoadingAssets ? 'Loading...' : "Haven't found anything yet..." }}
-                    </div>
-                </template>
+                <GitcoinItem
+                    v-if="gitcoins.length !== 0"
+                    v-for="item in gitcoins"
+                    :key="item.platform + item.identity + item.id"
+                    class="inline-flex m-0.5 cursor-pointer"
+                    :size="64"
+                    :imageUrl="item.info.image_preview_url"
+                    @click="toSingleGitcoin(item.platform, item.identity, item.id)"
+                />
+                <div v-else-if="isLoadingAssets" class="text-gitcoin-title m-auto text-center mt-4">Loading...</div>
+                <div v-else-if="!isOwner" class="text-gitcoin-title m-auto text-center mt-4">
+                    Haven't found anything yet...
+                </div>
+                <div v-else class="flex justify-center">
+                    <Button
+                        size="lg"
+                        class="text-lg bg-gitcoin-button text-white shadow-gitcoin cursor-pointer m-auto mt-4"
+                        @click="toMakeDonation"
+                    >
+                        Make your first donation!
+                    </Button>
+                </div>
             </template>
         </Card>
 
@@ -689,6 +696,10 @@ export default class Home extends Vue {
                 url: `https://pass3.me/${this.rns}`, // Todo: Change to one's own RNS after SSR done
             });
         }
+    }
+
+    toMakeDonation() {
+        window.open('https://gitcoin.co/');
     }
 }
 </script>
