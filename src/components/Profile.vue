@@ -17,7 +17,7 @@
                 <div class="stats-type">Followings</div>
             </div>
         </div>
-        <span class="font-bold text-2xl">{{ username }}</span>
+        <span class="font-bold text-2xl px-4">{{ username }}</span>
         <LinkButton v-if="rns">{{ rns + '.pass3.me' }}</LinkButton>
         <LinkButton v-else>{{ filter(address) }}</LinkButton>
         <LinkButton v-if="website">{{ website }}</LinkButton>

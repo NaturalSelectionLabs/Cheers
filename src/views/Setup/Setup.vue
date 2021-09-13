@@ -43,7 +43,7 @@
             class="mb-4 w-full"
             :is-having-content="nfts.length !== 0"
             :is-single-line="nfts.length !== 0"
-            :tips="nfts.length === 0 ? 'You don’t have any NFTs yet : {' : ''"
+            :tips="nfts.length === 0 ? 'Haven\'t found anything yet...' : ''"
         >
             <template #title-icon><NFTIcon /></template>
             <template #header-button>
@@ -75,7 +75,7 @@
             class="mb-4 w-full"
             :is-having-content="gitcoins.length !== 0"
             :is-single-line="gitcoins.length !== 0"
-            :tips="gitcoins.length === 0 ? 'You don’t have any donations yet :(' : ''"
+            :tips="gitcoins.length === 0 ? 'Haven\'t found anything yet...' : ''"
         >
             <template #title-icon><GitcoinIcon /></template>
             <template #header-button>
