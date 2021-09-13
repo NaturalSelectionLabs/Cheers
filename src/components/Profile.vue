@@ -1,19 +1,6 @@
 <template>
     <div class="profile-container flex flex-col justify-start items-start gap-y-2">
-        <div
-            class="
-                flex flex-row
-                font-medium
-                text-lg
-                justify-start
-                items-end
-                text-primary
-                gap-x-2
-                md:gap-x-8
-                leading-5
-                px-4
-            "
-        >
+        <div class="w-full pr-8 flex flex-row font-medium text-lg justify-between items-end text-primary leading-5">
             <div class="w-24 h-24">
                 <ImgHolder class="w-24 h-24" :is-rounded="true" :is-border="false" :src="avatar" />
             </div>
@@ -30,18 +17,21 @@
                 <div class="stats-type">Followings</div>
             </div>
         </div>
-        <span class="font-bold text-2xl px-4">{{ username }}</span>
-        <span class="font-medium text-lg rounded-sm px-4 bg-content-bg text-primary" v-if="rns" @click="emitShare">
+        <span class="font-bold text-2xl">{{ username }}</span>
+        <!-- <span class="font-medium text-lg rounded-sm bg-content-bg text-primary" v-if="rns" @click="emitShare">
             {{ rns + '.pass3.me' }}
         </span>
-        <span class="font-medium text-lg rounded-sm px-4 bg-content-bg text-primary" v-else>
+        <span class="font-medium text-lg rounded-sm bg-content-bg text-primary" v-else>
             {{ filter(address) }}
         </span>
-        <span class="font-medium text-lg rounded-sm px-4 bg-content-bg text-primary cursor-pointer" v-if="website">
+        <span class="font-medium text-lg rounded-sm bg-content-bg text-primary cursor-pointer" v-if="website">
             <i class="bx bx-link mr-1" />
             {{ website }}
-        </span>
-        <div class="bio w-full font-medium text-lg px-4 whitespace-pre-line">
+        </span> -->
+        <LinkButton v-if="rns">{{ rns + '.pass3.me' }}</LinkButton>
+        <LinkButton v-else>{{ filter(address) }}</LinkButton>
+        <LinkButton v-if="website">{{ website }}</LinkButton>
+        <div class="bio w-full font-medium text-lg whitespace-pre-line">
             {{ bio }}
         </div>
     </div>
@@ -50,10 +40,11 @@
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
 import ImgHolder from '@/components/ImgHolder.vue';
+import LinkButton from '@/components/LinkButton.vue';
 import Vue3Autocounter from 'vue3-autocounter';
 
 @Options({
-    components: { ImgHolder, Vue3Autocounter },
+    components: { ImgHolder, Vue3Autocounter, LinkButton },
     props: {
         avatar: String,
         username: String,
@@ -101,7 +92,7 @@ export default class Profile extends Vue {
     .stats-container {
         @apply cursor-pointer mb-2;
         .stats-number {
-            @apply text-lg font-medium;
+            @apply text-xl font-semibold;
         }
 
         .stats-type {
