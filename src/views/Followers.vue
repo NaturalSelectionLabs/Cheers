@@ -14,9 +14,9 @@
                     class="w-10 h-10 inline-flex my-auto cursor-pointer"
                     :is-rounded="true"
                     :is-border="false"
-                    :src="this.rss3Profile.avatar"
-                    :alt="this.rss3Profile.username"
-                    @click="toPublicPage(this.rns || this.ethAddress)"
+                    :src="rss3Profile.avatar"
+                    :alt="rss3Profile.username"
+                    @click="toPublicPage(rns || ethAddress)"
                 />
             </div>
             <div class="follow-list flex flex-col gap-y-4">
@@ -75,7 +75,7 @@ export default class Followers extends Vue {
             this.ethAddress = (await RNSUtils.name2Addr(`${address}.pass3.me`)).toString();
         } else {
             this.ethAddress = address;
-            this.rns = (await RNSUtils.addr2Name(address)).toString();
+            this.rns = await RNSUtils.addr2Name(address);
         }
         const rss3 = await RSS3.visitor();
         const profile = await rss3.profile.get(this.ethAddress);
@@ -87,19 +87,23 @@ export default class Followers extends Vue {
 
         if (rss3 && followersList) {
             for (const item of followersList) {
-                const profile = (await rss3.profile.get(item)) || {};
-                this.followerList.push({
-                    avatar: profile.avatar?.[0] || config.defaultAvatar,
-                    username: profile.name || '',
-                    bio: profile.bio || '',
-                    address: item,
-                    displayAddress: this.filter(item),
-                    rns: '',
-                });
+                try {
+                    const profile = (await rss3.profile.get(item)) || {};
+                    this.followerList.push({
+                        avatar: profile.avatar?.[0] || config.defaultAvatar,
+                        username: profile.name || '',
+                        bio: profile.bio || '',
+                        address: item,
+                        displayAddress: this.filter(item),
+                        rns: '',
+                    });
+                } catch (e) {
+                    console.log(item, e);
+                }
             }
             setTimeout(async () => {
                 for (const item of this.followerList) {
-                    item.rns = (await RNSUtils.addr2Name(item.address)).toString().replace('.pass3.me', '');
+                    item.rns = (await RNSUtils.addr2Name(item.address)).replace('.pass3.me', '');
                 }
             });
         }

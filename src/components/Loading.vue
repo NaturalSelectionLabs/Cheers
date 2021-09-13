@@ -37,7 +37,7 @@ export default class Loading extends Vue {
 @layer components {
     .lottie-container {
         > svg {
-            @apply shadow-secondary;
+            @apply shadow-secondary-btn;
         }
     }
 }

@@ -1,7 +1,9 @@
 import { createRouter, createWebHistory } from 'vue-router';
 
 import Index from '@/views/Index.vue';
-// import Test from '@/views/Test.vue';
+/* IFTRUE_isDevelop */
+import Test from '@/views/Test.vue';
+/* FITRUE_isDevelop */
 import Home from '@/views/Home.vue';
 import Followings from '@/views/Followings.vue';
 import Followers from '@/views/Followers.vue';
@@ -15,16 +17,21 @@ import RNS from '@/views/Setup/RNS.vue';
 import EditProfile from '@/views/EditProfile.vue';
 import RNSPending from '@/views/Setup/RNSPending.vue';
 import GoToPC from '@/views/Setup/GoToPC.vue';
+import Gitcoins from '@/views/Gitcoins.vue';
+import SetupGitcoins from '@/views/Setup/SetupGitcoins.vue';
+import SingleGitcoin from '@/views/SingleGitcoin.vue';
 
 const routes = [
     {
         path: '/',
         component: Index,
     },
-    // {
-    //     path: '/test',
-    //     component: Test,
-    // },
+    /* IFTRUE_isDevelop */
+    {
+        path: '/test',
+        component: Test,
+    },
+    /* FITRUE_isDevelop */
     {
         path: '/:address',
         component: Home,
@@ -54,9 +61,17 @@ const routes = [
         component: NFTs,
     },
     {
-        path: '/:address/singlenft/:chain/:aid/:id',
+        path: '/:address/singlenft/:platform/:identity/:id',
         name: 'SingleNFT',
         component: SingleNFT,
+    },
+    {
+        path: '/:address/gitcoins',
+        component: Gitcoins,
+    },
+    {
+        path: '/:address/singlegitcoin/:platform/:identity/:id',
+        component: SingleGitcoin,
     },
     {
         path: '/setup',
@@ -69,6 +84,11 @@ const routes = [
     {
         path: '/setup/nfts',
         component: SetupNFTs,
+    },
+
+    {
+        path: '/setup/gitcoins',
+        component: SetupGitcoins,
     },
     {
         path: '/rns',

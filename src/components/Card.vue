@@ -2,6 +2,7 @@
     <div class="card" :class="colorBackground">
         <div class="card-header">
             <div class="card-title-wrapper">
+                <slot name="title-icon" />
                 <span class="card-title" :class="colorTitle">
                     {{ $props.title }}
                 </span>
@@ -63,6 +64,7 @@ export default class Card extends Vue {}
         .card-header {
             @apply w-full flex justify-between items-center;
             .card-title-wrapper {
+                @apply flex justify-start items-center gap-2;
                 .card-title {
                     @apply mr-1 text-xl font-semibold;
                 }

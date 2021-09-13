@@ -123,25 +123,19 @@ module.exports = {
                 pending: {
                     bg: '#DDECFF',
                 },
+                top: {
+                    title: '#FFDB4C',
+                    bg: '#FFDB4C1A',
+                },
+                earliest: {
+                    title: '#F579A6',
+                    bg: '#F579A61A',
+                },
+                share: {
+                    bg: '#FFF8F8',
+                },
             },
             boxShadow: {
-                primary: '0px 9px 35px -7px rgba(0, 114, 255, 0.94)', //primary blue button shadow
-                secondary: '0px 9px 35px -7px rgba(55, 155, 255, 0.72)', //white button shadow with primary blue text
-                'primary-card': '0px 9px 18px -9px rgba(55, 155, 255, 0.25);', //follower card shadow
-                metamask: '0px 8px 12px 5px rgba(246, 133, 27, 0.18)', //cream-colored button shadow
-                account: '0px 4px 9px 1px rgba(64, 210, 47, 0.68)', //solid green button shadow for accounts
-                'account-sm': '0px 4px 16px -6px rgba(19, 189, 0, 0.78)', // show/hide white button shadow for accounts
-                'account-item': '-4px 4px 5px rgba(17, 170, 0, 0.12)',
-                nft: '0px 9px 35px -7px rgba(117, 83, 255, 0.94)', //solid purple button shadow for nfts
-                'nft-sm': '0px 4px 16px -6px rgba(117, 83, 255, 0.78)', // show/hide white button shadow for nfts
-                'nft-item': '-2px 4px 5px rgba(45, 0, 225, 0.12)',
-                gitcoin: '0px 9px 35px -7px rgba(71, 228, 191, 0.97)',
-                'gitcoin-sm': '0px 3px 8px 1px rgba(17, 188, 146, 0.2)',
-                'gitcoin-item': '0px 3px 8px 1px rgba(17, 188, 146, 0.2)',
-                content: '0px 9px 35px -7px rgba(55, 155, 255, 0.94)', //solid blue button shadow for contents
-                'content-sm': '0px 2px 13px -5px rgba(23, 139, 255, 0.76)', //content white small button shadow
-                'content-item': '-2px 2px 4px rgba(36, 146, 255, 0.13)', //content item card shadow
-
                 'primary-btn': 'var(--shadow-primary-btn)',
                 'secondary-btn': 'var(--shadow-secondary-btn)',
                 'follow-card': 'var(--shadow-follow-card)',
@@ -258,5 +252,5 @@ module.exports = {
             translate: ['active'],
         },
     },
-    plugins: [],
+    plugins: [require('@tailwindcss/aspect-ratio'), require('@tailwindcss/line-clamp')],
 };

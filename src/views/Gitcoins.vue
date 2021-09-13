@@ -1,15 +1,11 @@
 <template>
-    <div class="h-screen bg-nft-bg overflow-y-auto">
+    <div class="h-screen bg-gitcoin-bg overflow-y-auto">
         <div class="main px-4 py-8 max-w-md m-auto">
             <div class="header flex justify-between items-center pb-4">
-                <Button
-                    size="sm"
-                    class="w-10 h-10 bg-secondary-btn text-secondary-btn-text shadow-secondary-btn"
-                    @click="back"
-                >
+                <Button size="sm" class="w-10 h-10 bg-white text-primary shadow-secondary" @click="back">
                     <i class="bx bx-chevron-left bx-sm"></i>
                 </Button>
-                <div class="section-title text-2xl text-nft-title font-bold text-center">NFTs</div>
+                <div class="section-title text-2xl text-gitcoin-title font-bold text-center">Donations</div>
                 <ImgHolder
                     class="w-10 h-10 inline-flex my-auto cursor-pointer"
                     :is-rounded="true"
@@ -19,30 +15,29 @@
                     @click="toPublicPage(rns || ethAddress)"
                 />
             </div>
-            <div class="nft-list flex flex-wrap justify-between items-center gap-y-4" :class="{ 'pb-16': isOwner }">
-                <div class="relative" v-for="(item, index) in nfts" :key="index">
-                    <NFTItem
-                        class="cursor-pointer"
-                        :size="NFTWidth > 200 ? 200 : NFTWidth"
-                        :imageUrl="item.info.animation_url || item.info.image_preview_url"
-                        :poster-url="item.info.image_preview_url"
-                        @click="toSingleNFTPage(item.platform, item.identity, item.id)"
-                    />
-                    <NFTBadges
-                        class="absolute top-2.5 right-2.5"
-                        :chain="item.platform"
-                        location="overlay"
-                        :collectionImg="item.info.collection_icon"
-                    />
-                </div>
+            <div
+                class="gitcoin-gitcoins flex flex-col gap-y-4"
+                :class="{ 'pb-16': isOwner }"
+                v-show="gitcoins.length !== 0"
+            >
+                <GitcoinTitle :grants="grants" :contributions="contribs"></GitcoinTitle>
+                <GitcoinCard
+                    v-for="(item, index) in gitcoins"
+                    :key="index"
+                    :imageUrl="item.info.image_preview_url || defaultAvatar"
+                    :name="item.info.title || 'Inactive Project'"
+                    :contrib="item.info.total_contribs"
+                    :amount="item.info.token_contribs"
+                    @click="toSingleGitcoin(item.platform, item.identity, item.id)"
+                ></GitcoinCard>
             </div>
-            <div class="px-4 py-4 flex gap-5 fixed bottom-0 left-0 right-0 max-w-md m-auto w-full z-50" v-if="isOwner">
+            <div class="px-4 py-4 flex gap-5 fixed bottom-2 left-0 right-0 max-w-md m-auto w-full" v-if="isOwner">
                 <Button
                     size="lg"
-                    class="m-auto text-lg bg-nft-btn-m text-nft-btn-m-text shadow-nft-btn-m"
-                    @click="toSetupNfts"
+                    class="m-auto text-lg bg-gitcoin-button text-white shadow-gitcoin"
+                    @click="toSetupGitcoins"
                 >
-                    Manage NFTs
+                    Manage Contribs
                 </Button>
             </div>
         </div>
@@ -53,13 +48,13 @@
 import { Options, Vue } from 'vue-class-component';
 import Button from '@/components/Button.vue';
 import ImgHolder from '@/components/ImgHolder.vue';
-import NFTItem from '@/components/NFT/NFTItem.vue';
-import NFTBadges from '@/components/NFT/NFTBadges.vue';
-import RSS3 from '@/common/rss3';
-import RNSUtils from '@/common/rns';
+import GitcoinTitle from '@/components/GitcoinTitle.vue';
+import GitcoinCard from '@/components/GitcoinCard.vue';
 import config from '@/config';
-import { RSS3Asset } from 'rss3-next/types/rss3';
+import RNSUtils from '@/common/rns';
+import RSS3 from '@/common/rss3';
 import { GeneralAsset, GeneralAssetWithTags } from '@/common/types';
+import { RSS3Asset } from 'rss3-next/types/rss3';
 
 interface Profile {
     avatar: string;
@@ -69,21 +64,22 @@ interface Profile {
 }
 
 @Options({
-    components: { ImgHolder, Button, NFTItem, NFTBadges },
+    components: { ImgHolder, Button, GitcoinTitle, GitcoinCard },
 })
-export default class NFTs extends Vue {
+export default class Gitcoins extends Vue {
     rns: string = '';
     ethAddress: string = '';
-    public NFTWidth: number = (window.innerWidth - 52) / 2;
+    public grants: number = 0;
+    public contribs: number = 0;
+    public gitcoins: Array<Object> = [];
     public isOwner: boolean = false;
-    nfts: GeneralAssetWithTags[] = [];
     public rss3Profile: Profile = {
         avatar: config.defaultAvatar,
         username: '',
         address: '',
         bio: '',
     };
-    $gtag: any;
+    private defaultAvatar = config.defaultAvatar;
 
     async mounted() {
         const address = <string>this.$route.params.address;
@@ -92,25 +88,23 @@ export default class NFTs extends Vue {
             this.ethAddress = (await RNSUtils.name2Addr(`${address}.pass3.me`)).toString();
         } else {
             this.ethAddress = address;
-            this.rns = (await RNSUtils.addr2Name(address)).replace('.pass3.me', '');
+            this.rns = (await RNSUtils.addr2Name(address)).toString();
         }
         const rss3 = await RSS3.visitor();
         const owner: string = <string>rss3.account.address;
-        // const owner: string = 'RSS3 Address';
 
         if (owner === this.ethAddress) {
             this.isOwner = true;
         }
 
         const profile = await rss3.profile.get(this.ethAddress);
-
-        this.rss3Profile.avatar = profile.avatar?.[0] || config.defaultAvatar;
-        this.rss3Profile.username = profile.name?.[0] || '';
+        this.rss3Profile.avatar = profile?.avatar?.[0] || config.defaultAvatar;
+        this.rss3Profile.username = profile?.name?.[0] || '';
+        this.rss3Profile.address = this.ethAddress;
 
         const data = await RSS3.getAssetProfile(this.ethAddress);
-
         if (data) {
-            await this.loadNFTs(await rss3.assets.get(this.ethAddress), <GeneralAsset[]>data.assets);
+            await this.loadGitcoin(await rss3.assets.get(this.ethAddress), data.assets);
         }
     }
 
@@ -124,7 +118,7 @@ export default class NFTs extends Vue {
         return order;
     }
 
-    async loadNFTs(assetsInRSS3File: RSS3Asset[], assetsGrabbed: GeneralAsset[]) {
+    async loadGitcoin(assetsInRSS3File: RSS3Asset[], assetsGrabbed: GeneralAsset[]) {
         const assetsMerge: GeneralAssetWithTags[] = await Promise.all(
             (assetsGrabbed || []).map(async (ag: GeneralAssetWithTags) => {
                 const origType = ag.type;
@@ -148,39 +142,38 @@ export default class NFTs extends Vue {
             }),
         );
 
-        const NFTList: GeneralAssetWithTags[] = [];
+        const GitcoinList: GeneralAssetWithTags[] = [];
 
         for (const am of assetsMerge) {
-            if (am.type === 'NFT') {
-                NFTList.push(am);
+            if (am.type === 'Gitcoin-Donation' && !am.tags?.includes('pass:hidden')) {
+                this.contribs += <number>am.info.total_contribs;
+                GitcoinList.push(am);
             }
         }
 
-        this.nfts = NFTList.filter((asset) => !asset.tags || asset.tags.indexOf('pass:hidden') === -1).sort(
-            (a, b) => this.getAssetOrder(a) - this.getAssetOrder(b),
-        );
-    }
+        this.gitcoins = GitcoinList.sort((a, b) => this.getAssetOrder(a) - this.getAssetOrder(b));
 
-    public toSingleNFTPage(platform: string, identity: string, id: string) {
-        this.$gtag.event('visitSingleNft', {
-            userid: this.rns || this.ethAddress,
-            platform: platform,
-            nftidentity: identity,
-            nftid: id,
-        });
-        this.$router.push(`/${this.rns || this.ethAddress}/singlenft/${platform}/${identity}/${id}`);
+        this.grants = this.gitcoins.length;
     }
 
     public toPublicPage(address: string) {
         this.$router.push(`/${address}`);
     }
 
-    public toSetupNfts() {
-        this.$router.push(`/setup/nfts`);
-    }
-
     public back() {
         window.history.back();
+    }
+
+    public toSetupGitcoins() {
+        this.$router.push(`/setup/gitcoins`);
+    }
+
+    public toGitcoin() {
+        window.open(`https://gitcoin.co/`);
+    }
+
+    public toSingleGitcoin(platform: string, identity: string, id: string) {
+        this.$router.push(`/${this.rns}/singlegitcoin/${platform}/${identity}/${id}`);
     }
 }
 </script>

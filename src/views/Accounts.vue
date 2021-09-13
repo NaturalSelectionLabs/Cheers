@@ -20,7 +20,7 @@
                 />
             </div>
             <div class="account-list">
-                <div class="flex flex-col gap-y-4">
+                <div class="flex flex-col gap-y-4" :class="{ 'pb-16': isOwner }">
                     <div
                         class="account-wrapper flex flex-row justify-between items-center"
                         v-for="(item, index) in accounts"
@@ -45,7 +45,7 @@
                     </div>
                 </div>
             </div>
-            <div class="px-4 py-4 flex gap-5 fixed bottom-0 left-0 right-0 max-w-md m-auto w-full" v-if="isOwner">
+            <div class="px-4 py-4 flex gap-5 fixed bottom-2 left-0 right-0 max-w-md m-auto w-full" v-if="isOwner">
                 <Button
                     size="lg"
                     class="m-auto text-lg bg-account-btn-m text-account-btn-m-text shadow-account-btn-m"
@@ -97,7 +97,7 @@ export default class Accounts extends Vue {
             this.ethAddress = (await RNSUtils.name2Addr(`${address}.pass3.me`)).toString();
         } else {
             this.ethAddress = address;
-            this.rns = (await RNSUtils.addr2Name(address)).toString();
+            this.rns = await RNSUtils.addr2Name(address);
         }
         const rss3 = await RSS3.visitor();
         const owner: string = <string>rss3.account.address;

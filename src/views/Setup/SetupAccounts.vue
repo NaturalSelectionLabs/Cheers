@@ -408,7 +408,7 @@ export default class Setup extends Vue {
             this.isLoading = false;
             return;
         }
-        await RSS3.getAssetProfile((<IRSS3>this.rss3).account.address, true);
+        // await RSS3.getAssetProfile((<IRSS3>this.rss3).account.address, true);
         this.isLoading = false;
         window.history.back(); // Back
     }

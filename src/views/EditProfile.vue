@@ -71,7 +71,6 @@ import LoadingContainer from '@/components/LoadingContainer.vue';
 import { RSS3Account, RSS3Asset, RSS3Profile } from 'rss3-next/types/rss3';
 import RSS3, { IRSS3 } from '@/common/rss3';
 import config from '@/config';
-import { DetailedNFT, RSS3AssetShow } from '@/common/types';
 
 @Options({
     components: {
@@ -96,8 +95,6 @@ export default class EditProfile extends Vue {
         name: '',
         bio: '',
     };
-    accounts: RSS3Account[] = [];
-    assets: RSS3AssetShow[] = [];
     rss3: IRSS3 | null = null;
     isLoading: Boolean = false;
     maxValueLength: Number = 280;
@@ -120,100 +117,6 @@ export default class EditProfile extends Vue {
             this.profile.name = profile?.name || '';
             this.profile.bio = profile?.bio || '';
         }
-
-        await this.loadAccounts();
-        await this.loadAssets();
-    }
-
-    getTaggedOrder(taggedElement: RSS3Account | RSS3Asset): number {
-        if (!taggedElement.tags) {
-            return -1;
-        }
-        const orderPattern = /^pass:order:(-?\d+)$/i;
-        for (const tag of taggedElement.tags) {
-            if (orderPattern.test(tag)) {
-                return parseInt(orderPattern.exec(tag)?.[1] || '-1');
-            }
-        }
-        return -1;
-    }
-
-    async loadAccounts() {
-        // Add original account
-        this.accounts.push({
-            platform: 'Ethereum',
-            identity: (<IRSS3>this.rss3).account.address,
-            signature: '',
-            tags: ['pass:order:-1'],
-        });
-        // Get accounts
-        const accounts = await (<IRSS3>this.rss3).accounts.get((<IRSS3>this.rss3).account.address);
-        if (accounts) {
-            accounts.forEach((account: RSS3Account) => {
-                if (!account.tags?.includes('hidden')) {
-                    this.accounts.push(account);
-                }
-            });
-            this.accounts.sort((a, b) => {
-                return this.getTaggedOrder(a) - this.getTaggedOrder(b);
-            });
-        }
-    }
-
-    async loadAssets() {
-        const data = await RSS3.getAssetProfile((<IRSS3>this.rss3).account.address);
-        if (!data) {
-            return;
-        }
-        const queriedAssets: RSS3AssetShow[] = []; // Real-time NFTs queried from asset
-        for (const key in data.assets) {
-            // key: ethereum / bsc / ...
-            data.assets[key].forEach((account: any) => {
-                account.nft?.forEach((nft: DetailedNFT) => {
-                    const aNFT: RSS3AssetShow = {
-                        tags: [],
-                        platform: nft.chain,
-                        identity: nft.asset_contract.address,
-                        id: nft.token_id,
-                        image_url: nft.image_url,
-                        order: 0,
-                    };
-                    queriedAssets.push(aNFT);
-                });
-            });
-        }
-
-        const filedAssets: RSS3Asset[] = data.rss3File.assets || []; // NFTs cached in RSS3 file `asset`
-
-        queriedAssets.forEach((nft: RSS3AssetShow) => {
-            const i = filedAssets.findIndex(
-                (fn) => nft.platform === fn.platform && nft.identity === fn.identity && nft.id === fn.id,
-            );
-            if (i !== -1) {
-                if (!nft.tags) {
-                    nft.tags = [];
-                }
-                nft.tags.push(...(filedAssets[i].tags || []));
-                nft.tags.forEach((tag: string) => {
-                    if (tag.startsWith('pass:order:')) {
-                        nft.order = parseInt(tag.substr(11));
-                    }
-                });
-                if (!nft.tags.includes('hidden')) {
-                    // Show
-                    this.assets.push(nft);
-                }
-                filedAssets.splice(i, 1); // Remains are gone NFTs
-            } else {
-                // Newly added
-                nft.order = -1;
-                this.assets.push(nft);
-            }
-        });
-
-        this.assets.sort((a, b) => {
-            return a.order - b.order;
-        });
     }
 
     loadEdited() {

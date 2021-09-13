@@ -73,7 +73,7 @@ export default class Index extends Vue {
         this.$gtag.config(address);
 
         // Check if setup RNS
-        if ((await RNSUtils.addr2Name(address)).toString() === '') {
+        if ((await RNSUtils.addr2Name(address)) === '') {
             // Setup RNS
             // this.$gtag.event('rns', { userid: address });
             await (<IRSS3>this.rss3).files.sync();

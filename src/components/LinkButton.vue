@@ -6,7 +6,6 @@
 
 <script lang="ts">
 import { Vue, Options } from 'vue-class-component';
-
 @Options({
     props: {
         size: String,
