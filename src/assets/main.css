@@ -372,7 +372,7 @@
         --color-modal-border: white;
 
         --color-linkbutton-bg: black;
-        --color-linkbutton-border: white;
+        --color-linkbutton-border: var(--color-primary);
 
         --border-width-linkbutton: 1px;
 

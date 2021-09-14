@@ -143,38 +143,22 @@ module.exports = {
                 'primary-btn': 'var(--shadow-primary-btn)',
                 'secondary-btn': 'var(--shadow-secondary-btn)',
                 'follow-card': 'var(--shadow-follow-card)',
-                account: {
-                    btn: {
-                        s: 'var(--shadow-account-btn-m)',
-                        m: 'var(--shadow-account-btn-s)',
-                    },
-                    item: 'var(--shadow-account-item)',
-                    DEFAULT: 'var(--shadow-account-item)',
-                },
-                nft: {
-                    btn: {
-                        s: 'var(--shadow-nft-btn-m)',
-                        m: 'var(--shadow-nft-btn-s)',
-                    },
-                    item: 'var(--shadow-nft-item)',
-                    DEFAULT: 'var(--shadow-nft-item)',
-                },
-                gitcoin: {
-                    btn: {
-                        s: 'var(--shadow-gitcoin-btn-m)',
-                        m: 'var(--shadow-gitcoin-btn-s)',
-                    },
-                    item: 'var(--shadow-gitcoin-item)',
-                    DEFAULT: 'var(--shadow-gitcoin-item)',
-                },
-                content: {
-                    btn: {
-                        s: 'var(--shadow-content-btn-m)',
-                        m: 'var(--shadow-content-btn-s)',
-                    },
-                    item: 'var(--shadow-content-item)',
-                    DEFAULT: 'var(--shadow-content-item)',
-                },
+                account: 'var(--shadow-account-item)',
+                'account-item': 'var(--shadow-account-item)',
+                'account-btn-s': 'var(--shadow-account-btn-s)',
+                'account-btn-m': 'var(--shadow-account-btn-m)',
+                nft: 'var(--shadow-nft-item)',
+                'nft-item': 'var(--shadow-nft-item)',
+                'nft-btn-s': 'var(--shadow-nft-btn-s)',
+                'nft-btn-m': 'var(--shadow-nft-btn-m)',
+                gitcoin: 'var(--shadow-gitcoin-item)',
+                'gitcoin-item': 'var(--shadow-gitcoin-item)',
+                'gitcoin-btn-s': 'var(--shadow-gitcoin-btn-s)',
+                'gitcoin-btn-m': 'var(--shadow-gitcoin-btn-m)',
+                content: 'var(--shadow-content-item)',
+                'content-item': 'var(--shadow-content-item)',
+                'content-btn-s': 'var(--shadow-content-btn-s)',
+                'content-btn-m': 'var(--shadow-content-btn-m)',
             },
             opacity: {
                 20: '0.2', //input label
