@@ -57,9 +57,9 @@
             </template>
             <template #content>
                 <NFTItem
+                    class="inline-flex mx-0.5"
                     v-for="asset in nfts"
                     :key="asset.platform + asset.identity + asset.id"
-                    class="shadow-nft-sm inline-flex m-0.5"
                     :size="70"
                     :image-url="asset.info.animation_url || asset.info.image_preview_url"
                     :poster-url="asset.info.image_preview_url"
@@ -87,12 +87,12 @@
                 </Button>
             </template>
             <template #content>
-                <NFTItem
-                    v-for="asset in gitcoins"
-                    :key="asset.platform + asset.identity + asset.id"
-                    class="shadow-nft-sm inline-flex m-0.5"
+                <GitcoinItem
+                    class="inline-flex mx-0.5"
+                    v-for="item in gitcoins"
+                    :key="item.platform + item.identity + item.id"
                     :size="70"
-                    :image-url="asset.info.image_preview_url"
+                    :imageUrl="item.info.image_preview_url"
                 />
             </template>
         </Card>
@@ -187,9 +187,11 @@ import ContentIcon from '@/components/Icons/ContentIcon.vue';
 import AccountIcon from '@/components/Icons/AccountIcon.vue';
 
 import { GeneralAsset, GeneralAssetWithTags } from '@/common/types';
+import GitcoinItem from '@/components/GitcoinItem.vue';
 
 @Options({
     components: {
+        GitcoinItem,
         Modal,
         Button,
         AvatarEditor,

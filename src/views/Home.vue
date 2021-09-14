@@ -81,6 +81,7 @@
                 class="w-auto border-nft-border"
                 :is-having-content="true"
                 :is-single-line="nfts.length !== 0"
+                :tips="isLoadingAssets ? 'Loading...' : nfts.length === 0 ? 'Haven\'t found anything yet...' : ''"
             >
                 <template #title-icon><NFTIcon /></template>
 
@@ -111,22 +112,15 @@
                     </Button>
                 </template>
                 <template #content>
-                    <template v-if="nfts.length !== 0">
-                        <NFTItem
-                            class="inline-block mr-1 cursor-pointer"
-                            v-for="item in nfts"
-                            :key="item.platform + item.identity + item.id"
-                            :image-url="item.info.animation_url || item.info.image_preview_url"
-                            :poster-url="item.info.image_preview_url"
-                            :size="70"
-                            @click="toSingleNFTPage(item.platform, item.identity, item.id)"
-                        />
-                    </template>
-                    <template v-else>
-                        <div class="text-nft-title m-auto text-center mt-4">
-                            {{ isLoadingAssets ? 'Loading...' : "Haven't found anything yet..." }}
-                        </div>
-                    </template>
+                    <NFTItem
+                        class="inline-flex mx-0.5 cursor-pointer"
+                        v-for="item in nfts"
+                        :key="item.platform + item.identity + item.id"
+                        :image-url="item.info.animation_url || item.info.image_preview_url"
+                        :poster-url="item.info.image_preview_url"
+                        :size="70"
+                        @click="toSingleNFTPage(item.platform, item.identity, item.id)"
+                    />
                 </template>
             </Card>
 
@@ -139,9 +133,9 @@
                 :is-having-content="true"
                 :is-single-line="gitcoins.length !== 0"
             >
-                <template #title-icon
-                    ><GitcoinIcon :iconColor="currentTheme === 'loot' ? 'white' : 'black'"
-                /></template>
+                <template #title-icon>
+                    <GitcoinIcon :iconColor="currentTheme === 'loot' ? 'white' : 'black'" />
+                </template>
 
                 <template #header-button>
                     <div v-if="isOwner" class="flex flex-row gap-2">
@@ -172,9 +166,9 @@
                 <template #content>
                     <GitcoinItem
                         v-if="gitcoins.length !== 0"
+                        class="inline-flex mx-0.5 cursor-pointer"
                         v-for="item in gitcoins"
                         :key="item.platform + item.identity + item.id"
-                        class="inline-flex m-0.5 cursor-pointer"
                         :size="70"
                         :imageUrl="item.info.image_preview_url"
                         @click="toSingleGitcoin(item.platform, item.identity, item.id)"
