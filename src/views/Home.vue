@@ -175,7 +175,7 @@
                         v-for="item in gitcoins"
                         :key="item.platform + item.identity + item.id"
                         class="inline-flex m-0.5 cursor-pointer"
-                        :size="64"
+                        :size="70"
                         :imageUrl="item.info.image_preview_url"
                         @click="toSingleGitcoin(item.platform, item.identity, item.id)"
                     />
