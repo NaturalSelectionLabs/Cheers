@@ -379,6 +379,8 @@ export default class Home extends Vue {
                 this.rns = (await RNSUtils.addr2Name(address)).replace('.pass3.me', '');
                 if (this.rns !== '') {
                     await this.$router.push(`/${this.rns}`);
+                } else if (this.ethAddress === owner) {
+                    this.isOwner = true;
                 }
             } else {
                 // RNS
