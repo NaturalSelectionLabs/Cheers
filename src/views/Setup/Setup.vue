@@ -19,7 +19,7 @@
             <template #header-button>
                 <Button
                     size="sm"
-                    class="w-10 h-10 bg-account-button text-white shadow-account"
+                    class="w-10 h-10 bg-account-btn-m text-account-btn-m-text shadow-account-btn-m"
                     @click="toManageAccounts"
                 >
                     <i class="bx bx-pencil bx-sm" />
@@ -43,14 +43,13 @@
             class="mb-4 w-full"
             :is-having-content="nfts.length !== 0"
             :is-single-line="nfts.length !== 0"
-            :tips="nfts.length === 0 ? 'Haven\'t found anything yet...' : ''"
+            :tips="isLoadingAssets ? 'Loading...' : nfts.length === 0 ? 'Haven\'t found anything yet...' : ''"
         >
             <template #title-icon><NFTIcon /></template>
             <template #header-button>
                 <Button
                     size="sm"
-                    class="w-10 h-10 bg-nft-button text-white shadow-nft"
-                    v-if="nfts.length !== 0"
+                    class="w-10 h-10 bg-nft-btn-m text-nft-btn-m-text shadow-nft-btn-m"
                     @click="toManageNFTs"
                 >
                     <i class="bx bx-pencil bx-sm" />
@@ -61,7 +60,7 @@
                     v-for="asset in nfts"
                     :key="asset.platform + asset.identity + asset.id"
                     class="shadow-nft-sm inline-flex m-0.5"
-                    :size="64"
+                    :size="70"
                     :image-url="asset.info.animation_url || asset.info.image_preview_url"
                     :poster-url="asset.info.image_preview_url"
                 />
@@ -75,14 +74,13 @@
             class="mb-4 w-full"
             :is-having-content="gitcoins.length !== 0"
             :is-single-line="gitcoins.length !== 0"
-            :tips="gitcoins.length === 0 ? 'Haven\'t found anything yet...' : ''"
+            :tips="isLoadingAssets ? 'Loading...' : gitcoins.length === 0 ? 'Haven\'t found anything yet...' : ''"
         >
             <template #title-icon><GitcoinIcon /></template>
             <template #header-button>
                 <Button
                     size="sm"
-                    class="w-10 h-10 bg-gitcoin-button text-white shadow-nft"
-                    v-if="gitcoins.length !== 0"
+                    class="w-10 h-10 bg-gitcoin-btn-m text-gitcoin-btn-m-text shadow-gitcoin-btn-m"
                     @click="toManageGitcoins"
                 >
                     <i class="bx bx-pencil bx-sm" />
@@ -93,7 +91,7 @@
                     v-for="asset in gitcoins"
                     :key="asset.platform + asset.identity + asset.id"
                     class="shadow-nft-sm inline-flex m-0.5"
-                    :size="64"
+                    :size="70"
                     :image-url="asset.info.image_preview_url"
                 />
             </template>
@@ -113,13 +111,13 @@
                         size="lg"
                         class="
                             text-lg
-                            font-extralight
-                            bg-content-button
+                            bg-content-btn-m
                             opacity-35
-                            text-white
-                            shadow-content
+                            text-content-btn-m-text
+                            shadow-content-btn-m
                             cursor-not-allowed
                             m-auto
+                            mt-4
                         "
                         disabled
                     >
@@ -131,7 +129,7 @@
         <div class="px-4 py-4 flex gap-5 fixed bottom-0 left-0 right-0 max-w-md m-auto w-full">
             <Button
                 size="lg"
-                class="flex-1 text-lg bg-seconadry-btn text-seconadry-btn-text shadow-seconadry-btn"
+                class="flex-1 text-lg bg-secondary-btn text-secondary-btn-text shadow-secondary-btn"
                 @click="back"
                 >Back</Button
             >
@@ -222,6 +220,7 @@ export default class Setup extends Vue {
     gitcoins: GeneralAssetWithTags[] = [];
     rss3: IRSS3 | null = null;
     isLoading: Boolean = false;
+    isLoadingAssets: Boolean = true;
     maxValueLength: Number = 280;
     notice: String = '';
     isShowingNotice: Boolean = false;
@@ -250,23 +249,20 @@ export default class Setup extends Vue {
                 document.title = profile.name;
             }
         }
+        // Push original account
+        this.accounts.push({
+            platform: 'Ethereum',
+            identity: (<IRSS3>this.rss3).account.address,
+            signature: '',
+            tags: ['pass:order:-1'],
+        });
+
+        await this.loadAccounts(await (<IRSS3>this.rss3).accounts.get());
 
         const data = await RSS3.getAssetProfile((<IRSS3>this.rss3).account.address);
-        if (!data) {
-            return;
-        }
-
         if (data) {
-            // Push original account
-            this.accounts.push({
-                platform: 'Ethereum',
-                identity: (<IRSS3>this.rss3).account.address,
-                signature: '',
-                tags: ['pass:order:-1'],
-            });
-
-            await this.loadAccounts(await (<IRSS3>this.rss3).accounts.get());
             await this.loadAssets(await (<IRSS3>this.rss3).assets.get(), <GeneralAsset[]>data.assets);
+            this.isLoadingAssets = false;
         }
     }
 
