@@ -1,0 +1,114 @@
+@layer base {
+    :root {
+        --color-primary: #0072ff;
+        --color-account: #40d22f;
+        --color-nft: #7553ff;
+        --color-gitcoin: #02e2ac;
+        --color-content: #178bff;
+
+        --color-body-bg: white;
+        --color-body-text: black;
+
+        --color-primary-btn: var(--color-primary);
+        --color-primary-btn-text: white;
+        --color-primary-btn-border: transparent;
+
+        --color-secondary-btn: white;
+        --color-secondary-btn-text: var(--color-primary);
+        --color-secondary-btn-border: transparent;
+
+        --color-account-btn-m: var(--color-account);
+        --color-account-btn-m-text: white;
+        --color-account-btn-m-border: transparent;
+        --color-account-btn-s: white;
+        --color-account-btn-s-text: var(--color-account);
+        --color-account-btn-s-border: transparent;
+        --color-account-title: #13bd00;
+        --color-account-bg: #f6fff5;
+        --color-account-border: transparent;
+
+        --color-nft-btn-m: var(--color-nft);
+        --color-nft-btn-m-text: white;
+        --color-nft-btn-m-border: transparent;
+        --color-nft-btn-s: white;
+        --color-nft-btn-s-text: var(--color-nft);
+        --color-nft-btn-s-border: transparent;
+        --color-nft-title: #2d00e0;
+        --color-nft-bg: #f7f5ff;
+        --color-nft-border: transparent;
+        --color-nft-tag-border: var(--color-nft-bg);
+        --color-nft-trait-bg: var(--color-nft-bg);
+        --color-nft-trait-type: var(--color-nft);
+        --color-nft-trait-border: transparent;
+
+        --color-gitcoin-btn-m: var(--color-gitcoin);
+        --color-gitcoin-btn-m-text: white;
+        --color-gitcoin-btn-m-border: transparent;
+        --color-gitcoin-btn-s: white;
+        --color-gitcoin-btn-s-text: var(--color-gitcoin);
+        --color-gitcoin-btn-s-border: transparent;
+        --color-gitcoin-title: #11bc92;
+        --color-gitcoin-bg: #f4fffb;
+        --color-gitcoin-border: transparent;
+
+        --color-content-btn-m: var(--color-content);
+        --color-content-btn-m-text: white;
+        --color-content-btn-m-border: transparent;
+        --color-content-btn-s: white;
+        --color-content-btn-s-text: var(--color-content);
+        --color-content-btn-s-border: transparent;
+        --color-content-title: #0070e0;
+        --color-content-bg: #f5faff;
+        --color-content-border: transparent;
+
+        --color-btn-disabled: #f7fafc;
+
+        --color-card-hide: #f7fafc;
+        --color-card-overlay: #e2e8f0;
+
+        --color-input-bg: #f4f7f8;
+        --color-input-border: transparent;
+
+        --color-item-bg: white;
+        --color-item-border: white;
+
+        --color-modal-bg: white;
+        --color-modal-border: transparent;
+
+        --color-linkbutton-bg: rgba(0, 114, 255, 0.1);
+        --color-linkbutton-border: none;
+
+        --border-width-linkbutton: 0px;
+
+        --border-width-card: 0px;
+        --border-width-button: 0px;
+        --border-width-input: 0px;
+        --border-width-modal: 0px;
+
+        --shadow-primary-btn: 0px 9px 20px -7px rgba(0, 114, 255, 0.94);
+        --shadow-secondary-btn: 0px 9px 20px -7px rgba(55, 155, 255, 0.72);
+        --shadow-follow-card: 0px 9px 18px -9px rgba(55, 155, 255, 0.25);
+
+        --shadow-account-btn-m: 0px 4px 9px 1px rgba(64, 210, 47, 0.68);
+        --shadow-account-btn-s: 0px 4px 16px -6px rgba(19, 189, 0, 0.78);
+        --shadow-account-item: -4px 4px 5px rgba(17, 170, 0, 0.12);
+
+        --shadow-nft-btn-m: 0px 9px 35px -7px rgba(117, 83, 255, 0.94);
+        --shadow-nft-btn-s: 0px 4px 16px -6px rgba(117, 83, 255, 0.78);
+        --shadow-nft-item: -2px 4px 5px rgba(45, 0, 225, 0.12);
+
+        --shadow-gitcoin-btn-m: 0px 9px 35px -7px rgba(71, 228, 191, 0.97);
+        --shadow-gitcoin-btn-s: 0px 3px 8px 1px rgba(17, 188, 146, 0.2);
+        --shadow-gitcoin-item: 0px 3px 8px 1px rgba(17, 188, 146, 0.2);
+
+        --shadow-content-btn-m: 0px 9px 35px -7px rgba(55, 155, 255, 0.94);
+        --shadow-content-btn-s: 0px 2px 13px -5px rgba(23, 139, 255, 0.76);
+        --shadow-content-item: -2px 2px 4px rgba(36, 146, 255, 0.13);
+
+        body,
+        pre,
+        * {
+            @apply font-sf-compact-rounded;
+        }
+    }
+}

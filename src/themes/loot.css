@@ -1,0 +1,120 @@
+@layer base {
+    .theme-loot {
+        --color-primary: #0072ff;
+        --color-account: #40d22f;
+        --color-nft: #7553ff;
+        --color-gitcoin: #02e2ac;
+        --color-content: #178bff;
+
+        --color-body-bg: black;
+        --color-body-text: white;
+
+        --color-primary-btn: transparent;
+        --color-primary-btn-text: white;
+        --color-primary-btn-border: transparent;
+
+        --color-secondary-btn: transparent;
+        --color-secondary-btn-text: white;
+        --color-secondary-btn-border: transparent;
+
+        --color-account-btn-m: transparent;
+        --color-account-btn-m-text: white;
+        --color-account-btn-m-border: transparent;
+        --color-account-btn-s: transparent;
+        --color-account-btn-s-text: white;
+        --color-account-btn-s-border: transparent;
+        --color-account-title: white;
+        --color-account-bg: black;
+        --color-account-border: white;
+
+        --color-nft-btn-m: transparent;
+        --color-nft-btn-m-text: white;
+        --color-nft-btn-m-border: transparent;
+        --color-nft-btn-s: transparent;
+        --color-nft-btn-s-text: white;
+        --color-nft-btn-s-border: transparent;
+        --color-nft-title: white;
+        --color-nft-bg: black;
+        --color-nft-border: white;
+        --color-nft-tag-border: white;
+        --color-nft-tag-bg: white;
+        --color-nft-trait-bg: black;
+        --color-nft-trait-type: white;
+        --color-nft-trait-border: white;
+
+        --color-gitcoin-btn-m: transparent;
+        --color-gitcoin-btn-m-text: white;
+        --color-gitcoin-btn-m-border: transparent;
+        --color-gitcoin-btn-s: transparent;
+        --color-gitcoin-btn-s-text: white;
+        --color-gitcoin-btn-s-border: transparent;
+        --color-gitcoin-title: white;
+        --color-gitcoin-bg: black;
+        --color-gitcoin-border: white;
+
+        --color-content-btn-m: transparent;
+        --color-content-btn-m-text: white;
+        --color-content-btn-m-border: transparent;
+        --color-content-btn-s: transparent;
+        --color-content-btn-s-text: white;
+        --color-content-btn-s-border: transparent;
+        --color-content-title: white;
+        --color-content-bg: black;
+        --color-content-border: white;
+
+        --color-btn-disabled: transparent;
+
+        --color-card-hide: black;
+        --color-card-overlay: black;
+
+        --color-input-bg: black;
+        --color-input-border: white;
+
+        --color-item-bg: white;
+        --color-item-border: white;
+
+        --color-modal-bg: black;
+        --color-modal-border: white;
+
+        --color-linkbutton-bg: black;
+        --color-linkbutton-border: var(--color-primary);
+
+        --border-width-linkbutton: 1px;
+
+        --border-width-card: 1px;
+        --border-width-button: 0px;
+        --border-width-input: 1px;
+        --border-width-modal: 1px;
+
+        --shadow-primary-btn: none;
+        --shadow-secondary-btn: none;
+        --shadow-follow-card: none;
+
+        --shadow-account-btn-m: none;
+        --shadow-account-btn-s: none;
+        --shadow-account-item: none;
+
+        --shadow-nft-btn-m: none;
+        --shadow-nft-btn-s: none;
+        --shadow-nft-item: none;
+
+        --shadow-gitcoin-btn-m: none;
+        --shadow-gitcoin-btn-s: none;
+        --shadow-gitcoin-item: none;
+
+        --shadow-content-btn-m: none;
+        --shadow-content-btn-s: none;
+        --shadow-content-item: none;
+
+        * {
+            @apply font-serif;
+        }
+
+        a,
+        button {
+            span {
+                text-decoration: underline;
+            }
+        }
+    }
+}
