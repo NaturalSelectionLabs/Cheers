@@ -32,10 +32,10 @@
             <template #content>
                 <draggable class="min-h-20" :list="show" group="gitcoins" data-type="displayed" item-key="displayed">
                     <template #item="{ element }">
-                        <NFTItem
-                            class="shadow-nft-sm inline-flex m-0.5"
-                            :size="64"
-                            :image-url="element.info.image_preview_url"
+                        <GitcoinItem
+                            class="inline-flex mx-0.5 cursor-pointer"
+                            :size="70"
+                            :imageUrl="element.info.image_preview_url"
                         />
                     </template>
                 </draggable>
@@ -82,10 +82,10 @@
             <template #content>
                 <draggable class="min-h-20" :list="hide" group="gitcoins" data-type="displayed" item-key="displayed">
                     <template #item="{ element }">
-                        <NFTItem
-                            class="shadow-nft-sm inline-flex m-0.5"
-                            :size="64"
-                            :image-url="element.info.image_preview_url"
+                        <GitcoinItem
+                            class="inline-flex mx-0.5 cursor-pointer"
+                            :size="70"
+                            :imageUrl="element.info.image_preview_url"
                         />
                     </template>
                 </draggable>
@@ -115,9 +115,11 @@ import { GeneralAsset, GeneralAssetWithTags } from '@/common/types';
 import LoadingContainer from '@/components/LoadingContainer.vue';
 import { RSS3Account, RSS3Asset } from 'rss3-next/types/rss3';
 import NFTItem from '@/components/NFT/NFTItem.vue';
+import GitcoinItem from '@/components/GitcoinItem.vue';
 
 @Options({
     components: {
+        GitcoinItem,
         NFTItem,
         LoadingContainer,
         Button,
