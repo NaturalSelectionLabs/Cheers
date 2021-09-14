@@ -599,18 +599,18 @@ export default class Home extends Vue {
     }
 
     public toAccountsPage() {
-        this.$gtag.event('visitAccountsPage', { userid: this.rns });
-        this.$router.push(`/${this.rns}/accounts`);
+        this.$gtag.event('visitAccountsPage', { userid: this.rns || this.ethAddress });
+        this.$router.push(`/${this.rns || this.ethAddress}/accounts`);
     }
 
     public toNFTsPage() {
-        this.$gtag.event('visitNftPage', { userid: this.rns });
-        this.$router.push(`/${this.rns}/nfts`);
+        this.$gtag.event('visitNftPage', { userid: this.rns || this.ethAddress });
+        this.$router.push(`/${this.rns || this.ethAddress}/nfts`);
     }
 
     public toGitcoinsPage() {
-        this.$gtag.event('visitGitcoinPage', { userid: this.rns });
-        this.$router.push(`/${this.rns}/gitcoins`);
+        this.$gtag.event('visitGitcoinPage', { userid: this.rns || this.ethAddress });
+        this.$router.push(`/${this.rns || this.ethAddress}/gitcoins`);
     }
 
     public toSetupPage() {
