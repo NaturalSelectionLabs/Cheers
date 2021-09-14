@@ -1,5 +1,5 @@
 <template>
-    <div class="px-4 py-9 max-w-md m-auto pb-20">
+    <div class="px-4 py-9 max-w-md m-auto pb-20 bg-body-bg text-body-text">
         <div class="text-center mb-4 relative">
             <Button
                 size="sm"
@@ -21,13 +21,13 @@
                 size="lg"
                 class="flex-1 text-lg bg-secondary-btn text-secondary-btn-text shadow-secondary-btn"
                 @click="back"
-                >Discard</Button
+                ><span>Discard</span></Button
             >
             <Button
                 size="lg"
                 class="flex-1 text-lg bg-primary-btn text-primary-btn-text shadow-primary-btn"
                 @click="save"
-                >Save</Button
+                ><span>Save</span></Button
             >
         </div>
 
@@ -49,7 +49,7 @@
                         class="w-72 bg-primary-btn text-primary-btn-text shadow-primary-btn"
                         @click="isShowingNotice = false"
                     >
-                        OK
+                        <span>OK</span>
                     </Button>
                 </div>
             </template>
@@ -100,7 +100,6 @@ export default class EditProfile extends Vue {
     maxValueLength: Number = 280;
     notice: String = '';
     isShowingNotice: Boolean = false;
-
     $gtag: any;
 
     async mounted() {

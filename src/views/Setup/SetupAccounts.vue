@@ -89,7 +89,7 @@
                     <AccountItem
                         v-for="chain in additionalAccounts"
                         :key="chain"
-                        class="inline-flex m-0.5 rounded-full"
+                        class="inline-flex m-0.5 rounded-full shadow-account"
                         :size="64"
                         :chain="chain"
                         @click="addAccount(chain)"

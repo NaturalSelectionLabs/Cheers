@@ -15,6 +15,7 @@ module.exports = {
                 button: 'var(--border-width-button)',
                 input: 'var(--border-width-input)',
                 modal: 'var(--border-width-modal)',
+                link: 'var(--border-width-linkbutton)',
             },
             colors: {
                 // primary: '#0072FF',
@@ -24,7 +25,8 @@ module.exports = {
                     btn: 'var(--color-primary-btn)',
                     'btn-text': 'var(--color-primary-btn-text)',
                     'btn-border': 'var(--color-primary-btn-border)',
-                    link: 'var(--color-primary-link-btn)',
+                    link: 'var(--color-linkbutton-bg)',
+                    'link-border': 'var(--color-linkbutton-border)',
                 },
                 secondary: {
                     btn: 'var(--color-secondary-btn)',
@@ -39,9 +41,9 @@ module.exports = {
                 },
                 account: {
                     border: 'var(--color-account-border)',
-                    button: '#40D22F',
-                    title: '#13BD00',
-                    bg: '#F6FFF5',
+                    // button: '#40D22F',
+                    title: 'var(--color-account-title)',
+                    bg: 'var(--color-account-bg)',
                     'btn-m': 'var(--color-account-btn-m)',
                     'btn-m-text': 'var(--color-account-btn-m-text)',
                     'btn-m-border': 'var(--color-account-btn-m-border)',
@@ -51,9 +53,9 @@ module.exports = {
                 },
                 nft: {
                     border: 'var(--color-nft-border)',
-                    button: '#7553FF',
-                    title: '#2D00E0',
-                    bg: '#F7F5FF',
+                    // button: '#7553FF',
+                    title: 'var(--color-nft-title)',
+                    bg: 'var(--color-nft-bg)',
                     'btn-m': 'var(--color-nft-btn-m)',
                     'btn-m-text': 'var(--color-nft-btn-m-text)',
                     'btn-m-border': 'var(--color-nft-btn-m-border)',
@@ -61,6 +63,7 @@ module.exports = {
                     'btn-s-text': 'var(--color-nft-btn-s-text)',
                     'btn-s-border': 'var(--color-nft-btn-s-border)',
                     'tag-border': 'var(--color-nft-tag-border)',
+                    'tag-bg': 'var(--color-nft-tag-bg)',
                     trait: {
                         bg: 'var( --color-nft-trait-bg)',
                         type: 'var(--color-nft-trait-type)',
@@ -69,9 +72,9 @@ module.exports = {
                 },
                 gitcoin: {
                     border: 'var(--color-gitcoin-border)',
-                    button: '#02E2AC',
-                    title: '#11BC92',
-                    bg: '#F4FFFB',
+                    // button: '#02E2AC',
+                    title: 'var(--color-gitcoin-title)',
+                    bg: 'var(--color-gitcoin-bg)',
                     'btn-m': 'var(--color-gitcoin-btn-m)',
                     'btn-m-text': 'var(--color-gitcoin-btn-m-text)',
                     'btn-m-border': 'var(--color-gitcoin-btn-m-border)',
@@ -81,9 +84,9 @@ module.exports = {
                 },
                 content: {
                     border: 'var(--color-content-border)',
-                    button: '#178BFF',
-                    title: '#0070E0',
-                    bg: '#F5FAFF',
+                    // button: '#178BFF',
+                    title: 'var(--color-content-title)',
+                    bg: 'var(--color-content-bg)',
                     'btn-m': 'var(--color-content-btn-m)',
                     'btn-m-text': 'var(--color-content-btn-m-text)',
                     'btn-m-border': 'var(--color-content-btn-m-border)',
@@ -136,6 +139,7 @@ module.exports = {
                 },
             },
             boxShadow: {
+                metamask: '0px 8px 12px 5px rgba(246, 133, 27, 0.18)', //cream-colored button shadow
                 'primary-btn': 'var(--shadow-primary-btn)',
                 'secondary-btn': 'var(--shadow-secondary-btn)',
                 'follow-card': 'var(--shadow-follow-card)',
@@ -145,6 +149,7 @@ module.exports = {
                         m: 'var(--shadow-account-btn-s)',
                     },
                     item: 'var(--shadow-account-item)',
+                    DEFAULT: 'var(--shadow-account-item)',
                 },
                 nft: {
                     btn: {
@@ -152,6 +157,7 @@ module.exports = {
                         m: 'var(--shadow-nft-btn-s)',
                     },
                     item: 'var(--shadow-nft-item)',
+                    DEFAULT: 'var(--shadow-nft-item)',
                 },
                 gitcoin: {
                     btn: {
@@ -159,6 +165,7 @@ module.exports = {
                         m: 'var(--shadow-gitcoin-btn-s)',
                     },
                     item: 'var(--shadow-gitcoin-item)',
+                    DEFAULT: 'var(--shadow-gitcoin-item)',
                 },
                 content: {
                     btn: {
@@ -166,12 +173,8 @@ module.exports = {
                         m: 'var(--shadow-content-btn-s)',
                     },
                     item: 'var(--shadow-content-item)',
+                    DEFAULT: 'var(--shadow-content-item)',
                 },
-            },
-            dropShadow: {
-                account: '-4px 4px 5px rgba(17, 170, 0, 0.12)', //account item shadow
-                nft: '-2px 4px 5px rgba(45, 0, 225, 0.12)', //nft item shadow & detail content card shadow
-                gitcoin: '-1px 2px 7px rgba(17, 188, 146, 0.21)', //gitcoin item
             },
             opacity: {
                 20: '0.2', //input label

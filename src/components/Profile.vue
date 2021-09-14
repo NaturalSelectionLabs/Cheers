@@ -1,6 +1,6 @@
 <template>
     <div class="profile-container flex flex-col justify-start items-start gap-y-2">
-        <div class="flex flex-row font-medium text-lg justify-start items-end gap-x-2 md:gap-x-8 leading-5 px-4">
+        <div class="w-full pr-8 flex flex-row font-medium text-lg justify-between items-end leading-5">
             <div class="w-24 h-24">
                 <ImgHolder class="w-24 h-24" :is-rounded="true" :is-border="false" :src="avatar" />
             </div>
@@ -17,10 +17,16 @@
                 <div class="stats-type">Followings</div>
             </div>
         </div>
-        <span class="font-bold text-2xl px-4">{{ username }}</span>
-        <LinkButton v-if="rns">{{ rns + '.pass3.me' }}</LinkButton>
-        <LinkButton v-else>{{ filter(address) }}</LinkButton>
-        <LinkButton v-if="website">{{ website }}</LinkButton>
+        <span class="font-bold text-2xl">{{ username }}</span>
+        <LinkButton v-if="rns"
+            ><span>{{ rns + '.pass3.me' }}</span></LinkButton
+        >
+        <LinkButton v-else
+            ><span>{{ filter(address) }}</span></LinkButton
+        >
+        <LinkButton v-if="website"
+            ><span>{{ website }}</span></LinkButton
+        >
         <div class="bio w-full font-medium text-lg whitespace-pre-line">
             {{ bio }}
         </div>

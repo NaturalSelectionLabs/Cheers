@@ -42,7 +42,7 @@
                     class="m-auto text-lg bg-nft-btn-m text-nft-btn-m-text shadow-nft-btn-m"
                     @click="toSetupNfts"
                 >
-                    Manage NFTs
+                    <span>Manage NFTs</span>
                 </Button>
             </div>
         </div>

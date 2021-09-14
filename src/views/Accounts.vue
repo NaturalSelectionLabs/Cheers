@@ -51,7 +51,7 @@
                     class="m-auto text-lg bg-account-btn-m text-account-btn-m-text shadow-account-btn-m"
                     @click="toSetupAccounts"
                 >
-                    Manage Accounts
+                    <span>Manage Accounts</span>
                 </Button>
             </div>
         </div>

@@ -1,5 +1,5 @@
 <template>
-    <div class="h-screen bg-body-bg overflow-y-auto">
+    <div class="h-screen bg-body-bg overflow-y-auto text-body-text">
         <div v-if="isRNSExist" class="main px-4 py-8 flex flex-col gap-y-2 max-w-md m-auto overflow-y-auto select-none">
             <Profile
                 :avatar="rss3Profile.avatar"
@@ -22,7 +22,7 @@
                 @click="action()"
             >
                 <span>{{ isFollowing ? 'Following' : 'Follow' }}</span>
-                <i class="bx bx-sm" v-bind:class="[isFollowing ? 'bx-check' : 'bx-plus']"></i>
+                <i class="bx bx-sm no-underline" v-bind:class="[isFollowing ? 'bx-check' : 'bx-plus']"></i>
             </Button>
             <Button
                 size="sm"
@@ -31,7 +31,7 @@
                 @click="toSetupPage"
             >
                 <span>Edit Profile</span>
-                <i class="bx bx-pencil bx-sm"></i>
+                <i class="bx bx-pencil no-underline"></i>
             </Button>
 
             <AccountCard>
@@ -139,7 +139,9 @@
                 :is-having-content="true"
                 :is-single-line="gitcoins.length !== 0"
             >
-                <template #title-icon><GitcoinIcon /></template>
+                <template #title-icon
+                    ><GitcoinIcon :iconColor="currentTheme === 'loot' ? 'white' : 'black'"
+                /></template>
 
                 <template #header-button>
                     <div v-if="isOwner" class="flex flex-row gap-2">
@@ -187,7 +189,7 @@
                             class="text-lg bg-gitcoin-btn-m text-white shadow-gitcoin cursor-pointer m-auto mt-4"
                             @click="toMakeDonation"
                         >
-                            Make your first donation!
+                            <span>Make your first donation!</span>
                         </Button>
                     </div>
                 </template>
@@ -378,6 +380,7 @@ export default class Home extends Vue {
     isRNSExist: boolean = true;
     isShowingShareCard: boolean = false;
     isLoadingAssets: boolean = true;
+    currentTheme: string = '';
 
     public rss3Profile: ProfileInfo = {
         avatar: config.defaultAvatar,
@@ -461,6 +464,7 @@ export default class Home extends Vue {
             // Setup theme
             const themes = RSS3.getAvailableThemes(await (<IRSS3>this.rss3).assets.get(this.ethAddress));
             if (themes[0]) {
+                this.currentTheme = themes[0].name;
                 document.body.classList.add(themes[0].class);
             } else {
                 document.body.classList.remove(...document.body.classList);
@@ -745,4 +749,8 @@ export default class Home extends Vue {
 }
 </script>
 
-<style></style>
+<style>
+button > i {
+    text-decoration: none;
+}
+</style>

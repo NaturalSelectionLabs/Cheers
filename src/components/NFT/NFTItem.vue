@@ -4,7 +4,7 @@
             width: size + 'px',
             height: size + 'px',
         }"
-        class="rounded"
+        class="rounded shadow-nft"
     >
         <video
             v-if="imageUrl?.endsWith('.mp4') || imageUrl?.endsWith('.mov') || imageUrl?.endsWith('.mp3')"
