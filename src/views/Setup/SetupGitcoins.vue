@@ -1,7 +1,11 @@
 <template>
     <div class="px-4 py-9 max-w-md m-auto">
         <div class="flex justify-between items-center mb-4">
-            <Button size="sm" class="w-10 h-10 bg-white text-primary shadow-secondary" @click="back">
+            <Button
+                size="sm"
+                class="w-10 h-10 bg-secondary-btn text-secondary-btn-text shadow-secondary-btn"
+                @click="back"
+            >
                 <i class="bx bx-chevron-left bx-sm" />
             </Button>
             <span class="text-center">
@@ -39,7 +43,7 @@
             <template #footer-button>
                 <Button
                     size="sm"
-                    class="text-xs bg-white text-gitcoin-button shadow-gitcoin-sm ml-auto"
+                    class="text-xs bg-gitcoin-btn-s text-gitcoin-btn-s-text shadow-gitcoin-btn-s"
                     :class="{
                         'bg-gray-100 cursor-not-allowed': show.length === 0,
                     }"
@@ -65,7 +69,7 @@
             <template #header-button>
                 <Button
                     size="sm"
-                    class="text-xs bg-white text-gitcoin-button shadow-gitcoin-sm ml-auto"
+                    class="text-xs bg-gitcoin-btn-s text-gitcoin-btn-s-text shadow-gitcoin-btn-s"
                     :class="{
                         'bg-gray-100 cursor-not-allowed': hide.length === 0,
                     }"
