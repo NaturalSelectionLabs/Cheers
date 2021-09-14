@@ -91,12 +91,19 @@
                 </draggable>
             </template>
         </Card>
-
         <div class="px-4 py-4 flex gap-5 fixed bottom-0 left-0 right-0 max-w-md m-auto w-full">
-            <Button size="lg" class="flex-1 text-lg bg-white text-primary shadow-secondary" @click="back"
+            <Button
+                size="lg"
+                class="flex-1 text-lg bg-secondary-btn text-secondary-btn-text shadow-secondary-btn"
+                @click="back"
                 >Discard</Button
             >
-            <Button size="lg" class="flex-1 text-lg bg-primary text-white shadow-primary" @click="save">Save</Button>
+            <Button
+                size="lg"
+                class="flex-1 text-lg bg-primary-btn text-primary-btn-text shadow-primary-btn"
+                @click="save"
+                >Save</Button
+            >
         </div>
 
         <LoadingContainer v-show="isLoading" />
