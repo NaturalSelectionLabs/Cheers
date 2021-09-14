@@ -24,9 +24,12 @@
                     w-full
                     px-5
                     py-4
-                    bg-white
-                    shadow-gitcoin-sm
+                    bg-body-bg
                     rounded
+                    filter
+                    shadow-gitcoin
+                    border-card
+                    text-body-text
                     flex flex-col
                     justify-start
                     items-start
