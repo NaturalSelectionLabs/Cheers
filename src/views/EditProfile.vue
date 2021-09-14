@@ -125,7 +125,6 @@ export default class EditProfile extends Vue {
     async back() {
         this.clearEdited();
         this.$gtag.event('cancelEditProfile', { userid: (<IRSS3>this.rss3).account.address });
-        await RSS3.getAssetProfile((<IRSS3>this.rss3).account.address, true);
         window.history.back();
     }
     async save() {
