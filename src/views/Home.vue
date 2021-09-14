@@ -78,8 +78,8 @@
                 color-title="text-nft-title"
                 color-tips="text-nft-title"
                 color-background="bg-nft-bg"
-                class="w-auto border-nft-border"
-                :is-having-content="true"
+                class="w-full border-nft-border"
+                :is-having-content="nfts.length !== 0"
                 :is-single-line="nfts.length !== 0"
                 :tips="isLoadingAssets ? 'Loading...' : nfts.length === 0 ? 'Haven\'t found anything yet...' : ''"
             >
@@ -129,7 +129,7 @@
                 color-title="text-gitcoin-title"
                 color-tips="text-gitcoin-title"
                 color-background="bg-gitcoin-bg"
-                class="w-auto"
+                class="w-full border-gitcoin-border"
                 :is-having-content="true"
                 :is-single-line="gitcoins.length !== 0"
             >
