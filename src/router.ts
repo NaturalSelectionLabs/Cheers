@@ -21,7 +21,7 @@ import Gitcoins from '@/views/Gitcoins.vue';
 import SetupGitcoins from '@/views/Setup/SetupGitcoins.vue';
 import SingleGitcoin from '@/views/SingleGitcoin.vue';
 
-const routes = [
+export const routes = [
     {
         path: '/',
         component: Index,

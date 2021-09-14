@@ -3,7 +3,7 @@
         <Profile
             :avatar="rss3Profile.avatar"
             :username="rss3Profile.username"
-            :address="rss3Profile.address"
+            :address="ethAddress"
             :rns="rns"
             :followers="rss3Relations.followers"
             :followings="rss3Relations.followings"
@@ -398,12 +398,8 @@ export default class Home extends Vue {
                 await this.$router.push('/');
             } else {
                 this.rns = (await RNSUtils.addr2Name(owner)).replace('.pass3.me', '');
-                if (this.rns === '') {
-                    await this.$router.push('/rns');
-                } else {
-                    this.ethAddress = owner;
-                    this.isOwner = true;
-                }
+                this.ethAddress = owner;
+                this.isOwner = true;
             }
         }
 
@@ -427,18 +423,19 @@ export default class Home extends Vue {
         }, 0);
 
         setTimeout(async () => {
+            // Push original account
+            this.accounts.push({
+                platform: 'Ethereum',
+                identity: this.ethAddress,
+                signature: '',
+                tags: ['pass:order:-1'],
+            });
+
+            await this.loadAccounts(await (<IRSS3>this.rss3).accounts.get(this.ethAddress));
+
             const data = await RSS3.getAssetProfile(this.ethAddress);
 
             if (data) {
-                // Push original account
-                this.accounts.push({
-                    platform: 'Ethereum',
-                    identity: this.ethAddress,
-                    signature: '',
-                    tags: ['pass:order:-1'],
-                });
-
-                await this.loadAccounts(await (<IRSS3>this.rss3).accounts.get(this.ethAddress));
                 await this.loadAssets(
                     await (<IRSS3>this.rss3).assets.get(this.ethAddress),
                     <GeneralAsset[]>data.assets,

@@ -1,7 +1,7 @@
 <template>
     <div class="rns">
         <div class="page">
-            <h1 class="title">Onboard</h1>
+            <h1 class="title">Claim your RNS</h1>
             <div class="input-rns">
                 <span class="notice" :class="{ error: isErrorNotice, show: notice !== '' }">
                     <i class="bx" :class="{ 'bxs-x-circle': isErrorNotice }" />
@@ -22,11 +22,15 @@
                     <i class="bx bx-info-circle" />
                     <span> An RNS is a unique domain for a Web 3 Pass by RSS3 </span>
                 </span>
+                <span class="about">
+                    <i class="bx bx-info-circle" />
+                    <span> You can also set it up later in your profile </span>
+                </span>
             </div>
             <div class="nav">
                 <div class="px-4 py-4 flex gap-5 m-auto w-full">
-                    <Button size="lg" class="flex-1 text-lg bg-white text-primary shadow-secondary" @click="back"
-                        >Back</Button
+                    <Button size="lg" class="flex-1 text-lg bg-white text-primary shadow-secondary" @click="skip"
+                        >Skip</Button
                     >
                     <Button size="lg" class="flex-1 text-lg bg-primary text-white shadow-primary" @click="verifyRNS"
                         >Go</Button
@@ -77,6 +81,7 @@ import Input from '@/components/Input.vue';
 import Loading from '@/components/Loading.vue';
 import LoadingContainer from '@/components/LoadingContainer.vue';
 import config from '@/config';
+import { routes } from '@/router';
 function validateNetwork(chain: number | null, cb?: (chain: number | null) => void) {
     if (config.rns.test && chain !== 0x3) {
         alert('Please switch to ropsten network.');
@@ -109,48 +114,31 @@ export default class RNS extends Vue {
 
     isMobile: Boolean = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
-    // If redirect, return true. Otherwise return false.
-    async tryRedirect() {
-        if (!(await RSS3.reconnect())) {
-            sessionStorage.setItem('redirectFrom', this.$route.fullPath);
-            await this.$router.push('/');
-            return true;
-        } else {
-            if (this.isMobile) {
-                await this.$router.push('/gotopc');
-                return true;
-            }
-            this.rss3 = await RSS3.get();
-            if ((await RNSUtils.addr2Name((<IRSS3>this.rss3).account.address)) !== '') {
-                // Already setup RNS
-                const profile = await (<IRSS3>this.rss3).profile.get();
-                if (!profile) {
-                    // Setup Profile
-                    await (<IRSS3>this.rss3).files.sync();
-                    this.$gtag.event('sign_up', { userid: (<IRSS3>this.rss3).account.address });
-                    await this.$router.push('/setup');
-                } else {
-                    // Login
-                    this.$gtag.event('login', { userid: (<IRSS3>this.rss3).account.address });
-                    const redirectFrom = sessionStorage.getItem('redirectFrom');
-                    sessionStorage.removeItem('redirectFrom');
-                    await this.$router.push(redirectFrom || '/home');
-                }
-                return true;
-            }
-        }
-        return false;
+    async redirect() {
+        // Login
+        const redirectFrom = sessionStorage.getItem('redirectFrom');
+        sessionStorage.removeItem('redirectFrom');
+        await this.$router.push(redirectFrom || '/home');
     }
 
     async refreshAccount() {
-        if (!(await this.tryRedirect())) {
+        if (!(await RSS3.reconnect())) {
+            sessionStorage.setItem('redirectFrom', this.$route.fullPath);
+            await this.$router.push('/');
+        } else {
+            this.rss3 = await RSS3.get();
             const metamaskEthereum = (window as any).ethereum;
-            // this.rss3 object exists, doens't necessarily mean the account is connected
+            // this.rss3 object exists, don't necessarily mean the account is connected
             await metamaskEthereum.request({
                 method: 'eth_requestAccounts',
             });
             const chain: string | null = await metamaskEthereum.request({ method: 'eth_chainId' });
             validateNetwork(Number(chain));
+            const rns = (await RNSUtils.addr2Name((<IRSS3>this.rss3).account.address)).replace('.pass3.me', '');
+            if (rns !== '') {
+                this.rns = rns;
+                this.isDisabled = true;
+            }
         }
     }
 
@@ -164,12 +152,27 @@ export default class RNS extends Vue {
         window.history.back();
     }
 
+    async skip() {
+        await this.redirect();
+    }
+
+    async isPassEnough(): Promise<boolean> {
+        const passBalance = await RNSUtils.balanceOfPass3((<IRSS3>this.rss3).account.address);
+        console.log('Your $PASS: ', passBalance);
+        return passBalance >= 1;
+    }
+
     async verifyRNS() {
+        if ((await RNSUtils.addr2Name((<IRSS3>this.rss3).account.address)) !== '') {
+            await this.redirect();
+            return;
+        }
         if (!(window as any).ethereum) {
             this.notice = 'You need MetaMask extension to sign';
             this.isDisabled = true;
             return;
         }
+        this.isLoading = true;
         await this.refreshAccount();
         this.rns = this.rns.toLowerCase();
         if (this.rns.length < 3 || this.rns.length >= 15) {
@@ -180,11 +183,18 @@ export default class RNS extends Vue {
             this.notice = 'An RNS should only contain lower case letters, numbers, minus and underlines.';
             return;
         }
-        this.isLoading = true;
+        if (this.rns.startsWith('0x')) {
+            this.notice = 'An RNS should not start with "0x".';
+            return;
+        }
+        for (const r of routes) {
+            if (`/${this.rns}` === r.path) {
+                this.notice = 'Sorry, but this RNS is conflict with Routes and those will not work properly.';
+                return;
+            }
+        }
         // Check $PASS balance
-        const passBalance = await RNSUtils.balanceOfPass3((<IRSS3>this.rss3).account.address);
-        console.log('Your $PASS: ', passBalance);
-        if (passBalance < 1) {
+        if (!(await this.isPassEnough())) {
             this.notice = 'Sorry, but you need 1 $PASS to register an RNS';
             this.isLoading = false;
         } else if (parseInt((await RNSUtils.name2Addr(`${this.rns}.pass3.me`)).toString()) !== 0) {
@@ -215,7 +225,7 @@ export default class RNS extends Vue {
             @apply h-2/3 flex flex-col justify-between w-full;
 
             .title {
-                @apply text-8xl text-primary font-bold;
+                @apply text-6xl text-primary font-bold;
             }
 
             .input-rns {

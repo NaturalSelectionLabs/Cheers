@@ -240,6 +240,15 @@ export default class Setup extends Vue {
                 document.title = profile.name;
             }
         }
+        // Push original account
+        this.accounts.push({
+            platform: 'Ethereum',
+            identity: (<IRSS3>this.rss3).account.address,
+            signature: '',
+            tags: ['pass:order:-1'],
+        });
+
+        await this.loadAccounts(await (<IRSS3>this.rss3).accounts.get());
 
         const data = await RSS3.getAssetProfile((<IRSS3>this.rss3).account.address);
         if (!data) {
@@ -247,15 +256,6 @@ export default class Setup extends Vue {
         }
 
         if (data) {
-            // Push original account
-            this.accounts.push({
-                platform: 'Ethereum',
-                identity: (<IRSS3>this.rss3).account.address,
-                signature: '',
-                tags: ['pass:order:-1'],
-            });
-
-            await this.loadAccounts(await (<IRSS3>this.rss3).accounts.get());
             await this.loadAssets(await (<IRSS3>this.rss3).assets.get(), <GeneralAsset[]>data.assets);
         }
     }

@@ -5,6 +5,7 @@
         class="input"
         :class="{
             error: $props.isError,
+            'cursor-not-allowed': $props.isDisabled,
         }"
         :placeholder="placeholder"
         :value="modelValue"
@@ -16,6 +17,7 @@
         class="input textarea"
         :class="{
             error: $props.isError,
+            'cursor-not-allowed': $props.isDisabled,
         }"
         :placeholder="placeholder"
         :value="modelValue"

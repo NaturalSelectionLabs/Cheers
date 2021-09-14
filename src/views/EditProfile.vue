@@ -9,6 +9,9 @@
             </h1>
         </div>
         <AvatarEditor class="m-auto mb-4" size="lg" :url="profile.avatar" ref="avatar" />
+        <LinkButton class="m-auto mb-4" @click="toSetupRNS">
+            {{ rns ? rns : 'Claim Your RNS' }}
+        </LinkButton>
         <Input class="mb-4 w-full" :is-single-line="true" placeholder="Username" v-model="profile.name" />
         <Input class="mb-4 w-full" :is-single-line="false" placeholder="Bio" v-model="profile.bio" />
 
@@ -59,9 +62,12 @@ import LoadingContainer from '@/components/LoadingContainer.vue';
 import { RSS3Account, RSS3Asset, RSS3Profile } from 'rss3-next/types/rss3';
 import RSS3, { IRSS3 } from '@/common/rss3';
 import config from '@/config';
+import LinkButton from '@/components/LinkButton.vue';
+import RNSUtils from '@/common/rns';
 
 @Options({
     components: {
+        LinkButton,
         Modal,
         Button,
         AvatarEditor,
@@ -88,6 +94,8 @@ export default class EditProfile extends Vue {
     maxValueLength: Number = 280;
     notice: String = '';
     isShowingNotice: Boolean = false;
+    ethAddress: string = '';
+    rns: string = '';
 
     $gtag: any;
 
@@ -97,6 +105,8 @@ export default class EditProfile extends Vue {
             await this.$router.push('/');
         } else {
             this.rss3 = await RSS3.get();
+            this.ethAddress = await (<IRSS3>this.rss3).account.address;
+            this.rns = await RNSUtils.addr2Name(this.ethAddress);
         }
         if (!this.loadEdited()) {
             const profile = await (<IRSS3>this.rss3).profile.get();
@@ -161,6 +171,28 @@ export default class EditProfile extends Vue {
         const redirectFrom = sessionStorage.getItem('redirectFrom');
         sessionStorage.removeItem('redirectFrom');
         await this.$router.push(redirectFrom || '/home');
+    }
+
+    async isPassEnough(): Promise<boolean> {
+        const passBalance = await RNSUtils.balanceOfPass3((<IRSS3>this.rss3).account.address);
+        console.log('Your $PASS: ', passBalance);
+        return passBalance >= 1;
+    }
+
+    async toSetupRNS() {
+        if (!this.rns) {
+            this.isLoading = true;
+            if (!(await this.isPassEnough())) {
+                this.notice =
+                    'Oops! You haven’t got any $PASS yet. Setup your RNS later in your profile when you get one!';
+                this.isLoading = false;
+                this.isShowingNotice = true;
+            } else {
+                this.saveEdited();
+                sessionStorage.setItem('redirectFrom', this.$route.fullPath);
+                await this.$router.push('/rns');
+            }
+        }
     }
 }
 </script>

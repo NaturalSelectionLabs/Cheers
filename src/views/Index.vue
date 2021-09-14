@@ -60,6 +60,12 @@ export default class Index extends Vue {
         }
     }
 
+    async isPassEnough(): Promise<boolean> {
+        const passBalance = await RNSUtils.balanceOfPass3((<IRSS3>this.rss3).account.address);
+        console.log('Your $PASS: ', passBalance);
+        return passBalance >= 1;
+    }
+
     async initRedirect() {
         let profile: RSS3Profile | null = null;
         let address: string = '';
@@ -73,12 +79,12 @@ export default class Index extends Vue {
         this.$gtag.config(address);
 
         // Check if setup RNS
-        if ((await RNSUtils.addr2Name(address)) === '') {
+        if ((await RNSUtils.addr2Name(address)) === '' && (await this.isPassEnough())) {
             // Setup RNS
-            // this.$gtag.event('rns', { userid: address });
+            this.$gtag.event('rns', { userid: address });
             await (<IRSS3>this.rss3).files.sync();
             await this.$router.push('/rns');
-        } else if (!profile) {
+        } else if (!(profile?.name || profile?.bio || profile?.avatar)) {
             // Setup Profile
             await (<IRSS3>this.rss3).files.sync();
             this.$gtag.event('sign_up', { userid: address });
