@@ -243,7 +243,6 @@ export default class SetupGitcoins extends Vue {
             }),
         );
         await this.rss3?.files.sync();
-        // await RSS3.getAssetProfile((<IRSS3>this.rss3).account.address, true);
         this.isLoading = false;
         window.history.back();
     }

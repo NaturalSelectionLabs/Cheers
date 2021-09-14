@@ -314,7 +314,6 @@ export default class SetupNFTs extends Vue {
     async save() {
         this.isLoading = true;
         await this.rss3?.files.sync();
-        // await RSS3.getAssetProfile((<IRSS3>this.rss3).account.address, true);
         this.isLoading = false;
         window.history.back();
     }

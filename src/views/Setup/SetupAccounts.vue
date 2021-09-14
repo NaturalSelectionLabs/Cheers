@@ -218,8 +218,6 @@ export default class Setup extends Vue {
     isShowingAddAccountNotice: Boolean = false;
     addAccountNotice: String = '';
 
-    isMobile: Boolean = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-
     mode: String = 'normal';
 
     async mounted() {
@@ -286,12 +284,9 @@ export default class Setup extends Vue {
     }
 
     async addAccountPreTest() {
-        if (this.isMobile) {
+        if (!(window as any).ethereum) {
             this.addAccountNotice =
-                'Adding accounts are now only supported on PC with MetaMask browser extension installed.';
-            this.isShowingAddAccountNotice = true;
-        } else if (!(window as any).ethereum) {
-            this.addAccountNotice = 'Adding accounts are now only supported with MetaMask browser extension.';
+                'Adding accounts are now only supported with MetaMask browser extension enabled. (PC recommended)';
             this.isShowingAddAccountNotice = true;
         } else {
             this.mode = 'add';
@@ -393,7 +388,6 @@ export default class Setup extends Vue {
             this.isLoading = false;
             return;
         }
-        // await RSS3.getAssetProfile((<IRSS3>this.rss3).account.address, true);
         this.isLoading = false;
         window.history.back(); // Back
     }

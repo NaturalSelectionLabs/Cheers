@@ -112,8 +112,6 @@ export default class RNS extends Vue {
     isDisabled: Boolean = false;
     $gtag: any;
 
-    isMobile: Boolean = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-
     async redirect() {
         // Login
         const redirectFrom = sessionStorage.getItem('redirectFrom');
@@ -148,7 +146,6 @@ export default class RNS extends Vue {
 
     async back() {
         this.$gtag.event('cancelSetupRNS', { userid: (<IRSS3>this.rss3).account.address });
-        await RSS3.getAssetProfile((<IRSS3>this.rss3).account.address, true);
         window.history.back();
     }
 

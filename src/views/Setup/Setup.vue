@@ -369,7 +369,6 @@ export default class Setup extends Vue {
     async back() {
         this.clearEdited();
         this.$gtag.event('cancelEditProfile', { userid: (<IRSS3>this.rss3).account.address });
-        await RSS3.getAssetProfile((<IRSS3>this.rss3).account.address, true);
         window.history.back();
     }
     async save() {
@@ -406,7 +405,6 @@ export default class Setup extends Vue {
             return;
         }
         this.clearEdited();
-        await RSS3.getAssetProfile((<IRSS3>this.rss3).account.address, true);
         this.$gtag.event('finishEditProfile', { userid: (<IRSS3>this.rss3).account.address });
         this.isLoading = false;
         const redirectFrom = sessionStorage.getItem('redirectFrom');

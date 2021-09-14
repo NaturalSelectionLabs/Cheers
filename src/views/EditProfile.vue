@@ -165,7 +165,6 @@ export default class EditProfile extends Vue {
         await (<IRSS3>this.rss3).profile.patch(newProfile);
         await (<IRSS3>this.rss3).files.sync();
         this.clearEdited();
-        await RSS3.getAssetProfile((<IRSS3>this.rss3).account.address, true);
         this.$gtag.event('finishEditProfile', { userid: (<IRSS3>this.rss3).account.address });
         this.isLoading = false;
         const redirectFrom = sessionStorage.getItem('redirectFrom');
