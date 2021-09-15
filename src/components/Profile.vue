@@ -19,7 +19,7 @@
         </div>
         <span class="font-bold text-2xl">{{ username }}</span>
         <LinkButton v-if="rns"
-            ><span>{{ rns + '.pass3.me' }}</span></LinkButton
+            ><span>{{ rns + suffix }}</span></LinkButton
         >
         <LinkButton v-else
             ><span>{{ filter(address) }}</span></LinkButton
@@ -38,6 +38,7 @@ import { Options, Vue } from 'vue-class-component';
 import ImgHolder from '@/components/ImgHolder.vue';
 import LinkButton from '@/components/LinkButton.vue';
 import Vue3Autocounter from 'vue3-autocounter';
+import config from '@/config';
 
 @Options({
     components: { ImgHolder, Vue3Autocounter, LinkButton },
@@ -57,6 +58,7 @@ export default class Profile extends Vue {
     address!: String;
     rns!: String;
     website!: String;
+    suffix: string = config.rns.suffix;
 
     public toFollowersPage() {
         this.$router.push(`/${this.rns || this.address}/followers`);

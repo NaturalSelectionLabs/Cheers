@@ -428,7 +428,7 @@ export default class Home extends Vue {
                 // Might be address type
                 // Get RNS and redirect
                 this.ethAddress = address;
-                this.rns = (await RNSUtils.addr2Name(address)).replace('.pass3.me', '');
+                this.rns = (await RNSUtils.addr2Name(address)).replace(config.rns.suffix, '');
                 if (this.rns !== '') {
                     await this.$router.push(`/${this.rns}`);
                 } else if (this.ethAddress === owner) {
@@ -437,7 +437,7 @@ export default class Home extends Vue {
             } else {
                 // RNS
                 this.rns = address;
-                this.ethAddress = (await RNSUtils.name2Addr(`${address}.pass3.me`)).toString();
+                this.ethAddress = (await RNSUtils.name2Addr(address + config.rns.suffix)).toString();
                 if (parseInt(this.ethAddress) !== 0) {
                     if (this.ethAddress === owner) {
                         this.isOwner = true;
@@ -451,7 +451,7 @@ export default class Home extends Vue {
                 sessionStorage.setItem('redirectFrom', this.$route.fullPath);
                 await this.$router.push('/');
             } else {
-                this.rns = (await RNSUtils.addr2Name(owner)).replace('.pass3.me', '');
+                this.rns = (await RNSUtils.addr2Name(owner)).replace(config.rns.suffix, '');
                 this.ethAddress = owner;
                 this.isOwner = true;
             }
@@ -615,7 +615,7 @@ export default class Home extends Vue {
 
     public async checkIsFollowing() {
         if (!this.ethAddress) {
-            this.ethAddress = (await RNSUtils.name2Addr(`${this.rns}.pass3.me`)).toString();
+            this.ethAddress = (await RNSUtils.name2Addr(this.rns + config.rns.suffix)).toString();
         }
         const followList = await this.rss3?.links.get(this.rss3.account.address, 'following');
         if (typeof followList === 'undefined') {

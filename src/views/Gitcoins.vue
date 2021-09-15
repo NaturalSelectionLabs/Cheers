@@ -96,7 +96,7 @@ export default class Gitcoins extends Vue {
         const address = <string>this.$route.params.address;
         if (!address.startsWith('0x')) {
             this.rns = address;
-            this.ethAddress = (await RNSUtils.name2Addr(`${address}.pass3.me`)).toString();
+            this.ethAddress = (await RNSUtils.name2Addr(address + config.rns.suffix)).toString();
         } else {
             this.ethAddress = address;
             this.rns = (await RNSUtils.addr2Name(address)).toString();

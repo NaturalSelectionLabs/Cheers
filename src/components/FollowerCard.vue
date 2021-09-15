@@ -8,7 +8,7 @@
                 {{ $props.name }}
             </p>
             <p class="address">
-                {{ $props.address.startsWith('0x') ? $props.address : `${$props.address}.pass3.me` }}
+                {{ $props.address.startsWith('0x') ? $props.address : $props.address + suffix }}
             </p>
         </div>
     </div>
@@ -18,6 +18,7 @@
 import { Options, Vue } from 'vue-class-component';
 import ColorThief from 'colorthief';
 import { hslToRgb, rgbToHsl } from '@/common/utils';
+import config from '@/config';
 
 @Options({
     props: {
@@ -28,6 +29,7 @@ import { hslToRgb, rgbToHsl } from '@/common/utils';
 })
 export default class FollowerCard extends Vue {
     name!: string;
+    suffix: string = config.rns.suffix;
 
     mounted() {
         const colorThief = new ColorThief();

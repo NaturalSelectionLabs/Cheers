@@ -144,7 +144,7 @@ export default class RNS extends Vue {
             });
             const chain: string | null = await metamaskEthereum.request({ method: 'eth_chainId' });
             validateNetwork(Number(chain));
-            const rns = (await RNSUtils.addr2Name((<IRSS3>this.rss3).account.address)).replace('.pass3.me', '');
+            const rns = (await RNSUtils.addr2Name((<IRSS3>this.rss3).account.address)).replace(config.rns.suffix, '');
             if (rns !== '') {
                 this.rns = rns;
                 this.isDisabled = true;
@@ -206,7 +206,7 @@ export default class RNS extends Vue {
         if (!(await this.isPassEnough())) {
             this.notice = 'Sorry, but you need 1 $PASS to register an RNS';
             this.isLoading = false;
-        } else if (parseInt((await RNSUtils.name2Addr(`${this.rns}.pass3.me`)).toString()) !== 0) {
+        } else if (parseInt((await RNSUtils.name2Addr(this.rns + config.rns.suffix)).toString()) !== 0) {
             // Already taken
             this.notice = 'Sorry, but this RNS has already been taken.';
             this.isLoading = false;

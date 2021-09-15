@@ -72,7 +72,7 @@ export default class Followers extends Vue {
         const address = <string>this.$route.params.address;
         if (!address.startsWith('0x')) {
             this.rns = address;
-            this.ethAddress = (await RNSUtils.name2Addr(`${address}.pass3.me`)).toString();
+            this.ethAddress = (await RNSUtils.name2Addr(address + config.rns.suffix)).toString();
         } else {
             this.ethAddress = address;
             this.rns = await RNSUtils.addr2Name(address);
@@ -111,7 +111,7 @@ export default class Followers extends Vue {
             }
             setTimeout(async () => {
                 for (const item of this.followerList) {
-                    item.rns = (await RNSUtils.addr2Name(item.address)).replace('.pass3.me', '');
+                    item.rns = (await RNSUtils.addr2Name(item.address)).replace(config.rns.suffix, '');
                 }
             });
         }

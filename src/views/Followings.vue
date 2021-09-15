@@ -39,7 +39,7 @@ import { Options, Vue } from 'vue-class-component';
 import Button from '@/components/Button.vue';
 import ImgHolder from '@/components/ImgHolder.vue';
 import FollowerCard from '@/components/FollowerCard.vue';
-import RSS3, { IRSS3 } from '@/common/rss3';
+import RSS3 from '@/common/rss3';
 import RNSUtils from '@/common/rns';
 import config from '@/config';
 
@@ -72,7 +72,7 @@ export default class Followings extends Vue {
         const address = <string>this.$route.params.address;
         if (!address.startsWith('0x')) {
             this.rns = address;
-            this.ethAddress = (await RNSUtils.name2Addr(`${address}.pass3.me`)).toString();
+            this.ethAddress = (await RNSUtils.name2Addr(address + config.rns.suffix)).toString();
         } else {
             this.ethAddress = address;
             this.rns = await RNSUtils.addr2Name(address);
@@ -111,7 +111,7 @@ export default class Followings extends Vue {
             }
             setTimeout(async () => {
                 for (const item of this.followingList) {
-                    item.rns = (await RNSUtils.addr2Name(item.address)).replace('.pass3.me', '');
+                    item.rns = (await RNSUtils.addr2Name(item.address)).replace(config.rns.suffix, '');
                 }
             });
         }

@@ -62,6 +62,7 @@ import NFTBadges from '@/components/NFT/NFTBadges.vue';
 import RSS3, { IRSS3 } from '@/common/rss3';
 import RNSUtils from '@/common/rns';
 import { NFT } from '@/common/types';
+import config from '@/config';
 
 @Options({
     components: { Button, NFTDetail, NFTItem, AccountItem, NFTBadges },
@@ -82,7 +83,7 @@ export default class SingleNFT extends Vue {
         const address = <string>this.$route.params.address;
         if (!address.startsWith('0x')) {
             this.rns = address;
-            this.ethAddress = (await RNSUtils.name2Addr(`${address}.pass3.me`)).toString();
+            this.ethAddress = (await RNSUtils.name2Addr(address + config.rns.suffix)).toString();
         } else {
             this.ethAddress = address;
             this.rns = await RNSUtils.addr2Name(address);
