@@ -1,7 +1,11 @@
 <template>
     <div class="px-4 py-9 max-w-md m-auto">
         <div class="flex justify-between items-center mb-4">
-            <Button size="sm" class="w-10 h-10 bg-white text-primary shadow-secondary" @click="back">
+            <Button
+                size="sm"
+                class="w-10 h-10 bg-secondary-btn text-secondary-btn-text shadow-secondary-btn"
+                @click="back"
+            >
                 <i class="bx bx-chevron-left bx-sm" />
             </Button>
             <span class="text-center">
@@ -28,10 +32,10 @@
             <template #content>
                 <draggable class="min-h-20" :list="show" group="gitcoins" data-type="displayed" item-key="displayed">
                     <template #item="{ element }">
-                        <NFTItem
-                            class="shadow-nft-sm inline-flex m-0.5"
-                            :size="64"
-                            :image-url="element.info.image_preview_url"
+                        <GitcoinItem
+                            class="inline-flex mx-0.5 cursor-pointer"
+                            :size="70"
+                            :imageUrl="element.info.image_preview_url"
                         />
                     </template>
                 </draggable>
@@ -39,7 +43,7 @@
             <template #footer-button>
                 <Button
                     size="sm"
-                    class="text-xs bg-white text-gitcoin-button shadow-gitcoin-sm ml-auto"
+                    class="text-xs bg-gitcoin-btn-s text-gitcoin-btn-s-text shadow-gitcoin-btn-s"
                     :class="{
                         'bg-gray-100 cursor-not-allowed': show.length === 0,
                     }"
@@ -65,7 +69,7 @@
             <template #header-button>
                 <Button
                     size="sm"
-                    class="text-xs bg-white text-gitcoin-button shadow-gitcoin-sm ml-auto"
+                    class="text-xs bg-gitcoin-btn-s text-gitcoin-btn-s-text shadow-gitcoin-btn-s"
                     :class="{
                         'bg-gray-100 cursor-not-allowed': hide.length === 0,
                     }"
@@ -78,21 +82,28 @@
             <template #content>
                 <draggable class="min-h-20" :list="hide" group="gitcoins" data-type="displayed" item-key="displayed">
                     <template #item="{ element }">
-                        <NFTItem
-                            class="shadow-nft-sm inline-flex m-0.5"
-                            :size="64"
-                            :image-url="element.info.image_preview_url"
+                        <GitcoinItem
+                            class="inline-flex mx-0.5 cursor-pointer"
+                            :size="70"
+                            :imageUrl="element.info.image_preview_url"
                         />
                     </template>
                 </draggable>
             </template>
         </Card>
-
         <div class="px-4 py-4 flex gap-5 fixed bottom-0 left-0 right-0 max-w-md m-auto w-full">
-            <Button size="lg" class="flex-1 text-lg bg-white text-primary shadow-secondary" @click="back"
+            <Button
+                size="lg"
+                class="flex-1 text-lg bg-secondary-btn text-secondary-btn-text shadow-secondary-btn"
+                @click="back"
                 >Discard</Button
             >
-            <Button size="lg" class="flex-1 text-lg bg-primary text-white shadow-primary" @click="save">Save</Button>
+            <Button
+                size="lg"
+                class="flex-1 text-lg bg-primary-btn text-primary-btn-text shadow-primary-btn"
+                @click="save"
+                >Save</Button
+            >
         </div>
 
         <LoadingContainer v-show="isLoading" />
@@ -111,9 +122,11 @@ import { GeneralAsset, GeneralAssetWithTags } from '@/common/types';
 import LoadingContainer from '@/components/LoadingContainer.vue';
 import { RSS3Account, RSS3Asset } from 'rss3-next/types/rss3';
 import NFTItem from '@/components/NFT/NFTItem.vue';
+import GitcoinItem from '@/components/GitcoinItem.vue';
 
 @Options({
     components: {
+        GitcoinItem,
         NFTItem,
         LoadingContainer,
         Button,

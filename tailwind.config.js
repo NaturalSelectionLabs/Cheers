@@ -11,33 +11,111 @@ module.exports = {
                 xs: '1px',
                 sm: '2px',
                 DEFAULT: '4px',
+                card: 'var(--border-width-card)',
+                button: 'var(--border-width-button)',
+                input: 'var(--border-width-input)',
+                modal: 'var(--border-width-modal)',
+                link: 'var(--border-width-linkbutton)',
             },
             colors: {
-                primary: '#0072FF',
+                // primary: '#0072FF',
+                // secondary: '#ffffff',
+                primary: {
+                    text: '#0072FF',
+                    btn: 'var(--color-primary-btn)',
+                    'btn-text': 'var(--color-primary-btn-text)',
+                    'btn-border': 'var(--color-primary-btn-border)',
+                    link: 'var(--color-linkbutton-bg)',
+                    'link-border': 'var(--color-linkbutton-border)',
+                },
+                secondary: {
+                    btn: 'var(--color-secondary-btn)',
+                    'btn-text': 'var(--color-secondary-btn-text)',
+                    'btn-border': 'var(--color-secondary-btn-border)',
+                },
                 white: '#fff',
                 black: '#000',
+                body: {
+                    bg: 'var(--color-body-bg)',
+                    text: 'var(--color-body-text)',
+                },
                 account: {
-                    button: '#40D22F',
-                    title: '#13BD00',
-                    bg: '#F6FFF5',
+                    border: 'var(--color-account-border)',
+                    // button: '#40D22F',
+                    title: 'var(--color-account-title)',
+                    bg: 'var(--color-account-bg)',
+                    'btn-m': 'var(--color-account-btn-m)',
+                    'btn-m-text': 'var(--color-account-btn-m-text)',
+                    'btn-m-border': 'var(--color-account-btn-m-border)',
+                    'btn-s': 'var(--color-account-btn-s)',
+                    'btn-s-text': 'var(--color-account-btn-s-text)',
+                    'btn-s-border': 'var(--color-account-btn-s-border)',
                 },
                 nft: {
-                    button: '#7553FF',
-                    title: '#2D00E0',
-                    bg: '#F7F5FF',
-                },
-                content: {
-                    button: '#178BFF',
-                    title: '#0070E0',
-                    bg: '#F5FAFF',
+                    border: 'var(--color-nft-border)',
+                    // button: '#7553FF',
+                    title: 'var(--color-nft-title)',
+                    bg: 'var(--color-nft-bg)',
+                    'btn-m': 'var(--color-nft-btn-m)',
+                    'btn-m-text': 'var(--color-nft-btn-m-text)',
+                    'btn-m-border': 'var(--color-nft-btn-m-border)',
+                    'btn-s': 'var(--color-nft-btn-s)',
+                    'btn-s-text': 'var(--color-nft-btn-s-text)',
+                    'btn-s-border': 'var(--color-nft-btn-s-border)',
+                    'tag-border': 'var(--color-nft-tag-border)',
+                    'tag-bg': 'var(--color-nft-tag-bg)',
+                    trait: {
+                        bg: 'var( --color-nft-trait-bg)',
+                        type: 'var(--color-nft-trait-type)',
+                        border: 'var(--color-nft-trait-border)',
+                    },
                 },
                 gitcoin: {
-                    button: '#02E2AC',
-                    title: '#11BC92',
-                    bg: '#F4FFFB',
+                    border: 'var(--color-gitcoin-border)',
+                    // button: '#02E2AC',
+                    title: 'var(--color-gitcoin-title)',
+                    bg: 'var(--color-gitcoin-bg)',
+                    'btn-m': 'var(--color-gitcoin-btn-m)',
+                    'btn-m-text': 'var(--color-gitcoin-btn-m-text)',
+                    'btn-m-border': 'var(--color-gitcoin-btn-m-border)',
+                    'btn-s': 'var(--color-gitcoin-btn-s)',
+                    'btn-s-text': 'var(--color-gitcoin-btn-s-text)',
+                    'btn-s-border': 'var(--color-gitcoin-btn-s-border)',
+                },
+                content: {
+                    border: 'var(--color-content-border)',
+                    // button: '#178BFF',
+                    title: 'var(--color-content-title)',
+                    bg: 'var(--color-content-bg)',
+                    'btn-m': 'var(--color-content-btn-m)',
+                    'btn-m-text': 'var(--color-content-btn-m-text)',
+                    'btn-m-border': 'var(--color-content-btn-m-border)',
+                    'btn-s': 'var(--color-content-btn-s)',
+                    'btn-s-text': 'var(--color-content-btn-s-text)',
+                    'btn-s-border': 'var(--color-content-btn-s-border)',
                 },
                 gray: {
                     bg: '#F4F7F8',
+                },
+                input: {
+                    bg: 'var(--color-input-bg)',
+                    border: 'var(--color-input-border)',
+                },
+                item: {
+                    bg: 'var(--color-item-bg)',
+                    border: 'var(--color-item-border)',
+                },
+                card: {
+                    hide: 'var(--color-card-hide)',
+                    overlay: '--color-card-overlay',
+                },
+                btn: {
+                    border: 'var(--color-btn-border)',
+                    disabled: 'var(--color-btn-disabled)',
+                },
+                modal: {
+                    bg: 'var(--color-modal-bg)',
+                    border: 'var(--color-modal-border)',
                 },
                 success: '#00c700',
                 danger: '#b01a0a',
@@ -62,31 +140,35 @@ module.exports = {
                 },
             },
             boxShadow: {
-                blank: '5px 10px 22px rgba(0, 0, 0, 0.25);', // using on the share card
-                primary: '0px 9px 35px -7px rgba(0, 114, 255, 0.94)', //primary blue button shadow
-                secondary: '0px 9px 35px -7px rgba(55, 155, 255, 0.72)', //white button shadow with primary blue text
-                'primary-card': '0px 9px 18px -9px rgba(55, 155, 255, 0.25);', //follower card shadow
                 metamask: '0px 8px 12px 5px rgba(246, 133, 27, 0.18)', //cream-colored button shadow
-                account: '0px 4px 9px 1px rgba(64, 210, 47, 0.68)', //solid green button shadow for accounts
-                'account-sm': '0px 4px 16px -6px rgba(19, 189, 0, 0.78)', // show/hide white button shadow for accounts
-                nft: '0px 9px 35px -7px rgba(117, 83, 255, 0.94)', //solid purple button shadow for nfts
-                'nft-sm': '0px 4px 16px -6px rgba(117, 83, 255, 0.78)', // show/hide white button shadow for nfts
-                content: '0px 9px 35px -7px rgba(55, 155, 255, 0.94)', //solid blue button shadow for contents
-                'content-sm': '-2px 2px 4px rgba(36, 146, 255, 0.13)', //content item card shadow
-                'content-md': '0px 2px 13px -5px rgba(23, 139, 255, 0.76)', //content white small button shadow
-                gitcoin: '0px 9px 35px -7px rgba(71, 228, 191, 1)',
-                'gitcoin-sm': '-1px 2px 7px 0px rgba(17, 188, 146, 0.21)',
-                'gitcoin-md': '0px 3px 8px 1px rgba(17, 188, 146, 0.2)',
-                'share-card': '9px 19px 22px rgba(0, 0, 0, 0.25)', // share card shadow
-            },
-            dropShadow: {
-                account: '-4px 4px 5px rgba(17, 170, 0, 0.12)', //account item shadow
-                nft: '-2px 4px 5px rgba(45, 0, 225, 0.12)', //nft item shadow & detail content card shadow
+                'primary-btn': 'var(--shadow-primary-btn)',
+                'secondary-btn': 'var(--shadow-secondary-btn)',
+                'follow-card': 'var(--shadow-follow-card)',
+                account: 'var(--shadow-account-item)',
+                'account-item': 'var(--shadow-account-item)',
+                'account-btn-s': 'var(--shadow-account-btn-s)',
+                'account-btn-m': 'var(--shadow-account-btn-m)',
+                nft: 'var(--shadow-nft-item)',
+                'nft-item': 'var(--shadow-nft-item)',
+                'nft-btn-s': 'var(--shadow-nft-btn-s)',
+                'nft-btn-m': 'var(--shadow-nft-btn-m)',
+                gitcoin: 'var(--shadow-gitcoin-item)',
+                'gitcoin-item': 'var(--shadow-gitcoin-item)',
+                'gitcoin-btn-s': 'var(--shadow-gitcoin-btn-s)',
+                'gitcoin-btn-m': 'var(--shadow-gitcoin-btn-m)',
+                content: 'var(--shadow-content-item)',
+                'content-item': 'var(--shadow-content-item)',
+                'content-btn-s': 'var(--shadow-content-btn-s)',
+                'content-btn-m': 'var(--shadow-content-btn-m)',
             },
             opacity: {
-                30: '0.2', //input label
+                20: '0.2', //input label
+                30: '0.3',
                 35: '0.35', //disabled button/items
                 60: '0.6', //overlay
+            },
+            backgroundOpacity: {
+                10: '0.1',
             },
             spacing: {
                 0.5: '0.125rem', //2px
@@ -109,6 +191,7 @@ module.exports = {
             },
             fontFamily: {
                 'sf-compact-rounded': 'SFCompactRounded, sans-serif',
+                serif: 'Times New Roman, SourceHanSerif, SourceHanSerifSC, SourceHanSerifTC, SourceHanSerifK, Times, serif',
             },
             width: {
                 27: '6.75rem', //108px, scan tag width
@@ -119,14 +202,14 @@ module.exports = {
                 50: '12.5rem', //200px
             },
             backgroundImage: (theme) => ({
-                BSC: "url('@/assets/images/chains/BSC.png')",
-                Ethereum: "url('@/assets/images/chains/Ethereum.png')",
-                Ronin: "url('@/assets/images/chains/Ronin.png')",
-                Etherscan: "url('@/assets/images/scans/Etherscan.png')",
-                Roninscan: "url('@/assets/images/scans/Roninscan.png')",
-                bscscan: "url('@/assets/images/scans/bscscan.png')",
-                opensea: "url('@/assets/images/marketplaces/OpenSea.png')",
-                rarible: "url('@/assets/images/marketplaces/rarible.png')",
+                BSC: 'url(@/assets/images/chains/BSC.png)',
+                Ethereum: 'url(@/assets/images/chains/Ethereum.png)',
+                Ronin: 'url(@/assets/images/chains/Ronin.png)',
+                Etherscan: 'url(@/assets/images/scans/Etherscan.png)',
+                Roninscan: 'url(@/assets/images/scans/Roninscan.png)',
+                bscscan: 'url(@/assets/images/scans/bscscan.png)',
+                opensea: 'url(@/assets/images/marketplaces/OpenSea.png)',
+                rarible: 'url(@/assets/images/marketplaces/rarible.png)',
                 pass3gif: 'url(@/assets/images/pass3.gif)',
                 pass3logo: 'url(@/assets/images/pass3logo.svg)',
                 pass3gradient:
@@ -134,6 +217,7 @@ module.exports = {
             }),
             backgroundSize: {
                 85: '85%',
+                200: '200px',
             },
             zIndex: {
                 '-10': '-10',

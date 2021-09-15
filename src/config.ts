@@ -2,6 +2,13 @@ export default {
     infuraId: '76af1228cdf345d2bff6a9c0f35112e1',
     rss3Endpoint: 'https://hub.pass3.me',
     defaultAvatar: 'https://rss3.mypinata.cloud/ipfs/QmVFq9qimnudPcs6QkQv8ZVEsvwD3aqETHWtS5yXgdbYY5',
+    theme: [
+        {
+            name: 'loot',
+            class: 'theme-loot',
+            nftIdPrefix: '0xe8227e29d61889dd04a4f0f87cf609936ad70d76-', // Using color for test
+        },
+    ],
     rns: {
         test: true,
         contractNetworks: {

@@ -1,29 +1,35 @@
 <template>
-    <div class="main px-4 py-8 max-w-md m-auto">
-        <div class="header flex justify-between items-center pb-4">
-            <Button size="sm" class="w-10 h-10 bg-white text-primary shadow-secondary" @click="back">
-                <i class="bx bx-chevron-left bx-sm"></i>
-            </Button>
-            <div class="section-title text-2xl text-primary font-bold text-center">Followings</div>
-            <ImgHolder
-                class="w-10 h-10 inline-flex my-auto cursor-pointer"
-                :is-rounded="true"
-                :is-border="false"
-                :src="rss3Profile.avatar"
-                :alt="rss3Profile.username"
-                @click="toPublicPage(rns || ethAddress)"
-            />
-        </div>
-        <div class="follow-list flex flex-col gap-y-4">
-            <FollowerCard
-                class="w-auto cursor-pointer shadow-primary-card"
-                v-for="(item, index) in followingList"
-                :key="index"
-                :avatar="item.avatar"
-                :name="item.username"
-                :address="item.rns || item.displayAddress"
-                @click="toPublicPage(item.rns || item.address)"
-            />
+    <div class="h-screen bg-body-bg overflow-y-auto">
+        <div class="main px-4 py-8 max-w-md m-auto">
+            <div class="header flex justify-between items-center pb-4">
+                <Button
+                    size="sm"
+                    class="w-10 h-10 bg-secondary-btn text-secondary-btn-text shadow-secondary-btn"
+                    @click="back"
+                >
+                    <i class="bx bx-chevron-left bx-sm"></i>
+                </Button>
+                <div class="section-title text-2xl text-primary-text font-bold text-center">Followings</div>
+                <ImgHolder
+                    class="w-10 h-10 inline-flex my-auto cursor-pointer"
+                    :is-rounded="true"
+                    :is-border="false"
+                    :src="rss3Profile.avatar"
+                    :alt="rss3Profile.username"
+                    @click="toPublicPage(rns || ethAddress)"
+                />
+            </div>
+            <div class="follow-list flex flex-col gap-y-4">
+                <FollowerCard
+                    class="w-auto cursor-pointer"
+                    v-for="(item, index) in followingList"
+                    :key="index"
+                    :avatar="item.avatar"
+                    :name="item.username"
+                    :address="item.rns || item.displayAddress"
+                    @click="toPublicPage(item.rns || item.address)"
+                />
+            </div>
         </div>
     </div>
 </template>
@@ -33,7 +39,7 @@ import { Options, Vue } from 'vue-class-component';
 import Button from '@/components/Button.vue';
 import ImgHolder from '@/components/ImgHolder.vue';
 import FollowerCard from '@/components/FollowerCard.vue';
-import RSS3 from '@/common/rss3';
+import RSS3, { IRSS3 } from '@/common/rss3';
 import RNSUtils from '@/common/rns';
 import config from '@/config';
 
@@ -78,6 +84,14 @@ export default class Followings extends Vue {
         this.rss3Profile.avatar = profile?.avatar?.[0] || config.defaultAvatar;
         this.rss3Profile.username = profile?.name || '';
         this.rss3Profile.address = this.ethAddress;
+
+        // Setup theme
+        const themes = RSS3.getAvailableThemes(await rss3.assets.get(this.ethAddress));
+        if (themes[0]) {
+            document.body.classList.add(themes[0].class);
+        } else {
+            document.body.classList.remove(...document.body.classList);
+        }
 
         if (rss3 && followersList) {
             for (const item of followersList) {

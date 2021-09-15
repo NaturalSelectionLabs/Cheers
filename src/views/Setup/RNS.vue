@@ -29,10 +29,16 @@
             </div>
             <div class="nav">
                 <div class="px-4 py-4 flex gap-5 m-auto w-full">
-                    <Button size="lg" class="flex-1 text-lg bg-white text-primary shadow-secondary" @click="skip"
+                    <Button
+                        size="lg"
+                        class="flex-1 text-lg bg-secondary-btn text-secondary-btn-text shadow-secondary-btn"
+                        @click="skip"
                         >Skip</Button
                     >
-                    <Button size="lg" class="flex-1 text-lg bg-primary text-white shadow-primary" @click="verifyRNS"
+                    <Button
+                        size="lg"
+                        class="flex-1 text-lg bg-primary-btn text-secondary-btn-text shadow-primary-btn"
+                        @click="verifyRNS"
                         >Go</Button
                     >
                 </div>
@@ -47,10 +53,10 @@
             <template #body>
                 <p class="mt-6">
                     Your
-                    <span class="text-primary">RNS</span>
+                    <span class="text-primary-text">RNS</span>
                     will be
                 </p>
-                <h2 class="text-4xl my-6 px-4 py-2 text-primary overflow-y-auto select-all">
+                <h2 class="text-4xl my-6 px-4 py-2 text-primary-text overflow-y-auto select-all">
                     {{ rns }}
                 </h2>
                 <p>is that right?</p>
@@ -59,12 +65,18 @@
                 <div class="flex flex-row gap-5">
                     <Button
                         size="sm"
-                        class="w-32 bg-white text-primary shadow-secondary"
+                        class="w-32 bg-secondary-btn text-secondary-btn-text shadow-secondary-btn"
                         @click="isShowingConfirm = false"
                     >
                         No
                     </Button>
-                    <Button size="sm" class="w-32 bg-primary text-white shadow-primary" @click="confirm"> Yes </Button>
+                    <Button
+                        size="sm"
+                        class="w-32 bg-primary-btn text-primary-btn-text shadow-primary-btn"
+                        @click="confirm"
+                    >
+                        Yes
+                    </Button>
                 </div>
             </template>
         </Modal>
@@ -222,7 +234,7 @@ export default class RNS extends Vue {
             @apply h-2/3 flex flex-col justify-between w-full;
 
             .title {
-                @apply text-6xl text-primary font-bold;
+                @apply text-8xl text-primary-text font-bold;
             }
 
             .input-rns {
@@ -249,7 +261,7 @@ export default class RNS extends Vue {
                         @apply mr-2 text-lg text-gray-400;
                     }
                     > span {
-                        @apply text-primary;
+                        @apply text-primary-text;
                     }
                 }
             }

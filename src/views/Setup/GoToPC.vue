@@ -1,13 +1,13 @@
 <template>
     <div class="h-screen bg-pending-bg flex justify-center items-center">
         <div class="max-w-md px-4 py-9 flex flex-col justify-center items-center h-full gap-10">
-            <div class="w-full text-left font-medium text-primary">
+            <div class="w-full text-left font-medium text-primary-text">
                 <p class="text-2xl">Continue to set up your RNS <span class="font-bold">on PC 💻</span></p>
             </div>
-            <div class="w-full text-left font-medium text-primary">
+            <div class="w-full text-left font-medium text-primary-text">
                 <p class="text-base">Don't have access to PC right now? Check our docs below and set up later!</p>
             </div>
-            <Button size="lg" class="w-full text-lg bg-white text-primary shadow-secondary">
+            <Button size="lg" class="w-full text-lg bg-secondary-btn text-secondary-btn-text shadow-secondary-button">
                 <span>About RNS</span>
             </Button>
         </div>

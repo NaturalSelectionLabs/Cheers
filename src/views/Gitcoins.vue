@@ -2,7 +2,18 @@
     <div class="h-screen bg-gitcoin-bg overflow-y-auto">
         <div class="main px-4 py-8 max-w-md m-auto">
             <div class="header flex justify-between items-center pb-4">
-                <Button size="sm" class="w-10 h-10 bg-white text-primary shadow-secondary" @click="back">
+                <Button
+                    size="sm"
+                    class="
+                        w-10
+                        h-10
+                        bg-secondary-btn
+                        text-secondary-btn-text
+                        border-secondary-button-border
+                        shadow-secondary-btn
+                    "
+                    @click="back"
+                >
                     <i class="bx bx-chevron-left bx-sm"></i>
                 </Button>
                 <div class="section-title text-2xl text-gitcoin-title font-bold text-center">Donations</div>
@@ -37,7 +48,7 @@
                     class="m-auto text-lg bg-gitcoin-button text-white shadow-gitcoin"
                     @click="toSetupGitcoins"
                 >
-                    Manage Contribs
+                    <span>Manage Donations</span>
                 </Button>
             </div>
         </div>
@@ -52,7 +63,7 @@ import GitcoinTitle from '@/components/GitcoinTitle.vue';
 import GitcoinCard from '@/components/GitcoinCard.vue';
 import config from '@/config';
 import RNSUtils from '@/common/rns';
-import RSS3 from '@/common/rss3';
+import RSS3, { IRSS3 } from '@/common/rss3';
 import { GeneralAsset, GeneralAssetWithTags } from '@/common/types';
 import { RSS3Asset } from 'rss3-next/types/rss3';
 
@@ -71,7 +82,7 @@ export default class Gitcoins extends Vue {
     ethAddress: string = '';
     public grants: number = 0;
     public contribs: number = 0;
-    public gitcoins: Array<Object> = [];
+    public gitcoins: GeneralAssetWithTags[] = [];
     public isOwner: boolean = false;
     public rss3Profile: Profile = {
         avatar: config.defaultAvatar,
@@ -101,6 +112,14 @@ export default class Gitcoins extends Vue {
         this.rss3Profile.avatar = profile?.avatar?.[0] || config.defaultAvatar;
         this.rss3Profile.username = profile?.name?.[0] || '';
         this.rss3Profile.address = this.ethAddress;
+
+        // Setup theme
+        const themes = RSS3.getAvailableThemes(await rss3.assets.get(this.ethAddress));
+        if (themes[0]) {
+            document.body.classList.add(themes[0].class);
+        } else {
+            document.body.classList.remove(...document.body.classList);
+        }
 
         const data = await RSS3.getAssetProfile(this.ethAddress);
         if (data) {

@@ -1,7 +1,7 @@
 import WalletConnectProvider from '@walletconnect/web3-provider';
 import Web3 from 'web3';
 import RSS3 from 'rss3-next';
-import { RSS3Index } from 'rss3-next/types/rss3';
+import { RSS3Asset, RSS3Index } from 'rss3-next/types/rss3';
 import { RSS3Account, RSS3AccountInput } from 'rss3-next/types/rss3';
 import axios from 'axios';
 import { GitcoinResponse, GeneralAsset, NFTResponse } from './types';
@@ -16,6 +16,12 @@ export type IRSS3 = RSS3;
 
 export interface IAssetProfile {
     assets: GeneralAsset[];
+}
+
+export interface Theme {
+    name: string;
+    class: string;
+    nftIdPrefix: string;
 }
 
 async function walletConnect() {
@@ -69,8 +75,8 @@ async function metamaskConnect() {
     web3 = new Web3(metamaskEthereum);
 
     let address: string;
-    if (sessionStorage.getItem('lastConnect') === 'metamask' && sessionStorage.getItem('lastAddress')) {
-        address = <string>sessionStorage.getItem('lastAddress');
+    if (localStorage.getItem('lastConnect') === 'metamask' && localStorage.getItem('lastAddress')) {
+        address = <string>localStorage.getItem('lastAddress');
     } else {
         const accounts = await metamaskEthereum.request({
             method: 'eth_requestAccounts',
@@ -101,16 +107,17 @@ async function disconnect() {
     if (provider) {
         await provider.disconnect();
     }
-    sessionStorage.removeItem('lastConnect');
+    localStorage.removeItem('lastConnect');
+    localStorage.removeItem('lastAddress');
 }
 
 export default {
     walletConnect: async () => {
-        sessionStorage.setItem('lastConnect', 'walletConnect');
+        localStorage.setItem('lastConnect', 'walletConnect');
         return await walletConnect();
     },
     metamaskConnect: async () => {
-        sessionStorage.setItem('lastConnect', 'metamask');
+        localStorage.setItem('lastConnect', 'metamask');
         return await metamaskConnect();
     },
     disconnect: async () => {
@@ -118,7 +125,7 @@ export default {
     },
     reconnect: async (): Promise<boolean> => {
         if (!isValidRSS3()) {
-            const lastConnect = sessionStorage.getItem('lastConnect');
+            const lastConnect = localStorage.getItem('lastConnect');
             switch (lastConnect) {
                 case 'walletConnect':
                     await walletConnect();
@@ -224,5 +231,21 @@ export default {
             signature: signature,
         };
         // await rss3.files.sync();
+    },
+    getAvailableThemes(assets: RSS3Asset[]) {
+        const availableThemes: Theme[] = [];
+        for (const theme of config.theme) {
+            for (const asset of assets) {
+                if (
+                    asset.type === 'NFT' &&
+                    !asset.tags?.includes('pass:hidden') &&
+                    asset.id.startsWith(theme.nftIdPrefix)
+                ) {
+                    availableThemes.push(theme);
+                    break;
+                }
+            }
+        }
+        return availableThemes;
     },
 };

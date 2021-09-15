@@ -2,7 +2,11 @@
     <div class="h-screen bg-nft-bg overflow-y-auto">
         <div class="main px-4 py-8 max-w-md m-auto">
             <div class="header flex justify-between items-center pb-4">
-                <Button size="sm" class="w-10 h-10 bg-white text-primary shadow-secondary" @click="back">
+                <Button
+                    size="sm"
+                    class="w-10 h-10 bg-secondary-btn text-secondary-btn-text shadow-secondary-btn"
+                    @click="back"
+                >
                     <i class="bx bx-chevron-left bx-sm"></i>
                 </Button>
                 <div class="section-title text-2xl text-nft-title font-bold text-center">NFTs</div>
@@ -32,9 +36,13 @@
                     />
                 </div>
             </div>
-            <div class="px-4 py-4 flex gap-5 fixed bottom-2 left-0 right-0 max-w-md m-auto w-full z-50" v-if="isOwner">
-                <Button size="lg" class="m-auto text-lg bg-nft-button text-white shadow-nft" @click="toSetupNfts">
-                    Manage NFTs
+            <div class="px-4 py-4 flex gap-5 fixed bottom-0 left-0 right-0 max-w-md m-auto w-full z-50" v-if="isOwner">
+                <Button
+                    size="lg"
+                    class="m-auto text-lg bg-nft-btn-m text-nft-btn-m-text shadow-nft-btn-m"
+                    @click="toSetupNfts"
+                >
+                    <span>Manage NFTs</span>
                 </Button>
             </div>
         </div>
@@ -47,7 +55,7 @@ import Button from '@/components/Button.vue';
 import ImgHolder from '@/components/ImgHolder.vue';
 import NFTItem from '@/components/NFT/NFTItem.vue';
 import NFTBadges from '@/components/NFT/NFTBadges.vue';
-import RSS3 from '@/common/rss3';
+import RSS3, { IRSS3 } from '@/common/rss3';
 import RNSUtils from '@/common/rns';
 import config from '@/config';
 import { RSS3Asset } from 'rss3-next/types/rss3';
@@ -98,6 +106,14 @@ export default class NFTs extends Vue {
 
         this.rss3Profile.avatar = profile.avatar?.[0] || config.defaultAvatar;
         this.rss3Profile.username = profile.name?.[0] || '';
+
+        // Setup theme
+        const themes = RSS3.getAvailableThemes(await rss3.assets.get(this.ethAddress));
+        if (themes[0]) {
+            document.body.classList.add(themes[0].class);
+        } else {
+            document.body.classList.remove(...document.body.classList);
+        }
 
         const data = await RSS3.getAssetProfile(this.ethAddress);
 

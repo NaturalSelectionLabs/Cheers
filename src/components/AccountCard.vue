@@ -1,5 +1,17 @@
 <template>
-    <div class="box-border rounded-xl px-5 pb-1 pt-2 bg-account-bg flex flex-row items-center">
+    <div
+        class="
+            box-border
+            rounded-xl
+            px-5
+            pb-1
+            pt-2
+            bg-account-bg
+            flex flex-row
+            items-center
+            border-card border-account-border
+        "
+    >
         <div class="content flex flex-row items-center w-full overflow-y-auto pb-2 px-2">
             <slot name="content" />
         </div>

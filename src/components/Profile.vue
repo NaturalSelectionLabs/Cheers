@@ -1,6 +1,6 @@
 <template>
     <div class="profile-container flex flex-col justify-start items-start gap-y-2">
-        <div class="w-full pr-8 flex flex-row font-medium text-lg justify-between items-end text-primary leading-5">
+        <div class="w-full pr-8 flex flex-row font-medium text-lg justify-between items-end leading-5">
             <div class="w-24 h-24">
                 <ImgHolder class="w-24 h-24" :is-rounded="true" :is-border="false" :src="avatar" />
             </div>
@@ -18,19 +18,15 @@
             </div>
         </div>
         <span class="font-bold text-2xl">{{ username }}</span>
-        <!-- <span class="font-medium text-lg rounded-sm bg-content-bg text-primary" v-if="rns" @click="emitShare">
-            {{ rns + '.pass3.me' }}
-        </span>
-        <span class="font-medium text-lg rounded-sm bg-content-bg text-primary" v-else>
-            {{ filter(address) }}
-        </span>
-        <span class="font-medium text-lg rounded-sm bg-content-bg text-primary cursor-pointer" v-if="website">
-            <i class="bx bx-link mr-1" />
-            {{ website }}
-        </span> -->
-        <LinkButton v-if="rns">{{ rns + '.pass3.me' }}</LinkButton>
-        <LinkButton v-else>{{ filter(address) }}</LinkButton>
-        <LinkButton v-if="website">{{ website }}</LinkButton>
+        <LinkButton v-if="rns"
+            ><span>{{ rns + '.pass3.me' }}</span></LinkButton
+        >
+        <LinkButton v-else
+            ><span>{{ filter(address) }}</span></LinkButton
+        >
+        <LinkButton v-if="website"
+            ><span>{{ website }}</span></LinkButton
+        >
         <div class="bio w-full font-medium text-lg whitespace-pre-line">
             {{ bio }}
         </div>
@@ -90,7 +86,7 @@ export default class Profile extends Vue {
 <style lang="postcss" scoped>
 @layer components {
     .stats-container {
-        @apply cursor-pointer mb-2;
+        @apply cursor-pointer mb-2 text-primary-text;
         .stats-number {
             @apply text-xl font-semibold;
         }
