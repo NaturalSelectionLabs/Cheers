@@ -82,7 +82,7 @@ export default class Gitcoins extends Vue {
     ethAddress: string = '';
     public grants: number = 0;
     public contribs: number = 0;
-    public gitcoins: Array<Object> = [];
+    public gitcoins: GeneralAssetWithTags[] = [];
     public isOwner: boolean = false;
     public rss3Profile: Profile = {
         avatar: config.defaultAvatar,

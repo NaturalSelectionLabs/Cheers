@@ -24,15 +24,24 @@
                 <span>{{ isFollowing ? 'Following' : 'Follow' }}</span>
                 <i class="bx bx-sm no-underline" v-bind:class="[isFollowing ? 'bx-check' : 'bx-plus']"></i>
             </Button>
-            <Button
-                size="sm"
-                class="w-auto text-lg bg-secondary-btn text-secondary-btn-text shadow-secondary-btn mb-4"
-                v-if="isOwner"
-                @click="toSetupPage"
-            >
-                <span>Edit Profile</span>
-                <i class="bx bx-pencil no-underline"></i>
-            </Button>
+
+            <div class="flex mb-4 h-13 gap-2 mt-2" v-else>
+                <Button
+                    size="lg"
+                    class="text-lg bg-secondary-btn text-secondary-btn-text shadow-secondary-btn flex-1"
+                    @click="toSetupPage"
+                >
+                    <span>Edit Profile</span>
+                    <i class="bx bx-pencil bx-sm"></i>
+                </Button>
+                <Button
+                    size="lg"
+                    class="w-13 text-lg bg-primary-btn text-primary-btn-text shadow-primary-btn"
+                    @click="logout"
+                >
+                    <i class="bx bx-log-out bx-sm"></i>
+                </Button>
+            </div>
 
             <AccountCard>
                 <template #header-button>
@@ -738,6 +747,11 @@ export default class Home extends Vue {
 
     toMakeDonation() {
         window.open('https://gitcoin.co/');
+    }
+
+    async logout() {
+        await RSS3.disconnect();
+        this.$router.push('/');
     }
 }
 </script>
