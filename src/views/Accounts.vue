@@ -14,9 +14,9 @@
                     class="w-10 h-10 inline-flex my-auto cursor-pointer"
                     :is-rounded="true"
                     :is-border="false"
-                    :src="this.rss3Profile.avatar"
-                    :alt="this.rss3Profile.username"
-                    @click="toPublicPage(this.rss3Profile.address)"
+                    :src="rss3Profile.avatar"
+                    :alt="rss3Profile.username"
+                    @click="toPublicPage(rss3Profile.address)"
                 />
             </div>
             <div class="account-list">
@@ -27,7 +27,9 @@
                         :key="index"
                     >
                         <AccountItem :size="70" :chain="item.platform"></AccountItem>
-                        <span class="address text-2xl font-semibold">{{ filter(item.identity) }}</span>
+                        <span class="address text-2xl text-account-title font-semibold">{{
+                            filter(item.identity)
+                        }}</span>
                         <Button
                             size="sm"
                             class="w-10 h-10 bg-account-btn-m text-account-btn-m-text shadow-account-btn-m"
