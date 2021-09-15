@@ -55,7 +55,7 @@ export default class Card extends Vue {}
 <style scoped lang="postcss">
 @layer components {
     .card {
-        @apply box-border rounded-xl pt-4 pb-4 pl-5 pr-5 flex flex-col items-start;
+        @apply box-border rounded-xl pt-4 pb-4 pl-5 pr-5 flex flex-col items-start border-card;
 
         > * + * {
             @apply my-5;
@@ -87,7 +87,7 @@ export default class Card extends Vue {}
                 }
             }
             .body-tips {
-                @apply flex w-full justify-start items-center;
+                @apply flex w-full justify-center items-center;
             }
         }
 

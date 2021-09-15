@@ -6,8 +6,10 @@
             justify-start
             items-center
             rounded rounded-2xl
-            bg-white
-            shadow-gitcoin-md
+            bg-body-bg
+            text-body-text
+            border-card
+            shadow-gitcoin
             cursor-pointer
         "
     >

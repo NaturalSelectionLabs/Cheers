@@ -13,11 +13,11 @@
                 @click="toMarket(details.asset_contract?.address, details.token_id)"
             />
         </div>
-        <div>
+        <div v-if="details.description">
             <h3>Description</h3>
             <p>{{ details.description }}</p>
         </div>
-        <div>
+        <div v-if="details.traits">
             <h3>Properties</h3>
             <div class="traits-container">
                 <Trait
@@ -28,7 +28,7 @@
                 ></Trait>
             </div>
         </div>
-        <div>
+        <div v-if="details.collection?.name">
             <h3>About {{ details.collection?.name }}</h3>
             <p>{{ details.collection?.description }}</p>
         </div>
@@ -80,7 +80,7 @@ export default class NFTDetail extends Vue {
 <style scoped lang="postcss">
 @layer components {
     .details-container {
-        @apply w-full px-5 py-4 bg-white rounded filter drop-shadow-nft text-black flex flex-col justify-start items-start gap-5;
+        @apply w-full px-5 py-4 bg-body-bg rounded filter shadow-nft border-card text-body-text flex flex-col justify-start items-start gap-5;
     }
     h2 {
         @apply text-xl font-semibold capitalize overflow-ellipsis overflow-hidden break-all;

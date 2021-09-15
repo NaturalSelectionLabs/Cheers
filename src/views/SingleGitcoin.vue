@@ -2,7 +2,11 @@
     <div class="h-screen bg-gitcoin-bg overflow-y-auto">
         <div class="main px-4 py-8 max-w-md m-auto">
             <div class="header flex justify-between items-center pb-4">
-                <Button size="sm" class="w-10 h-10 bg-white text-primary shadow-secondary" @click="back">
+                <Button
+                    size="sm"
+                    class="w-10 h-10 bg-secondary-btn text-secondary-btn-text shadow-secondary-btn"
+                    @click="back"
+                >
                     <i class="bx bx-chevron-left bx-sm"></i>
                 </Button>
                 <ImgHolder
@@ -20,9 +24,12 @@
                     w-full
                     px-5
                     py-4
-                    bg-white
-                    shadow-gitcoin-sm
+                    bg-body-bg
                     rounded
+                    filter
+                    shadow-gitcoin
+                    border-card
+                    text-body-text
                     flex flex-col
                     justify-start
                     items-start
@@ -88,11 +95,13 @@
                                     :autoinit="true"
                                 />
                             </div>
-                            <div class="flex-1 truncate w-0 text-right">{{ timeDifferent(item.timeStamp) }}</div>
+                            <div class="flex-1 truncate w-0 text-right text-gitcoin-title">
+                                {{ timeDifferent(item.timeStamp) }}
+                            </div>
                         </div>
                         <Button
                             size="sm"
-                            class="w-9 h-9 ml-1 bg-gitcoin-button text-white shadow-gitcoin-sm"
+                            class="w-9 h-9 ml-1 bg-gitcoin-btn-m text-gitcoin-btn-m-text shadow-gitcoin-btn-m"
                             @click="toEtherscan(item.txHash)"
                         >
                             <i class="bx bx-link-external bx-xs" />
@@ -111,7 +120,7 @@ import ImgHolder from '@/components/ImgHolder.vue';
 import GitcoinItem from '@/components/GitcoinItem.vue';
 import config from '@/config';
 import RNSUtils from '@/common/rns';
-import RSS3 from '@/common/rss3';
+import RSS3, { IRSS3 } from '@/common/rss3';
 import Vue3Autocounter from 'vue3-autocounter';
 
 interface Profile {
@@ -184,6 +193,14 @@ export default class SingleGitcoin extends Vue {
         this.rss3Profile.avatar = profile?.avatar?.[0] || config.defaultAvatar;
         this.rss3Profile.username = profile?.name?.[0] || '';
         this.rss3Profile.address = this.ethAddress;
+
+        // Setup theme
+        const themes = RSS3.getAvailableThemes(await rss3.assets.get(this.ethAddress));
+        if (themes[0]) {
+            document.body.classList.add(themes[0].class);
+        } else {
+            document.body.classList.remove(...document.body.classList);
+        }
 
         await this.loadGitcoin();
     }

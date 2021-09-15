@@ -1,11 +1,11 @@
 <template>
     <div class="onboarding h-full text-center bg-cover bg-fixed flex items-center justify-center bg-pass3gradient">
         <div class="body px-4 h-2/3 flex flex-col justify-start items-center justify-between">
-            <div class="logo-container w-50 h-50 bg-pass3logo bg-center bg-contain bg-no-repeat"></div>
+            <Logo :size="200" />
             <div class="leading-17.5 text-white w-83.5 text-2xl mx-auto">
                 <Button
                     size="lg"
-                    class="bg-primary shadow-primary rounded-3xl w-full h-17.5 mb-9"
+                    class="bg-primary-btn shadow-primary-btn text-primary-btn-text rounded-3xl w-full h-17.5 mb-9"
                     @click="walletConnect"
                 >
                     <WalletConnect :size="40" />
@@ -37,6 +37,7 @@ import WalletConnect from '@/components/Icons/WalletConnect.vue';
 import Metamask from '@/components/Icons/Metamask.vue';
 import Loading from '@/components/Loading.vue';
 import LoadingContainer from '@/components/LoadingContainer.vue';
+import Logo from '@/components/Logo.vue';
 @Options({
     components: {
         Metamask,
@@ -45,6 +46,7 @@ import LoadingContainer from '@/components/LoadingContainer.vue';
         Button,
         Loading,
         LoadingContainer,
+        Logo,
     },
 })
 export default class Index extends Vue {

@@ -22,7 +22,11 @@
                     {{ details.collection?.name }}
                 </div>
                 <div class="flex justify-between items-center">
-                    <Button size="sm" class="w-10 h-10 bg-white text-primary shadow-secondary" @click="back">
+                    <Button
+                        size="sm"
+                        class="w-10 h-10 bg-secondary-btn text-secondary-btn-text shadow-secondary-btn"
+                        @click="back"
+                    >
                         <i class="bx bx-chevron-left bx-sm"></i>
                     </Button>
                     <NFTBadges
@@ -55,7 +59,7 @@ import NFTItem from '@/components/NFT/NFTItem.vue';
 import NFTDetail from '@/components/NFT/NFTDetails.vue';
 import AccountItem from '@/components/AccountItem.vue';
 import NFTBadges from '@/components/NFT/NFTBadges.vue';
-import RSS3 from '@/common/rss3';
+import RSS3, { IRSS3 } from '@/common/rss3';
 import RNSUtils from '@/common/rns';
 import { NFT } from '@/common/types';
 
@@ -87,6 +91,16 @@ export default class SingleNFT extends Vue {
         const platform: string = String(this.$route.params.platform);
         const identity: string = String(this.$route.params.identity);
         const id: string = String(this.$route.params.id);
+
+        const rss3 = await RSS3.visitor();
+
+        // Setup theme
+        const themes = RSS3.getAvailableThemes(await rss3.assets.get(this.ethAddress));
+        if (themes[0]) {
+            document.body.classList.add(themes[0].class);
+        } else {
+            document.body.classList.remove(...document.body.classList);
+        }
 
         const data = await RSS3.getAssetProfile(this.ethAddress);
 

@@ -1,10 +1,14 @@
 <template>
-    <div class="px-4 py-9 max-w-md m-auto pb-20">
+    <div class="px-4 py-9 max-w-md m-auto pb-20 bg-body-bg text-body-text">
         <div class="text-center mb-4 relative">
-            <Button size="sm" class="w-10 h-10 bg-white text-primary shadow-secondary" @click="back">
+            <Button
+                size="sm"
+                class="w-10 h-10 bg-secondary-btn text-secondary-btn-text shadow-secondary-btn"
+                @click="back"
+            >
                 <i class="bx bx-chevron-left bx-sm"></i>
             </Button>
-            <h1 class="text-xl text-primary font-bold absolute top-0 leading-10 w-full text-center -z-10">
+            <h1 class="text-xl text-primary-text font-bold absolute top-0 leading-10 w-full text-center -z-10">
                 Edit Profile
             </h1>
         </div>
@@ -13,10 +17,18 @@
         <Input class="mb-4 w-full" :is-single-line="false" placeholder="Bio" v-model="profile.bio" />
 
         <div class="px-4 py-4 flex gap-5 fixed left-0 right-0 max-w-md m-auto w-full">
-            <Button size="lg" class="flex-1 text-lg bg-white text-primary shadow-secondary" @click="back"
-                >Discard</Button
+            <Button
+                size="lg"
+                class="flex-1 text-lg bg-secondary-btn text-secondary-btn-text shadow-secondary-btn"
+                @click="back"
+                ><span>Discard</span></Button
             >
-            <Button size="lg" class="flex-1 text-lg bg-primary text-white shadow-primary" @click="save">Save</Button>
+            <Button
+                size="lg"
+                class="flex-1 text-lg bg-primary-btn text-primary-btn-text shadow-primary-btn"
+                @click="save"
+                ><span>Save</span></Button
+            >
         </div>
 
         <LoadingContainer v-show="isLoading" />
@@ -34,10 +46,10 @@
                 <div class="flex flex-row gap-5">
                     <Button
                         size="sm"
-                        class="w-72 bg-primary text-white shadow-primary"
+                        class="w-72 bg-primary-btn text-primary-btn-text shadow-primary-btn"
                         @click="isShowingNotice = false"
                     >
-                        OK
+                        <span>OK</span>
                     </Button>
                 </div>
             </template>
@@ -88,7 +100,6 @@ export default class EditProfile extends Vue {
     maxValueLength: Number = 280;
     notice: String = '';
     isShowingNotice: Boolean = false;
-
     $gtag: any;
 
     async mounted() {

@@ -4,13 +4,14 @@
             width: size + 'px',
             height: size + 'px',
         }"
-        class="rounded"
+        class="rounded shadow-nft"
     >
         <video
             v-if="imageUrl?.endsWith('.mp4') || imageUrl?.endsWith('.mov') || imageUrl?.endsWith('.mp3')"
             :src="imageUrl"
             :poster="posterUrl?.endsWith('.mp4') || posterUrl?.endsWith('.mov') ? undefined : posterUrl"
             class="nft-item"
+            :class="[!isShowingDetails ? 'object-cover' : 'object-contain']"
             :style="{
                 width: size + 'px',
                 height: size + 'px',
@@ -19,13 +20,14 @@
             loop
             webkit-playsinline
             playsinline
-            :muted="!isShowingDetails"
+            :muted="true"
             :controls="isShowingDetails"
         />
         <iframe
             v-else-if="imageUrl?.endsWith('embed') || imageUrl?.includes('farmhero.io')"
             :src="imageUrl"
             class="nft-item"
+            :class="[!isShowingDetails ? 'object-cover' : 'object-contain']"
             :style="{
                 width: size + 'px',
                 height: size + 'px',
@@ -35,6 +37,7 @@
             v-else-if="imageUrl?.endsWith('.glb') && isShowingDetails"
             :src="imageUrl"
             class="nft-item"
+            :class="[!isShowingDetails ? 'object-cover' : 'object-contain']"
             :style="{
                 width: size + 'px',
                 height: size + 'px',
@@ -49,6 +52,7 @@
             v-else
             :src="(imageUrl?.endsWith('.glb') ? posterUrl : imageUrl) || defaultImage"
             class="nft-item"
+            :class="[!isShowingDetails ? 'object-cover' : 'object-contain']"
             :style="{
                 width: size + 'px',
                 height: size + 'px',
@@ -83,7 +87,7 @@ export default class NFTItem extends Vue {
 <style scoped lang="postcss">
 @layer components {
     .nft-item {
-        @apply rounded border border-white filter drop-shadow-nft bg-white object-contain;
+        @apply rounded border border-item-border filter shadow-nft bg-item-bg;
     }
 }
 </style>

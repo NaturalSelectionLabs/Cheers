@@ -2,7 +2,11 @@
     <div class="h-screen bg-account-bg overflow-y-auto">
         <div class="main px-4 py-8 max-w-md m-auto">
             <div class="header flex justify-between items-center pb-4">
-                <Button size="sm" class="w-10 h-10 bg-white text-primary shadow-secondary" @click="back">
+                <Button
+                    size="sm"
+                    class="w-10 h-10 bg-secondary-btn text-secondary-btn-text shadow-secondary-btn"
+                    @click="back"
+                >
                     <i class="bx bx-chevron-left bx-sm"></i>
                 </Button>
                 <div class="section-title text-2xl text-account-title font-bold text-center">Accounts</div>
@@ -26,14 +30,14 @@
                         <span class="address text-2xl font-semibold">{{ filter(item.identity) }}</span>
                         <Button
                             size="sm"
-                            class="w-10 h-10 bg-account-button text-white shadow-account"
+                            class="w-10 h-10 bg-account-btn-m text-account-btn-m-text shadow-account-btn-m"
                             @click="copyToClipboard(item.identity)"
                         >
                             <i class="bx bxs-copy bx-sm"></i>
                         </Button>
                         <Button
                             size="sm"
-                            class="w-10 h-10 bg-account-button text-white shadow-account"
+                            class="w-10 h-10 bg-account-btn-m text-account-btn-m-text shadow-account-btn-m"
                             @click="toExternalLink(item.identity, item.platform)"
                         >
                             <i class="bx bx-link-external bx-sm"></i>
@@ -44,10 +48,10 @@
             <div class="px-4 py-4 flex gap-5 fixed bottom-2 left-0 right-0 max-w-md m-auto w-full" v-if="isOwner">
                 <Button
                     size="lg"
-                    class="m-auto text-lg bg-account-button text-white shadow-account"
+                    class="m-auto text-lg bg-account-btn-m text-account-btn-m-text shadow-account-btn-m"
                     @click="toSetupAccounts"
                 >
-                    Manage Accounts
+                    <span>Manage Accounts</span>
                 </Button>
             </div>
         </div>
@@ -59,7 +63,7 @@ import { Options, Vue } from 'vue-class-component';
 import Button from '@/components/Button.vue';
 import ImgHolder from '@/components/ImgHolder.vue';
 import AccountItem from '@/components/AccountItem.vue';
-import RSS3 from '@/common/rss3';
+import RSS3, { IRSS3 } from '@/common/rss3';
 import { RSS3Account } from 'rss3-next/types/rss3';
 import RNSUtils from '@/common/rns';
 import config from '@/config';
@@ -107,6 +111,14 @@ export default class Accounts extends Vue {
         this.rss3Profile.avatar = profile?.avatar?.[0] || config.defaultAvatar;
         this.rss3Profile.username = profile?.name?.[0] || '';
         this.rss3Profile.address = this.ethAddress;
+
+        // Setup theme
+        const themes = RSS3.getAvailableThemes(await rss3.assets.get(this.ethAddress));
+        if (themes[0]) {
+            document.body.classList.add(themes[0].class);
+        } else {
+            document.body.classList.remove(...document.body.classList);
+        }
 
         this.accounts.push({
             platform: 'Ethereum',

@@ -1,49 +1,18 @@
+@import './fonts.css';
+@import '../themes/default.css';
+@import '../themes/loot.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-@font-face {
-    font-family: SFCompactRounded;
-    font-weight: normal;
-    src: url('../assets/fonts/SF-Compact-Rounded-Regular.otf') format('opentype');
-}
-
-@font-face {
-    font-family: SFCompactRounded;
-    font-weight: 100;
-    src: url('../assets/fonts/SF-Compact-Rounded-Thin.otf') format('opentype');
-}
-
-@font-face {
-    font-family: SFCompactRounded;
-    font-weight: 300;
-    src: url('../assets/fonts/SF-Compact-Rounded-Light.otf') format('opentype');
-}
-
-@font-face {
-    font-family: SFCompactRounded;
-    font-weight: 500;
-    src: url('../assets/fonts/SF-Compact-Rounded-Medium.otf') format('opentype');
-}
-
-@font-face {
-    font-family: SFCompactRounded;
-    font-weight: 600;
-    src: url('../assets/fonts/SF-Compact-Rounded-Semibold.otf') format('opentype');
-}
-@font-face {
-    font-family: SFCompactRounded;
-    font-weight: 700;
-    src: url('../assets/fonts/SF-Compact-Rounded-Bold.otf') format('opentype');
-}
-
-body {
+/* body {
     @apply font-sf-compact-rounded;
 }
 
 pre {
     @apply font-sf-compact-rounded;
-}
+} */
 ::-webkit-scrollbar {
     width: 3px;
     height: 3px;

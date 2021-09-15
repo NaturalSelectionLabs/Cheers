@@ -1,101 +1,128 @@
 <template>
-    <div v-if="isRNSExist" class="main px-4 py-8 flex flex-col gap-y-2 max-w-md m-auto overflow-y-auto select-none">
-        <Profile
-            :avatar="rss3Profile.avatar"
-            :username="rss3Profile.username"
-            :address="rss3Profile.address"
-            :rns="rns"
-            :followers="rss3Relations.followers"
-            :followings="rss3Relations.followings"
-            :bio="rss3Profile.bio"
-        />
-        <Button
-            size="sm"
-            class="w-auto text-lg shadow-secondary mb-4 duration-200"
-            v-if="!isOwner"
-            v-bind:class="[isFollowing ? 'bg-white text-primary' : 'bg-primary text-white']"
-            @click="action()"
-        >
-            <span>{{ isFollowing ? 'Following' : 'Follow' }}</span>
-            <i class="bx bx-sm" v-bind:class="[isFollowing ? 'bx-check' : 'bx-plus']"></i>
-        </Button>
-        <div class="flex mb-4 h-13 gap-2 mt-2" v-if="isOwner">
-            <Button size="lg" class="text-lg bg-white text-primary shadow-secondary flex-1" @click="toSetupPage">
-                <span>Edit Profile</span>
-                <i class="bx bx-pencil bx-sm"></i>
+    <div class="h-screen bg-body-bg overflow-y-auto text-body-text">
+        <div v-if="isRNSExist" class="main px-4 py-8 flex flex-col gap-y-2 max-w-md m-auto overflow-y-auto select-none">
+            <Profile
+                :avatar="rss3Profile.avatar"
+                :username="rss3Profile.username"
+                :address="rss3Profile.address"
+                :rns="rns"
+                :followers="rss3Relations.followers"
+                :followings="rss3Relations.followings"
+                :bio="rss3Profile.bio"
+            />
+            <Button
+                size="sm"
+                class="w-auto text-lg mb-4 duration-200"
+                v-if="!isOwner"
+                v-bind:class="[
+                    isFollowing
+                        ? 'bg-secondary-btn text-secondary-btn-text shadow-secondary-btn'
+                        : 'bg-primary-btn text-primary-btn-text shadow-primary-btn',
+                ]"
+                @click="action()"
+            >
+                <span>{{ isFollowing ? 'Following' : 'Follow' }}</span>
+                <i class="bx bx-sm no-underline" v-bind:class="[isFollowing ? 'bx-check' : 'bx-plus']"></i>
             </Button>
-            <Button size="lg" class="w-13 text-lg bg-primary text-white shadow-secondary" @click="logout">
-                <i class="bx bx-log-out bx-sm"></i>
-            </Button>
-        </div>
 
-        <AccountCard>
-            <template #header-button>
-                <div v-if="isOwner" class="flex flex-row gap-2">
+            <div class="flex mb-4 h-13 gap-2 mt-2" v-else>
+                <Button
+                    size="lg"
+                    class="text-lg bg-secondary-btn text-secondary-btn-text shadow-secondary-btn flex-1"
+                    @click="toSetupPage"
+                >
+                    <span>Edit Profile</span>
+                    <i class="bx bx-pencil bx-sm"></i>
+                </Button>
+                <Button
+                    size="lg"
+                    class="w-13 text-lg bg-primary-btn text-primary-btn-text shadow-primary-btn"
+                    @click="logout"
+                >
+                    <i class="bx bx-log-out bx-sm"></i>
+                </Button>
+            </div>
+
+            <AccountCard>
+                <template #header-button>
+                    <div v-if="isOwner" class="flex flex-row gap-2">
+                        <Button
+                            size="sm"
+                            class="w-8 h-8 bg-account-btn-s text-account-btn-s-text shadow-account-btn-s"
+                            @click="toManageAccounts"
+                        >
+                            <i class="bx bxs-pencil bx-xs" />
+                        </Button>
+                        <Button
+                            size="sm"
+                            class="w-8 h-8 bg-account-btn-s text-account-btn-s-text shadow-account-btn-s"
+                            @click="toAccountsPage"
+                        >
+                            <i class="bx bx-expand-alt bx-xs" />
+                        </Button>
+                    </div>
                     <Button
+                        v-else
                         size="sm"
-                        class="w-8 h-8 bg-white text-account-button shadow-account-sm"
-                        @click="toManageAccounts"
-                    >
-                        <i class="bx bxs-pencil bx-xs" />
-                    </Button>
-                    <Button
-                        size="sm"
-                        class="w-8 h-8 bg-white text-account-button shadow-account-sm"
+                        class="w-10 h-10 bg-account-btn-s text-account-btn-s-text shadow-account-btn-s"
                         @click="toAccountsPage"
                     >
-                        <i class="bx bx-expand-alt bx-xs" />
+                        <i class="bx bx-expand-alt bx-xs"></i>
                     </Button>
-                </div>
-                <Button
-                    v-else
-                    size="sm"
-                    class="w-10 h-10 text-account-button bg-white shadow-account-sm"
-                    @click="toAccountsPage"
-                >
-                    <i class="bx bx-expand-alt bx-xs"></i>
-                </Button>
-            </template>
-            <template #content>
-                <AccountItem
-                    class="inline-block mr-1 cursor-pointer"
-                    :size="40"
-                    :chain="item.platform"
-                    v-for="(item, index) in accounts"
-                    :key="index"
-                    @click="displayDialog(item.identity, item.platform)"
-                />
-            </template>
-        </AccountCard>
-
-        <Card
-            title="NFTs"
-            color-title="text-nft-title"
-            color-tips="text-nft-title"
-            color-background="bg-nft-bg"
-            class="w-auto"
-            :is-having-content="true"
-            :is-single-line="nfts.length !== 0"
-        >
-            <template #title-icon><NFTIcon /></template>
-
-            <template #header-button>
-                <div v-if="isOwner" class="flex flex-row gap-2">
-                    <Button size="sm" class="w-8 h-8 bg-white text-nft-button shadow-nft-sm" @click="toManageNFTs">
-                        <i class="bx bxs-pencil bx-xs" />
-                    </Button>
-                    <Button size="sm" class="w-8 h-8 bg-white text-nft-button shadow-nft-sm" @click="toNFTsPage">
-                        <i class="bx bx-expand-alt bx-xs" />
-                    </Button>
-                </div>
-                <Button v-else size="sm" class="w-10 h-10 text-nft-button bg-white shadow-nft-sm" @click="toNFTsPage">
-                    <i class="bx bx-expand-alt bx-xs"></i>
-                </Button>
-            </template>
-            <template #content>
-                <template v-if="nfts.length !== 0">
-                    <NFTItem
+                </template>
+                <template #content>
+                    <AccountItem
                         class="inline-block mr-1 cursor-pointer"
+                        :size="40"
+                        :chain="item.platform"
+                        v-for="(item, index) in accounts"
+                        :key="index"
+                        @click="displayDialog(item.identity, item.platform)"
+                    />
+                </template>
+            </AccountCard>
+
+            <Card
+                title="NFTs"
+                color-title="text-nft-title"
+                color-tips="text-nft-title"
+                color-background="bg-nft-bg"
+                class="w-full border-nft-border"
+                :is-having-content="nfts.length !== 0"
+                :is-single-line="nfts.length !== 0"
+                :tips="isLoadingAssets ? 'Loading...' : nfts.length === 0 ? 'Haven\'t found anything yet...' : ''"
+            >
+                <template #title-icon><NFTIcon /></template>
+
+                <template #header-button>
+                    <div v-if="isOwner" class="flex flex-row gap-2">
+                        <Button
+                            size="sm"
+                            class="w-8 h-8 bg-nft-btn-s text-nft-btn-s-text shadow-nft-btn-s"
+                            @click="toManageNFTs"
+                        >
+                            <i class="bx bxs-pencil bx-xs" />
+                        </Button>
+                        <Button
+                            size="sm"
+                            class="w-8 h-8 bg-nft-btn-s text-nft-btn-s-text shadow-nft-btn-s"
+                            @click="toNFTsPage"
+                        >
+                            <i class="bx bx-expand-alt bx-xs" />
+                        </Button>
+                    </div>
+                    <Button
+                        v-else
+                        size="sm"
+                        class="w-10 h-10 bg-nft-btn-s text-nft-btn-s-text shadow-nft-btn-s"
+                        @click="toNFTsPage"
+                    >
+                        <i class="bx bx-expand-alt bx-xs" />
+                    </Button>
+                </template>
+                <template #content>
+                    <NFTItem
+                        class="inline-flex mx-0.5 cursor-pointer"
                         v-for="item in nfts"
                         :key="item.platform + item.identity + item.id"
                         :image-url="item.info.animation_url || item.info.image_preview_url"
@@ -104,180 +131,203 @@
                         @click="toSingleNFTPage(item.platform, item.identity, item.id)"
                     />
                 </template>
-                <template v-else>
-                    <div class="text-nft-title m-auto text-center mt-4">
-                        {{ isLoadingAssets ? 'Loading...' : "Haven't found anything yet..." }}
-                    </div>
+            </Card>
+
+            <Card
+                title="Donations"
+                color-title="text-gitcoin-title"
+                color-tips="text-gitcoin-title"
+                color-background="bg-gitcoin-bg"
+                class="w-full border-gitcoin-border"
+                :is-having-content="true"
+                :is-single-line="gitcoins.length !== 0"
+            >
+                <template #title-icon>
+                    <GitcoinIcon :iconColor="currentTheme === 'loot' ? 'white' : 'black'" />
                 </template>
-            </template>
-        </Card>
 
-        <Card
-            title="Donations"
-            color-title="text-gitcoin-title"
-            color-tips="text-gitcoin-title"
-            color-background="bg-gitcoin-bg"
-            class="w-auto"
-            :is-having-content="true"
-            :is-single-line="gitcoins.length !== 0"
-        >
-            <template #title-icon><GitcoinIcon /></template>
-
-            <template #header-button>
-                <div v-if="isOwner" class="flex flex-row gap-2">
+                <template #header-button>
+                    <div v-if="isOwner" class="flex flex-row gap-2">
+                        <Button
+                            size="sm"
+                            class="w-8 h-8 bg-gitcoin-btn-s text-gitcoin-btn-s-text shadow-gitcoin-btn-s"
+                            @click="toManageGitcoins"
+                        >
+                            <i class="bx bxs-pencil bx-xs" />
+                        </Button>
+                        <Button
+                            size="sm"
+                            class="w-8 h-8 bg-gitcoin-btn-s text-gitcoin-btn-s-text shadow-gitcoin-btn-s"
+                            @click="toGitcoinsPage"
+                        >
+                            <i class="bx bx-expand-alt bx-xs" />
+                        </Button>
+                    </div>
                     <Button
+                        v-else
                         size="sm"
-                        class="w-8 h-8 bg-white text-gitcoin-button shadow-gitcoin-sm"
-                        @click="toManageGitcoins"
-                    >
-                        <i class="bx bxs-pencil bx-xs" />
-                    </Button>
-                    <Button
-                        size="sm"
-                        class="w-8 h-8 bg-white text-gitcoin-button shadow-gitcoin-sm"
+                        class="w-10 h-10 bg-gitcoin-btn-s text-gitcoin-btn-s-text shadow-gitcoin-btn-s"
                         @click="toGitcoinsPage"
                     >
-                        <i class="bx bx-expand-alt bx-xs" />
+                        <i class="bx bx-expand-alt bx-xs"></i>
                     </Button>
-                </div>
-                <Button
-                    v-else
-                    size="sm"
-                    class="w-10 h-10 text-gitcoin-button bg-white shadow-gitcoin-sm"
-                    @click="toGitcoinsPage"
-                >
-                    <i class="bx bx-expand-alt bx-xs"></i>
-                </Button>
-            </template>
-            <template #content>
-                <GitcoinItem
-                    v-if="gitcoins.length !== 0"
-                    v-for="item in gitcoins"
-                    :key="item.platform + item.identity + item.id"
-                    class="inline-flex m-0.5 cursor-pointer"
-                    :size="64"
-                    :imageUrl="item.info.image_preview_url"
-                    @click="toSingleGitcoin(item.platform, item.identity, item.id)"
-                />
-                <div v-else-if="isLoadingAssets" class="text-gitcoin-title m-auto text-center mt-4">Loading...</div>
-                <div v-else-if="!isOwner" class="text-gitcoin-title m-auto text-center mt-4">
-                    Haven't found anything yet...
-                </div>
-                <div v-else class="flex justify-center">
-                    <Button
-                        size="lg"
-                        class="text-lg bg-gitcoin-button text-white shadow-gitcoin cursor-pointer m-auto mt-4"
-                        @click="toMakeDonation"
-                    >
-                        Make your first donation!
-                    </Button>
-                </div>
-            </template>
-        </Card>
+                </template>
+                <template #content>
+                    <GitcoinItem
+                        v-if="gitcoins.length !== 0"
+                        class="inline-flex mx-0.5 cursor-pointer"
+                        v-for="item in gitcoins"
+                        :key="item.platform + item.identity + item.id"
+                        :size="70"
+                        :imageUrl="item.info.image_preview_url"
+                        @click="toSingleGitcoin(item.platform, item.identity, item.id)"
+                    />
+                    <div v-else-if="isLoadingAssets" class="text-gitcoin-title m-auto text-center mt-4">Loading...</div>
+                    <div v-else-if="!isOwner" class="text-gitcoin-title m-auto text-center mt-4">
+                        Haven't found anything yet...
+                    </div>
+                    <div v-else class="flex justify-center">
+                        <Button
+                            size="lg"
+                            class="text-lg bg-gitcoin-btn-m text-white shadow-gitcoin cursor-pointer m-auto mt-4"
+                            @click="toMakeDonation"
+                        >
+                            <span>Make your first donation!</span>
+                        </Button>
+                    </div>
+                </template>
+            </Card>
 
-        <Card
-            title="Contents"
-            color-title="text-content-title"
-            color-tips="text-content-title"
-            color-background="bg-content-bg"
-            class="w-auto"
-            :is-having-content="true"
-        >
-            <template #title-icon><ContentIcon /></template>
-            <template #content>
-                <Button
-                    size="sm"
-                    class="
-                        text-xs
-                        bg-content-button
-                        opacity-35
-                        text-white
-                        shadow-content
-                        cursor-not-allowed
-                        m-auto
-                        mt-4
-                    "
-                    disabled
-                >
-                    Coming Soon
-                </Button>
-            </template>
-        </Card>
-
-        <Modal v-show="isdisplaying">
-            <template #header>
-                <Button
-                    size="sm"
-                    class="absolute left-4 w-10 h-10 bg-white text-primary shadow-secondary"
-                    @click="closeDialog"
-                >
-                    <i class="bx bx-chevron-left bx-sm"></i>
-                </Button>
-            </template>
-            <template #body>
-                <div class="flex flex-col gap-y-4 items-center">
-                    <AccountItem class="m-auto mt-4" :size="90" :chain="dialogChain"></AccountItem>
-                    <span class="address text-xl font-semibold break-all text-center mt-4">{{ dialogAddress }}</span>
+            <Card
+                title="Contents"
+                color-title="text-content-title"
+                color-tips="text-content-title"
+                color-background="bg-content-bg"
+                class="w-auto border-content-border"
+                :is-having-content="true"
+            >
+                <template #title-icon><ContentIcon /></template>
+                <template #content>
                     <Button
                         size="sm"
-                        class="text-md bg-account-button text-white shadow-account m-auto mt-4"
-                        @click="copyToClipboard(dialogAddress)"
+                        class="
+                            text-xs
+                            bg-content-btn-m
+                            opacity-35
+                            text-content-btn-m-text
+                            shadow-content-btn-m
+                            cursor-not-allowed
+                            m-auto
+                            mt-4
+                        "
+                        disabled
                     >
-                        Copy
+                        Coming Soon
+                    </Button>
+                </template>
+            </Card>
+
+            <div class="footer-container w-full flex justify-between items-center mt-2">
+                <Logo class="cursor-pointer" :size="18" @click="toHomePage" />
+                <div class="text-body-text font-normal text-xs">
+                    Made with 🌀 by
+                    <a
+                        href="https://rss3.io"
+                        class="text-body-text font-normal text-xs no-underline visited:no-underline active:no-underline"
+                        >RSS3</a
+                    >
+                </div>
+            </div>
+
+            <Modal v-show="isdisplaying">
+                <template #header>
+                    <Button
+                        size="sm"
+                        class="absolute left-4 w-10 h-10 bg-secondary-btn text-secondary-btn-text shadow-secondary-btn"
+                        @click="closeDialog"
+                    >
+                        <i class="bx bx-chevron-left bx-sm"></i>
+                    </Button>
+                </template>
+                <template #body>
+                    <div class="flex flex-col gap-y-4 items-center">
+                        <AccountItem class="m-auto mt-4" :size="90" :chain="dialogChain"></AccountItem>
+                        <span class="address text-xl font-semibold break-all text-center mt-4">
+                            {{ dialogAddress }}
+                        </span>
+                        <Button
+                            size="sm"
+                            class="text-md bg-account-btn-m text-account-btn-m-text shadow-account-btn-m m-auto mt-4"
+                            @click="copyToClipboard(dialogAddress)"
+                        >
+                            Copy
+                        </Button>
+                    </div>
+                </template>
+            </Modal>
+
+            <!-- Share Card -->
+            <div
+                v-show="isShowingShareCard"
+                class="fixed w-screen h-screen m-0 p-0 top-0 left-0 flex justify-center items-center flex-col"
+            >
+                <div class="fixed w-screen h-screen bg-share-bg bg-opacity-70" @click="isShowingShareCard = false" />
+
+                <ShareCard
+                    class="max-w-md"
+                    :name="rss3Profile.username"
+                    :avatar="rss3Profile.avatar"
+                    :address="`${rns}`"
+                    ref="shareCard"
+                    :id="`share-card-${rns}`"
+                />
+
+                <div class="flex flex-row gap-7">
+                    <Button
+                        size="sm"
+                        class="w-12 h-12 bg-primary text-white shadow-primary mt-8"
+                        @click="saveShareCard"
+                    >
+                        <i class="bx bx-download bx-sm" />
+                    </Button>
+                    <Button
+                        size="sm"
+                        class="w-12 h-12 bg-primary text-white shadow-primary mt-8"
+                        @click="shareShareCard"
+                    >
+                        <i class="bx bx-share-alt bx-sm" />
                     </Button>
                 </div>
-            </template>
-        </Modal>
-
-        <!-- Share Card -->
-        <div
-            v-show="isShowingShareCard"
-            class="fixed w-screen h-screen m-0 p-0 top-0 left-0 flex justify-center items-center flex-col"
-        >
-            <div class="fixed w-screen h-screen bg-share-bg bg-opacity-70" @click="isShowingShareCard = false" />
-
-            <ShareCard
-                class="max-w-md"
-                :name="rss3Profile.username"
-                :avatar="rss3Profile.avatar"
-                :address="`${rns}`"
-                ref="shareCard"
-                :id="`share-card-${rns}`"
-            />
-
-            <div class="flex flex-row gap-7">
-                <Button size="sm" class="w-12 h-12 bg-primary text-white shadow-primary mt-8" @click="saveShareCard">
-                    <i class="bx bx-download bx-sm" />
-                </Button>
-                <Button size="sm" class="w-12 h-12 bg-primary text-white shadow-primary mt-8" @click="shareShareCard">
-                    <i class="bx bx-share-alt bx-sm" />
-                </Button>
             </div>
         </div>
-    </div>
-    <div
-        v-else
-        class="onboarding h-full text-center bg-cover bg-fixed flex items-center justify-center bg-pass3gradient"
-    >
-        <div class="body px-4 h-2/3 flex flex-col justify-center items-center justify-between">
-            <div class="logo-container w-50 h-50 bg-pass3logo bg-center bg-contain bg-no-repeat"></div>
-            <div class="text-primary text-2xl max-w-md">
-                <p>
-                    This RNS is not claimed yet. <br />
-                    Grab it as yours or claim your own!
-                </p>
-            </div>
-            <div class="leading-17.5 text-white w-83.5 text-2xl mx-auto">
-                <Button size="lg" class="bg-primary shadow-primary rounded-3xl w-full h-17.5 mb-9" @click="toSetupRNS">
-                    <span> Claim an RNS </span>
-                </Button>
-                <Button
-                    size="lg"
-                    class="text-primary bg-white shadow-primary rounded-3xl w-full h-17.5"
-                    @click="toHomePage"
-                >
-                    <span> Go Home </span>
-                </Button>
+        <div
+            v-else
+            class="onboarding h-full text-center bg-cover bg-fixed flex items-center justify-center bg-pass3gradient"
+        >
+            <div class="body px-4 h-2/3 flex flex-col justify-center items-center justify-between">
+                <Logo :size="200" />
+                <div class="text-primary text-2xl max-w-md">
+                    <p>
+                        This RNS is not claimed yet. <br />
+                        Grab it as yours or claim your own!
+                    </p>
+                </div>
+                <div class="leading-17.5 text-white w-83.5 text-2xl mx-auto">
+                    <Button
+                        size="lg"
+                        class="bg-primary shadow-primary rounded-3xl w-full h-17.5 mb-9"
+                        @click="toSetupRNS"
+                    >
+                        <span> Claim an RNS </span>
+                    </Button>
+                    <Button
+                        size="lg"
+                        class="text-primary bg-white shadow-primary rounded-3xl w-full h-17.5"
+                        @click="toHomePage"
+                    >
+                        <span> Go Home </span>
+                    </Button>
+                </div>
             </div>
         </div>
     </div>
@@ -300,10 +350,10 @@ import GitcoinItem from '@/components/GitcoinItem.vue';
 import { GeneralAsset, GeneralAssetWithTags } from '@/common/types';
 import ShareCard from '@/components/ShareCard.vue';
 import html2canvas from '@/common/html2canvas.js';
-
 import NFTIcon from '@/components/Icons/NFTIcon.vue';
 import GitcoinIcon from '@/components/Icons/GitcoinIcon.vue';
 import ContentIcon from '@/components/Icons/ContentIcon.vue';
+import Logo from '@/components/Logo.vue';
 
 interface ProfileInfo {
     avatar: string;
@@ -331,6 +381,7 @@ interface Relations {
         NFTIcon,
         ContentIcon,
         GitcoinIcon,
+        Logo,
     },
 })
 export default class Home extends Vue {
@@ -345,6 +396,7 @@ export default class Home extends Vue {
     isRNSExist: boolean = true;
     isShowingShareCard: boolean = false;
     isLoadingAssets: boolean = true;
+    currentTheme: string = '';
 
     public rss3Profile: ProfileInfo = {
         avatar: config.defaultAvatar,
@@ -423,6 +475,15 @@ export default class Home extends Vue {
             }
             if (profile?.name) {
                 document.title = profile.name;
+            }
+
+            // Setup theme
+            const themes = RSS3.getAvailableThemes(await (<IRSS3>this.rss3).assets.get(this.ethAddress));
+            if (themes[0]) {
+                this.currentTheme = themes[0].name;
+                document.body.classList.add(themes[0].class);
+            } else {
+                document.body.classList.remove(...document.body.classList);
             }
         }, 0);
 

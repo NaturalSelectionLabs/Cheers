@@ -12,7 +12,7 @@
         <Button
             v-show="deleteMode"
             size="sm"
-            class="w-6 h-6 bg-account-button text-white shadow-account absolute top-0 right-0 z-20"
+            class="w-6 h-6 bg-account-btn-m text-account-btn-m-text shadow-account absolute top-0 right-0 z-20"
             @click="deleteAccount"
         >
             <i class="bx bx-minus bx-sm"></i>
@@ -46,7 +46,7 @@ export default class AccountItem extends Vue {
 <style scoped lang="postcss">
 @layer components {
     .account-item {
-        @apply rounded-full border border-white filter drop-shadow-account bg-white bg-85 bg-center bg-no-repeat;
+        @apply rounded-full border border-item-border filter shadow-account bg-item-bg bg-85 bg-center bg-no-repeat;
     }
 }
 </style>

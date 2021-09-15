@@ -47,7 +47,7 @@ export default class Avatar extends Vue {
 <style scoped lang="postcss">
 @layer components {
     .avatar {
-        @apply flex justify-center items-center cursor-pointer rounded-full relative bg-gray-bg;
+        @apply flex justify-center items-center cursor-pointer rounded-full relative bg-input-bg;
 
         &.sm {
             @apply w-14 h-14;
