@@ -28,7 +28,7 @@
                 color-background="bg-gitcoin-bg"
                 class="w-full mb-4"
                 :is-having-content="true"
-                :tips="show.length === 0 ? 'Drag to reorder' : ''"
+                tips="Drag to reorder"
             >
                 <template #content>
                     <draggable
@@ -68,7 +68,7 @@
                 color-background="bg-card-hide"
                 class="w-full mb-4"
                 :is-having-content="true"
-                :tips="hide.length === 0 ? 'Drag here to hide' : ''"
+                tips="Drag here to hide"
             >
                 <template #accessibility>
                     <i class="bx bx-info-circle" style="color: rgba(0, 0, 0, 0.2)" />
