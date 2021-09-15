@@ -684,9 +684,13 @@ export default class Home extends Vue {
     }
 
     async toHomePage() {
-        await this.$router.push('/home');
-        this.isRNSExist = true;
-        await this.initLoad();
+        if (this.$route.fullPath !== '/home') {
+            await this.$router.push('/home');
+            this.isRNSExist = true;
+            await this.initLoad();
+        } else {
+            console.log('Already at home!');
+        }
     }
 
     public toSingleNFTPage(platform: string, identity: string, id: string) {
