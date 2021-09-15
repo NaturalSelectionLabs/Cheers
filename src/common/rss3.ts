@@ -69,8 +69,8 @@ async function metamaskConnect() {
     web3 = new Web3(metamaskEthereum);
 
     let address: string;
-    if (sessionStorage.getItem('lastConnect') === 'metamask' && sessionStorage.getItem('lastAddress')) {
-        address = <string>sessionStorage.getItem('lastAddress');
+    if (localStorage.getItem('lastConnect') === 'metamask' && localStorage.getItem('lastAddress')) {
+        address = <string>localStorage.getItem('lastAddress');
     } else {
         const accounts = await metamaskEthereum.request({
             method: 'eth_requestAccounts',
@@ -101,16 +101,16 @@ async function disconnect() {
     if (provider) {
         await provider.disconnect();
     }
-    sessionStorage.removeItem('lastConnect');
+    localStorage.removeItem('lastConnect');
 }
 
 export default {
     walletConnect: async () => {
-        sessionStorage.setItem('lastConnect', 'walletConnect');
+        localStorage.setItem('lastConnect', 'walletConnect');
         return await walletConnect();
     },
     metamaskConnect: async () => {
-        sessionStorage.setItem('lastConnect', 'metamask');
+        localStorage.setItem('lastConnect', 'metamask');
         return await metamaskConnect();
     },
     disconnect: async () => {
@@ -118,7 +118,7 @@ export default {
     },
     reconnect: async (): Promise<boolean> => {
         if (!isValidRSS3()) {
-            const lastConnect = sessionStorage.getItem('lastConnect');
+            const lastConnect = localStorage.getItem('lastConnect');
             switch (lastConnect) {
                 case 'walletConnect':
                     await walletConnect();
