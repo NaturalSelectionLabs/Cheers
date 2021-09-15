@@ -69,7 +69,7 @@
                     </h1>
                 </div>
                 <div class="w-full flex flex-col gap-y-2">
-                    <div class="flex flex-row justify-start gap-x-2" v-for="(item, index) in donationInfo" :key="index">
+                    <div class="flex flex-row justify-start gap-x-2" v-for="item in donationInfo" :key="item.txHash">
                         <div
                             class="
                                 flex-1

@@ -75,8 +75,8 @@
                         class="inline-block mr-1 cursor-pointer"
                         :size="40"
                         :chain="item.platform"
-                        v-for="(item, index) in accounts"
-                        :key="index"
+                        v-for="item in accounts"
+                        :key="item.platform + item.identity"
                         @click="displayDialog(item.identity, item.platform)"
                     />
                 </template>

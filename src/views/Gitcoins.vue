@@ -33,8 +33,8 @@
             >
                 <GitcoinTitle :grants="grants" :contributions="contribs"></GitcoinTitle>
                 <GitcoinCard
-                    v-for="(item, index) in gitcoins"
-                    :key="index"
+                    v-for="item in gitcoins"
+                    :key="item.platform + item.identity + item.id"
                     :imageUrl="item.info.image_preview_url || defaultAvatar"
                     :name="item.info.title || 'Inactive Project'"
                     :contrib="item.info.total_contribs"

@@ -22,8 +22,8 @@
             <div class="follow-list flex flex-col gap-y-4">
                 <FollowerCard
                     class="w-auto cursor-pointer"
-                    v-for="(item, index) in followerList"
-                    :key="index"
+                    v-for="item in followerList"
+                    :key="item.address"
                     :avatar="item.avatar"
                     :name="item.username"
                     :address="item.rns || item.displayAddress"

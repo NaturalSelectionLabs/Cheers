@@ -23,8 +23,8 @@
                 <div class="flex flex-col gap-y-4" :class="{ 'pb-16': isOwner }">
                     <div
                         class="account-wrapper flex flex-row justify-between items-center"
-                        v-for="(item, index) in accounts"
-                        :key="index"
+                        v-for="item in accounts"
+                        :key="item.platform + item.identity"
                     >
                         <AccountItem :size="70" :chain="item.platform"></AccountItem>
                         <span class="address text-2xl text-account-title font-semibold">{{

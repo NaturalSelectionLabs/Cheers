@@ -20,7 +20,7 @@
                 />
             </div>
             <div class="nft-list flex flex-wrap justify-between items-center gap-y-4" :class="{ 'pb-16': isOwner }">
-                <div class="relative" v-for="(item, index) in nfts" :key="index">
+                <div class="relative" v-for="item in nfts" :key="item.platform + item.identity + item.id">
                     <NFTItem
                         class="cursor-pointer"
                         :size="NFTWidth > 200 ? 200 : NFTWidth"

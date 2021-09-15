@@ -33,7 +33,7 @@
                     </div>
                     <div>Contrib</div>
                 </div>
-                <div v-for="(item, index) in amount" :key="index">
+                <div v-for="(item, index) in amount" :key="index.toString()">
                     <div class="font-medium">
                         <vue3-autocounter
                             ref="counter"

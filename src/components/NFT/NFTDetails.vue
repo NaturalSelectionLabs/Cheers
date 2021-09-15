@@ -21,8 +21,8 @@
             <h3>Properties</h3>
             <div class="traits-container">
                 <Trait
-                    v-for="(item, index) in details.traits"
-                    :key="index"
+                    v-for="item in details.traits"
+                    :key="item.trait_type + item.value"
                     :traitType="item.trait_type"
                     :traitValue="item.value"
                 ></Trait>
