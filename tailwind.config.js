@@ -240,5 +240,5 @@ module.exports = {
             translate: ['active'],
         },
     },
-    plugins: [require('@tailwindcss/aspect-ratio'), require('@tailwindcss/line-clamp')],
+    plugins: [require('@tailwindcss/aspect-ratio'), require('@tailwindcss/line-clamp'), require('postcss-100vh-fix')],
 };

@@ -14,4 +14,11 @@ export default class App extends Vue {}
     width: 100%;
     height: 100vh;
 }
+
+@supports (-webkit-touch-callout: none) {
+    #app {
+        /* The hack for Safari */
+        height: -webkit-fill-available;
+    }
+}
 </style>
