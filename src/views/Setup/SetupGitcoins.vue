@@ -1,112 +1,126 @@
 <template>
-    <div class="px-4 py-9 max-w-md m-auto">
-        <div class="flex justify-between items-center mb-4">
-            <Button
-                size="sm"
-                class="w-10 h-10 bg-secondary-btn text-secondary-btn-text shadow-secondary-btn"
-                @click="back"
-            >
-                <i class="bx bx-chevron-left bx-sm" />
-            </Button>
-            <span class="text-center">
-                <h1 class="text-xl text-gitcoin-title font-bold inline">Manage Donations</h1>
-            </span>
-            <span class="avatar">
-                <ImgHolder
-                    class="w-10 h-10 inline-flex my-auto cursor-pointer"
-                    :is-rounded="true"
-                    :is-border="false"
-                    :src="avatar"
-                />
-            </span>
-        </div>
-        <Card
-            title="Listed"
-            color-title="text-gitcoin-title"
-            color-tips="text-gitcoin-title"
-            color-background="bg-gitcoin-bg"
-            class="w-full mb-4"
-            :is-having-content="true"
-            :tips="show.length === 0 ? 'Drag to reorder' : ''"
-        >
-            <template #content>
-                <draggable class="min-h-20" :list="show" group="gitcoins" data-type="displayed" item-key="displayed">
-                    <template #item="{ element }">
-                        <GitcoinItem
-                            class="inline-flex mx-0.5 cursor-pointer"
-                            :size="70"
-                            :imageUrl="element.info.image_preview_url"
-                        />
-                    </template>
-                </draggable>
-            </template>
-            <template #footer-button>
+    <div class="h-screen bg-body-bg overflow-y-auto">
+        <div class="px-4 py-9 max-w-md m-auto">
+            <div class="flex justify-between items-center mb-4">
                 <Button
                     size="sm"
-                    class="text-xs bg-gitcoin-btn-s text-gitcoin-btn-s-text shadow-gitcoin-btn-s"
-                    :class="{
-                        'bg-gray-100 cursor-not-allowed': show.length === 0,
-                    }"
-                    :disabled="show.length === 0"
-                    @click="hideAll"
+                    class="w-10 h-10 bg-secondary-btn text-secondary-btn-text shadow-secondary-btn"
+                    @click="back"
                 >
-                    Hide All
+                    <i class="bx bx-chevron-left bx-sm" />
                 </Button>
-            </template>
-        </Card>
-        <Card
-            title="Unlisted"
-            color-title="text-gitcoin-title"
-            color-tips="text-gitcoin-title"
-            color-background="bg-gray-bg"
-            class="w-full mb-4"
-            :is-having-content="true"
-            :tips="hide.length === 0 ? 'Drag here to hide' : ''"
-        >
-            <template #accessibility>
-                <i class="bx bx-info-circle" style="color: rgba(0, 0, 0, 0.2)" />
-            </template>
-            <template #header-button>
+                <span class="text-center">
+                    <h1 class="text-xl text-gitcoin-title font-bold inline">Manage Donations</h1>
+                </span>
+                <span class="avatar">
+                    <ImgHolder
+                        class="w-10 h-10 inline-flex my-auto cursor-pointer"
+                        :is-rounded="true"
+                        :is-border="false"
+                        :src="avatar"
+                    />
+                </span>
+            </div>
+            <Card
+                title="Listed"
+                color-title="text-gitcoin-title"
+                color-tips="text-gitcoin-title"
+                color-background="bg-gitcoin-bg"
+                class="w-full mb-4"
+                :is-having-content="true"
+                :tips="show.length === 0 ? 'Drag to reorder' : ''"
+            >
+                <template #content>
+                    <draggable
+                        class="min-h-20"
+                        :list="show"
+                        group="gitcoins"
+                        data-type="displayed"
+                        item-key="displayed"
+                    >
+                        <template #item="{ element }">
+                            <GitcoinItem
+                                class="inline-flex mx-0.5 cursor-pointer"
+                                :size="70"
+                                :imageUrl="element.info.image_preview_url"
+                            />
+                        </template>
+                    </draggable>
+                </template>
+                <template #footer-button>
+                    <Button
+                        size="sm"
+                        class="text-xs bg-gitcoin-btn-s text-gitcoin-btn-s-text shadow-gitcoin-btn-s"
+                        :class="{
+                            'bg-gray-100 cursor-not-allowed': show.length === 0,
+                        }"
+                        :disabled="show.length === 0"
+                        @click="hideAll"
+                    >
+                        Hide All
+                    </Button>
+                </template>
+            </Card>
+            <Card
+                title="Unlisted"
+                color-title="text-gitcoin-title"
+                color-tips="text-gitcoin-title"
+                color-background="bg-card-hide"
+                class="w-full mb-4"
+                :is-having-content="true"
+                :tips="hide.length === 0 ? 'Drag here to hide' : ''"
+            >
+                <template #accessibility>
+                    <i class="bx bx-info-circle" style="color: rgba(0, 0, 0, 0.2)" />
+                </template>
+                <template #header-button>
+                    <Button
+                        size="sm"
+                        class="text-xs bg-gitcoin-btn-s text-gitcoin-btn-s-text shadow-gitcoin-btn-s"
+                        :class="{
+                            'bg-gray-100 cursor-not-allowed': hide.length === 0,
+                        }"
+                        :disabled="hide.length === 0"
+                        @click="showAll"
+                    >
+                        Show All
+                    </Button>
+                </template>
+                <template #content>
+                    <draggable
+                        class="min-h-20"
+                        :list="hide"
+                        group="gitcoins"
+                        data-type="displayed"
+                        item-key="displayed"
+                    >
+                        <template #item="{ element }">
+                            <GitcoinItem
+                                class="inline-flex mx-0.5 cursor-pointer"
+                                :size="70"
+                                :imageUrl="element.info.image_preview_url"
+                            />
+                        </template>
+                    </draggable>
+                </template>
+            </Card>
+            <div class="px-4 py-4 flex gap-5 fixed bottom-0 left-0 right-0 max-w-md m-auto w-full">
                 <Button
-                    size="sm"
-                    class="text-xs bg-gitcoin-btn-s text-gitcoin-btn-s-text shadow-gitcoin-btn-s"
-                    :class="{
-                        'bg-gray-100 cursor-not-allowed': hide.length === 0,
-                    }"
-                    :disabled="hide.length === 0"
-                    @click="showAll"
+                    size="lg"
+                    class="flex-1 text-lg bg-secondary-btn text-secondary-btn-text shadow-secondary-btn"
+                    @click="back"
+                    >Discard</Button
                 >
-                    Show All
-                </Button>
-            </template>
-            <template #content>
-                <draggable class="min-h-20" :list="hide" group="gitcoins" data-type="displayed" item-key="displayed">
-                    <template #item="{ element }">
-                        <GitcoinItem
-                            class="inline-flex mx-0.5 cursor-pointer"
-                            :size="70"
-                            :imageUrl="element.info.image_preview_url"
-                        />
-                    </template>
-                </draggable>
-            </template>
-        </Card>
-        <div class="px-4 py-4 flex gap-5 fixed bottom-0 left-0 right-0 max-w-md m-auto w-full">
-            <Button
-                size="lg"
-                class="flex-1 text-lg bg-secondary-btn text-secondary-btn-text shadow-secondary-btn"
-                @click="back"
-                >Discard</Button
-            >
-            <Button
-                size="lg"
-                class="flex-1 text-lg bg-primary-btn text-primary-btn-text shadow-primary-btn"
-                @click="save"
-                >Save</Button
-            >
-        </div>
+                <Button
+                    size="lg"
+                    class="flex-1 text-lg bg-primary-btn text-primary-btn-text shadow-primary-btn"
+                    @click="save"
+                    >Save</Button
+                >
+            </div>
 
-        <LoadingContainer v-show="isLoading" />
+            <LoadingContainer v-show="isLoading" />
+        </div>
     </div>
 </template>
 

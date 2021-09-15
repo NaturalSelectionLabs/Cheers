@@ -1,198 +1,200 @@
 <template>
-    <div class="px-4 py-9 max-w-md m-auto">
-        <div class="flex justify-between items-center mb-4">
-            <Button
-                size="sm"
-                class="
-                    w-10
-                    h-10
-                    bg-secondary-btn
-                    text-secondary-btn-text
-                    shadow-secondary-btn
-                    border-secondary-btn-border
-                "
-                @click="back"
-            >
-                <i class="bx bx-chevron-left bx-sm"></i>
-            </Button>
-            <span class="text-center">
-                <h1 class="text-xl text-primary-text font-bold inline">Manage Accounts</h1>
-            </span>
-            <span class="avatar">
-                <img
-                    :src="avatar"
-                    class="rounded-full w-10 h-10 inline-block cursor-pointer"
-                    alt="avatar"
-                    @click="toPublicPage()"
-                />
-            </span>
-        </div>
-        <Card
-            title="Default ETH Account"
-            color-title="text-account-title"
-            color-tips="text-account-title"
-            color-background="bg-body-bg"
-            class="w-full mb-4 border-account-border"
-            :is-having-content="true"
-        >
-            <template #content>
-                <AccountItem class="shadow-account-sm inline-flex m-0.5 rounded-full" :size="64" chain="Ethereum" />
-            </template>
-        </Card>
-        <Card
-            title="Additional Accounts"
-            color-title="text-account-title"
-            color-tips="text-account-title"
-            :color-background="mode === 'normal' ? 'bg-account-bg' : 'bg-card-overlay'"
-            class="w-full mb-4 border-account-border"
-            :is-having-content="true"
-            :tips="mode !== 'delete' ? 'Drag here to show and reorder' : 'Delete unwanted accounts'"
-        >
-            <template #header-button>
-                <div class="flex flex-row gap-2">
-                    <Button
-                        v-if="mode === 'delete'"
-                        size="sm"
-                        class="w-8 h-8 bg-account-btn-s text-account-btn-s-text shadow-account-btn-s"
-                        @click="mode = 'normal'"
-                    >
-                        <i class="bx bx-check bx-xs" />
-                    </Button>
-                    <Button
-                        v-else
-                        size="sm"
-                        class="w-8 h-8 bg-account-btn-s text-account-btn-s-text shadow-account-btn-s"
-                        @click="mode = 'delete'"
-                    >
-                        <i class="bx bx-minus bx-xs" />
-                    </Button>
-                    <Button
-                        v-if="mode === 'add'"
-                        size="sm"
-                        class="w-8 h-8 bg-account-btn-s text-account-btn-s-text shadow-account-btn-s"
-                        @click="mode = 'normal'"
-                    >
-                        <i class="bx bx-x bx-xs" />
-                    </Button>
-                    <Button
-                        v-else
-                        size="sm"
-                        class="w-8 h-8 bg-account-btn-m text-account-btn-m-text shadow-account-btn-s"
-                        @click="addAccountPreTest"
-                    >
-                        <i class="bx bx-plus bx-xs" />
-                    </Button>
-                </div>
-            </template>
-            <template #content>
-                <div v-if="mode === 'add'" class="text-center">
-                    <AccountItem
-                        v-for="chain in additionalAccounts"
-                        :key="chain"
-                        class="inline-flex m-0.5 rounded-full shadow-account"
-                        :size="64"
-                        :chain="chain"
-                        @click="addAccount(chain)"
+    <div class="h-screen bg-body-bg overflow-y-auto">
+        <div class="px-4 py-9 max-w-md m-auto">
+            <div class="flex justify-between items-center mb-4">
+                <Button
+                    size="sm"
+                    class="
+                        w-10
+                        h-10
+                        bg-secondary-btn
+                        text-secondary-btn-text
+                        shadow-secondary-btn
+                        border-secondary-btn-border
+                    "
+                    @click="back"
+                >
+                    <i class="bx bx-chevron-left bx-sm"></i>
+                </Button>
+                <span class="text-center">
+                    <h1 class="text-xl text-primary-text font-bold inline">Manage Accounts</h1>
+                </span>
+                <span class="avatar">
+                    <img
+                        :src="avatar"
+                        class="rounded-full w-10 h-10 inline-block cursor-pointer"
+                        alt="avatar"
+                        @click="toPublicPage()"
                     />
-                </div>
-                <div v-else>
-                    <draggable class="min-h-20" :list="show" group="accounts" itemKey="chain">
-                        <template #item="{ element, index }">
-                            <AccountItem
-                                class="shadow-account-item inline-flex m-0.5 rounded-full"
-                                :size="64"
-                                :chain="element.platform"
-                                :delete-mode="mode === 'delete'"
-                                @delete-account="deleteAccount(index)"
-                            />
+                </span>
+            </div>
+            <Card
+                title="Default ETH Account"
+                color-title="text-account-title"
+                color-tips="text-account-title"
+                color-background="bg-body-bg"
+                class="w-full mb-4 border-account-border"
+                :is-having-content="true"
+            >
+                <template #content>
+                    <AccountItem class="shadow-account-sm inline-flex m-0.5 rounded-full" :size="64" chain="Ethereum" />
+                </template>
+            </Card>
+            <Card
+                title="Additional Accounts"
+                color-title="text-account-title"
+                color-tips="text-account-title"
+                :color-background="mode === 'normal' ? 'bg-account-bg' : 'bg-card-overlay'"
+                class="w-full mb-4 border-account-border"
+                :is-having-content="true"
+                :tips="mode !== 'delete' ? 'Drag here to show and reorder' : 'Delete unwanted accounts'"
+            >
+                <template #header-button>
+                    <div class="flex flex-row gap-2">
+                        <Button
+                            v-if="mode === 'delete'"
+                            size="sm"
+                            class="w-8 h-8 bg-account-btn-s text-account-btn-s-text shadow-account-btn-s"
+                            @click="mode = 'normal'"
+                        >
+                            <i class="bx bx-check bx-xs" />
+                        </Button>
+                        <Button
+                            v-else
+                            size="sm"
+                            class="w-8 h-8 bg-account-btn-s text-account-btn-s-text shadow-account-btn-s"
+                            @click="mode = 'delete'"
+                        >
+                            <i class="bx bx-minus bx-xs" />
+                        </Button>
+                        <Button
+                            v-if="mode === 'add'"
+                            size="sm"
+                            class="w-8 h-8 bg-account-btn-s text-account-btn-s-text shadow-account-btn-s"
+                            @click="mode = 'normal'"
+                        >
+                            <i class="bx bx-x bx-xs" />
+                        </Button>
+                        <Button
+                            v-else
+                            size="sm"
+                            class="w-8 h-8 bg-account-btn-m text-account-btn-m-text shadow-account-btn-s"
+                            @click="addAccountPreTest"
+                        >
+                            <i class="bx bx-plus bx-xs" />
+                        </Button>
+                    </div>
+                </template>
+                <template #content>
+                    <div v-if="mode === 'add'" class="text-center">
+                        <AccountItem
+                            v-for="chain in additionalAccounts"
+                            :key="chain"
+                            class="inline-flex m-0.5 rounded-full shadow-account"
+                            :size="64"
+                            :chain="chain"
+                            @click="addAccount(chain)"
+                        />
+                    </div>
+                    <div v-else>
+                        <draggable class="min-h-20" :list="show" group="accounts" itemKey="chain">
+                            <template #item="{ element, index }">
+                                <AccountItem
+                                    class="shadow-account-item inline-flex m-0.5 rounded-full"
+                                    :size="64"
+                                    :chain="element.platform"
+                                    :delete-mode="mode === 'delete'"
+                                    @delete-account="deleteAccount(index)"
+                                />
+                            </template>
+                        </draggable>
+                    </div>
+                </template>
+                <template #footer-button>
+                    <Button
+                        size="sm"
+                        class="text-xs bg-account-btn-s text-account-btn-s-text shadow-account-btn-s"
+                        :class="{
+                            'bg-btn-disabled cursor-not-allowed text-opacity-20': show.length === 0,
+                        }"
+                        :disabled="show.length === 0"
+                        @click="hideAll"
+                    >
+                        Hide All
+                    </Button>
+                </template>
+            </Card>
+            <Card
+                title="No-show Accounts"
+                color-title="text-account-title"
+                color-tips="text-account-title"
+                color-background="bg-card-hide"
+                class="w-full mb-4 border-account-border"
+                :is-having-content="true"
+                tips="Drag here to hide"
+            >
+                <!-- <template #accessibility>
+                    <i class="bx bx-info-circle" style="color: rgba(0, 0, 0, 0.2)" />
+                </template> -->
+                <template #header-button>
+                    <Button
+                        size="sm"
+                        class="text-xs bg-account-btn-s text-account-btn-s-text shadow-account-btn-s"
+                        :class="{
+                            'bg-btn-disabled cursor-not-allowed text-opacity-20': hide.length === 0,
+                        }"
+                        :disabled="hide.length === 0"
+                        @click="showAll"
+                    >
+                        Show All
+                    </Button>
+                </template>
+                <template #content>
+                    <draggable class="min-h-20" :list="hide" group="accounts" itemKey="chain">
+                        <template #item="{ element }">
+                            <AccountItem class="inline-flex m-0.5 rounded-full" :size="64" :chain="element.platform" />
                         </template>
                     </draggable>
-                </div>
-            </template>
-            <template #footer-button>
+                </template>
+            </Card>
+            <div class="px-4 py-4 flex gap-5 fixed bottom-0 left-0 right-0 max-w-md m-auto w-full">
                 <Button
-                    size="sm"
-                    class="text-xs bg-account-btn-s text-account-btn-s-text shadow-account-btn-s"
-                    :class="{
-                        'bg-btn-disabled cursor-not-allowed text-opacity-20': show.length === 0,
-                    }"
-                    :disabled="show.length === 0"
-                    @click="hideAll"
+                    size="lg"
+                    class="flex-1 text-lg bg-secondary-btn text-secondary-btn-text shadow-secondary-btn"
+                    @click="back"
+                    >Discard</Button
                 >
-                    Hide All
-                </Button>
-            </template>
-        </Card>
-        <Card
-            title="No-show Accounts"
-            color-title="text-account-title"
-            color-tips="text-account-title"
-            color-background="bg-card-hide"
-            class="w-full mb-4 border-account-border"
-            :is-having-content="true"
-            tips="Drag here to hide"
-        >
-            <!-- <template #accessibility>
-                <i class="bx bx-info-circle" style="color: rgba(0, 0, 0, 0.2)" />
-            </template> -->
-            <template #header-button>
                 <Button
-                    size="sm"
-                    class="text-xs bg-account-btn-s text-account-btn-s-text shadow-account-btn-s"
-                    :class="{
-                        'bg-btn-disabled cursor-not-allowed text-opacity-20': hide.length === 0,
-                    }"
-                    :disabled="hide.length === 0"
-                    @click="showAll"
+                    size="lg"
+                    class="flex-1 text-lg bg-primary-btn text-primary-btn-text shadow-primary-btn"
+                    @click="save"
+                    >Save</Button
                 >
-                    Show All
-                </Button>
-            </template>
-            <template #content>
-                <draggable class="min-h-20" :list="hide" group="accounts" itemKey="chain">
-                    <template #item="{ element }">
-                        <AccountItem class="inline-flex m-0.5 rounded-full" :size="64" :chain="element.platform" />
-                    </template>
-                </draggable>
-            </template>
-        </Card>
-        <div class="px-4 py-4 flex gap-5 fixed bottom-0 left-0 right-0 max-w-md m-auto w-full">
-            <Button
-                size="lg"
-                class="flex-1 text-lg bg-secondary-btn text-secondary-btn-text shadow-secondary-btn"
-                @click="back"
-                >Discard</Button
-            >
-            <Button
-                size="lg"
-                class="flex-1 text-lg bg-primary-btn text-primary-btn-text shadow-primary-btn"
-                @click="save"
-                >Save</Button
-            >
-        </div>
-        <LoadingContainer v-show="isLoading" />
+            </div>
+            <LoadingContainer v-show="isLoading" />
 
-        <Modal v-if="isShowingAddAccountNotice">
-            <template #header>
-                <h1>Oops!</h1>
-            </template>
-            <template #body>
-                <p class="mt-1 p-4">
-                    {{ addAccountNotice }}
-                </p>
-            </template>
-            <template #footer>
-                <div class="flex flex-row gap-5">
-                    <Button
-                        size="sm"
-                        class="w-72 bg-primary-btn text-primary-btn-text shadow-primary-btn"
-                        @click="isShowingAddAccountNotice = false"
-                    >
-                        OK
-                    </Button>
-                </div>
-            </template>
-        </Modal>
+            <Modal v-if="isShowingAddAccountNotice">
+                <template #header>
+                    <h1>Oops!</h1>
+                </template>
+                <template #body>
+                    <p class="mt-1 p-4">
+                        {{ addAccountNotice }}
+                    </p>
+                </template>
+                <template #footer>
+                    <div class="flex flex-row gap-5">
+                        <Button
+                            size="sm"
+                            class="w-72 bg-primary-btn text-primary-btn-text shadow-primary-btn"
+                            @click="isShowingAddAccountNotice = false"
+                        >
+                            OK
+                        </Button>
+                    </div>
+                </template>
+            </Modal>
+        </div>
     </div>
 </template>
 

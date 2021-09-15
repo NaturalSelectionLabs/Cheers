@@ -1,5 +1,5 @@
 <template>
-    <div class="px-4 py-9 max-w-md m-auto pb-20">
+    <div class="px-4 py-9 max-w-md m-auto pb-20 bg-body-bg">
         <div class="text-center mb-4">
             <h1 class="text-5xl text-primary-text font-bold">Setup</h1>
         </div>
