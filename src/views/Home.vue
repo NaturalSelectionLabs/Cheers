@@ -227,6 +227,18 @@
                 </template>
             </Card>
 
+            <div class="footer-container w-full flex justify-between items-center mt-2">
+                <Logo class="cursor-pointer" :size="18" @click="toHomePage" />
+                <div class="text-body-text font-normal text-xs">
+                    Made with 🌀 by
+                    <a
+                        href="https://rss3.io"
+                        class="text-body-text font-normal text-xs no-underline visited:no-underline active:no-underline"
+                        >RSS3</a
+                    >
+                </div>
+            </div>
+
             <Modal v-show="isdisplaying">
                 <template #header>
                     <Button
@@ -293,7 +305,7 @@
             class="onboarding h-full text-center bg-cover bg-fixed flex items-center justify-center bg-pass3gradient"
         >
             <div class="body px-4 h-2/3 flex flex-col justify-center items-center justify-between">
-                <div class="logo-container w-50 h-50 bg-pass3logo bg-center bg-contain bg-no-repeat"></div>
+                <Logo :size="200" />
                 <div class="text-primary text-2xl max-w-md">
                     <p>
                         This RNS is not claimed yet. <br />
@@ -341,6 +353,7 @@ import html2canvas from '@/common/html2canvas.js';
 import NFTIcon from '@/components/Icons/NFTIcon.vue';
 import GitcoinIcon from '@/components/Icons/GitcoinIcon.vue';
 import ContentIcon from '@/components/Icons/ContentIcon.vue';
+import Logo from '@/components/Logo.vue';
 
 interface ProfileInfo {
     avatar: string;
@@ -368,6 +381,7 @@ interface Relations {
         NFTIcon,
         ContentIcon,
         GitcoinIcon,
+        Logo,
     },
 })
 export default class Home extends Vue {
@@ -756,8 +770,4 @@ export default class Home extends Vue {
 }
 </script>
 
-<style>
-button > i {
-    text-decoration: none;
-}
-</style>
+<style></style>
