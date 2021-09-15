@@ -102,6 +102,7 @@ async function disconnect() {
         await provider.disconnect();
     }
     localStorage.removeItem('lastConnect');
+    localStorage.removeItem('lastAddress');
 }
 
 export default {
