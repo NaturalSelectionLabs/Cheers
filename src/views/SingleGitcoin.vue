@@ -95,7 +95,9 @@
                                     :autoinit="true"
                                 />
                             </div>
-                            <div class="flex-1 truncate w-0 text-right">{{ timeDifferent(item.timeStamp) }}</div>
+                            <div class="flex-1 truncate w-0 text-right text-gitcoin-title">
+                                {{ timeDifferent(item.timeStamp) }}
+                            </div>
                         </div>
                         <Button
                             size="sm"
