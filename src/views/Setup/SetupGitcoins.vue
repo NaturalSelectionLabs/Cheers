@@ -1,5 +1,5 @@
 <template>
-    <div class="h-screen bg-body-bg overflow-y-auto">
+    <div class="h-screen bg-body-bg text-body-text overflow-y-auto">
         <div class="px-4 py-9 max-w-md m-auto">
             <div class="flex justify-between items-center mb-4">
                 <Button
@@ -170,6 +170,14 @@ export default class SetupGitcoins extends Vue {
         } else {
             const profile = await (<IRSS3>this.rss3).profile.get();
             this.avatar = profile?.avatar?.[0] || config.defaultAvatar;
+        }
+
+        // Setup theme
+        const themes = RSS3.getAvailableThemes(await (<IRSS3>this.rss3).assets.get());
+        if (themes[0]) {
+            document.body.classList.add(themes[0].class);
+        } else {
+            document.body.classList.remove(...document.body.classList);
         }
 
         const data = await RSS3.getAssetProfile((<IRSS3>this.rss3).account.address);

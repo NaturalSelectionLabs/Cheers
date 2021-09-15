@@ -1,168 +1,170 @@
 <template>
-    <div class="px-4 py-9 max-w-md m-auto pb-20 bg-body-bg">
-        <div class="text-center mb-4">
-            <h1 class="text-5xl text-primary-text font-bold">Setup</h1>
-        </div>
-        <AvatarEditor class="m-auto mb-4" size="lg" :url="profile.avatar" ref="avatar" />
-        <Input class="mb-4 w-full" :is-single-line="true" placeholder="Username" v-model="profile.name" />
-        <Input class="mb-4 w-full" :is-single-line="false" placeholder="Bio" v-model="profile.bio" />
-        <Card
-            title="Accounts"
-            color-title="text-account-title"
-            color-tips="text-account-title"
-            color-background="bg-account-bg"
-            class="mb-4 w-full"
-            :is-having-content="true"
-            :is-single-line="true"
-        >
-            <template #title-icon><AccountIcon /></template>
-            <template #header-button>
-                <Button
-                    size="sm"
-                    class="w-10 h-10 bg-account-btn-m text-account-btn-m-text shadow-account-btn-m"
-                    @click="toManageAccounts"
-                >
-                    <i class="bx bx-pencil bx-sm" />
-                </Button>
-            </template>
-            <template #content>
-                <AccountItem
-                    v-for="account in accounts"
-                    :key="account.platform + account.identity"
-                    class="shadow-account-sm inline-flex m-0.5 rounded-full"
-                    :size="64"
-                    :chain="account.platform"
-                />
-            </template>
-        </Card>
-        <Card
-            title="NFTs"
-            color-title="text-nft-title"
-            color-tips="text-nft-title"
-            color-background="bg-nft-bg"
-            class="mb-4 w-full"
-            :is-having-content="nfts.length !== 0"
-            :is-single-line="nfts.length !== 0"
-            :tips="isLoadingAssets ? 'Loading...' : nfts.length === 0 ? 'Haven\'t found anything yet...' : ''"
-        >
-            <template #title-icon><NFTIcon /></template>
-            <template #header-button>
-                <Button
-                    size="sm"
-                    class="w-10 h-10 bg-nft-btn-m text-nft-btn-m-text shadow-nft-btn-m"
-                    @click="toManageNFTs"
-                >
-                    <i class="bx bx-pencil bx-sm" />
-                </Button>
-            </template>
-            <template #content>
-                <NFTItem
-                    class="inline-flex mx-0.5"
-                    v-for="asset in nfts"
-                    :key="asset.platform + asset.identity + asset.id"
-                    :size="70"
-                    :image-url="asset.info.animation_url || asset.info.image_preview_url"
-                    :poster-url="asset.info.image_preview_url"
-                />
-            </template>
-        </Card>
-        <Card
-            title="Donations"
-            color-title="text-gitcoin-title"
-            color-tips="text-gitcoin-title"
-            color-background="bg-gitcoin-bg"
-            class="mb-4 w-full"
-            :is-having-content="gitcoins.length !== 0"
-            :is-single-line="gitcoins.length !== 0"
-            :tips="isLoadingAssets ? 'Loading...' : gitcoins.length === 0 ? 'Haven\'t found anything yet...' : ''"
-        >
-            <template #title-icon><GitcoinIcon /></template>
-            <template #header-button>
-                <Button
-                    size="sm"
-                    class="w-10 h-10 bg-gitcoin-btn-m text-gitcoin-btn-m-text shadow-gitcoin-btn-m"
-                    @click="toManageGitcoins"
-                >
-                    <i class="bx bx-pencil bx-sm" />
-                </Button>
-            </template>
-            <template #content>
-                <GitcoinItem
-                    class="inline-flex mx-0.5"
-                    v-for="item in gitcoins"
-                    :key="item.platform + item.identity + item.id"
-                    :size="70"
-                    :imageUrl="item.info.image_preview_url"
-                />
-            </template>
-        </Card>
-        <Card
-            title="Contents"
-            color-title="text-content-title"
-            color-tips="text-content-title"
-            color-background="bg-content-bg"
-            class="mb-4 w-full"
-            :is-having-content="true"
-        >
-            <template #title-icon><ContentIcon /></template>
-            <template #content>
-                <div class="flex justify-center">
-                    <Button
-                        size="lg"
-                        class="
-                            text-lg
-                            bg-content-btn-m
-                            opacity-35
-                            text-content-btn-m-text
-                            shadow-content-btn-m
-                            cursor-not-allowed
-                            m-auto
-                            mt-4
-                        "
-                        disabled
-                    >
-                        Coming Soon
-                    </Button>
-                </div>
-            </template>
-        </Card>
-        <div class="px-4 py-4 flex gap-5 fixed bottom-0 left-0 right-0 max-w-md m-auto w-full">
-            <Button
-                size="lg"
-                class="flex-1 text-lg bg-secondary-btn text-secondary-btn-text shadow-secondary-btn"
-                @click="back"
-                >Back</Button
+    <div class="h-screen bg-body-bg text-body-text overflow-y-auto">
+        <div class="px-4 py-9 max-w-md m-auto pb-20">
+            <div class="text-center mb-4">
+                <h1 class="text-5xl text-primary-text font-bold">Setup</h1>
+            </div>
+            <AvatarEditor class="m-auto mb-4" size="lg" :url="profile.avatar" ref="avatar" />
+            <Input class="mb-4 w-full" :is-single-line="true" placeholder="Username" v-model="profile.name" />
+            <Input class="mb-4 w-full" :is-single-line="false" placeholder="Bio" v-model="profile.bio" />
+            <Card
+                title="Accounts"
+                color-title="text-account-title"
+                color-tips="text-account-title"
+                color-background="bg-account-bg"
+                class="mb-4 w-full"
+                :is-having-content="true"
+                :is-single-line="true"
             >
-            <Button
-                size="lg"
-                class="flex-1 text-lg bg-primary-btn text-primary-btn-text shadow-primary-btn"
-                @click="save"
-                >Done</Button
-            >
-        </div>
-        <LoadingContainer v-show="isLoading" />
-
-        <Modal v-if="isShowingNotice">
-            <template #header>
-                <h1>Oops!</h1>
-            </template>
-            <template #body>
-                <p class="mt-1 p-4">
-                    {{ notice }}
-                </p>
-            </template>
-            <template #footer>
-                <div class="flex flex-row gap-5">
+                <template #title-icon><AccountIcon /></template>
+                <template #header-button>
                     <Button
                         size="sm"
-                        class="w-72 bg-primary-btn text-primary-btn-text shadow-primary-btn"
-                        @click="isShowingNotice = false"
+                        class="w-10 h-10 bg-account-btn-m text-account-btn-m-text shadow-account-btn-m"
+                        @click="toManageAccounts"
                     >
-                        OK
+                        <i class="bx bx-pencil bx-sm" />
                     </Button>
-                </div>
-            </template>
-        </Modal>
+                </template>
+                <template #content>
+                    <AccountItem
+                        v-for="account in accounts"
+                        :key="account.platform + account.identity"
+                        class="shadow-account-sm inline-flex m-0.5 rounded-full"
+                        :size="64"
+                        :chain="account.platform"
+                    />
+                </template>
+            </Card>
+            <Card
+                title="NFTs"
+                color-title="text-nft-title"
+                color-tips="text-nft-title"
+                color-background="bg-nft-bg"
+                class="mb-4 w-full"
+                :is-having-content="nfts.length !== 0"
+                :is-single-line="nfts.length !== 0"
+                :tips="isLoadingAssets ? 'Loading...' : nfts.length === 0 ? 'Haven\'t found anything yet...' : ''"
+            >
+                <template #title-icon><NFTIcon /></template>
+                <template #header-button>
+                    <Button
+                        size="sm"
+                        class="w-10 h-10 bg-nft-btn-m text-nft-btn-m-text shadow-nft-btn-m"
+                        @click="toManageNFTs"
+                    >
+                        <i class="bx bx-pencil bx-sm" />
+                    </Button>
+                </template>
+                <template #content>
+                    <NFTItem
+                        class="inline-flex mx-0.5"
+                        v-for="asset in nfts"
+                        :key="asset.platform + asset.identity + asset.id"
+                        :size="70"
+                        :image-url="asset.info.animation_url || asset.info.image_preview_url"
+                        :poster-url="asset.info.image_preview_url"
+                    />
+                </template>
+            </Card>
+            <Card
+                title="Donations"
+                color-title="text-gitcoin-title"
+                color-tips="text-gitcoin-title"
+                color-background="bg-gitcoin-bg"
+                class="mb-4 w-full"
+                :is-having-content="gitcoins.length !== 0"
+                :is-single-line="gitcoins.length !== 0"
+                :tips="isLoadingAssets ? 'Loading...' : gitcoins.length === 0 ? 'Haven\'t found anything yet...' : ''"
+            >
+                <template #title-icon><GitcoinIcon /></template>
+                <template #header-button>
+                    <Button
+                        size="sm"
+                        class="w-10 h-10 bg-gitcoin-btn-m text-gitcoin-btn-m-text shadow-gitcoin-btn-m"
+                        @click="toManageGitcoins"
+                    >
+                        <i class="bx bx-pencil bx-sm" />
+                    </Button>
+                </template>
+                <template #content>
+                    <GitcoinItem
+                        class="inline-flex mx-0.5"
+                        v-for="item in gitcoins"
+                        :key="item.platform + item.identity + item.id"
+                        :size="70"
+                        :imageUrl="item.info.image_preview_url"
+                    />
+                </template>
+            </Card>
+            <Card
+                title="Contents"
+                color-title="text-content-title"
+                color-tips="text-content-title"
+                color-background="bg-content-bg"
+                class="mb-4 w-full"
+                :is-having-content="true"
+            >
+                <template #title-icon><ContentIcon /></template>
+                <template #content>
+                    <div class="flex justify-center">
+                        <Button
+                            size="lg"
+                            class="
+                                text-lg
+                                bg-content-btn-m
+                                opacity-35
+                                text-content-btn-m-text
+                                shadow-content-btn-m
+                                cursor-not-allowed
+                                m-auto
+                                mt-4
+                            "
+                            disabled
+                        >
+                            Coming Soon
+                        </Button>
+                    </div>
+                </template>
+            </Card>
+            <div class="px-4 py-4 flex gap-5 fixed bottom-0 left-0 right-0 max-w-md m-auto w-full">
+                <Button
+                    size="lg"
+                    class="flex-1 text-lg bg-secondary-btn text-secondary-btn-text shadow-secondary-btn"
+                    @click="back"
+                    >Back</Button
+                >
+                <Button
+                    size="lg"
+                    class="flex-1 text-lg bg-primary-btn text-primary-btn-text shadow-primary-btn"
+                    @click="save"
+                    >Done</Button
+                >
+            </div>
+            <LoadingContainer v-show="isLoading" />
+
+            <Modal v-if="isShowingNotice">
+                <template #header>
+                    <h1>Oops!</h1>
+                </template>
+                <template #body>
+                    <p class="mt-1 p-4">
+                        {{ notice }}
+                    </p>
+                </template>
+                <template #footer>
+                    <div class="flex flex-row gap-5">
+                        <Button
+                            size="sm"
+                            class="w-72 bg-primary-btn text-primary-btn-text shadow-primary-btn"
+                            @click="isShowingNotice = false"
+                        >
+                            OK
+                        </Button>
+                    </div>
+                </template>
+            </Modal>
+        </div>
     </div>
 </template>
 
@@ -251,6 +253,15 @@ export default class Setup extends Vue {
                 document.title = profile.name;
             }
         }
+
+        // Setup theme
+        const themes = RSS3.getAvailableThemes(await (<IRSS3>this.rss3).assets.get());
+        if (themes[0]) {
+            document.body.classList.add(themes[0].class);
+        } else {
+            document.body.classList.remove(...document.body.classList);
+        }
+
         // Push original account
         this.accounts.push({
             platform: 'Ethereum',

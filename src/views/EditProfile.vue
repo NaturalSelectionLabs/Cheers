@@ -1,6 +1,6 @@
 <template>
-    <div class="h-screen bg-body-bg overflow-y-auto">
-        <div class="px-4 py-9 max-w-md m-auto pb-20 text-body-text">
+    <div class="h-screen bg-body-bg text-body-text overflow-y-auto">
+        <div class="px-4 py-9 max-w-md m-auto pb-20">
             <div class="text-center mb-4 relative">
                 <Button
                     size="sm"
@@ -128,6 +128,14 @@ export default class EditProfile extends Vue {
             this.profile.avatar = profile?.avatar?.[0] || config.defaultAvatar;
             this.profile.name = profile?.name || '';
             this.profile.bio = profile?.bio || '';
+        }
+
+        // Setup theme
+        const themes = RSS3.getAvailableThemes(await (<IRSS3>this.rss3).assets.get());
+        if (themes[0]) {
+            document.body.classList.add(themes[0].class);
+        } else {
+            document.body.classList.remove(...document.body.classList);
         }
     }
 
