@@ -425,6 +425,7 @@ export default class Setup extends Vue {
         }
         this.clearEdited();
         this.$gtag.event('finishEditProfile', { userid: (<IRSS3>this.rss3).account.address });
+        await RSS3.getAssetProfile((<IRSS3>this.rss3).account.address, true);
         this.isLoading = false;
         const redirectFrom = sessionStorage.getItem('redirectFrom');
         sessionStorage.removeItem('redirectFrom');
