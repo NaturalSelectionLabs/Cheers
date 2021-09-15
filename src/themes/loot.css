@@ -76,13 +76,14 @@
         --color-modal-bg: black;
         --color-modal-border: white;
 
+        --color-btn-border: white;
         --color-linkbutton-bg: black;
         --color-linkbutton-border: var(--color-primary);
 
         --border-width-linkbutton: 1px;
 
         --border-width-card: 1px;
-        --border-width-button: 0px;
+        --border-width-button: 1px;
         --border-width-input: 1px;
         --border-width-modal: 1px;
 

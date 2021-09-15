@@ -110,6 +110,7 @@ module.exports = {
                     overlay: '--color-card-overlay',
                 },
                 btn: {
+                    border: 'var(--color-btn-border)',
                     disabled: 'var(--color-btn-disabled)',
                 },
                 modal: {

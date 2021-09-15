@@ -62,12 +62,12 @@
         --color-content-border: transparent;
 
         --color-btn-disabled: #f7fafc;
+        --color-btn-border: transparent;
 
         --color-card-hide: #f7fafc;
         --color-card-overlay: #e2e8f0;
 
         --color-input-bg: #f4f7f8;
-        --color-input-border: transparent;
 
         --color-item-bg: white;
         --color-item-border: white;
@@ -75,6 +75,7 @@
         --color-modal-bg: white;
         --color-modal-border: transparent;
 
+        --color-input-border: transparent;
         --color-linkbutton-bg: rgba(0, 114, 255, 0.1);
         --color-linkbutton-border: none;
 
