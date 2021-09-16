@@ -334,7 +334,7 @@ import Profile from '@/components/Profile.vue';
 import AccountItem from '@/components/AccountItem.vue';
 import NFTItem from '@/components/NFT/NFTItem.vue';
 import RSS3, { IRSS3 } from '@/common/rss3';
-import { RSS3Account, RSS3Asset, RSS3ID } from 'rss3-next/types/rss3';
+import { RSS3Account, RSS3Asset, RSS3ID, RSS3Index } from 'rss3-next/types/rss3';
 import Modal from '@/components/Modal.vue';
 import RNSUtils from '@/common/rns';
 import config from '@/config';
@@ -441,7 +441,9 @@ export default class Home extends Vue {
                 }
             }
 
-            if (!(await RSS3.detectAccountExist(this.ethAddress))) {
+            const file = <RSS3Index>await this.rss3.files.get(this.ethAddress);
+
+            if (!file.signature) {
                 this.isAccountExist = false;
                 return;
             }

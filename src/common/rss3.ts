@@ -244,15 +244,4 @@ export default {
         }
         return availableThemes;
     },
-    async detectAccountExist(address: string) {
-        try {
-            await axios({
-                method: 'get',
-                url: `${config.rss3Endpoint}/${address}`,
-            });
-            return true;
-        } catch (e) {
-            return false;
-        }
-    },
 };
