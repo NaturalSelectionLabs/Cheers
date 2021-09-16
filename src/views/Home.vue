@@ -306,23 +306,23 @@
         >
             <div class="body px-4 h-2/3 flex flex-col justify-center items-center justify-between">
                 <Logo :size="200" />
-                <div class="text-primary text-2xl max-w-md">
+                <div class="text-primary-text text-2xl max-w-md">
                     <p>
                         This RNS is not claimed yet. <br />
                         Grab it as yours or claim your own!
                     </p>
                 </div>
-                <div class="leading-17.5 text-white w-83.5 text-2xl mx-auto">
+                <div class="leading-17.5 w-83.5 text-2xl mx-auto">
                     <Button
                         size="lg"
-                        class="bg-primary shadow-primary rounded-3xl w-full h-17.5 mb-9"
+                        class="bg-primary-btn shadow-primary-btn text-primary-btn-text rounded-3xl w-full h-17.5 mb-9"
                         @click="toSetupRNS"
                     >
                         <span> Claim an RNS </span>
                     </Button>
                     <Button
                         size="lg"
-                        class="text-primary bg-white shadow-primary rounded-3xl w-full h-17.5"
+                        class="bg-secondary-btn shadow-primary-btn text-secondary-btn-text rounded-3xl w-full h-17.5"
                         @click="toHomePage"
                     >
                         <span> Go Home </span>

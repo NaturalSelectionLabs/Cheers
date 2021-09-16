@@ -28,7 +28,7 @@
                 ></Trait>
             </div>
         </div>
-        <div v-if="details.collection?.name">
+        <div v-if="details.collection?.description">
             <h3>About {{ details.collection?.name }}</h3>
             <p>{{ details.collection?.description }}</p>
         </div>

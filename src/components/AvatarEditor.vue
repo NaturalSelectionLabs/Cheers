@@ -7,7 +7,9 @@
                 fill: newUrl || url,
             }"
         >
-            <i class="bx bx-plus" />
+            <div class="w-full h-full flex justify-center items-center rounded-full">
+                <i class="bx bx-plus bx-sm absolute z-10" />
+            </div>
         </span>
         <input type="file" class="hidden" accept="image/*" @change="preview" />
     </label>

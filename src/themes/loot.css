@@ -9,6 +9,13 @@
         --color-body-bg: black;
         --color-body-text: white;
 
+        --color-button-container: linear-gradient(
+            179.69deg,
+            rgba(0, 0, 0, 0) 0%,
+            rgba(0, 0, 0, 0) 1%,
+            rgba(0, 0, 0, 0.541667) 40.16%,
+            #000000 100%
+        );
         --color-primary-btn: transparent;
         --color-primary-btn-text: white;
         --color-primary-btn-border: transparent;
@@ -83,7 +90,7 @@
         --border-width-linkbutton: 1px;
 
         --border-width-card: 1px;
-        --border-width-button: 1px;
+        --border-width-button: 0px;
         --border-width-input: 1px;
         --border-width-modal: 1px;
 
