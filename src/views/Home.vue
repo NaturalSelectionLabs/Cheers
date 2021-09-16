@@ -1,6 +1,9 @@
 <template>
     <div class="h-screen bg-body-bg overflow-y-auto text-body-text">
-        <div v-if="isRNSExist" class="main px-4 py-8 flex flex-col gap-y-2 max-w-md m-auto overflow-y-auto select-none">
+        <div
+            v-if="isAccountExist"
+            class="main px-4 py-8 flex flex-col gap-y-2 max-w-md m-auto overflow-y-auto select-none"
+        >
             <Profile
                 :avatar="rss3Profile.avatar"
                 :username="rss3Profile.username"
@@ -307,22 +310,12 @@
             <div class="body px-4 h-2/3 flex flex-col justify-center items-center justify-between">
                 <Logo :size="200" />
                 <div class="text-primary text-2xl max-w-md">
-                    <p>
-                        This RNS is not claimed yet. <br />
-                        Grab it as yours or claim your own!
-                    </p>
+                    <p>This account is not on RSS3 yet...</p>
                 </div>
                 <div class="leading-17.5 text-white w-83.5 text-2xl mx-auto">
                     <Button
                         size="lg"
-                        class="bg-primary shadow-primary rounded-3xl w-full h-17.5 mb-9"
-                        @click="toSetupRNS"
-                    >
-                        <span> Claim an RNS </span>
-                    </Button>
-                    <Button
-                        size="lg"
-                        class="text-primary bg-white shadow-primary rounded-3xl w-full h-17.5"
+                        class="bg-primary-btn text-primary-btn-text shadow-primary-btn rounded-3xl w-full h-17.5 mb-9"
                         @click="toHomePage"
                     >
                         <span> Go Home </span>
@@ -393,7 +386,7 @@ export default class Home extends Vue {
     public isdisplaying: boolean = false;
     public dialogAddress: string = '';
     public dialogChain: string = '';
-    isRNSExist: boolean = true;
+    isAccountExist: boolean = true;
     isShowingShareCard: boolean = false;
     isLoadingAssets: boolean = true;
     currentTheme: string = '';
@@ -443,8 +436,14 @@ export default class Home extends Vue {
                         this.isOwner = true;
                     }
                 } else {
-                    this.isRNSExist = false;
+                    this.isAccountExist = false;
+                    return;
                 }
+            }
+
+            if (!(await RSS3.detectAccountExist(this.ethAddress))) {
+                this.isAccountExist = false;
+                return;
             }
         } else {
             if (!isValidRSS3) {
@@ -688,7 +687,7 @@ export default class Home extends Vue {
     async toHomePage() {
         if (this.$route.fullPath !== '/home') {
             await this.$router.push('/home');
-            this.isRNSExist = true;
+            this.isAccountExist = true;
             await this.initLoad();
         } else {
             console.log('Already at home!');
