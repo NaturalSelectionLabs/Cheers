@@ -9,6 +9,7 @@
         --color-body-bg: white;
         --color-body-text: black;
 
+        --color-button-container: transparent;
         --color-primary-btn: var(--color-primary);
         --color-primary-btn-text: white;
         --color-primary-btn-border: transparent;

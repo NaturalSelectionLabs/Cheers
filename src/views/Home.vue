@@ -309,13 +309,13 @@
         >
             <div class="body px-4 h-2/3 flex flex-col justify-center items-center justify-between">
                 <Logo :size="200" />
-                <div class="text-primary text-2xl max-w-md">
+                <div class="text-primary-text text-2xl max-w-md">
                     <p>This account is not on RSS3 yet...</p>
                 </div>
-                <div class="leading-17.5 text-white w-83.5 text-2xl mx-auto">
+                <div class="leading-17.5 w-83.5 text-2xl mx-auto">
                     <Button
                         size="lg"
-                        class="bg-primary-btn text-primary-btn-text shadow-primary-btn rounded-3xl w-full h-17.5 mb-9"
+                        class="bg-primary-btn shadow-primary-btn text-primary-btn-text rounded-3xl w-full h-17.5 mb-9"
                         @click="toHomePage"
                     >
                         <span> Go Home </span>

@@ -39,6 +39,7 @@ module.exports = {
                     bg: 'var(--color-body-bg)',
                     text: 'var(--color-body-text)',
                 },
+
                 account: {
                     border: 'var(--color-account-border)',
                     // button: '#40D22F',
@@ -202,16 +203,7 @@ module.exports = {
                 50: '12.5rem', //200px
             },
             backgroundImage: (theme) => ({
-                BSC: 'url(@/assets/images/chains/BSC.png)',
-                Ethereum: 'url(@/assets/images/chains/Ethereum.png)',
-                Ronin: 'url(@/assets/images/chains/Ronin.png)',
-                Etherscan: 'url(@/assets/images/scans/Etherscan.png)',
-                Roninscan: 'url(@/assets/images/scans/Roninscan.png)',
-                bscscan: 'url(@/assets/images/scans/bscscan.png)',
-                opensea: 'url(@/assets/images/marketplaces/OpenSea.png)',
-                rarible: 'url(@/assets/images/marketplaces/rarible.png)',
-                pass3gif: 'url(@/assets/images/pass3.gif)',
-                pass3logo: 'url(@/assets/images/pass3logo.svg)',
+                'btn-container': 'var(--color-button-container)',
                 pass3gradient:
                     'linear-gradient(172.52deg, #0072FF -40.83%, #96C5FF -3.21%, #DDECFF 28.66%, #FFFFFF 44.01%);',
             }),

@@ -57,7 +57,7 @@
                         :disabled="show.length === 0"
                         @click="hideAll"
                     >
-                        Hide All
+                        <span>Hide All</span>
                     </Button>
                 </template>
             </Card>
@@ -83,7 +83,7 @@
                         :disabled="hide.length === 0"
                         @click="showAll"
                     >
-                        Show All
+                        <span>Show All</span>
                     </Button>
                 </template>
                 <template #content>
@@ -104,18 +104,18 @@
                     </draggable>
                 </template>
             </Card>
-            <div class="px-4 py-4 flex gap-5 fixed bottom-0 left-0 right-0 max-w-md m-auto w-full">
+            <div class="px-4 py-4 flex gap-5 fixed bottom-0 left-0 right-0 max-w-md m-auto w-full bg-btn-container">
                 <Button
                     size="lg"
                     class="flex-1 text-lg bg-secondary-btn text-secondary-btn-text shadow-secondary-btn"
                     @click="back"
-                    >Discard</Button
+                    ><span>Discard</span></Button
                 >
                 <Button
                     size="lg"
                     class="flex-1 text-lg bg-primary-btn text-primary-btn-text shadow-primary-btn"
                     @click="save"
-                    >Save</Button
+                    ><span>Save</span></Button
                 >
             </div>
 

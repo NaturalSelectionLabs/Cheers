@@ -47,7 +47,10 @@
                     </div>
                 </div>
             </div>
-            <div class="px-4 py-4 flex gap-5 fixed bottom-2 left-0 right-0 max-w-md m-auto w-full" v-if="isOwner">
+            <div
+                class="px-4 py-4 flex gap-5 fixed bottom-2 left-0 right-0 max-w-md m-auto w-full bg-btn-container"
+                v-if="isOwner"
+            >
                 <Button
                     size="lg"
                     class="m-auto text-lg bg-account-btn-m text-account-btn-m-text shadow-account-btn-m"

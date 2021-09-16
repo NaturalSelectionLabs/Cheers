@@ -29,7 +29,7 @@
                 </span>
             </div>
             <Card
-                title="Default ETH Account"
+                title="Default"
                 color-title="text-account-title"
                 color-tips="text-account-title"
                 color-background="bg-body-bg"
@@ -41,7 +41,7 @@
                 </template>
             </Card>
             <Card
-                title="Additional Accounts"
+                title="Listed"
                 color-title="text-account-title"
                 color-tips="text-account-title"
                 :color-background="mode === 'normal' ? 'bg-account-bg' : 'bg-card-overlay'"
@@ -120,12 +120,12 @@
                         :disabled="show.length === 0"
                         @click="hideAll"
                     >
-                        Hide All
+                        <span>Hide All</span>
                     </Button>
                 </template>
             </Card>
             <Card
-                title="No-show Accounts"
+                title="Unlisted"
                 color-title="text-account-title"
                 color-tips="text-account-title"
                 color-background="bg-card-hide"
@@ -146,7 +146,7 @@
                         :disabled="hide.length === 0"
                         @click="showAll"
                     >
-                        Show All
+                        <span>Show All</span>
                     </Button>
                 </template>
                 <template #content>
@@ -157,18 +157,18 @@
                     </draggable>
                 </template>
             </Card>
-            <div class="px-4 py-4 flex gap-5 fixed bottom-0 left-0 right-0 max-w-md m-auto w-full">
+            <div class="px-4 py-4 flex gap-5 fixed bottom-0 left-0 right-0 max-w-md m-auto w-full bg-btn-container">
                 <Button
                     size="lg"
                     class="flex-1 text-lg bg-secondary-btn text-secondary-btn-text shadow-secondary-btn"
                     @click="back"
-                    >Discard</Button
+                    ><span>Discard</span></Button
                 >
                 <Button
                     size="lg"
                     class="flex-1 text-lg bg-primary-btn text-primary-btn-text shadow-primary-btn"
                     @click="save"
-                    >Save</Button
+                    ><span>Save</span></Button
                 >
             </div>
             <LoadingContainer v-show="isLoading" />
@@ -189,7 +189,7 @@
                             class="w-72 bg-primary-btn text-primary-btn-text shadow-primary-btn"
                             @click="isShowingAddAccountNotice = false"
                         >
-                            OK
+                            <span>OK</span>
                         </Button>
                     </div>
                 </template>

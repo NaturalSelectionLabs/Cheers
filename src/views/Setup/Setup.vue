@@ -77,7 +77,9 @@
                 :is-single-line="gitcoins.length !== 0"
                 :tips="isLoadingAssets ? 'Loading...' : gitcoins.length === 0 ? 'Haven\'t found anything yet...' : ''"
             >
-                <template #title-icon><GitcoinIcon /></template>
+                <template #title-icon
+                    ><GitcoinIcon :iconColor="currentTheme === 'loot' ? 'white' : 'black'"
+                /></template>
                 <template #header-button>
                     <Button
                         size="sm"
@@ -127,18 +129,34 @@
                     </div>
                 </template>
             </Card>
-            <div class="px-4 py-4 flex gap-5 fixed bottom-0 left-0 right-0 max-w-md m-auto w-full">
+            <div
+                class="
+                    px-4
+                    py-4
+                    flex
+                    justify-between
+                    gap-5
+                    fixed
+                    bottom-0
+                    left-0
+                    right-0
+                    max-w-md
+                    m-auto
+                    w-full
+                    bg-btn-container
+                "
+            >
                 <Button
                     size="lg"
                     class="flex-1 text-lg bg-secondary-btn text-secondary-btn-text shadow-secondary-btn"
                     @click="back"
-                    >Back</Button
+                    ><span>Back</span></Button
                 >
                 <Button
                     size="lg"
                     class="flex-1 text-lg bg-primary-btn text-primary-btn-text shadow-primary-btn"
                     @click="save"
-                    >Done</Button
+                    ><span>Done</span></Button
                 >
             </div>
             <LoadingContainer v-show="isLoading" />
@@ -228,7 +246,7 @@ export default class Setup extends Vue {
     maxValueLength: Number = 280;
     notice: String = '';
     isShowingNotice: Boolean = false;
-
+    currentTheme: string = '';
     $gtag: any;
 
     async mounted() {
@@ -261,6 +279,7 @@ export default class Setup extends Vue {
         // Setup theme
         const themes = RSS3.getAvailableThemes(await (<IRSS3>this.rss3).assets.get());
         if (themes[0]) {
+            this.currentTheme = themes[0].name;
             document.body.classList.add(themes[0].class);
         } else {
             document.body.classList.remove(...document.body.classList);

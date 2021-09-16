@@ -15,7 +15,7 @@
             </div>
             <AvatarEditor class="m-auto mb-4" size="lg" :url="profile.avatar" ref="avatar" />
             <LinkButton class="m-auto mb-4" @click="toSetupRNS">
-                {{ rns ? rns : 'Claim Your RNS' }}
+                <span>{{ rns ? rns : 'Claim Your RNS' }}</span>
             </LinkButton>
             <Input class="mb-4 w-full" :is-single-line="true" placeholder="Username" v-model="profile.name" />
             <Input class="mb-4 w-full" :is-single-line="false" placeholder="Bio" v-model="profile.bio" />
