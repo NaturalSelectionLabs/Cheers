@@ -83,12 +83,12 @@ export default class Index extends Vue {
         // Check if setup RNS
         if ((await RNSUtils.addr2Name(address)) === '' && (await this.isPassEnough())) {
             // Setup RNS
-            // await (<IRSS3>this.rss3).files.sync();
+            await (<IRSS3>this.rss3).files.sync();
             this.$gtag.event('rns', { userid: address });
             await this.$router.push('/rns');
         } else if (!(profile?.name || profile?.bio || profile?.avatar)) {
             // Setup Profile
-            // await (<IRSS3>this.rss3).files.sync();
+            await (<IRSS3>this.rss3).files.sync();
             this.$gtag.event('sign_up', { userid: address });
             await this.$router.push('/setup');
         } else {
