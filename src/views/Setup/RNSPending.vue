@@ -30,27 +30,25 @@ export default class RNSPending extends Vue {
             await this.$router.push('/');
         } else {
             this.rss3 = await RSS3.get();
-            await this.checkAndRedirect();
-            setInterval(this.checkAndRedirect, 20000);
-        }
-    }
-
-    async checkAndRedirect() {
-        if ((await RNSUtils.addr2Name((<IRSS3>this.rss3).account.address)) !== '') {
-            // Already setup RNS
-            const profile = await (<IRSS3>this.rss3).profile.get();
-            if (!profile) {
-                // Setup Profile
-                await (<IRSS3>this.rss3).files.sync();
-                this.$gtag.event('sign_up', { userid: (<IRSS3>this.rss3).account.address });
-                await this.$router.push('/setup');
-            } else {
-                // Login
-                this.$gtag.event('login', { userid: (<IRSS3>this.rss3).account.address });
-                const redirectFrom = sessionStorage.getItem('redirectFrom');
-                sessionStorage.removeItem('redirectFrom');
-                await this.$router.push(redirectFrom || '/home');
-            }
+            const iv = setInterval(async () => {
+                if ((await RNSUtils.addr2Name((<IRSS3>this.rss3).account.address)) !== '') {
+                    // Already setup RNS
+                    clearInterval(iv);
+                    const profile = await (<IRSS3>this.rss3).profile.get();
+                    if (!profile) {
+                        // Setup Profile
+                        await (<IRSS3>this.rss3).files.sync();
+                        this.$gtag.event('sign_up', { userid: (<IRSS3>this.rss3).account.address });
+                        await this.$router.push('/setup');
+                    } else {
+                        // Login
+                        this.$gtag.event('login', { userid: (<IRSS3>this.rss3).account.address });
+                        const redirectFrom = sessionStorage.getItem('redirectFrom');
+                        sessionStorage.removeItem('redirectFrom');
+                        await this.$router.push(redirectFrom || '/home');
+                    }
+                }
+            }, 20000);
         }
     }
 }
