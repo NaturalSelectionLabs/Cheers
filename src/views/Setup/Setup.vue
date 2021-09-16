@@ -223,7 +223,7 @@ export default class Setup extends Vue {
     nfts: GeneralAssetWithTags[] = [];
     gitcoins: GeneralAssetWithTags[] = [];
     rss3: IRSS3 | null = null;
-    isLoading: Boolean = false;
+    isLoading: Boolean = true;
     isLoadingAssets: Boolean = true;
     maxValueLength: Number = 280;
     notice: String = '';
@@ -238,6 +238,10 @@ export default class Setup extends Vue {
         } else {
             this.rss3 = await RSS3.get();
         }
+        // Trigger force refresh
+        await RSS3.getAssetProfile((<IRSS3>this.rss3).account.address, true);
+        await (<IRSS3>this.rss3).files.get((<IRSS3>this.rss3).account.address, true);
+
         if (!this.loadEdited()) {
             const profile = await (<IRSS3>this.rss3).profile.get();
             console.log(profile);
@@ -277,6 +281,7 @@ export default class Setup extends Vue {
             await this.loadAssets(await (<IRSS3>this.rss3).assets.get(), <GeneralAsset[]>data.assets);
             this.isLoadingAssets = false;
         }
+        this.isLoading = false;
     }
 
     getTaggedOrder(taggedElement: RSS3Account | RSS3Asset): number {
@@ -425,7 +430,6 @@ export default class Setup extends Vue {
         }
         this.clearEdited();
         this.$gtag.event('finishEditProfile', { userid: (<IRSS3>this.rss3).account.address });
-        await RSS3.getAssetProfile((<IRSS3>this.rss3).account.address, true);
         this.isLoading = false;
         const redirectFrom = sessionStorage.getItem('redirectFrom');
         sessionStorage.removeItem('redirectFrom');
