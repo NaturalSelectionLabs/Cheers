@@ -486,6 +486,9 @@ export default class Home extends Vue {
         }, 0);
 
         setTimeout(async () => {
+            // Clear accounts
+            this.accounts.splice(0, this.accounts.length);
+
             // Push original account
             this.accounts.push({
                 platform: 'Ethereum',
@@ -767,8 +770,11 @@ export default class Home extends Vue {
     }
 
     async logout() {
+        (<HTMLLinkElement>document.getElementById('favicon')).href = '/favicon.ico';
+        document.title = 'Web3 Pass';
+
         await RSS3.disconnect();
-        this.$router.push('/');
+        await this.$router.push('/');
     }
 }
 </script>
