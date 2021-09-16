@@ -37,7 +37,7 @@
                     >
                     <Button
                         size="lg"
-                        class="flex-1 text-lg bg-primary-btn text-secondary-btn-text shadow-primary-btn"
+                        class="flex-1 text-lg bg-primary-btn text-primary-btn-text shadow-primary-btn"
                         @click="verifyRNS"
                         >Go</Button
                     >
@@ -184,37 +184,30 @@ export default class RNS extends Vue {
         this.isLoading = true;
         await this.refreshAccount();
         this.rns = this.rns.toLowerCase();
-        if (this.rns.length < 3 || this.rns.length >= 15) {
-            this.notice = 'An RNS must have at least 3 characters and no more than 15';
-            return;
-        }
-        if (!/^[a-z0-9\-_]+$/.test(this.rns)) {
-            this.notice = 'An RNS should only contain lower case letters, numbers, minus and underlines.';
-            return;
-        }
-        if (this.rns.startsWith('0x')) {
-            this.notice = 'An RNS should not start with "0x".';
-            return;
-        }
         for (const r of routes) {
             if (`/${this.rns}` === r.path) {
-                this.notice = 'Sorry, but this RNS is conflict with Routes and those will not work properly.';
+                this.notice = 'Sorry, but this RNS is conflict with Routes and thus will not work properly.';
+                this.isLoading = false;
                 return;
             }
         }
-        // Check $PASS balance
-        if (!(await this.isPassEnough())) {
+        if (this.rns.length < 3 || this.rns.length >= 15) {
+            this.notice = 'An RNS must have at least 3 characters and no more than 15';
+        } else if (!/^[a-z0-9\-_]+$/.test(this.rns)) {
+            this.notice = 'An RNS should only contain lower case letters, numbers, minus and underlines.';
+        } else if (this.rns.startsWith('0x')) {
+            this.notice = 'An RNS should not start with "0x".';
+        } else if (!(await this.isPassEnough())) {
+            // Check $PASS balance
             this.notice = 'Sorry, but you need 1 $PASS to register an RNS';
-            this.isLoading = false;
         } else if (parseInt((await RNSUtils.name2Addr(this.rns + config.rns.suffix)).toString()) !== 0) {
             // Already taken
             this.notice = 'Sorry, but this RNS has already been taken.';
-            this.isLoading = false;
         } else {
             this.isShowingConfirm = true;
-            this.isLoading = false;
             this.notice = '';
         }
+        this.isLoading = false;
     }
 
     async confirm() {
@@ -234,7 +227,7 @@ export default class RNS extends Vue {
             @apply h-2/3 flex flex-col justify-between w-full;
 
             .title {
-                @apply text-8xl text-primary-text font-bold;
+                @apply text-6xl text-primary-text font-bold;
             }
 
             .input-rns {
