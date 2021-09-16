@@ -51,11 +51,14 @@ async function walletConnect() {
     rss3 = new RSS3({
         endpoint: config.rss3Endpoint,
         address: address,
+        agentSign: true,
         sign: async (data: string) => {
             alert('Ready to sign... You may need to prepare your wallet.');
             return await (<Web3>web3).eth.personal.sign(data, address, '');
         },
     });
+    rss3.files.set(await rss3.files.get(address));
+    await rss3.files.sync();
 
     return rss3;
 }
@@ -87,8 +90,11 @@ async function metamaskConnect() {
     rss3 = new RSS3({
         endpoint: config.rss3Endpoint,
         address: address,
+        agentSign: true,
         sign: async (data: string) => await (<Web3>web3).eth.personal.sign(data, address, ''),
     });
+    rss3.files.set(await rss3.files.get(address));
+    await rss3.files.sync();
 
     return rss3;
 }
@@ -226,7 +232,6 @@ export default {
             identity: address,
             signature: signature,
         };
-        // await rss3.files.sync();
     },
     getAvailableThemes(assets: RSS3Asset[]) {
         const availableThemes: Theme[] = [];
