@@ -90,7 +90,7 @@ export default {
     },
     async balanceOfPass3(addr: string, speed: SPEED = 'average') {
         await (window as any).ethereum?.enable();
-        const balance = await callRNSContract<ethers.BigNumber>('token', 'web3', speed, 'balanceOf', addr);
+        const balance = await callRNSContract<ethers.BigNumber>('token', 'infura', speed, 'balanceOf', addr);
         return Number(ethers.utils.formatUnits(balance, 18));
     },
 };
