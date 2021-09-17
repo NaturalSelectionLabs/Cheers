@@ -24,7 +24,7 @@ export interface Theme {
     nftIdPrefix: string;
 }
 
-async function walletConnect() {
+async function walletConnect(skipSign?: boolean) {
     provider = new WalletConnectProvider({
         infuraId: config.infuraId,
     });
@@ -57,8 +57,10 @@ async function walletConnect() {
             return await (<Web3>web3).eth.personal.sign(data, address, '');
         },
     });
-    rss3.files.set(await rss3.files.get(address));
-    await rss3.files.sync();
+    if (!skipSign) {
+        rss3.files.set(await rss3.files.get(address));
+        await rss3.files.sync();
+    }
 
     return rss3;
 }
@@ -73,7 +75,7 @@ async function visitor() {
     }
 }
 
-async function metamaskConnect() {
+async function metamaskConnect(skipSign?: boolean) {
     const metamaskEthereum = (window as any).ethereum;
     web3 = new Web3(metamaskEthereum);
 
@@ -93,8 +95,10 @@ async function metamaskConnect() {
         agentSign: true,
         sign: async (data: string) => await (<Web3>web3).eth.personal.sign(data, address, ''),
     });
-    rss3.files.set(await rss3.files.get(address));
-    await rss3.files.sync();
+    if (!skipSign) {
+        rss3.files.set(await rss3.files.get(address));
+        await rss3.files.sync();
+    }
 
     return rss3;
 }
@@ -130,10 +134,10 @@ export default {
             const lastConnect = localStorage.getItem('lastConnect');
             switch (lastConnect) {
                 case 'walletConnect':
-                    await walletConnect();
+                    await walletConnect(true);
                     return true;
                 case 'metamask':
-                    await metamaskConnect();
+                    await metamaskConnect(true);
                     return true;
                 default:
                     return false;
