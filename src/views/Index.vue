@@ -1,5 +1,5 @@
 <template>
-    <div class="onboarding h-full text-center bg-cover bg-fixed flex items-center justify-center bg-pass3gradient">
+    <div class="onboarding h-screen text-center bg-cover bg-fixed flex items-center justify-center bg-pass3gradient">
         <div class="body px-4 h-2/3 flex flex-col justify-start items-center justify-between">
             <Logo :size="200" />
             <div class="leading-17.5 text-white w-83.5 text-2xl mx-auto">
