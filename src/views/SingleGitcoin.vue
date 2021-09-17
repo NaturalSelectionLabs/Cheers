@@ -102,7 +102,7 @@
                         <Button
                             size="sm"
                             class="w-9 h-9 ml-1 bg-gitcoin-btn-m text-gitcoin-btn-m-text shadow-gitcoin-btn-m"
-                            @click="toEtherscan(item.txHash)"
+                            @click="toScanTx(item)"
                         >
                             <i class="bx bx-link-external bx-xs" />
                         </Button>
@@ -144,14 +144,17 @@ export interface GrantInfo {
     contract_address?: string;
 }
 
+type DonationApproach = 'zkSync' | 'Standard';
 export interface DonationInfo {
     donor: string;
-    tokenAddr: string;
+    tokenAddr?: string;
+    tokenId?: number;
     amount: string;
     symbol?: string;
     formatedAmount?: string;
     timeStamp: string;
     txHash: string;
+    approach?: DonationApproach;
 }
 
 @Options({
@@ -239,8 +242,12 @@ export default class SingleGitcoin extends Vue {
         window.open(address);
     }
 
-    public toEtherscan(txHash: string) {
-        window.open(`https://etherscan.io/tx/${txHash}`);
+    toScanTx(item: DonationInfo) {
+        if (item.approach === 'zkSync') {
+            window.open(`https://zkscan.io/explorer/transactions/${item.txHash}`);
+        } else {
+            window.open(`https://etherscan.io/tx/${item.txHash}`);
+        }
     }
 
     toPublicPage(address: string) {
