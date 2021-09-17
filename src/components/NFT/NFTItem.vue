@@ -24,7 +24,10 @@
             :controls="isShowingDetails"
         />
         <iframe
-            v-else-if="imageUrl?.endsWith('embed') || imageUrl?.includes('farmhero.io')"
+            v-else-if="
+                (imageUrl?.endsWith('embed') || imageUrl?.includes('farmhero.io') || imageUrl?.endsWith('.html')) &&
+                isShowingDetails
+            "
             :src="imageUrl"
             class="nft-item"
             :class="[!isShowingDetails ? 'object-cover' : 'object-contain']"
@@ -50,7 +53,11 @@
         />
         <img
             v-else
-            :src="(imageUrl?.endsWith('.glb') || imageUrl?.endsWith('.gltf') ? posterUrl : imageUrl) || defaultImage"
+            :src="
+                (imageUrl?.endsWith('.glb') || imageUrl?.endsWith('.gltf') || imageUrl?.endsWith('.html')
+                    ? posterUrl
+                    : imageUrl) || defaultImage
+            "
             class="nft-item"
             :class="[!isShowingDetails ? 'object-cover' : 'object-contain']"
             :style="{
