@@ -34,7 +34,7 @@
             }"
         />
         <model-viewer
-            v-else-if="imageUrl?.endsWith('.glb') && isShowingDetails"
+            v-else-if="(imageUrl?.endsWith('.glb') || imageUrl?.endsWith('.gltf')) && isShowingDetails"
             :src="imageUrl"
             class="nft-item"
             :class="[!isShowingDetails ? 'object-cover' : 'object-contain']"
@@ -50,7 +50,7 @@
         />
         <img
             v-else
-            :src="(imageUrl?.endsWith('.glb') ? posterUrl : imageUrl) || defaultImage"
+            :src="(imageUrl?.endsWith('.glb') || imageUrl?.endsWith('.gltf') ? posterUrl : imageUrl) || defaultImage"
             class="nft-item"
             :class="[!isShowingDetails ? 'object-cover' : 'object-contain']"
             :style="{
