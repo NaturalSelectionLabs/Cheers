@@ -1,5 +1,5 @@
 <template>
-    <div class="h-screen bg-gitcoin-bg overflow-y-auto">
+    <div id="main" class="h-screen bg-gitcoin-bg overflow-y-auto">
         <div class="main px-4 py-8 max-w-md m-auto">
             <div class="header flex justify-between items-center pb-4">
                 <Button
@@ -69,6 +69,7 @@ import RNSUtils from '@/common/rns';
 import RSS3, { IRSS3 } from '@/common/rss3';
 import { GeneralAsset, GeneralAssetWithTags } from '@/common/types';
 import { RSS3Asset } from 'rss3-next/types/rss3';
+import { debounce } from 'lodash';
 
 interface Profile {
     avatar: string;
@@ -95,6 +96,7 @@ export default class Gitcoins extends Vue {
         bio: '',
     };
     private defaultAvatar = config.defaultAvatar;
+    scrollTop: number = 0;
 
     async mounted() {
         const address = <string>this.$route.params.address;
@@ -129,6 +131,7 @@ export default class Gitcoins extends Vue {
         if (data) {
             await this.loadGitcoin(await rss3.assets.get(this.ethAddress), data.assets);
         }
+        this.mountScrollEvent();
     }
 
     private getAssetOrder(nft: RSS3Asset) {
@@ -197,6 +200,25 @@ export default class Gitcoins extends Vue {
 
     public toSingleGitcoin(platform: string, identity: string, id: string) {
         this.$router.push(`/${this.rns}/singlegitcoin/${platform}/${identity}/${id}`);
+    }
+
+    mountScrollEvent() {
+        const el = document.getElementById('main');
+        if (el) {
+            el.addEventListener(
+                'scroll',
+                debounce((ev) => {
+                    this.scrollTop = el.scrollTop;
+                }, 100),
+            );
+        }
+    }
+
+    activated() {
+        const el = document.getElementById('main');
+        if (el) {
+            el.scrollTop = this.scrollTop;
+        }
     }
 }
 </script>

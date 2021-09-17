@@ -1,5 +1,5 @@
 <template>
-    <div class="h-screen bg-nft-bg overflow-y-auto">
+    <div id="main" class="h-screen bg-nft-bg overflow-y-auto">
         <div class="main px-4 py-8 max-w-md m-auto">
             <div class="header flex justify-between items-center pb-4">
                 <Button
@@ -63,6 +63,7 @@ import RNSUtils from '@/common/rns';
 import config from '@/config';
 import { RSS3Asset } from 'rss3-next/types/rss3';
 import { GeneralAsset, GeneralAssetWithTags } from '@/common/types';
+import { debounce } from 'lodash';
 
 interface Profile {
     avatar: string;
@@ -88,6 +89,7 @@ export default class NFTs extends Vue {
         bio: '',
     };
     $gtag: any;
+    scrollTop: number = 0;
 
     async mounted() {
         const address = <string>this.$route.params.address;
@@ -124,6 +126,7 @@ export default class NFTs extends Vue {
         if (data) {
             await this.loadNFTs(await rss3.assets.get(this.ethAddress), <GeneralAsset[]>data.assets);
         }
+        this.mountScrollEvent();
     }
 
     private getAssetOrder(nft: RSS3Asset) {
@@ -193,6 +196,25 @@ export default class NFTs extends Vue {
 
     public back() {
         window.history.back();
+    }
+
+    mountScrollEvent() {
+        const el = document.getElementById('main');
+        if (el) {
+            el.addEventListener(
+                'scroll',
+                debounce((ev) => {
+                    this.scrollTop = el.scrollTop;
+                }, 100),
+            );
+        }
+    }
+
+    activated() {
+        const el = document.getElementById('main');
+        if (el) {
+            el.scrollTop = this.scrollTop;
+        }
     }
 }
 </script>

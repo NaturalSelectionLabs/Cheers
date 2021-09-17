@@ -1,5 +1,5 @@
 <template>
-    <div class="h-screen bg-body-bg overflow-y-auto text-body-text">
+    <div id="main" class="h-screen bg-body-bg overflow-y-auto text-body-text">
         <div
             v-if="isAccountExist"
             class="main px-4 py-8 flex flex-col gap-y-2 max-w-md m-auto overflow-y-auto select-none"
@@ -347,6 +347,7 @@ import NFTIcon from '@/components/Icons/NFTIcon.vue';
 import GitcoinIcon from '@/components/Icons/GitcoinIcon.vue';
 import ContentIcon from '@/components/Icons/ContentIcon.vue';
 import Logo from '@/components/Logo.vue';
+import { debounce } from 'lodash';
 
 interface ProfileInfo {
     avatar: string;
@@ -406,9 +407,11 @@ export default class Home extends Vue {
     nfts: GeneralAssetWithTags[] = [];
     gitcoins: GeneralAssetWithTags[] = [];
     $gtag: any;
+    scrollTop: number = 0;
 
     async mounted() {
         await this.initLoad();
+        this.mountScrollEvent();
     }
 
     async initLoad() {
@@ -777,6 +780,25 @@ export default class Home extends Vue {
 
         await RSS3.disconnect();
         await this.$router.push('/');
+    }
+
+    mountScrollEvent() {
+        const el = document.getElementById('main');
+        if (el) {
+            el.addEventListener(
+                'scroll',
+                debounce((ev) => {
+                    this.scrollTop = el.scrollTop;
+                }, 100),
+            );
+        }
+    }
+
+    activated() {
+        const el = document.getElementById('main');
+        if (el) {
+            el.scrollTop = this.scrollTop;
+        }
     }
 }
 </script>
