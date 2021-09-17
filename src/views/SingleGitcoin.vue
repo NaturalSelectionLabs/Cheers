@@ -155,6 +155,7 @@ export interface DonationInfo {
 }
 
 @Options({
+    name: 'SingleGitcoin',
     components: { ImgHolder, Button, GitcoinItem, Vue3Autocounter },
 })
 export default class SingleGitcoin extends Vue {

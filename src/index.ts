@@ -11,6 +11,13 @@ import * as Sentry from '@sentry/vue';
 import { Integrations } from '@sentry/tracing';
 const app = createApp(App);
 
+// import { Vue } from 'vue-class-component';
+// Vue.registerHooks([
+//     'beforeRouteEnter',//进入路由之前
+//     'beforeRouteLeave',//离开路由之前
+//     'beforeRouteUpdate'
+// ]);
+
 app.use(router);
 app.use(
     VueGtag,

@@ -210,6 +210,7 @@ import { GeneralAsset, GeneralAssetWithTags } from '@/common/types';
 import GitcoinItem from '@/components/GitcoinItem.vue';
 
 @Options({
+    name: 'Setup',
     components: {
         GitcoinItem,
         Modal,
@@ -260,20 +261,18 @@ export default class Setup extends Vue {
         await RSS3.getAssetProfile((<IRSS3>this.rss3).account.address, true);
         await (<IRSS3>this.rss3).files.get((<IRSS3>this.rss3).account.address, true);
 
-        if (!this.loadEdited()) {
-            const profile = await (<IRSS3>this.rss3).profile.get();
-            console.log(profile);
-            this.profile.avatar = profile?.avatar?.[0] || config.defaultAvatar;
-            this.profile.name = profile?.name || '';
-            this.profile.bio = profile?.bio || '';
+        const profile = await (<IRSS3>this.rss3).profile.get();
+        console.log(profile);
+        this.profile.avatar = profile?.avatar?.[0] || config.defaultAvatar;
+        this.profile.name = profile?.name || '';
+        this.profile.bio = profile?.bio || '';
 
-            if (profile?.avatar?.[0]) {
-                const favicon = <HTMLLinkElement>document.getElementById('favicon');
-                favicon.href = profile.avatar[0];
-            }
-            if (profile?.name) {
-                document.title = profile.name;
-            }
+        if (profile?.avatar?.[0]) {
+            const favicon = <HTMLLinkElement>document.getElementById('favicon');
+            favicon.href = profile.avatar[0];
+        }
+        if (profile?.name) {
+            document.title = profile.name;
         }
 
         // Setup theme
@@ -383,34 +382,34 @@ export default class Setup extends Vue {
         );
     }
 
-    loadEdited() {
-        if (sessionStorage.getItem('profile')) {
-            this.profile = JSON.parse(sessionStorage.getItem('profile') || '');
-            return true;
-        } else {
-            return false;
-        }
-    }
-    saveEdited() {
-        sessionStorage.setItem('profile', JSON.stringify(this.profile));
-    }
-    clearEdited() {
-        sessionStorage.removeItem('profile');
-    }
+    // loadEdited() {
+    //     if (sessionStorage.getItem('profile')) {
+    //         this.profile = JSON.parse(sessionStorage.getItem('profile') || '');
+    //         return true;
+    //     } else {
+    //         return false;
+    //     }
+    // }
+    // saveEdited() {
+    //     sessionStorage.setItem('profile', JSON.stringify(this.profile));
+    // }
+    // clearEdited() {
+    //     sessionStorage.removeItem('profile');
+    // }
 
     toManageAccounts() {
-        this.saveEdited();
+        // this.saveEdited();
         this.$router.push('/setup/accounts');
     }
     toManageNFTs() {
-        this.saveEdited();
+        // this.saveEdited();
         this.$router.push('/setup/nfts');
     }
     toManageGitcoins() {
         this.$router.push('/setup/gitcoins');
     }
     async back() {
-        this.clearEdited();
+        // this.clearEdited();
         this.$gtag.event('cancelEditProfile', { userid: (<IRSS3>this.rss3).account.address });
         window.history.back();
     }
@@ -447,7 +446,7 @@ export default class Setup extends Vue {
             this.isLoading = false;
             return;
         }
-        this.clearEdited();
+        // this.clearEdited();
         this.$gtag.event('finishEditProfile', { userid: (<IRSS3>this.rss3).account.address });
         this.isLoading = false;
         const redirectFrom = sessionStorage.getItem('redirectFrom');

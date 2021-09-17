@@ -53,6 +53,7 @@ interface Profile {
 }
 
 @Options({
+    name: 'Followings',
     components: { ImgHolder, Button, FollowerCard },
 })
 export default class Followings extends Vue {

@@ -65,6 +65,7 @@ import { NFT } from '@/common/types';
 import config from '@/config';
 
 @Options({
+    name: 'SingleNFT',
     components: { Button, NFTDetail, NFTItem, AccountItem, NFTBadges },
 })
 export default class SingleNFT extends Vue {

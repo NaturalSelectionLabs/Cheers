@@ -139,6 +139,7 @@ import NFTItem from '@/components/NFT/NFTItem.vue';
 import GitcoinItem from '@/components/GitcoinItem.vue';
 
 @Options({
+    name: 'SetupGitcoins',
     components: {
         GitcoinItem,
         NFTItem,

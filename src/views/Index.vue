@@ -39,6 +39,7 @@ import Loading from '@/components/Loading.vue';
 import LoadingContainer from '@/components/LoadingContainer.vue';
 import Logo from '@/components/Logo.vue';
 @Options({
+    name: 'Index',
     components: {
         Metamask,
         WalletConnect,

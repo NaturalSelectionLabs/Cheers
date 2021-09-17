@@ -78,6 +78,7 @@ interface Profile {
 }
 
 @Options({
+    name: 'Gitcoins',
     components: { ImgHolder, Button, GitcoinTitle, GitcoinCard },
 })
 export default class Gitcoins extends Vue {

@@ -17,6 +17,7 @@ import RSS3, { IRSS3 } from '@/common/rss3';
 import RNSUtils from '@/common/rns';
 
 @Options({
+    name: 'RNSPending',
     components: { Loading },
 })
 export default class RNSPending extends Vue {

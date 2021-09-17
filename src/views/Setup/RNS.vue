@@ -106,6 +106,7 @@ function validateNetwork(chain: number | null, cb?: (chain: number | null) => vo
     }
 }
 @Options({
+    name: 'RNS',
     components: {
         Input,
         Modal,

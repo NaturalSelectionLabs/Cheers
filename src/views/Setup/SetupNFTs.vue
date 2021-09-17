@@ -154,6 +154,7 @@ interface RSS3AssetCollectionShow {
 }
 
 @Options({
+    name: 'SetupNFTs',
     components: {
         LoadingContainer,
         Button,

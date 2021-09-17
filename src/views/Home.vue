@@ -361,6 +361,7 @@ interface Relations {
 }
 
 @Options({
+    name: 'Home',
     components: {
         Button,
         Card,

@@ -72,6 +72,7 @@ interface Profile {
 }
 
 @Options({
+    name: 'NFTs',
     components: { ImgHolder, Button, NFTItem, NFTBadges },
 })
 export default class NFTs extends Vue {

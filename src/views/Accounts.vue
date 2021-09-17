@@ -81,6 +81,7 @@ interface Profile {
 }
 
 @Options({
+    name: 'Accounts',
     components: { ImgHolder, Button, AccountItem },
 })
 export default class Accounts extends Vue {
