@@ -136,7 +136,7 @@ export default class Followers extends Vue {
     }
 
     public back() {
-        window.history.back();
+        this.$router.push(`/${this.rns || this.ethAddress}`);
     }
 
     activated() {

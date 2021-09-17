@@ -247,8 +247,12 @@ export default class SingleGitcoin extends Vue {
         this.$router.push(`/${address}`);
     }
 
-    public back() {
-        window.history.back();
+    back() {
+        if (window.history.length > 2) {
+            window.history.back();
+        } else {
+            this.$router.push(`/${this.rns || this.ethAddress}/gitcoins`);
+        }
     }
 }
 </script>

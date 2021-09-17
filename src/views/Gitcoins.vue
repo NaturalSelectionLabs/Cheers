@@ -196,7 +196,7 @@ export default class Gitcoins extends Vue {
     }
 
     public back() {
-        window.history.back();
+        this.$router.push(`/${this.rns || this.ethAddress}`);
     }
 
     public toSetupGitcoins() {

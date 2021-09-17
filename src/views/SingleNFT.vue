@@ -120,7 +120,11 @@ export default class SingleNFT extends Vue {
     }
 
     public back() {
-        window.history.back();
+        if (window.history.length > 2) {
+            window.history.back();
+        } else {
+            this.$router.push(`/${this.rns || this.ethAddress}/nfts`);
+        }
     }
 }
 </script>

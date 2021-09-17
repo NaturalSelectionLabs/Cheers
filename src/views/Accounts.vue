@@ -213,7 +213,7 @@ export default class Accounts extends Vue {
     }
 
     public back() {
-        window.history.back();
+        this.$router.push(`/${this.rns || this.ethAddress}`);
     }
 
     activated() {
