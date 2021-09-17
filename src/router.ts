@@ -16,7 +16,6 @@ import SetupNFTs from '@/views/Setup/SetupNFTs.vue';
 import RNS from '@/views/Setup/RNS.vue';
 import EditProfile from '@/views/EditProfile.vue';
 import RNSPending from '@/views/Setup/RNSPending.vue';
-import GoToPC from '@/views/Setup/GoToPC.vue';
 import Gitcoins from '@/views/Gitcoins.vue';
 import SetupGitcoins from '@/views/Setup/SetupGitcoins.vue';
 import SingleGitcoin from '@/views/SingleGitcoin.vue';
@@ -101,10 +100,6 @@ export const routes = [
     {
         path: '/pending',
         component: RNSPending,
-    },
-    {
-        path: '/gotopc',
-        component: GoToPC,
     },
 ];
 
