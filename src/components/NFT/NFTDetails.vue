@@ -17,7 +17,7 @@
             <h3>Description</h3>
             <p>{{ details.description }}</p>
         </div>
-        <div v-if="details.traits">
+        <div v-if="details.traits && details.traits.length > 0">
             <h3>Properties</h3>
             <div class="traits-container">
                 <Trait
