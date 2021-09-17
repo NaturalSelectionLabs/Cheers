@@ -106,6 +106,7 @@ export default class Gitcoins extends Vue {
 
     async initLoad() {
         this.lastRoute = this.$route.fullPath;
+        this.contribs = 0;
         this.gitcoins = [];
         this.rss3Profile.avatar = config.defaultAvatar;
 
