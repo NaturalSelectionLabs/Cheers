@@ -182,7 +182,7 @@
                         v-for="item in gitcoins"
                         :key="item.platform + item.identity + item.id"
                         :size="70"
-                        :imageUrl="item.info.image_preview_url"
+                        :imageUrl="item.info.image_preview_url || defaultAvatar"
                         @click="toSingleGitcoin(item.platform, item.identity, item.id)"
                     />
                     <div v-else-if="isLoadingAssets" class="text-gitcoin-title m-auto text-center mt-4">Loading...</div>
@@ -409,6 +409,7 @@ export default class Home extends Vue {
     $gtag: any;
     scrollTop: number = 0;
     lastRoute: string = '';
+    defaultAvatar = config.defaultAvatar;
 
     async mounted() {
         await this.initLoad();
