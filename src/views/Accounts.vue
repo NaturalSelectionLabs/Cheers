@@ -81,6 +81,7 @@ interface Profile {
 }
 
 @Options({
+    name: 'Accounts',
     components: { ImgHolder, Button, AccountItem },
 })
 export default class Accounts extends Vue {
@@ -94,8 +95,17 @@ export default class Accounts extends Vue {
         address: '',
         bio: '',
     };
+    lastRoute: string = '';
 
     async mounted() {
+        await this.initLoad();
+    }
+
+    async initLoad() {
+        this.lastRoute = this.$route.fullPath;
+        this.accounts = [];
+        this.rss3Profile.avatar = config.defaultAvatar;
+
         const address = <string>this.$route.params.address;
         if (!address.startsWith('0x')) {
             this.rns = address;
@@ -203,7 +213,13 @@ export default class Accounts extends Vue {
     }
 
     public back() {
-        window.history.back();
+        this.$router.push(`/${this.rns || this.ethAddress}`);
+    }
+
+    activated() {
+        if (this.lastRoute !== this.$route.fullPath) {
+            this.initLoad();
+        }
     }
 }
 </script>

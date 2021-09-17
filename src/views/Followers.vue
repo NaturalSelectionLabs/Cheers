@@ -53,6 +53,7 @@ interface Profile {
 }
 
 @Options({
+    name: 'Followers',
     components: { ImgHolder, Button, FollowerCard },
 })
 export default class Followers extends Vue {
@@ -67,8 +68,17 @@ export default class Followers extends Vue {
     };
     rns: string = '';
     ethAddress: string = '';
+    lastRoute: string = '';
 
     async mounted() {
+        await this.initLoad();
+    }
+
+    async initLoad() {
+        this.lastRoute = this.$route.fullPath;
+        this.followerList = [];
+        this.rss3Profile.avatar = config.defaultAvatar;
+
         const address = <string>this.$route.params.address;
         if (!address.startsWith('0x')) {
             this.rns = address;
@@ -126,7 +136,13 @@ export default class Followers extends Vue {
     }
 
     public back() {
-        window.history.back();
+        this.$router.push(`/${this.rns || this.ethAddress}`);
+    }
+
+    activated() {
+        if (this.lastRoute !== this.$route.fullPath) {
+            this.initLoad();
+        }
     }
 }
 </script>

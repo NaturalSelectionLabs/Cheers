@@ -213,6 +213,7 @@ import config from '@/config';
 import draggable from 'vuedraggable';
 
 @Options({
+    name: 'SetupAccounts',
     components: {
         Modal,
         Button,
@@ -223,7 +224,7 @@ import draggable from 'vuedraggable';
         LoadingContainer,
     },
 })
-export default class Setup extends Vue {
+export default class SetupAccounts extends Vue {
     avatar: String = '';
     additionalAccounts: String[] = ['Ethereum', 'BSC'];
     show: RSS3Account[] = [];

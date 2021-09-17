@@ -80,6 +80,7 @@ import LinkButton from '@/components/LinkButton.vue';
 import RNSUtils from '@/common/rns';
 
 @Options({
+    name: 'EditProfile',
     components: {
         LinkButton,
         Modal,
@@ -122,13 +123,12 @@ export default class EditProfile extends Vue {
             this.ethAddress = await (<IRSS3>this.rss3).account.address;
             this.rns = await RNSUtils.addr2Name(this.ethAddress);
         }
-        if (!this.loadEdited()) {
-            const profile = await (<IRSS3>this.rss3).profile.get();
-            console.log(profile);
-            this.profile.avatar = profile?.avatar?.[0] || config.defaultAvatar;
-            this.profile.name = profile?.name || '';
-            this.profile.bio = profile?.bio || '';
-        }
+
+        const profile = await (<IRSS3>this.rss3).profile.get();
+        console.log(profile);
+        this.profile.avatar = profile?.avatar?.[0] || config.defaultAvatar;
+        this.profile.name = profile?.name || '';
+        this.profile.bio = profile?.bio || '';
 
         // Setup theme
         const themes = RSS3.getAvailableThemes(await (<IRSS3>this.rss3).assets.get());
@@ -139,23 +139,23 @@ export default class EditProfile extends Vue {
         }
     }
 
-    loadEdited() {
-        if (sessionStorage.getItem('profile')) {
-            this.profile = JSON.parse(sessionStorage.getItem('profile') || '');
-            return true;
-        } else {
-            return false;
-        }
-    }
-    saveEdited() {
-        sessionStorage.setItem('profile', JSON.stringify(this.profile));
-    }
-    clearEdited() {
-        sessionStorage.removeItem('profile');
-    }
+    // loadEdited() {
+    //     if (sessionStorage.getItem('profile')) {
+    //         this.profile = JSON.parse(sessionStorage.getItem('profile') || '');
+    //         return true;
+    //     } else {
+    //         return false;
+    //     }
+    // }
+    // saveEdited() {
+    //     sessionStorage.setItem('profile', JSON.stringify(this.profile));
+    // }
+    // clearEdited() {
+    //     sessionStorage.removeItem('profile');
+    // }
 
     async back() {
-        this.clearEdited();
+        // this.clearEdited();
         this.$gtag.event('cancelEditProfile', { userid: (<IRSS3>this.rss3).account.address });
         window.history.back();
     }
@@ -192,7 +192,7 @@ export default class EditProfile extends Vue {
             this.isLoading = false;
             return;
         }
-        this.clearEdited();
+        // this.clearEdited();
         this.$gtag.event('finishEditProfile', { userid: (<IRSS3>this.rss3).account.address });
         this.isLoading = false;
         const redirectFrom = sessionStorage.getItem('redirectFrom');
@@ -215,7 +215,7 @@ export default class EditProfile extends Vue {
                 this.isLoading = false;
                 this.isShowingNotice = true;
             } else {
-                this.saveEdited();
+                // this.saveEdited();
                 sessionStorage.setItem('redirectFrom', this.$route.fullPath);
                 await this.$router.push('/rns');
             }

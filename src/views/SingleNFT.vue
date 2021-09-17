@@ -65,6 +65,7 @@ import { NFT } from '@/common/types';
 import config from '@/config';
 
 @Options({
+    name: 'SingleNFT',
     components: { Button, NFTDetail, NFTItem, AccountItem, NFTBadges },
 })
 export default class SingleNFT extends Vue {
@@ -119,7 +120,11 @@ export default class SingleNFT extends Vue {
     }
 
     public back() {
-        window.history.back();
+        if (window.history.length > 2) {
+            window.history.back();
+        } else {
+            this.$router.push(`/${this.rns || this.ethAddress}/nfts`);
+        }
     }
 }
 </script>

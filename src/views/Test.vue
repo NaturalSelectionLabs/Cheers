@@ -541,6 +541,7 @@ import draggable from 'vuedraggable';
 import Loading from '@/components/Loading.vue';
 
 @Options({
+    name: 'Test',
     components: {
         ScanTag,
         Modal,

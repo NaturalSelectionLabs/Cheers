@@ -1,5 +1,5 @@
 <template>
-    <div class="h-screen bg-gitcoin-bg overflow-y-auto">
+    <div id="main" class="h-screen bg-gitcoin-bg overflow-y-auto">
         <div class="main px-4 py-8 max-w-md m-auto">
             <div class="header flex justify-between items-center pb-4">
                 <Button
@@ -69,6 +69,7 @@ import RNSUtils from '@/common/rns';
 import RSS3, { IRSS3 } from '@/common/rss3';
 import { GeneralAsset, GeneralAssetWithTags } from '@/common/types';
 import { RSS3Asset } from 'rss3-next/types/rss3';
+import { debounce } from 'lodash';
 
 interface Profile {
     avatar: string;
@@ -78,6 +79,7 @@ interface Profile {
 }
 
 @Options({
+    name: 'Gitcoins',
     components: { ImgHolder, Button, GitcoinTitle, GitcoinCard },
 })
 export default class Gitcoins extends Vue {
@@ -94,8 +96,19 @@ export default class Gitcoins extends Vue {
         bio: '',
     };
     private defaultAvatar = config.defaultAvatar;
+    scrollTop: number = 0;
+    lastRoute: string = '';
 
     async mounted() {
+        await this.initLoad();
+        this.mountScrollEvent();
+    }
+
+    async initLoad() {
+        this.lastRoute = this.$route.fullPath;
+        this.gitcoins = [];
+        this.rss3Profile.avatar = config.defaultAvatar;
+
         const address = <string>this.$route.params.address;
         if (!address.startsWith('0x')) {
             this.rns = address;
@@ -130,9 +143,9 @@ export default class Gitcoins extends Vue {
         }
     }
 
-    private getAssetOrder(nft: RSS3Asset) {
+    private getAssetOrder(asset: RSS3Asset) {
         let order = -1;
-        nft.tags?.forEach((tag: string) => {
+        asset.tags?.forEach((tag: string) => {
             if (tag.startsWith('pass:order:')) {
                 order = parseInt(tag.substr(11));
             }
@@ -183,7 +196,7 @@ export default class Gitcoins extends Vue {
     }
 
     public back() {
-        window.history.back();
+        this.$router.push(`/${this.rns || this.ethAddress}`);
     }
 
     public toSetupGitcoins() {
@@ -196,6 +209,29 @@ export default class Gitcoins extends Vue {
 
     public toSingleGitcoin(platform: string, identity: string, id: string) {
         this.$router.push(`/${this.rns}/singlegitcoin/${platform}/${identity}/${id}`);
+    }
+
+    mountScrollEvent() {
+        const el = document.getElementById('main');
+        if (el) {
+            el.addEventListener(
+                'scroll',
+                debounce((ev) => {
+                    this.scrollTop = el.scrollTop;
+                }, 100),
+            );
+        }
+    }
+
+    activated() {
+        if (this.lastRoute === this.$route.fullPath) {
+            const el = document.getElementById('main');
+            if (el) {
+                el.scrollTop = this.scrollTop;
+            }
+        } else {
+            this.initLoad();
+        }
     }
 }
 </script>
