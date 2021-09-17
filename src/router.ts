@@ -35,12 +35,12 @@ export const routes = [
     /* FITRUE_isDevelop */
     {
         path: '/:address',
-        name: 'Home',
+        name: 'NamedHome',
         component: Home,
     },
     {
         path: '/home',
-        name: 'Home',
+        name: 'OwnedHome',
         component: Home,
     },
     {

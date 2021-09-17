@@ -408,6 +408,7 @@ export default class Home extends Vue {
     gitcoins: GeneralAssetWithTags[] = [];
     $gtag: any;
     scrollTop: number = 0;
+    lastRoute: string = '';
 
     async mounted() {
         await this.initLoad();
@@ -415,6 +416,24 @@ export default class Home extends Vue {
     }
 
     async initLoad() {
+        this.lastRoute = this.$route.fullPath;
+        this.accounts = [];
+        this.nfts = [];
+        this.gitcoins = [];
+        this.isFollowing = false;
+        this.isOwner = false;
+        this.isdisplaying = false;
+        this.dialogAddress = '';
+        this.dialogChain = '';
+        this.isShowingShareCard = false;
+        this.isLoadingAssets = true;
+        this.rss3Profile = {
+            avatar: config.defaultAvatar,
+            username: '...',
+            address: '',
+            bio: '...',
+        };
+
         const isValidRSS3 = await RSS3.reconnect();
         this.rss3 = await RSS3.visitor();
         const owner: string = <string>this.rss3.account.address;
@@ -436,9 +455,7 @@ export default class Home extends Vue {
                 this.rns = address;
                 this.ethAddress = (await RNSUtils.name2Addr(address + config.rns.suffix)).toString();
                 if (parseInt(this.ethAddress) !== 0) {
-                    if (this.ethAddress === owner) {
-                        this.isOwner = true;
-                    }
+                    this.isOwner = this.ethAddress === owner;
                 } else {
                     this.isAccountExist = false;
                     return;
@@ -491,9 +508,6 @@ export default class Home extends Vue {
         }, 0);
 
         setTimeout(async () => {
-            // Clear accounts
-            this.accounts.splice(0, this.accounts.length);
-
             // Push original account
             this.accounts.push({
                 platform: 'Ethereum',
@@ -795,9 +809,13 @@ export default class Home extends Vue {
     }
 
     activated() {
-        const el = document.getElementById('main');
-        if (el) {
-            el.scrollTop = this.scrollTop;
+        if (this.lastRoute === this.$route.fullPath) {
+            const el = document.getElementById('main');
+            if (el) {
+                el.scrollTop = this.scrollTop;
+            }
+        } else {
+            this.initLoad();
         }
     }
 }

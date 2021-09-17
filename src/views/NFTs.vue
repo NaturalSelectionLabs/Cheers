@@ -90,8 +90,18 @@ export default class NFTs extends Vue {
     };
     $gtag: any;
     scrollTop: number = 0;
+    lastRoute: string = '';
 
     async mounted() {
+        await this.initLoad();
+        this.mountScrollEvent();
+    }
+
+    async initLoad() {
+        this.lastRoute = this.$route.fullPath;
+        this.nfts = [];
+        this.rss3Profile.avatar = config.defaultAvatar;
+
         const address = <string>this.$route.params.address;
         if (!address.startsWith('0x')) {
             this.rns = address;
@@ -126,7 +136,6 @@ export default class NFTs extends Vue {
         if (data) {
             await this.loadNFTs(await rss3.assets.get(this.ethAddress), <GeneralAsset[]>data.assets);
         }
-        this.mountScrollEvent();
     }
 
     private getAssetOrder(nft: RSS3Asset) {
@@ -211,9 +220,13 @@ export default class NFTs extends Vue {
     }
 
     activated() {
-        const el = document.getElementById('main');
-        if (el) {
-            el.scrollTop = this.scrollTop;
+        if (this.lastRoute === this.$route.fullPath) {
+            const el = document.getElementById('main');
+            if (el) {
+                el.scrollTop = this.scrollTop;
+            }
+        } else {
+            this.initLoad();
         }
     }
 }

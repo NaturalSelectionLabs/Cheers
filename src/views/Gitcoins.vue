@@ -97,8 +97,18 @@ export default class Gitcoins extends Vue {
     };
     private defaultAvatar = config.defaultAvatar;
     scrollTop: number = 0;
+    lastRoute: string = '';
 
     async mounted() {
+        await this.initLoad();
+        this.mountScrollEvent();
+    }
+
+    async initLoad() {
+        this.lastRoute = this.$route.fullPath;
+        this.gitcoins = [];
+        this.rss3Profile.avatar = config.defaultAvatar;
+
         const address = <string>this.$route.params.address;
         if (!address.startsWith('0x')) {
             this.rns = address;
@@ -131,12 +141,11 @@ export default class Gitcoins extends Vue {
         if (data) {
             await this.loadGitcoin(await rss3.assets.get(this.ethAddress), data.assets);
         }
-        this.mountScrollEvent();
     }
 
-    private getAssetOrder(nft: RSS3Asset) {
+    private getAssetOrder(asset: RSS3Asset) {
         let order = -1;
-        nft.tags?.forEach((tag: string) => {
+        asset.tags?.forEach((tag: string) => {
             if (tag.startsWith('pass:order:')) {
                 order = parseInt(tag.substr(11));
             }
@@ -215,9 +224,13 @@ export default class Gitcoins extends Vue {
     }
 
     activated() {
-        const el = document.getElementById('main');
-        if (el) {
-            el.scrollTop = this.scrollTop;
+        if (this.lastRoute === this.$route.fullPath) {
+            const el = document.getElementById('main');
+            if (el) {
+                el.scrollTop = this.scrollTop;
+            }
+        } else {
+            this.initLoad();
         }
     }
 }
