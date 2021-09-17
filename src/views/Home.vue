@@ -433,6 +433,8 @@ export default class Home extends Vue {
             address: '',
             bio: '...',
         };
+        (<HTMLLinkElement>document.getElementById('favicon')).href = '/favicon.ico';
+        document.title = 'Web3 Pass';
 
         const isValidRSS3 = await RSS3.reconnect();
         this.rss3 = await RSS3.visitor();
