@@ -93,7 +93,6 @@ export default class NFTs extends Vue {
     lastRoute: string = '';
 
     async mounted() {
-        await this.initLoad();
         this.mountScrollEvent();
     }
 
@@ -110,13 +109,11 @@ export default class NFTs extends Vue {
             this.ethAddress = address;
             this.rns = (await RNSUtils.addr2Name(address)).replace(config.rns.suffix, '');
         }
+        await RSS3.reconnect();
         const rss3 = await RSS3.visitor();
         const owner: string = <string>rss3.account.address;
-        // const owner: string = 'RSS3 Address';
 
-        if (owner === this.ethAddress) {
-            this.isOwner = true;
-        }
+        this.isOwner = owner === this.ethAddress;
 
         const profile = await rss3.profile.get(this.ethAddress);
 

@@ -420,7 +420,6 @@ export default class Home extends Vue {
     defaultAvatar = config.defaultAvatar;
 
     async mounted() {
-        await this.initLoad();
         this.mountScrollEvent();
     }
 
