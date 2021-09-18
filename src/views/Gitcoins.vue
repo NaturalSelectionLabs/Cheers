@@ -100,7 +100,6 @@ export default class Gitcoins extends Vue {
     lastRoute: string = '';
 
     async mounted() {
-        await this.initLoad();
         this.mountScrollEvent();
     }
 
@@ -118,12 +117,11 @@ export default class Gitcoins extends Vue {
             this.ethAddress = address;
             this.rns = (await RNSUtils.addr2Name(address)).toString();
         }
+        await RSS3.reconnect();
         const rss3 = await RSS3.visitor();
         const owner: string = <string>rss3.account.address;
 
-        if (owner === this.ethAddress) {
-            this.isOwner = true;
-        }
+        this.isOwner = owner === this.ethAddress;
 
         const profile = await rss3.profile.get(this.ethAddress);
         this.rss3Profile.avatar = profile?.avatar?.[0] || config.defaultAvatar;
