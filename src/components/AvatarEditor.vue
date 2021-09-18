@@ -1,16 +1,14 @@
 <template>
     <label class="avatar" :class="size">
         <img class="image" :src="newUrl || url" v-show="newUrl || url" alt="Avatar Upload" />
-        <span
+        <div
             class="plus"
             :class="{
                 fill: newUrl || url,
             }"
         >
-            <div class="w-full h-full flex justify-center items-center rounded-full">
-                <i class="bx bx-plus bx-sm absolute z-10" />
-            </div>
-        </span>
+            <i class="bx bx-plus bx-sm text-white fill-current" />
+        </div>
         <input type="file" class="hidden" accept="image/*" @change="preview" />
     </label>
 </template>
@@ -63,6 +61,14 @@ export default class Avatar extends Vue {
 
         .image {
             @apply object-contain object-center absolute left-0 top-0 w-full h-full rounded-full object-cover;
+        }
+
+        .plus {
+            @apply w-full h-full flex justify-center items-center rounded-full z-0;
+
+            &.fill {
+                @apply bg-black bg-opacity-40;
+            }
         }
     }
 }
