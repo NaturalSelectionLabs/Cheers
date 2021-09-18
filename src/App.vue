@@ -23,7 +23,6 @@ export default class App extends Vue {}
     #app {
         /* The hack for Safari */
         height: -webkit-fill-available;
-        -webkit-overflow-scrolling: touch;
     }
 }
 </style>
