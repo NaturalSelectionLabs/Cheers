@@ -792,11 +792,13 @@ export default class Home extends Vue {
     }
 
     async logout() {
-        (<HTMLLinkElement>document.getElementById('favicon')).href = '/favicon.ico';
-        document.title = 'Web3 Pass';
+        if (confirm('Are you sure to logout?')) {
+            (<HTMLLinkElement>document.getElementById('favicon')).href = '/favicon.ico';
+            document.title = 'Web3 Pass';
 
-        await RSS3.disconnect();
-        await this.$router.push('/');
+            await RSS3.disconnect();
+            await this.$router.push('/');
+        }
     }
 
     mountScrollEvent() {
