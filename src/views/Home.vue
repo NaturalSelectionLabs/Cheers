@@ -192,7 +192,15 @@
                     <div v-else class="flex justify-center">
                         <Button
                             size="lg"
-                            class="text-lg bg-gitcoin-btn-m text-white shadow-gitcoin cursor-pointer m-auto mt-4"
+                            class="
+                                text-lg
+                                bg-gitcoin-btn-m
+                                text-gitcoin-btn-m-text
+                                shadow-gitcoin-btn-m
+                                cursor-pointer
+                                m-auto
+                                mt-4
+                            "
                             @click="toMakeDonation"
                         >
                             <span>Make your first donation!</span>

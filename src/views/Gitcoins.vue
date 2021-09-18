@@ -48,7 +48,7 @@
             >
                 <Button
                     size="lg"
-                    class="m-auto text-lg bg-gitcoin-button text-white shadow-gitcoin"
+                    class="m-auto text-lg bg-gitcoin-btn-m text-gitcoin-btn-m-text shadow-gitcoin-btn-m"
                     @click="toSetupGitcoins"
                 >
                     <span>Manage Donations</span>
