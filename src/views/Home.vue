@@ -94,6 +94,7 @@
                 :is-having-content="nfts.length !== 0"
                 :is-single-line="nfts.length !== 0"
                 :tips="isLoadingAssets ? 'Loading...' : nfts.length === 0 ? 'Haven\'t found anything yet...' : ''"
+                id="nfts-card"
             >
                 <template #title-icon><NFTIcon /></template>
 
@@ -144,6 +145,7 @@
                 class="w-full border-gitcoin-border"
                 :is-having-content="true"
                 :is-single-line="gitcoins.length !== 0"
+                id="gitcoins-card"
             >
                 <template #title-icon>
                     <GitcoinIcon :iconColor="currentTheme === 'loot' ? 'white' : 'black'" />
@@ -416,6 +418,8 @@ export default class Home extends Vue {
     gitcoins: GeneralAssetWithTags[] = [];
     $gtag: any;
     scrollTop: number = 0;
+    scrollNftsLeft: number = 0;
+    scrollGitcoinsLeft: number = 0;
     lastRoute: string = '';
     defaultAvatar = config.defaultAvatar;
 
@@ -818,13 +822,39 @@ export default class Home extends Vue {
                 }, 100),
             );
         }
+        const nfts = document.getElementById('nfts-card')?.getElementsByClassName('card-content')?.[0];
+        if (nfts) {
+            nfts.addEventListener(
+                'scroll',
+                debounce((ev) => {
+                    this.scrollNftsLeft = nfts.scrollLeft;
+                }, 100),
+            );
+        }
+        const gitcoins = document.getElementById('gitcoins-card')?.getElementsByClassName('card-content')?.[0];
+        if (gitcoins) {
+            gitcoins.addEventListener(
+                'scroll',
+                debounce((ev) => {
+                    this.scrollGitcoinsLeft = gitcoins.scrollLeft;
+                }, 100),
+            );
+        }
     }
 
     activated() {
         if (this.lastRoute === this.$route.fullPath) {
             const el = document.getElementById('main');
+            const nfts = document.getElementById('nfts-card')?.getElementsByClassName('card-content')?.[0];
+            const gitcoins = document.getElementById('gitcoins-card')?.getElementsByClassName('card-content')?.[0];
             if (el) {
                 el.scrollTop = this.scrollTop;
+            }
+            if (nfts) {
+                nfts.scrollLeft = this.scrollNftsLeft;
+            }
+            if (gitcoins) {
+                gitcoins.scrollLeft = this.scrollGitcoinsLeft;
             }
         } else {
             this.initLoad();
