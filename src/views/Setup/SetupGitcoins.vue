@@ -1,6 +1,6 @@
 <template>
     <div class="h-screen bg-body-bg text-body-text overflow-y-auto">
-        <div class="px-4 py-9 max-w-md m-auto">
+        <div class="px-4 pt-8 pb-32 max-w-md m-auto">
             <div class="flex justify-between items-center mb-4">
                 <Button
                     size="sm"

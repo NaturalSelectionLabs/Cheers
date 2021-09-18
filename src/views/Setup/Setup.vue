@@ -1,6 +1,6 @@
 <template>
     <div class="h-screen bg-body-bg text-body-text overflow-y-auto">
-        <div class="px-4 py-9 max-w-md m-auto pb-20">
+        <div class="px-4 pt-8 pb-32 max-w-md m-auto">
             <div class="text-center mb-4">
                 <h1 class="text-5xl text-primary-text font-bold">Setup</h1>
             </div>

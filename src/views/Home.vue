@@ -1,9 +1,6 @@
 <template>
     <div id="main" class="h-screen bg-body-bg overflow-y-auto text-body-text">
-        <div
-            v-if="isAccountExist"
-            class="main px-4 py-8 flex flex-col gap-y-2 max-w-md m-auto overflow-y-auto select-none"
-        >
+        <div v-if="isAccountExist" class="main px-4 pt-8 pb-32 flex flex-col gap-y-2 max-w-md m-auto select-none">
             <Profile
                 :avatar="rss3Profile.avatar"
                 :username="rss3Profile.username"

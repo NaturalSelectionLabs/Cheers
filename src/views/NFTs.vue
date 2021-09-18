@@ -1,6 +1,6 @@
 <template>
     <div id="main" class="h-screen bg-nft-bg overflow-y-auto">
-        <div class="main px-4 py-8 max-w-md m-auto">
+        <div class="main px-4 pt-8 pb-32 max-w-md m-auto">
             <div class="header flex justify-between items-center pb-4">
                 <Button
                     size="sm"
@@ -232,10 +232,4 @@ export default class NFTs extends Vue {
 }
 </script>
 
-<style>
-#main {
-    min-height: 101;
-    overflow-y: scroll;
-    -webkit-overflow-scrolling: touch;
-}
-</style>
+<style></style>

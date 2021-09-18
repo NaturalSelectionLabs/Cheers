@@ -1,6 +1,6 @@
 <template>
     <div class="h-screen bg-nft-bg overflow-y-auto">
-        <div class="main px-4 py-8 max-w-md m-auto">
+        <div class="main px-4 pt-8 pb-20 max-w-md m-auto">
             <div class="header pb-4 relative">
                 <div
                     class="
