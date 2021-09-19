@@ -451,7 +451,7 @@ export default class Setup extends Vue {
         this.isLoading = false;
         const redirectFrom = sessionStorage.getItem('redirectFrom');
         sessionStorage.removeItem('redirectFrom');
-        await this.$router.push(redirectFrom || '/home');
+        await this.$router.push(redirectFrom || '/pending');
     }
 }
 </script>
