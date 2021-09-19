@@ -46,7 +46,7 @@
                 :is-single-line="nfts.length !== 0"
                 :tips="
                     isLoadingAssets
-                        ? 'Loading...You can also set up later'
+                        ? 'Loading... Hold on a little bit or manage them later 🙌'
                         : nfts.length === 0
                         ? 'Haven\'t found anything yet...'
                         : ''
@@ -83,7 +83,7 @@
                 :is-single-line="gitcoins.length !== 0"
                 :tips="
                     isLoadingAssets
-                        ? 'Loading...You can also set up later'
+                        ? 'Loading... Hold on a little bit or manage them later 🙌'
                         : gitcoins.length === 0
                         ? 'Haven\'t found anything yet...'
                         : ''
@@ -477,7 +477,7 @@ export default class Setup extends Vue {
         this.isLoading = false;
         const redirectFrom = sessionStorage.getItem('redirectFrom');
         sessionStorage.removeItem('redirectFrom');
-        await this.$router.push(redirectFrom || '/home');
+        await this.$router.push(redirectFrom || '/pending');
     }
 }
 </script>
