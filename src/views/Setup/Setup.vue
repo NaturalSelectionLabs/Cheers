@@ -44,7 +44,13 @@
                 class="mb-4 w-full"
                 :is-having-content="nfts.length !== 0"
                 :is-single-line="nfts.length !== 0"
-                :tips="isLoadingAssets ? 'Loading...' : nfts.length === 0 ? 'Haven\'t found anything yet...' : ''"
+                :tips="
+                    isLoadingAssets
+                        ? 'Loading... Hold on a little bit or manage them later 🙌'
+                        : nfts.length === 0
+                        ? 'Haven\'t found anything yet...'
+                        : ''
+                "
             >
                 <template #title-icon><NFTIcon /></template>
                 <template #header-button>
@@ -75,7 +81,13 @@
                 class="mb-4 w-full"
                 :is-having-content="gitcoins.length !== 0"
                 :is-single-line="gitcoins.length !== 0"
-                :tips="isLoadingAssets ? 'Loading...' : gitcoins.length === 0 ? 'Haven\'t found anything yet...' : ''"
+                :tips="
+                    isLoadingAssets
+                        ? 'Loading... Hold on a little bit or manage them later 🙌'
+                        : gitcoins.length === 0
+                        ? 'Haven\'t found anything yet...'
+                        : ''
+                "
             >
                 <template #title-icon
                     ><GitcoinIcon :iconColor="currentTheme === 'loot' ? 'white' : 'black'"
