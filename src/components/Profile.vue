@@ -19,7 +19,7 @@
         </div>
         <span class="font-bold text-2xl">{{ username }}</span>
         <LinkButton v-if="rns" class="cursor-default">
-            <span>{{ rns }}</span>
+            <span>pass3.me/{{ rns }}</span>
         </LinkButton>
         <LinkButton v-else
             ><span>{{ filter(address) }}</span></LinkButton
