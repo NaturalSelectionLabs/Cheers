@@ -309,6 +309,28 @@
                     </Button>
                 </div>
             </div>
+
+            <Modal v-if="isShowingNotice">
+                <template #header>
+                    <h1>Oops!</h1>
+                </template>
+                <template #body>
+                    <p class="mt-1 p-4">
+                        {{ notice }}
+                    </p>
+                </template>
+                <template #footer>
+                    <div class="flex flex-row gap-5">
+                        <Button
+                            size="sm"
+                            class="w-72 bg-primary-btn text-primary-btn-text shadow-primary-btn"
+                            @click="isShowingNotice = false"
+                        >
+                            OK
+                        </Button>
+                    </div>
+                </template>
+            </Modal>
         </div>
         <div
             v-else
@@ -419,6 +441,8 @@ export default class Home extends Vue {
     scrollGitcoinsLeft: number = 0;
     lastRoute: string = '';
     defaultAvatar = config.defaultAvatar;
+    notice: string = '';
+    isShowingNotice: boolean = false;
 
     async mounted() {
         this.mountScrollEvent();
@@ -529,15 +553,17 @@ export default class Home extends Vue {
 
             await this.loadAccounts(await (<IRSS3>this.rss3).accounts.get(this.ethAddress));
 
-            const data = await RSS3.getAssetProfile(this.ethAddress);
-
-            if (data) {
-                await this.loadAssets(
-                    await (<IRSS3>this.rss3).assets.get(this.ethAddress),
-                    <GeneralAsset[]>data.assets,
-                );
-                this.isLoadingAssets = false;
-            }
+            const iv = setInterval(async () => {
+                const data = await RSS3.getAssetProfile((<IRSS3>this.rss3).account.address, true);
+                if (data && data.status !== false) {
+                    await this.loadAssets(
+                        await (<IRSS3>this.rss3).assets.get(this.ethAddress),
+                        <GeneralAsset[]>data.assets,
+                    );
+                    this.isLoadingAssets = false;
+                    clearInterval(iv);
+                }
+            }, 300);
         }, 0);
 
         setTimeout(async () => {
@@ -686,10 +712,21 @@ export default class Home extends Vue {
         this.$router.push('/setup/accounts');
     }
     toManageNFTs() {
-        this.$router.push('/setup/nfts');
+        // this.saveEdited();
+        if (this.isLoadingAssets) {
+            this.notice = 'NFTs still loading... Maybe check back later?';
+            this.isShowingNotice = true;
+        } else {
+            this.$router.push('/setup/nfts');
+        }
     }
     toManageGitcoins() {
-        this.$router.push('/setup/gitcoins');
+        if (this.isLoadingAssets) {
+            this.notice = 'Gitcoins still loading... Maybe check back later?';
+            this.isShowingNotice = true;
+        } else {
+            this.$router.push('/setup/gitcoins');
+        }
     }
 
     public toAccountsPage() {

@@ -16,6 +16,7 @@ export type IRSS3 = RSS3;
 
 export interface IAssetProfile {
     assets: GeneralAsset[];
+    status?: boolean;
 }
 
 export interface Theme {

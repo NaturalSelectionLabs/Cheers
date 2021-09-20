@@ -44,7 +44,13 @@
                 class="mb-4 w-full"
                 :is-having-content="nfts.length !== 0"
                 :is-single-line="nfts.length !== 0"
-                :tips="isLoadingAssets ? 'Loading...' : nfts.length === 0 ? 'Haven\'t found anything yet...' : ''"
+                :tips="
+                    isLoadingAssets
+                        ? 'Loading... Hold on a little bit or manage them later 🙌'
+                        : nfts.length === 0
+                        ? 'Haven\'t found anything yet...'
+                        : ''
+                "
             >
                 <template #title-icon><NFTIcon /></template>
                 <template #header-button>
@@ -75,7 +81,13 @@
                 class="mb-4 w-full"
                 :is-having-content="gitcoins.length !== 0"
                 :is-single-line="gitcoins.length !== 0"
-                :tips="isLoadingAssets ? 'Loading...' : gitcoins.length === 0 ? 'Haven\'t found anything yet...' : ''"
+                :tips="
+                    isLoadingAssets
+                        ? 'Loading... Hold on a little bit or manage them later 🙌'
+                        : gitcoins.length === 0
+                        ? 'Haven\'t found anything yet...'
+                        : ''
+                "
             >
                 <template #title-icon
                     ><GitcoinIcon :iconColor="currentTheme === 'loot' ? 'white' : 'black'"
@@ -294,11 +306,15 @@ export default class Setup extends Vue {
 
         await this.loadAccounts(await (<IRSS3>this.rss3).accounts.get());
 
-        const data = await RSS3.getAssetProfile((<IRSS3>this.rss3).account.address);
-        if (data) {
-            await this.loadAssets(await (<IRSS3>this.rss3).assets.get(), <GeneralAsset[]>data.assets);
-            this.isLoadingAssets = false;
-        }
+        const iv = setInterval(async () => {
+            const data = await RSS3.getAssetProfile((<IRSS3>this.rss3).account.address, true);
+            if (data && data.status !== false) {
+                await this.loadAssets(await (<IRSS3>this.rss3).assets.get(), <GeneralAsset[]>data.assets);
+                this.isLoadingAssets = false;
+                clearInterval(iv);
+            }
+        }, 300);
+
         this.isLoading = false;
     }
 
@@ -403,10 +419,20 @@ export default class Setup extends Vue {
     }
     toManageNFTs() {
         // this.saveEdited();
-        this.$router.push('/setup/nfts');
+        if (this.isLoadingAssets) {
+            this.notice = 'NFTs still loading... Maybe check back later?';
+            this.isShowingNotice = true;
+        } else {
+            this.$router.push('/setup/nfts');
+        }
     }
     toManageGitcoins() {
-        this.$router.push('/setup/gitcoins');
+        if (this.isLoadingAssets) {
+            this.notice = 'Gitcoins still loading... Maybe check back later?';
+            this.isShowingNotice = true;
+        } else {
+            this.$router.push('/setup/gitcoins');
+        }
     }
     async back() {
         // this.clearEdited();
@@ -451,7 +477,7 @@ export default class Setup extends Vue {
         this.isLoading = false;
         const redirectFrom = sessionStorage.getItem('redirectFrom');
         sessionStorage.removeItem('redirectFrom');
-        await this.$router.push(redirectFrom || '/home');
+        await this.$router.push(redirectFrom || '/pending');
     }
 }
 </script>
