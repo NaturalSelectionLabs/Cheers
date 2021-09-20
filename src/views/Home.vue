@@ -559,6 +559,8 @@ export default class Home extends Vue {
             this.rss3Relations.followings =
                 (await (<IRSS3>this.rss3).links.get(this.ethAddress, 'following'))?.list || [];
         }, 0);
+
+        this.startLoadingAssets();
     }
 
     startLoadingAssets() {
@@ -892,10 +894,12 @@ export default class Home extends Vue {
             if (gitcoins) {
                 gitcoins.scrollLeft = this.scrollGitcoinsLeft;
             }
+            if (this.isOwner) {
+                this.startLoadingAssets();
+            }
         } else {
             this.initLoad();
         }
-        this.startLoadingAssets();
     }
 }
 </script>
