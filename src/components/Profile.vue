@@ -18,9 +18,9 @@
             </div>
         </div>
         <span class="font-bold text-2xl">{{ username }}</span>
-        <LinkButton v-if="rns"
-            ><span>{{ rns + suffix }}</span></LinkButton
-        >
+        <LinkButton v-if="rns" class="cursor-default">
+            <span>{{ rns }}</span>
+        </LinkButton>
         <LinkButton v-else
             ><span>{{ filter(address) }}</span></LinkButton
         >
