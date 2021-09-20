@@ -554,7 +554,7 @@ export default class Home extends Vue {
             await this.loadAccounts(await (<IRSS3>this.rss3).accounts.get(this.ethAddress));
 
             const iv = setInterval(async () => {
-                const data = await RSS3.getAssetProfile((<IRSS3>this.rss3).account.address, true);
+                const data = await RSS3.getAssetProfile(this.ethAddress, true);
                 if (data && data.status !== false) {
                     await this.loadAssets(
                         await (<IRSS3>this.rss3).assets.get(this.ethAddress),
