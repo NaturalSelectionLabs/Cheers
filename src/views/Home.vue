@@ -552,18 +552,6 @@ export default class Home extends Vue {
             });
 
             await this.loadAccounts(await (<IRSS3>this.rss3).accounts.get(this.ethAddress));
-
-            const iv = setInterval(async () => {
-                const data = await RSS3.getAssetProfile(this.ethAddress, true);
-                if (data && data.status !== false) {
-                    await this.loadAssets(
-                        await (<IRSS3>this.rss3).assets.get(this.ethAddress),
-                        <GeneralAsset[]>data.assets,
-                    );
-                    this.isLoadingAssets = false;
-                    clearInterval(iv);
-                }
-            }, 300);
         }, 0);
 
         setTimeout(async () => {
@@ -571,6 +559,20 @@ export default class Home extends Vue {
             this.rss3Relations.followings =
                 (await (<IRSS3>this.rss3).links.get(this.ethAddress, 'following'))?.list || [];
         }, 0);
+    }
+
+    startLoadingAssets() {
+        const iv = setInterval(async () => {
+            const data = await RSS3.getAssetProfile(this.ethAddress, true);
+            if (data && data.status !== false) {
+                await this.mergeAssets(
+                    await (<IRSS3>this.rss3).assets.get(this.ethAddress),
+                    <GeneralAsset[]>data.assets,
+                );
+                this.isLoadingAssets = false;
+                clearInterval(iv);
+            }
+        }, 300);
     }
 
     getTaggedOrder(taggedElement: RSS3Account | RSS3Asset): number {
@@ -610,7 +612,7 @@ export default class Home extends Vue {
         }
     }
 
-    async loadAssets(assetsInRSS3File: RSS3Asset[], assetsGrabbed: GeneralAsset[]) {
+    async mergeAssets(assetsInRSS3File: RSS3Asset[], assetsGrabbed: GeneralAsset[]) {
         const assetsMerge: GeneralAssetWithTags[] = await Promise.all(
             (assetsGrabbed || []).map(async (ag: GeneralAssetWithTags) => {
                 const origType = ag.type;
@@ -893,6 +895,7 @@ export default class Home extends Vue {
         } else {
             this.initLoad();
         }
+        this.startLoadingAssets();
     }
 }
 </script>

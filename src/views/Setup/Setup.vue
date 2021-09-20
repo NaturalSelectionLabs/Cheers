@@ -306,16 +306,20 @@ export default class Setup extends Vue {
 
         await this.loadAccounts(await (<IRSS3>this.rss3).accounts.get());
 
+        // this.startLoadingAssets();
+
+        this.isLoading = false;
+    }
+
+    startLoadingAssets() {
         const iv = setInterval(async () => {
             const data = await RSS3.getAssetProfile((<IRSS3>this.rss3).account.address, true);
             if (data && data.status !== false) {
-                await this.loadAssets(await (<IRSS3>this.rss3).assets.get(), <GeneralAsset[]>data.assets);
+                await this.mergeAssets(await (<IRSS3>this.rss3).assets.get(), <GeneralAsset[]>data.assets);
                 this.isLoadingAssets = false;
                 clearInterval(iv);
             }
         }, 300);
-
-        this.isLoading = false;
     }
 
     getTaggedOrder(taggedElement: RSS3Account | RSS3Asset): number {
@@ -355,7 +359,7 @@ export default class Setup extends Vue {
         }
     }
 
-    async loadAssets(assetsInRSS3File: RSS3Asset[], assetsGrabbed: GeneralAsset[]) {
+    async mergeAssets(assetsInRSS3File: RSS3Asset[], assetsGrabbed: GeneralAsset[]) {
         const assetsMerge: GeneralAssetWithTags[] = await Promise.all(
             (assetsGrabbed || []).map(async (ag: GeneralAssetWithTags) => {
                 const origType = ag.type;
@@ -478,6 +482,10 @@ export default class Setup extends Vue {
         const redirectFrom = sessionStorage.getItem('redirectFrom');
         sessionStorage.removeItem('redirectFrom');
         await this.$router.push(redirectFrom || '/pending');
+    }
+
+    activated() {
+        this.startLoadingAssets();
     }
 }
 </script>
