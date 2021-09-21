@@ -9,6 +9,8 @@
                 :followers="rss3Relations.followers"
                 :followings="rss3Relations.followings"
                 :bio="rss3Profile.bio"
+                @click-address="clickAddress"
+                click-address-notice="Copied!"
             />
             <Button
                 size="sm"
@@ -805,6 +807,10 @@ export default class Home extends Vue {
                 console.error('Async: Could not copy the account: ', err);
             },
         );
+    }
+
+    clickAddress() {
+        navigator.clipboard.writeText(`https://pass3.me/${this.rns || this.ethAddress}`);
     }
 
     showShareCard() {
