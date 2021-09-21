@@ -207,7 +207,7 @@ export default class Gitcoins extends Vue {
     }
 
     public toSingleGitcoin(platform: string, identity: string, id: string) {
-        this.$router.push(`/${this.rns}/singlegitcoin/${platform}/${identity}/${id}`);
+        this.$router.push(`/${this.rns || this.ethAddress}/singlegitcoin/${platform}/${identity}/${id}`);
     }
 
     mountScrollEvent() {

@@ -18,15 +18,18 @@
             </div>
         </div>
         <span class="font-bold text-2xl">{{ username }}</span>
-        <LinkButton v-if="rns"
-            ><span>{{ rns + suffix }}</span></LinkButton
-        >
-        <LinkButton v-else
-            ><span>{{ filter(address) }}</span></LinkButton
-        >
-        <LinkButton v-if="website"
-            ><span>{{ website }}</span></LinkButton
-        >
+        <div @click="emitClickAddress" class="inline-block relative align-middle">
+            <LinkButton v-if="rns">
+                <span>pass3.me/{{ rns }}</span>
+            </LinkButton>
+            <LinkButton v-else>
+                <span>{{ filter(address) }}</span>
+            </LinkButton>
+            <Tooltip v-show="isShowingTooltip" :text="$props.clickAddressNotice" view-type="options" />
+        </div>
+        <LinkButton v-if="website">
+            <span>{{ website }}</span>
+        </LinkButton>
         <div class="bio w-full font-medium text-lg whitespace-pre-line">
             {{ bio }}
         </div>
@@ -39,9 +42,10 @@ import ImgHolder from '@/components/ImgHolder.vue';
 import LinkButton from '@/components/LinkButton.vue';
 import Vue3Autocounter from 'vue3-autocounter';
 import config from '@/config';
+import Tooltip from '@/components/Tooltip.vue';
 
 @Options({
-    components: { ImgHolder, Vue3Autocounter, LinkButton },
+    components: { Tooltip, ImgHolder, Vue3Autocounter, LinkButton },
     props: {
         avatar: String,
         username: String,
@@ -51,14 +55,16 @@ import config from '@/config';
         website: String,
         bio: String,
         rns: String,
+        clickAddressNotice: String,
     },
-    emits: ['share'],
+    emits: ['share', 'clickAddress'],
 })
 export default class Profile extends Vue {
     address!: String;
     rns!: String;
     website!: String;
     suffix: string = config.rns.suffix;
+    isShowingTooltip: boolean = false;
 
     public toFollowersPage() {
         this.$router.push(`/${this.rns || this.address}/followers`);
@@ -81,6 +87,14 @@ export default class Profile extends Vue {
 
     emitShare() {
         this.$emit('share');
+    }
+
+    emitClickAddress() {
+        this.$emit('clickAddress');
+        this.isShowingTooltip = true;
+        setTimeout(() => {
+            this.isShowingTooltip = false;
+        }, 2000);
     }
 }
 </script>

@@ -9,6 +9,8 @@
                 :followers="rss3Relations.followers"
                 :followings="rss3Relations.followings"
                 :bio="rss3Profile.bio"
+                @click-address="clickAddress"
+                click-address-notice="Copied!"
             />
             <Button
                 size="sm"
@@ -309,6 +311,28 @@
                     </Button>
                 </div>
             </div>
+
+            <Modal v-if="isShowingNotice">
+                <template #header>
+                    <h1>Oops!</h1>
+                </template>
+                <template #body>
+                    <p class="mt-1 p-4">
+                        {{ notice }}
+                    </p>
+                </template>
+                <template #footer>
+                    <div class="flex flex-row gap-5">
+                        <Button
+                            size="sm"
+                            class="w-72 bg-primary-btn text-primary-btn-text shadow-primary-btn"
+                            @click="isShowingNotice = false"
+                        >
+                            OK
+                        </Button>
+                    </div>
+                </template>
+            </Modal>
         </div>
         <div
             v-else
@@ -419,6 +443,8 @@ export default class Home extends Vue {
     scrollGitcoinsLeft: number = 0;
     lastRoute: string = '';
     defaultAvatar = config.defaultAvatar;
+    notice: string = '';
+    isShowingNotice: boolean = false;
 
     async mounted() {
         this.mountScrollEvent();
@@ -528,16 +554,6 @@ export default class Home extends Vue {
             });
 
             await this.loadAccounts(await (<IRSS3>this.rss3).accounts.get(this.ethAddress));
-
-            const data = await RSS3.getAssetProfile(this.ethAddress);
-
-            if (data) {
-                await this.loadAssets(
-                    await (<IRSS3>this.rss3).assets.get(this.ethAddress),
-                    <GeneralAsset[]>data.assets,
-                );
-                this.isLoadingAssets = false;
-            }
         }, 0);
 
         setTimeout(async () => {
@@ -545,6 +561,22 @@ export default class Home extends Vue {
             this.rss3Relations.followings =
                 (await (<IRSS3>this.rss3).links.get(this.ethAddress, 'following'))?.list || [];
         }, 0);
+
+        this.startLoadingAssets();
+    }
+
+    startLoadingAssets() {
+        const iv = setInterval(async () => {
+            const data = await RSS3.getAssetProfile(this.ethAddress, true);
+            if (data && data.status !== false) {
+                await this.mergeAssets(
+                    await (<IRSS3>this.rss3).assets.get(this.ethAddress),
+                    <GeneralAsset[]>data.assets,
+                );
+                this.isLoadingAssets = false;
+                clearInterval(iv);
+            }
+        }, 300);
     }
 
     getTaggedOrder(taggedElement: RSS3Account | RSS3Asset): number {
@@ -584,7 +616,7 @@ export default class Home extends Vue {
         }
     }
 
-    async loadAssets(assetsInRSS3File: RSS3Asset[], assetsGrabbed: GeneralAsset[]) {
+    async mergeAssets(assetsInRSS3File: RSS3Asset[], assetsGrabbed: GeneralAsset[]) {
         const assetsMerge: GeneralAssetWithTags[] = await Promise.all(
             (assetsGrabbed || []).map(async (ag: GeneralAssetWithTags) => {
                 const origType = ag.type;
@@ -686,10 +718,21 @@ export default class Home extends Vue {
         this.$router.push('/setup/accounts');
     }
     toManageNFTs() {
-        this.$router.push('/setup/nfts');
+        // this.saveEdited();
+        if (this.isLoadingAssets) {
+            this.notice = 'NFTs still loading... Maybe check back later?';
+            this.isShowingNotice = true;
+        } else {
+            this.$router.push('/setup/nfts');
+        }
     }
     toManageGitcoins() {
-        this.$router.push('/setup/gitcoins');
+        if (this.isLoadingAssets) {
+            this.notice = 'Gitcoins still loading... Maybe check back later?';
+            this.isShowingNotice = true;
+        } else {
+            this.$router.push('/setup/gitcoins');
+        }
     }
 
     public toAccountsPage() {
@@ -764,6 +807,10 @@ export default class Home extends Vue {
                 console.error('Async: Could not copy the account: ', err);
             },
         );
+    }
+
+    clickAddress() {
+        navigator.clipboard.writeText(`https://pass3.me/${this.rns || this.ethAddress}`);
     }
 
     showShareCard() {
@@ -852,6 +899,9 @@ export default class Home extends Vue {
             }
             if (gitcoins) {
                 gitcoins.scrollLeft = this.scrollGitcoinsLeft;
+            }
+            if (this.isOwner) {
+                this.startLoadingAssets();
             }
         } else {
             this.initLoad();

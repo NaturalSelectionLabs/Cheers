@@ -14,7 +14,13 @@
                 </h1>
             </div>
             <AvatarEditor class="m-auto mb-4" size="lg" :url="profile.avatar" ref="avatar" />
-            <LinkButton class="m-auto mb-4" @click="toSetupRNS">
+            <LinkButton
+                class="m-auto mb-4"
+                :class="{
+                    'cursor-default': rns,
+                }"
+                @click="toSetupRNS"
+            >
                 <span>{{ rns ? rns : 'Claim Your RNS' }}</span>
             </LinkButton>
             <Input class="mb-4 w-full" :is-single-line="true" placeholder="Username" v-model="profile.name" />
@@ -121,7 +127,7 @@ export default class EditProfile extends Vue {
         } else {
             this.rss3 = await RSS3.get();
             this.ethAddress = await (<IRSS3>this.rss3).account.address;
-            this.rns = await RNSUtils.addr2Name(this.ethAddress);
+            this.rns = (await RNSUtils.addr2Name(this.ethAddress)).replace(config.rns.suffix, '');
         }
 
         const profile = await (<IRSS3>this.rss3).profile.get();
