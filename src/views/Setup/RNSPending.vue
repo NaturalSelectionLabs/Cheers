@@ -49,7 +49,7 @@ export default class RNSPending extends Vue {
                         await this.$router.push(redirectFrom || '/home');
                     }
                 }
-            }, 20000);
+            }, 10000);
         }
     }
 }
