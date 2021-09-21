@@ -89,7 +89,14 @@ export default class NFTDetail extends Vue {
         @apply text-lg font-medium capitalize;
     }
     p {
-        @apply text-sm leading-normal break-all;
+        overflow-wrap: break-word;
+        word-wrap: break-word;
+        word-break: break-word;
+        -ms-hyphens: auto;
+        -moz-hyphens: auto;
+        -webkit-hyphens: auto;
+        hyphens: auto;
+        @apply text-sm leading-normal;
     }
     .tag-container {
         @apply flex flex-row flex-wrap justify-start items-center gap-2.5;
