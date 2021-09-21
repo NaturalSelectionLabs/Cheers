@@ -86,6 +86,7 @@
         --color-btn-border: white;
         --color-linkbutton-bg: black;
         --color-linkbutton-border: var(--color-primary);
+        --color-sharebutton-border: var(--color-primary);
 
         --border-width-linkbutton: 1px;
 
