@@ -810,7 +810,7 @@ export default class Home extends Vue {
     }
 
     clickAddress() {
-        navigator.clipboard.writeText(`pass3.me/${this.rns || this.ethAddress}`);
+        navigator.clipboard.writeText(`https://pass3.me/${this.rns || this.ethAddress}`);
     }
 
     showShareCard() {
