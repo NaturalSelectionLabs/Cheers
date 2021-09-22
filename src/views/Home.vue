@@ -230,6 +230,7 @@
                             :content="item.info.pre_content"
                             :title="item.info.title"
                             :provider="item.type"
+                            :link="item.info.link"
                         />
 
                         <Button

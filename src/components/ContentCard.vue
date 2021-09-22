@@ -5,7 +5,7 @@
             <h2 class="font-medium text-lg truncate">
                 {{ title }}
             </h2>
-            <ContentBadge :contentProvider="$props.provider" />
+            <ContentBadge @click="openLink($props.link)" :contentProvider="$props.provider" class="cursor-pointer" />
         </div>
         <p class="line-clamp-3">{{ content }}</p>
     </div>
@@ -21,11 +21,15 @@ import ContentBadge from '@/components/ContentBadge.vue';
         content: String,
         timestamp: Number,
         provider: String,
+        link: String,
     },
 })
 export default class ContentCard extends Vue {
     getDate(timestamp: number): string {
         return new Date(timestamp * 1000).toLocaleDateString('en-US');
+    }
+    openLink(link: string) {
+        window.open(link);
     }
 }
 </script>
