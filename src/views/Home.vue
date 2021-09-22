@@ -1,6 +1,6 @@
 <template>
-    <div id="main" class="h-screen bg-body-bg overflow-y-auto text-body-text">
-        <div v-if="isAccountExist" class="main px-4 pt-8 pb-32 flex flex-col gap-y-2 max-w-md m-auto select-none">
+    <div class="h-screen bg-body-bg overflow-y-auto text-body-text">
+        <div v-if="isAccountExist" class="px-4 pt-8 pb-32 flex flex-col gap-y-2 max-w-md m-auto select-none">
             <Profile
                 :avatar="rss3Profile.avatar"
                 :username="rss3Profile.username"
@@ -177,15 +177,16 @@
                     </Button>
                 </template>
                 <template #content>
-                    <GitcoinItem
-                        v-if="gitcoins.length !== 0"
-                        class="inline-flex mx-0.5 cursor-pointer"
-                        v-for="item in gitcoins"
-                        :key="item.platform + item.identity + item.id"
-                        :size="70"
-                        :imageUrl="item.info.image_preview_url || defaultAvatar"
-                        @click="toSingleGitcoin(item.platform, item.identity, item.id)"
-                    />
+                    <template v-if="gitcoins.length !== 0">
+                        <GitcoinItem
+                            class="inline-flex mx-0.5 cursor-pointer"
+                            v-for="item in gitcoins"
+                            :key="item.platform + item.identity + item.id"
+                            :size="70"
+                            :imageUrl="item.info.image_preview_url || defaultAvatar"
+                            @click="toSingleGitcoin(item.platform, item.identity, item.id)"
+                        />
+                    </template>
                     <div v-else-if="isLoadingAssets" class="text-gitcoin-title m-auto text-center mt-4">Loading...</div>
                     <div v-else-if="!isOwner" class="text-gitcoin-title m-auto text-center mt-4">
                         Haven't found anything yet...
@@ -235,28 +236,24 @@
                 </template>
             </Card>
 
-            <div
-                class="
-                    footer-container
-                    max-w-md
-                    w-full
-                    flex
-                    justify-between
-                    items-center
-                    mt-2
-                    bg-footer-bg
-                    fixed
-                    bottom-0
-                "
-            >
-                <Logo class="cursor-pointer" :size="18" @click="toHomePage" />
-                <div class="text-body-text font-normal text-xs text-right">
-                    Made with 🌀 by
-                    <a
-                        href="https://rss3.io"
-                        class="text-body-text font-normal text-xs no-underline visited:no-underline active:no-underline"
-                        >RSS3</a
-                    >
+            <div class="mt-2 fixed bottom-0 left-0 w-full center">
+                <div class="px-4 py-2 max-w-md m-auto flex justify-between items-center bg-footer-bg">
+                    <Logo class="cursor-pointer" :size="18" @click="toHomePage" />
+                    <div class="text-body-text font-normal text-xs text-right">
+                        Made with 🌀 by
+                        <a
+                            href="https://rss3.io"
+                            class="
+                                text-body-text
+                                font-normal
+                                text-xs
+                                no-underline
+                                visited:no-underline
+                                active:no-underline
+                            "
+                            >RSS3</a
+                        >
+                    </div>
                 </div>
             </div>
 
