@@ -1,7 +1,7 @@
 <template>
     <div class="badge bg-white">
-        <Arweave v-if="contentProvider === 'Arweave'" size="18" />
-        <Mirror v-if="contentProvider === 'Mirror'" size="18" />
+        <Arweave v-if="contentProvider === 'Arweave'" :size="18" />
+        <Mirror v-if="contentProvider === 'Mirror-XYZ'" :size="18" />
     </div>
 </template>
 

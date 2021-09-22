@@ -1,6 +1,6 @@
 <template>
-    <div class="h-screen bg-body-bg overflow-y-auto text-body-text">
-        <div v-if="isAccountExist" class="px-4 pt-8 pb-32 flex flex-col gap-y-2 max-w-md m-auto select-none">
+    <div id="main" class="h-screen bg-body-bg overflow-y-auto text-body-text">
+        <div v-if="isAccountExist" class="px-4 pt-8 pb-12 flex flex-col gap-y-2 max-w-md m-auto select-none">
             <Profile
                 :avatar="rss3Profile.avatar"
                 :username="rss3Profile.username"
@@ -221,15 +221,27 @@
             >
                 <template #title-icon><ContentIcon /></template>
                 <template #content>
-                    <div class="max-h-80 flex flex-col overflow-y-auto" v-if="contents.length !== 0">
+                    <div class="flex flex-col overflow-y-auto" v-if="contents.length !== 0">
                         <ContentCard
                             class="mb-4"
-                            v-for="(item, index) in contents"
-                            :key="index"
-                            :timestamp="item.timestamp"
-                            :content="item.content"
-                            :title="item.title"
-                        ></ContentCard>
+                            v-for="item in contents"
+                            :key="item.id"
+                            :timestamp="parseInt(item.info.timestamp)"
+                            :content="item.info.pre_content"
+                            :title="item.info.title"
+                            :provider="item.type"
+                        />
+
+                        <Button
+                            size="sm"
+                            class="w-full h-6 bg-content-btn-s text-content-btn-s-text shadow-content-btn-s"
+                            v-show="isContentsHaveMore"
+                            @click="loadMoreContents"
+                            id="contents-load-more-button"
+                        >
+                            <i v-if="isLoadingContents" class="bx bx-loader-circle bx-spin"></i>
+                            <i v-else class="bx bx-dots-horizontal-rounded" />
+                        </Button>
                     </div>
                     <div v-else-if="isLoadingAssets" class="text-content-title m-auto text-center mt-4">Loading...</div>
                     <div v-else class="text-content-title m-auto text-center mt-4">Haven't found anything yet...</div>
@@ -386,6 +398,8 @@ import ContentIcon from '@/components/Icons/ContentIcon.vue';
 import Logo from '@/components/Logo.vue';
 import ContentCard from '@/components/ContentCard.vue';
 import { debounce } from 'lodash';
+import ContentProviders, { Content } from '@/common/content-providers';
+import LinkButton from '@/components/LinkButton.vue';
 
 interface ProfileInfo {
     avatar: string;
@@ -399,17 +413,10 @@ interface Relations {
     followings: RSS3ID[];
 }
 
-export interface ContentInfo {
-    title?: string;
-    content: string;
-    timestamp: string;
-    txHash: string;
-    link: string;
-}
-
 @Options({
     name: 'Home',
     components: {
+        LinkButton,
         Button,
         Card,
         Profile,
@@ -429,31 +436,32 @@ export interface ContentInfo {
 export default class Home extends Vue {
     rns: string = '';
     ethAddress: string = '';
-    public rss3?: IRSS3;
-    public isFollowing: boolean = false;
-    public isOwner: boolean = false;
-    public isdisplaying: boolean = false;
-    public dialogAddress: string = '';
-    public dialogChain: string = '';
+    rss3?: IRSS3;
+    isFollowing: boolean = false;
+    isOwner: boolean = false;
+    isdisplaying: boolean = false;
+    dialogAddress: string = '';
+    dialogChain: string = '';
     isAccountExist: boolean = true;
     isShowingShareCard: boolean = false;
     isLoadingAssets: boolean = true;
+    isLoadingContents: boolean = false;
     currentTheme: string = '';
 
-    public rss3Profile: ProfileInfo = {
+    rss3Profile: ProfileInfo = {
         avatar: config.defaultAvatar,
         username: '...',
         address: '',
         bio: '...',
     };
-    public rss3Relations: Relations = {
+    rss3Relations: Relations = {
         followers: [],
         followings: [],
     };
     accounts: RSS3Account[] = [];
     nfts: GeneralAssetWithTags[] = [];
     gitcoins: GeneralAssetWithTags[] = [];
-    contents: ContentInfo[] = [];
+    contents: Content[] = [];
     $gtag: any;
     scrollTop: number = 0;
     scrollNftsLeft: number = 0;
@@ -462,6 +470,7 @@ export default class Home extends Vue {
     defaultAvatar = config.defaultAvatar;
     notice: string = '';
     isShowingNotice: boolean = false;
+    isContentsHaveMore: boolean = true;
 
     async mounted() {
         this.mountScrollEvent();
@@ -472,6 +481,7 @@ export default class Home extends Vue {
         this.accounts = [];
         this.nfts = [];
         this.gitcoins = [];
+        this.contents = [];
         this.isFollowing = false;
         this.isOwner = false;
         this.isdisplaying = false;
@@ -479,12 +489,14 @@ export default class Home extends Vue {
         this.dialogChain = '';
         this.isShowingShareCard = false;
         this.isLoadingAssets = true;
+        this.isLoadingContents = false;
         this.rss3Profile = {
             avatar: config.defaultAvatar,
             username: '...',
             address: '',
             bio: '...',
         };
+        this.isContentsHaveMore = true;
         (<HTMLLinkElement>document.getElementById('favicon')).href = '/favicon.ico';
         document.title = 'Web3 Pass';
 
@@ -579,9 +591,14 @@ export default class Home extends Vue {
                 (await (<IRSS3>this.rss3).links.get(this.ethAddress, 'following'))?.list || [];
         }, 0);
 
+        // Load assets
         this.startLoadingAssets();
-        // load the static data
-        this.toLoadContent();
+
+        // Load contents
+        setTimeout(async () => {
+            await this.loadLatestContents();
+            this.initIntersectionObserver();
+        }, 0);
     }
 
     startLoadingAssets() {
@@ -678,18 +695,53 @@ export default class Home extends Vue {
         );
     }
 
-    public toLoadContent() {
-        // static data loading
-        let info: ContentInfo = {
-            timestamp: '1630626112',
-            content:
-                'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
-            title: 'test title',
-            txHash: '0x',
-            link: '',
-        };
+    async loadLatestContents() {
+        await this.loadMoreContents();
+    }
 
-        this.contents.push(info);
+    async loadMoreContents() {
+        if (this.isLoadingContents || !this.isContentsHaveMore) {
+            // Is already loading or not having more
+            return;
+        }
+        this.isLoadingContents = true;
+        // Get oldest timestamp
+        const nowTS = this.contents.length ? this.contents[this.contents.length - 1].info.timestamp - 1 : 0xffffffff;
+        const contents = await ContentProviders.mirror.get(this.ethAddress, 0, nowTS);
+        if (contents.length < config.contentRequestLimit) {
+            // No more
+            this.isContentsHaveMore = false;
+        }
+        this.contents.push(...contents);
+        this.isLoadingContents = false;
+    }
+
+    initIntersectionObserver() {
+        // Check if running in browser
+        const runningOnBrowser = typeof window !== 'undefined';
+        // Match spiders
+        const isBot =
+            (runningOnBrowser && !('onscroll' in window)) ||
+            (typeof navigator !== 'undefined' &&
+                /(gle|ing|ro|msn)bot|crawl|spider|yand|duckgo/i.test(navigator.userAgent));
+        // Check if browser supports IntersectionObserver API
+        const supportsIntersectionObserver = runningOnBrowser && 'IntersectionObserver' in window;
+
+        const loadMoreButton = document.getElementById('contents-load-more-button');
+        if (runningOnBrowser && !isBot && supportsIntersectionObserver && loadMoreButton) {
+            const observer = new IntersectionObserver(
+                async (entries) => {
+                    if (entries[0].isIntersecting) {
+                        await this.loadMoreContents();
+                        if (!this.isContentsHaveMore) {
+                            observer.disconnect();
+                        }
+                    }
+                },
+                { threshold: 0 },
+            );
+            observer.observe(loadMoreButton);
+        }
     }
 
     public async action() {
@@ -799,7 +851,7 @@ export default class Home extends Vue {
             this.isAccountExist = true;
             await this.initLoad();
         } else {
-            console.log('Already at home!');
+            // To top
         }
     }
 

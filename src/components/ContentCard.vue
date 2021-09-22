@@ -5,7 +5,7 @@
             <h2 class="font-medium text-lg truncate">
                 {{ title }}
             </h2>
-            <ContentBadge contentProvider="Mirror" />
+            <ContentBadge :contentProvider="$props.provider" />
         </div>
         <p class="line-clamp-3">{{ content }}</p>
     </div>
@@ -20,6 +20,7 @@ import ContentBadge from '@/components/ContentBadge.vue';
         title: String,
         content: String,
         timestamp: Number,
+        provider: String,
     },
 })
 export default class ContentCard extends Vue {
