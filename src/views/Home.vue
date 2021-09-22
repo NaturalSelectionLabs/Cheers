@@ -220,22 +220,18 @@
             >
                 <template #title-icon><ContentIcon /></template>
                 <template #content>
-                    <Button
-                        size="sm"
-                        class="
-                            text-xs
-                            bg-content-btn-m
-                            opacity-35
-                            text-content-btn-m-text
-                            shadow-content-btn-m
-                            cursor-not-allowed
-                            m-auto
-                            mt-4
-                        "
-                        disabled
-                    >
-                        Coming Soon
-                    </Button>
+                    <div class="max-h-80 flex flex-col overflow-y-auto" v-if="contents.length !== 0">
+                        <ContentCard
+                            class="mb-4"
+                            v-for="(item, index) in contents"
+                            :key="index"
+                            :timestamp="item.timestamp"
+                            :content="item.content"
+                            :title="item.title"
+                        ></ContentCard>
+                    </div>
+                    <div v-else-if="isLoadingAssets" class="text-content-title m-auto text-center mt-4">Loading...</div>
+                    <div v-else class="text-content-title m-auto text-center mt-4">Haven't found anything yet...</div>
                 </template>
             </Card>
 
@@ -378,6 +374,7 @@ import NFTIcon from '@/components/Icons/NFTIcon.vue';
 import GitcoinIcon from '@/components/Icons/GitcoinIcon.vue';
 import ContentIcon from '@/components/Icons/ContentIcon.vue';
 import Logo from '@/components/Logo.vue';
+import ContentCard from '@/components/ContentCard.vue';
 import { debounce } from 'lodash';
 
 interface ProfileInfo {
@@ -390,6 +387,14 @@ interface ProfileInfo {
 interface Relations {
     followers: RSS3ID[];
     followings: RSS3ID[];
+}
+
+export interface ContentInfo {
+    title?: string;
+    content: string;
+    timestamp: string;
+    txHash: string;
+    link: string;
 }
 
 @Options({
@@ -407,6 +412,7 @@ interface Relations {
         NFTIcon,
         ContentIcon,
         GitcoinIcon,
+        ContentCard,
         Logo,
     },
 })
@@ -437,6 +443,7 @@ export default class Home extends Vue {
     accounts: RSS3Account[] = [];
     nfts: GeneralAssetWithTags[] = [];
     gitcoins: GeneralAssetWithTags[] = [];
+    contents: ContentInfo[] = [];
     $gtag: any;
     scrollTop: number = 0;
     scrollNftsLeft: number = 0;
@@ -563,6 +570,8 @@ export default class Home extends Vue {
         }, 0);
 
         this.startLoadingAssets();
+        // load the static data
+        this.toLoadContent();
     }
 
     startLoadingAssets() {
@@ -659,6 +668,20 @@ export default class Home extends Vue {
         );
     }
 
+    public toLoadContent() {
+        // static data loading
+        let info: ContentInfo = {
+            timestamp: '1630626112',
+            content:
+                'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
+            title: 'test title',
+            txHash: '0x',
+            link: '',
+        };
+
+        this.contents.push(info);
+    }
+
     public async action() {
         if (RSS3.isValidRSS3()) {
             if (this.isFollowing) {
@@ -751,10 +774,12 @@ export default class Home extends Vue {
     }
 
     public toSetupPage() {
+        this.$gtag.event('visitSetupPage', { userid: this.rns || this.ethAddress });
         this.$router.push(`/profile`);
     }
 
     toSetupRNS() {
+        this.$gtag.event('visitSetupRNS', { userid: this.rns || this.ethAddress });
         this.$router.push('/rns');
     }
 
