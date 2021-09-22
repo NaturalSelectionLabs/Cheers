@@ -235,9 +235,22 @@
                 </template>
             </Card>
 
-            <div class="footer-container w-full flex justify-between items-center mt-2">
+            <div
+                class="
+                    footer-container
+                    max-w-md
+                    w-full
+                    flex
+                    justify-between
+                    items-center
+                    mt-2
+                    bg-footer-bg
+                    fixed
+                    bottom-0
+                "
+            >
                 <Logo class="cursor-pointer" :size="18" @click="toHomePage" />
-                <div class="text-body-text font-normal text-xs">
+                <div class="text-body-text font-normal text-xs text-right">
                     Made with 🌀 by
                     <a
                         href="https://rss3.io"

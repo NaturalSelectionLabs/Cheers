@@ -1,16 +1,21 @@
 <template>
     <div class="w-full relative p-4 pb-8 bg-body-bg border-card text-body-text rounded shadow-content-item">
         <div class="timestamp absolute right-4 bottom-2 font-light">{{ getDate(timestamp) }}</div>
-        <h2 class="font-medium text-lg truncate">
-            {{ title }}
-        </h2>
+        <div class="content-header flex justify-start gap-4">
+            <h2 class="font-medium text-lg truncate">
+                {{ title }}
+            </h2>
+            <ContentBadge contentProvider="Mirror" />
+        </div>
         <p class="line-clamp-3">{{ content }}</p>
     </div>
 </template>
 
 <script lang="ts">
 import { Vue, Options } from 'vue-class-component';
+import ContentBadge from '@/components/ContentBadge.vue';
 @Options({
+    components: { ContentBadge },
     props: {
         title: String,
         content: String,
