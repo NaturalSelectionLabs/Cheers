@@ -566,6 +566,7 @@ export default class Home extends Vue {
     }
 
     startLoadingAssets() {
+        let failCount = 0;
         const iv = setInterval(async () => {
             const data = await RSS3.getAssetProfile(this.ethAddress, true);
             if (data && data.status !== false) {
@@ -575,8 +576,10 @@ export default class Home extends Vue {
                 );
                 this.isLoadingAssets = false;
                 clearInterval(iv);
+            } else {
+                failCount++;
             }
-        }, 300);
+        }, 1000 * failCount);
     }
 
     getTaggedOrder(taggedElement: RSS3Account | RSS3Asset): number {

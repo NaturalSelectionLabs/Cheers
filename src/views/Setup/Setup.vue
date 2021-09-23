@@ -312,14 +312,17 @@ export default class Setup extends Vue {
     }
 
     startLoadingAssets() {
+        let failCount = 0;
         const iv = setInterval(async () => {
             const data = await RSS3.getAssetProfile((<IRSS3>this.rss3).account.address);
             if (data && data.status !== false) {
                 await this.mergeAssets(await (<IRSS3>this.rss3).assets.get(), <GeneralAsset[]>data.assets);
                 this.isLoadingAssets = false;
                 clearInterval(iv);
+            } else {
+                failCount++;
             }
-        }, 300);
+        }, 1000 * failCount);
     }
 
     getTaggedOrder(taggedElement: RSS3Account | RSS3Asset): number {
