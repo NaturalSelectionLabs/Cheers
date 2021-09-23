@@ -1,11 +1,24 @@
 <template>
-    <div class="w-full relative p-4 pb-8 bg-body-bg border-card text-body-text rounded shadow-content-item">
+    <div
+        class="
+            w-full
+            relative
+            p-4
+            pb-8
+            bg-body-bg
+            border-card
+            text-body-text
+            rounded
+            shadow-content-item
+            cursor-pointer
+        "
+    >
         <div class="timestamp absolute right-4 bottom-2 font-light">{{ getDate(timestamp) }}</div>
         <div class="content-header flex justify-start justify-between">
             <h2 class="font-medium text-lg truncate">
                 {{ title }}
             </h2>
-            <ContentBadge :contentProvider="$props.provider" class="cursor-pointer" />
+            <ContentBadge :contentProvider="$props.provider" />
         </div>
         <p class="line-clamp-3">{{ content }}</p>
     </div>
