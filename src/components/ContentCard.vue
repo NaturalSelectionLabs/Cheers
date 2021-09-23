@@ -20,13 +20,16 @@
             </h2>
             <ContentBadge :contentProvider="$props.provider" />
         </div>
-        <p class="line-clamp-3">{{ content }}</p>
+        <div v-html="renderedContent" />
     </div>
 </template>
 
 <script lang="ts">
 import { Vue, Options } from 'vue-class-component';
 import ContentBadge from '@/components/ContentBadge.vue';
+
+import marked from 'marked';
+
 @Options({
     components: { ContentBadge },
     props: {
@@ -37,6 +40,13 @@ import ContentBadge from '@/components/ContentBadge.vue';
     },
 })
 export default class ContentCard extends Vue {
+    content!: string;
+    renderedContent: string = '';
+
+    mounted() {
+        this.renderedContent = marked(this.content);
+    }
+
     getDate(timestamp: number): string {
         return new Date(timestamp * 1000).toLocaleDateString('en-US');
     }

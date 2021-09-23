@@ -1635,6 +1635,11 @@
   resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.171.tgz#f01b3a5fe3499e34b622c362a46a609fdb23573b"
   integrity sha512-7eQ2xYLLI/LsicL2nejW9Wyko3lcpN6O/z0ZLHrEQsg280zIdCv1t/0m6UtBjUHokCGBQ3gYTbHzDkZ1xOBwwg==
 
+"@types/marked@3.0.1":
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/@types/marked/-/marked-3.0.1.tgz#748645ecde30d8cf7861c3e1c360c6f694172f92"
+  integrity sha512-jry/WUAC511P2NBCeiCkfTRCN2VXobeeQa8p8gImOYsRfnuIVfeEsqOJ1pk+CzCwfMCdv3dkTQRCYaNkkFGtxw==
+
 "@types/node@*":
   version "15.6.0"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-15.6.0.tgz#f0ddca5a61e52627c9dcb771a6039d44694597bc"
@@ -6040,6 +6045,11 @@ map-age-cleaner@^0.1.3:
   integrity sha1-fVg6cwZDTAVf5HSw9FB45uG0uSo=
   dependencies:
     p-defer "^1.0.0"
+
+marked@3.0.4:
+  version "3.0.4"
+  resolved "https://registry.yarnpkg.com/marked/-/marked-3.0.4.tgz#b8a1539e5e05c6ea9e93f15c0bad1d54ce890406"
+  integrity sha512-jBo8AOayNaEcvBhNobg6/BLhdsK3NvnKWJg33MAAPbvTWiG4QBn9gpW1+7RssrKu4K1dKlN+0goVQwV41xEfOA==
 
 md5.js@^1.3.4:
   version "1.3.5"
