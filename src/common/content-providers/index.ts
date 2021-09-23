@@ -14,6 +14,7 @@ export interface Content {
     platform: string;
     type: string;
     info: ContentInfo;
+    accessible?: boolean;
 }
 
 export default {

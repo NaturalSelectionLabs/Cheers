@@ -713,7 +713,14 @@ export default class Home extends Vue {
             // No more
             this.isContentsHaveMore = false;
         }
-        this.contents.push(...contents);
+        for (const content of contents) {
+            if (
+                content.accessible !== false &&
+                this.contents.findIndex((ctx) => ctx.info.title === content.info.title) === -1 // todo: opt-out this
+            ) {
+                this.contents.push(content);
+            }
+        }
         this.isLoadingContents = false;
     }
 
