@@ -230,7 +230,7 @@
                             :content="item.info.pre_content"
                             :title="item.info.title"
                             :provider="item.type"
-                            :link="item.info.link"
+                            @click="toContentLink(item.info.link)"
                         />
 
                         <Button
@@ -888,6 +888,10 @@ export default class Home extends Vue {
             id: id,
         });
         this.$router.push(`/${this.rns || this.ethAddress}/singlegitcoin/${platform}/${identity}/${id}`);
+    }
+
+    toContentLink(link: string) {
+        window.open(link);
     }
 
     public displayDialog(address: string, chain: string) {
