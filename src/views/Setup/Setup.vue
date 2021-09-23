@@ -270,8 +270,8 @@ export default class Setup extends Vue {
             this.rss3 = await RSS3.get();
         }
         // Trigger force refresh
-        await RSS3.getAssetProfile((<IRSS3>this.rss3).account.address, true);
-        await (<IRSS3>this.rss3).files.get((<IRSS3>this.rss3).account.address, true);
+        // await RSS3.getAssetProfile((<IRSS3>this.rss3).account.address, true);
+        // await (<IRSS3>this.rss3).files.get((<IRSS3>this.rss3).account.address, true);
 
         const profile = await (<IRSS3>this.rss3).profile.get();
         console.log(profile);
@@ -313,7 +313,7 @@ export default class Setup extends Vue {
 
     startLoadingAssets() {
         const iv = setInterval(async () => {
-            const data = await RSS3.getAssetProfile((<IRSS3>this.rss3).account.address, true);
+            const data = await RSS3.getAssetProfile((<IRSS3>this.rss3).account.address);
             if (data && data.status !== false) {
                 await this.mergeAssets(await (<IRSS3>this.rss3).assets.get(), <GeneralAsset[]>data.assets);
                 this.isLoadingAssets = false;
