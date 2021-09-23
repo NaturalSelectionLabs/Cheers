@@ -671,6 +671,10 @@ export default class Home extends Vue {
                 await this.follow();
                 this.rss3Relations.followers.push((<IRSS3>this.rss3).account.address);
             }
+            const followers = this.$router.getRoutes().find((r) => r.name === 'Followers')?.instances?.default;
+            if (followers) {
+                (<any>followers).lastRoute = '';
+            }
             await (<IRSS3>this.rss3).files.sync();
         } else {
             sessionStorage.setItem('redirectFrom', this.$route.fullPath);
