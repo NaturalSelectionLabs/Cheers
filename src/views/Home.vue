@@ -857,6 +857,7 @@ export default class Home extends Vue {
 
             await RSS3.disconnect();
             await this.$router.push('/');
+            this.lastRoute = '';
         }
     }
 
