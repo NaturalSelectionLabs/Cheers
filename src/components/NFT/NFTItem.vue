@@ -7,9 +7,18 @@
         class="rounded shadow-nft"
     >
         <video
-            v-if="imageUrl?.endsWith('.mp4') || imageUrl?.endsWith('.mov') || imageUrl?.endsWith('.mp3')"
+            v-if="
+                imageUrl?.endsWith('.mp4') ||
+                imageUrl?.endsWith('.mov') ||
+                imageUrl?.endsWith('.webm') ||
+                imageUrl?.endsWith('.mp3')
+            "
             :src="imageUrl"
-            :poster="posterUrl?.endsWith('.mp4') || posterUrl?.endsWith('.mov') ? undefined : posterUrl"
+            :poster="
+                posterUrl?.endsWith('.mp4') || posterUrl?.endsWith('.mov') || posterUrl?.endsWith('.webm')
+                    ? undefined
+                    : posterUrl
+            "
             class="nft-item"
             :class="[!isShowingDetails ? 'object-cover' : 'object-contain']"
             :style="{
@@ -25,8 +34,9 @@
         />
         <iframe
             v-else-if="
-                (imageUrl?.endsWith('embed') || imageUrl?.includes('farmhero.io') || imageUrl?.endsWith('.html')) &&
-                isShowingDetails
+                ((imageUrl?.endsWith('embed') || imageUrl?.includes('farmhero.io') || imageUrl?.endsWith('.html')) &&
+                    isShowingDetails) ||
+                imageUrl?.includes('artblocks.io')
             "
             :src="imageUrl"
             class="nft-item"

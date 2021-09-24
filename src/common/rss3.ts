@@ -50,7 +50,7 @@ async function walletConnect(skipSign?: boolean) {
     const address = (await web3.eth.getAccounts())[0];
 
     rss3 = new RSS3({
-        endpoint: config.rss3Endpoint,
+        endpoint: config.hubEndpoint,
         address: address,
         agentSign: true,
         sign: async (data: string) => {
@@ -71,7 +71,7 @@ async function visitor() {
         return rss3;
     } else {
         return new RSS3({
-            endpoint: config.rss3Endpoint,
+            endpoint: config.hubEndpoint,
         });
     }
 }
@@ -91,7 +91,7 @@ async function metamaskConnect(skipSign?: boolean) {
     }
 
     rss3 = new RSS3({
-        endpoint: config.rss3Endpoint,
+        endpoint: config.hubEndpoint,
         address: address,
         agentSign: true,
         sign: async (data: string) => await (<Web3>web3).eth.personal.sign(data, address, ''),
@@ -157,7 +157,7 @@ export default {
         } else {
             let data: IAssetProfile | null = null;
             try {
-                const res = await axios.get(`${config.rss3Endpoint}/asset-profile/${address}`);
+                const res = await axios.get(`${config.hubEndpoint}/asset-profile/${address}`);
                 if (res && res.data) {
                     data = res.data;
                     assets.set(address, <IAssetProfile>data);
@@ -173,7 +173,7 @@ export default {
         try {
             const res = await axios({
                 method: 'get',
-                url: `${config.rss3Endpoint}/asset-profile/${address}/nft/`,
+                url: `${config.hubEndpoint}/asset-profile/${address}/nft/`,
                 params: {
                     platform: platform,
                     id: id,
@@ -193,7 +193,7 @@ export default {
         try {
             const res = await axios({
                 method: 'get',
-                url: `${config.rss3Endpoint}/asset-profile/${address}/gitcoin-donation/`,
+                url: `${config.hubEndpoint}/asset-profile/${address}/gitcoin-donation/`,
                 params: {
                     platform: platform,
                     id: id,

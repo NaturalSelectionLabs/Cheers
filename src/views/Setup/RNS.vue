@@ -192,8 +192,8 @@ export default class RNS extends Vue {
                 return;
             }
         }
-        if (this.rns.length < 3 || this.rns.length >= 15) {
-            this.notice = 'An RNS must have at least 3 characters and no more than 15';
+        if (this.rns.length < 5 || this.rns.length >= 15) {
+            this.notice = 'An RNS must have at least 5 characters and no more than 15';
         } else if (!/^[a-z0-9\-_]+$/.test(this.rns)) {
             this.notice = 'An RNS should only contain lower case letters, numbers, minus and underlines.';
         } else if (this.rns.startsWith('0x')) {

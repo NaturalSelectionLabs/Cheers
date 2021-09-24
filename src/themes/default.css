@@ -10,6 +10,14 @@
         --color-body-text: black;
 
         --color-button-container: transparent;
+        --color-footer-bg: linear-gradient(
+            179.69deg,
+            rgba(255, 255, 255, 0) 0%,
+            rgba(255, 255, 255, 0) 1%,
+            rgba(255, 255, 255, 0.541667) 40.16%,
+            #ffffff 100%
+        );
+
         --color-primary-btn: var(--color-primary);
         --color-primary-btn-text: white;
         --color-primary-btn-border: transparent;

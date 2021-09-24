@@ -1,6 +1,6 @@
 <template>
     <div id="main" class="h-screen bg-nft-bg overflow-y-auto">
-        <div class="main px-4 pt-8 pb-32 max-w-md m-auto">
+        <div class="px-4 pt-8 pb-32 max-w-md m-auto">
             <div class="header flex justify-between items-center pb-4">
                 <Button
                     size="sm"

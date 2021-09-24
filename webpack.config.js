@@ -51,6 +51,7 @@ module.exports = (env, argv) => ({
                         loader: 'js-conditional-compile-loader',
                         options: {
                             isDevelop: process.env.NODE_ENV !== 'production',
+                            isNDevelop: process.env.NODE_ENV === 'production',
                         },
                     },
                 ],

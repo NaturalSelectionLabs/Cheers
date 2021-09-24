@@ -1,6 +1,6 @@
 <template>
     <div id="main" class="h-screen bg-body-bg overflow-y-auto text-body-text">
-        <div v-if="isAccountExist" class="main px-4 pt-8 pb-32 flex flex-col gap-y-2 max-w-md m-auto select-none">
+        <div v-if="isAccountExist" class="px-4 pt-8 pb-12 flex flex-col gap-y-2 max-w-md m-auto select-none">
             <Profile
                 :avatar="rss3Profile.avatar"
                 :username="rss3Profile.username"
@@ -177,15 +177,16 @@
                     </Button>
                 </template>
                 <template #content>
-                    <GitcoinItem
-                        v-if="gitcoins.length !== 0"
-                        class="inline-flex mx-0.5 cursor-pointer"
-                        v-for="item in gitcoins"
-                        :key="item.platform + item.identity + item.id"
-                        :size="70"
-                        :imageUrl="item.info.image_preview_url || defaultAvatar"
-                        @click="toSingleGitcoin(item.platform, item.identity, item.id)"
-                    />
+                    <template v-if="gitcoins.length !== 0">
+                        <GitcoinItem
+                            class="inline-flex mx-0.5 cursor-pointer"
+                            v-for="item in gitcoins"
+                            :key="item.platform + item.identity + item.id"
+                            :size="70"
+                            :imageUrl="item.info.image_preview_url || defaultAvatar"
+                            @click="toSingleGitcoin(item.platform, item.identity, item.id)"
+                        />
+                    </template>
                     <div v-else-if="isLoadingAssets" class="text-gitcoin-title m-auto text-center mt-4">Loading...</div>
                     <div v-else-if="!isOwner" class="text-gitcoin-title m-auto text-center mt-4">
                         Haven't found anything yet...
@@ -220,34 +221,52 @@
             >
                 <template #title-icon><ContentIcon /></template>
                 <template #content>
-                    <Button
-                        size="sm"
-                        class="
-                            text-xs
-                            bg-content-btn-m
-                            opacity-35
-                            text-content-btn-m-text
-                            shadow-content-btn-m
-                            cursor-not-allowed
-                            m-auto
-                            mt-4
-                        "
-                        disabled
-                    >
-                        Coming Soon
-                    </Button>
+                    <div class="flex flex-col overflow-y-auto" v-if="contents.length !== 0">
+                        <ContentCard
+                            class="mb-4"
+                            v-for="item in contents"
+                            :key="item.id"
+                            :timestamp="parseInt(item.info.timestamp)"
+                            :content="item.info.pre_content"
+                            :title="item.info.title"
+                            :provider="item.type"
+                            @click="toContentLink(item.info.link)"
+                        />
+
+                        <Button
+                            size="sm"
+                            class="w-full h-6 bg-content-btn-s text-content-btn-s-text shadow-content-btn-s"
+                            v-show="isContentsHaveMore"
+                            @click="loadMoreContents"
+                            id="contents-load-more-button"
+                        >
+                            <i v-if="isLoadingContents" class="bx bx-loader-circle bx-spin"></i>
+                            <i v-else class="bx bx-dots-horizontal-rounded" />
+                        </Button>
+                    </div>
+                    <div v-else-if="isLoadingAssets" class="text-content-title m-auto text-center mt-4">Loading...</div>
+                    <div v-else class="text-content-title m-auto text-center mt-4">Haven't found anything yet...</div>
                 </template>
             </Card>
 
-            <div class="footer-container w-full flex justify-between items-center mt-2">
-                <Logo class="cursor-pointer" :size="18" @click="toHomePage" />
-                <div class="text-body-text font-normal text-xs">
-                    Made with 🌀 by
-                    <a
-                        href="https://rss3.io"
-                        class="text-body-text font-normal text-xs no-underline visited:no-underline active:no-underline"
-                        >RSS3</a
-                    >
+            <div class="mt-2 fixed bottom-0 left-0 w-full center">
+                <div class="px-4 py-2 max-w-md m-auto flex justify-between items-center bg-footer-bg">
+                    <Logo class="cursor-pointer" :size="18" @click="toHomePage" />
+                    <div class="text-body-text font-normal text-xs text-right">
+                        Made with 🌀 by
+                        <a
+                            href="https://rss3.io"
+                            class="
+                                text-body-text
+                                font-normal
+                                text-xs
+                                no-underline
+                                visited:no-underline
+                                active:no-underline
+                            "
+                            >RSS3</a
+                        >
+                    </div>
                 </div>
             </div>
 
@@ -378,7 +397,10 @@ import NFTIcon from '@/components/Icons/NFTIcon.vue';
 import GitcoinIcon from '@/components/Icons/GitcoinIcon.vue';
 import ContentIcon from '@/components/Icons/ContentIcon.vue';
 import Logo from '@/components/Logo.vue';
+import ContentCard from '@/components/ContentCard.vue';
 import { debounce } from 'lodash';
+import ContentProviders, { Content } from '@/common/content-providers';
+import LinkButton from '@/components/LinkButton.vue';
 
 interface ProfileInfo {
     avatar: string;
@@ -395,6 +417,7 @@ interface Relations {
 @Options({
     name: 'Home',
     components: {
+        LinkButton,
         Button,
         Card,
         Profile,
@@ -407,36 +430,39 @@ interface Relations {
         NFTIcon,
         ContentIcon,
         GitcoinIcon,
+        ContentCard,
         Logo,
     },
 })
 export default class Home extends Vue {
     rns: string = '';
     ethAddress: string = '';
-    public rss3?: IRSS3;
-    public isFollowing: boolean = false;
-    public isOwner: boolean = false;
-    public isdisplaying: boolean = false;
-    public dialogAddress: string = '';
-    public dialogChain: string = '';
+    rss3?: IRSS3;
+    isFollowing: boolean = false;
+    isOwner: boolean = false;
+    isdisplaying: boolean = false;
+    dialogAddress: string = '';
+    dialogChain: string = '';
     isAccountExist: boolean = true;
     isShowingShareCard: boolean = false;
     isLoadingAssets: boolean = true;
+    isLoadingContents: boolean = false;
     currentTheme: string = '';
 
-    public rss3Profile: ProfileInfo = {
+    rss3Profile: ProfileInfo = {
         avatar: config.defaultAvatar,
         username: '...',
         address: '',
         bio: '...',
     };
-    public rss3Relations: Relations = {
+    rss3Relations: Relations = {
         followers: [],
         followings: [],
     };
     accounts: RSS3Account[] = [];
     nfts: GeneralAssetWithTags[] = [];
     gitcoins: GeneralAssetWithTags[] = [];
+    contents: Content[] = [];
     $gtag: any;
     scrollTop: number = 0;
     scrollNftsLeft: number = 0;
@@ -445,6 +471,7 @@ export default class Home extends Vue {
     defaultAvatar = config.defaultAvatar;
     notice: string = '';
     isShowingNotice: boolean = false;
+    isContentsHaveMore: boolean = true;
 
     async mounted() {
         this.mountScrollEvent();
@@ -455,6 +482,7 @@ export default class Home extends Vue {
         this.accounts = [];
         this.nfts = [];
         this.gitcoins = [];
+        this.contents = [];
         this.isFollowing = false;
         this.isOwner = false;
         this.isdisplaying = false;
@@ -462,12 +490,14 @@ export default class Home extends Vue {
         this.dialogChain = '';
         this.isShowingShareCard = false;
         this.isLoadingAssets = true;
+        this.isLoadingContents = false;
         this.rss3Profile = {
             avatar: config.defaultAvatar,
             username: '...',
             address: '',
             bio: '...',
         };
+        this.isContentsHaveMore = true;
         (<HTMLLinkElement>document.getElementById('favicon')).href = '/favicon.ico';
         document.title = 'Web3 Pass';
 
@@ -562,7 +592,14 @@ export default class Home extends Vue {
                 (await (<IRSS3>this.rss3).links.get(this.ethAddress, 'following'))?.list || [];
         }, 0);
 
+        // Load assets
         this.startLoadingAssets();
+
+        // Load contents
+        setTimeout(async () => {
+            await this.loadLatestContents();
+            this.initIntersectionObserver();
+        }, 0);
     }
 
     startLoadingAssets() {
@@ -576,7 +613,7 @@ export default class Home extends Vue {
                 this.isLoadingAssets = false;
                 clearInterval(iv);
             }
-        }, 300);
+        }, 2000);
     }
 
     getTaggedOrder(taggedElement: RSS3Account | RSS3Asset): number {
@@ -659,6 +696,62 @@ export default class Home extends Vue {
         );
     }
 
+    async loadLatestContents() {
+        await this.loadMoreContents();
+    }
+
+    async loadMoreContents() {
+        if (this.isLoadingContents || !this.isContentsHaveMore) {
+            // Is already loading or not having more
+            return;
+        }
+        this.isLoadingContents = true;
+        // Get oldest timestamp
+        const nowTS = this.contents.length ? this.contents[this.contents.length - 1].info.timestamp - 1 : 0xffffffff;
+        const contents = await ContentProviders.mirror.get(this.ethAddress, 0, nowTS);
+        if (contents.length < config.contentRequestLimit) {
+            // No more
+            this.isContentsHaveMore = false;
+        }
+        for (const content of contents) {
+            if (
+                content.accessible !== false &&
+                this.contents.findIndex((ctx) => ctx.info.title === content.info.title) === -1 // todo: opt-out this
+            ) {
+                this.contents.push(content);
+            }
+        }
+        this.isLoadingContents = false;
+    }
+
+    initIntersectionObserver() {
+        // Check if running in browser
+        const runningOnBrowser = typeof window !== 'undefined';
+        // Match spiders
+        const isBot =
+            (runningOnBrowser && !('onscroll' in window)) ||
+            (typeof navigator !== 'undefined' &&
+                /(gle|ing|ro|msn)bot|crawl|spider|yand|duckgo/i.test(navigator.userAgent));
+        // Check if browser supports IntersectionObserver API
+        const supportsIntersectionObserver = runningOnBrowser && 'IntersectionObserver' in window;
+
+        const loadMoreButton = document.getElementById('contents-load-more-button');
+        if (runningOnBrowser && !isBot && supportsIntersectionObserver && loadMoreButton) {
+            const observer = new IntersectionObserver(
+                async (entries) => {
+                    if (entries[0].isIntersecting) {
+                        await this.loadMoreContents();
+                        if (!this.isContentsHaveMore) {
+                            observer.disconnect();
+                        }
+                    }
+                },
+                { threshold: 0 },
+            );
+            observer.observe(loadMoreButton);
+        }
+    }
+
     public async action() {
         if (RSS3.isValidRSS3()) {
             if (this.isFollowing) {
@@ -670,6 +763,10 @@ export default class Home extends Vue {
             } else {
                 await this.follow();
                 this.rss3Relations.followers.push((<IRSS3>this.rss3).account.address);
+            }
+            const followers = this.$router.getRoutes().find((r) => r.name === 'Followers')?.instances?.default;
+            if (followers) {
+                (<any>followers).lastRoute = '';
             }
             await (<IRSS3>this.rss3).files.sync();
         } else {
@@ -751,10 +848,12 @@ export default class Home extends Vue {
     }
 
     public toSetupPage() {
+        this.$gtag.event('visitSetupPage', { userid: this.rns || this.ethAddress });
         this.$router.push(`/profile`);
     }
 
     toSetupRNS() {
+        this.$gtag.event('visitSetupRNS', { userid: this.rns || this.ethAddress });
         this.$router.push('/rns');
     }
 
@@ -764,7 +863,7 @@ export default class Home extends Vue {
             this.isAccountExist = true;
             await this.initLoad();
         } else {
-            console.log('Already at home!');
+            // To top
         }
     }
 
@@ -786,6 +885,10 @@ export default class Home extends Vue {
             id: id,
         });
         this.$router.push(`/${this.rns || this.ethAddress}/singlegitcoin/${platform}/${identity}/${id}`);
+    }
+
+    toContentLink(link: string) {
+        window.open(link);
     }
 
     public displayDialog(address: string, chain: string) {
@@ -853,6 +956,7 @@ export default class Home extends Vue {
 
             await RSS3.disconnect();
             await this.$router.push('/');
+            this.lastRoute = '';
         }
     }
 
