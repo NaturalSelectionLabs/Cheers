@@ -244,7 +244,9 @@
                             <i v-else class="bx bx-dots-horizontal-rounded" />
                         </Button>
                     </div>
-                    <div v-else-if="isLoadingAssets" class="text-content-title m-auto text-center mt-4">Loading...</div>
+                    <div v-else-if="isLoadingContents" class="text-content-title m-auto text-center mt-4">
+                        Loading...
+                    </div>
                     <div v-else class="text-content-title m-auto text-center mt-4">Haven't found anything yet...</div>
                 </template>
             </Card>
