@@ -14,7 +14,7 @@
         "
     >
         <div class="timestamp absolute right-4 bottom-2 font-light">{{ getDate(timestamp) }}</div>
-        <div class="content-header flex justify-start justify-between">
+        <div class="content-header flex justify-between">
             <h2 class="font-medium text-lg truncate">
                 {{ title }}
             </h2>
