@@ -208,7 +208,7 @@ export default {
         }
         return data;
     },
-    addNewAccount: async (platform: string): Promise<RSS3Account> => {
+    addNewMetamaskAccount: async (platform: string): Promise<RSS3Account> => {
         // js don't support multiple return values,
         // so here I'm using signature as a message provider
         if (!rss3) {

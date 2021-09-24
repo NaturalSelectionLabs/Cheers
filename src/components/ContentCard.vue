@@ -44,7 +44,7 @@ export default class ContentCard extends Vue {
     renderedContent: string = '';
 
     mounted() {
-        this.renderedContent = marked(this.content);
+        this.renderedContent = marked(this.content || '');
     }
 
     getDate(timestamp: number): string {

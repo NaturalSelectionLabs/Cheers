@@ -1,4 +1,5 @@
 import mirror from './mirror';
+import misskey from './misskey';
 
 interface ContentInfo {
     title: string;
@@ -19,4 +20,5 @@ export interface Content {
 
 export default {
     mirror,
+    misskey,
 };

@@ -1,4 +1,6 @@
 import axios from 'axios';
+import config from '@/config';
+import { Content } from './index';
 
 const userInfoMap = new Map();
 
@@ -20,6 +22,9 @@ function spliceAccountString(account: string) {
 
 async function getUser(account: string, refresh: boolean = false) {
     const { username, instance } = spliceAccountString(account);
+    if (!username || !instance) {
+        return null;
+    }
     if (!refresh && userInfoMap.has(account)) {
         return userInfoMap.get(account);
     }
@@ -96,21 +101,42 @@ export default {
         // Else: not verified
         return false;
     },
-    getNotes: async (account: string, sinceDate?: string, untilDate?: string): Promise<Note[]> => {
+    getAccountLink: (account: string) => {
+        const { username, instance } = spliceAccountString(account);
+        return `https://${instance}/@${username}`;
+    },
+    get: async (account: string, sinceOffset: number = 0, untilTimeStamp: number = 0xffffffff): Promise<Content[]> => {
         const { instance } = spliceAccountString(account);
         const u = await getUser(account);
         if (u) {
             try {
                 const reqData = {
                     userId: u.id,
-                    sinceDate,
-                    untilDate,
-                    limit: 20,
+                    includeReplies: false,
+                    untilDate: untilTimeStamp * 1000,
+                    limit: config.contentRequestLimit,
                     excludeNsfw: true,
                 };
                 const res = await axios.post(`https://${instance}/api/users/notes`, reqData);
                 if (res.data) {
-                    return <Note[]>res.data;
+                    const notes = <Note[]>res.data;
+                    const contents: Content[] = [];
+                    for (const note of notes) {
+                        contents.push({
+                            id: note.id,
+                            identity: account,
+                            platform: 'Misskey',
+                            type: 'Misskey',
+                            info: {
+                                title: '',
+                                pre_content: note.text,
+                                timestamp: Math.floor(Number(new Date(note.createdAt)) / 1000),
+                                txHash: `https://${instance}/notes/${note.id}`,
+                                link: `https://${instance}/notes/${note.id}`,
+                            },
+                        });
+                    }
+                    return contents;
                 }
             } catch (e) {
                 console.log(e);

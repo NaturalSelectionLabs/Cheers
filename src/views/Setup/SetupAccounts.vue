@@ -87,14 +87,26 @@
                 </template>
                 <template #content>
                     <div v-if="mode === 'add'" class="text-center">
-                        <AccountItem
-                            v-for="chain in additionalAccounts"
-                            :key="chain"
-                            class="inline-flex m-0.5 rounded-full shadow-account"
-                            :size="64"
-                            :chain="chain"
-                            @click="addAccount(chain)"
-                        />
+                        <div>
+                            <AccountItem
+                                v-for="chain in additionalMetamaskAccounts"
+                                :key="chain"
+                                class="inline-flex m-0.5 rounded-full shadow-account cursor-pointer"
+                                :size="64"
+                                :chain="chain"
+                                @click="addMetamaskAccount(chain)"
+                            />
+                        </div>
+                        <div>
+                            <AccountItem
+                                v-for="platform in additionalNoSignAccounts"
+                                :key="platform"
+                                class="inline-flex m-0.5 rounded-full shadow-account cursor-pointer"
+                                :size="64"
+                                :chain="platform"
+                                @click="addNoSignAccount(platform)"
+                            />
+                        </div>
                     </div>
                     <div v-else>
                         <draggable class="min-h-20" :list="show" group="accounts" itemKey="chain">
@@ -173,6 +185,46 @@
             </div>
             <LoadingContainer v-show="isLoading" />
 
+            <Modal v-if="isShowingAddSpecifyAccountInput">
+                <template #header>
+                    <h1>{{ specifyNoSignAccount.platform }}</h1>
+                </template>
+                <template #body>
+                    <p class="mt-6">
+                        Input
+                        <span class="text-primary-text">{{ specifyNoSignAccount.platform }}</span>
+                        account:
+                    </p>
+                    <div class="flex">
+                        <Input
+                            class="text-xl mt-6 text-primary-text"
+                            :is-single-line="true"
+                            :placeholder="specifyNoSignAccount.notice"
+                            v-model="specifyNoSignAccount.account"
+                            @keyup.enter.native="addNoSignAccountConfirm"
+                        />
+                    </div>
+                </template>
+                <template #footer>
+                    <div class="flex flex-row gap-5">
+                        <Button
+                            size="sm"
+                            class="w-32 bg-secondary-btn text-secondary-btn-text shadow-secondary-btn"
+                            @click="isShowingAddSpecifyAccountInput = false"
+                        >
+                            Cancel
+                        </Button>
+                        <Button
+                            size="sm"
+                            class="w-32 bg-primary-btn text-primary-btn-text shadow-primary-btn"
+                            @click="addNoSignAccountConfirm"
+                        >
+                            Confirm
+                        </Button>
+                    </div>
+                </template>
+            </Modal>
+
             <Modal v-if="isShowingAddAccountNotice">
                 <template #header>
                     <h1>Oops!</h1>
@@ -208,13 +260,17 @@ import Loading from '@/components/Loading.vue';
 import LoadingContainer from '@/components/LoadingContainer.vue';
 import { RSS3Account, RSS3Index } from 'rss3-next/types/rss3';
 import RSS3, { IRSS3 } from '@/common/rss3';
+import RNS from '@/common/rns';
 import config from '@/config';
+import ContentProviders from '@/common/content-providers';
 
 import draggable from 'vuedraggable';
+import Input from '@/components/Input.vue';
 
 @Options({
     name: 'SetupAccounts',
     components: {
+        Input,
         Modal,
         Button,
         Card,
@@ -226,7 +282,8 @@ import draggable from 'vuedraggable';
 })
 export default class SetupAccounts extends Vue {
     avatar: String = '';
-    additionalAccounts: String[] = ['Ethereum', 'BSC'];
+    additionalMetamaskAccounts: String[] = ['Ethereum', 'BSC'];
+    additionalNoSignAccounts: String[] = ['Misskey'];
     show: RSS3Account[] = [];
     hide: RSS3Account[] = [];
     toAdd: RSS3Account[] = [];
@@ -235,8 +292,19 @@ export default class SetupAccounts extends Vue {
     isLoading: Boolean = false;
     isShowingAddAccountNotice: Boolean = false;
     addAccountNotice: String = '';
+    isShowingAddSpecifyAccountInput: Boolean = false;
 
     mode: String = 'normal';
+
+    specifyNoSignAccount: {
+        platform: string;
+        notice: string;
+        account: string;
+    } = {
+        platform: '',
+        notice: '',
+        account: '',
+    };
 
     async mounted() {
         if (!(await RSS3.reconnect())) {
@@ -319,8 +387,8 @@ export default class SetupAccounts extends Vue {
         }
     }
 
-    async addAccount(platform: string) {
-        const newAccount = await RSS3.addNewAccount(platform);
+    async addMetamaskAccount(platform: string) {
+        const newAccount = await RSS3.addNewMetamaskAccount(platform);
         if (newAccount.identity) {
             const equalDefaultAccount =
                 newAccount.platform === 'Ethereum' && newAccount.identity === (<IRSS3>this.rss3).account.address;
@@ -341,6 +409,41 @@ export default class SetupAccounts extends Vue {
             this.addAccountNotice = newAccount.signature;
             this.isShowingAddAccountNotice = true;
         }
+        this.mode = 'normal';
+    }
+
+    async addNoSignAccount(platform: string) {
+        if (platform === 'Misskey') {
+            this.specifyNoSignAccount.platform = platform;
+            this.specifyNoSignAccount.notice = 'username@instance.ltd';
+        }
+        this.isShowingAddSpecifyAccountInput = true;
+    }
+
+    async addNoSignAccountConfirm() {
+        this.isShowingAddSpecifyAccountInput = false;
+        this.isLoading = true;
+        const ethAddres = (<IRSS3>this.rss3).account.address;
+        const rns = await RNS.addr2Name(ethAddres);
+        if (
+            this.specifyNoSignAccount.platform === 'Misskey' &&
+            (await ContentProviders.misskey.verify(this.specifyNoSignAccount.account, rns, ethAddres))
+        ) {
+            // Pass
+            const newAccount = {
+                platform: this.specifyNoSignAccount.platform,
+                identity: this.specifyNoSignAccount.account,
+                signature: '',
+            };
+            this.show.push(newAccount);
+            this.toAdd.push(newAccount);
+        } else {
+            // Unverified
+            this.addAccountNotice = 'Sorry, but this account cannot be verified.';
+            this.isShowingAddAccountNotice = true;
+        }
+
+        this.isLoading = false;
         this.mode = 'normal';
     }
 
