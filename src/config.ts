@@ -1,5 +1,5 @@
 export default {
-    infuraId: '76af1228cdf345d2bff6a9c0f35112e1',
+    infuraId: 'cddf9c43e60e4fee9dd875f3f88f6c0a',
     hubEndpoint: 'https://hub.pass3.me',
     defaultAvatar: 'https://rss3.mypinata.cloud/ipfs/QmVFq9qimnudPcs6QkQv8ZVEsvwD3aqETHWtS5yXgdbYY5',
     theme: [
