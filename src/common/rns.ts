@@ -5,6 +5,9 @@ import { utils } from 'ethers/lib';
 
 type SPEED = 'fast' | 'average' | 'fastest' | 'safeLow' | undefined;
 type CNAME = 'resolver' | 'token';
+
+let idNo = -1;
+
 async function callRNSContract<T>(
     cname: CNAME,
     providerType: 'web3' | 'infura',
@@ -18,8 +21,19 @@ async function callRNSContract<T>(
         provider = new ethers.providers.Web3Provider((window as any).ethereum);
         signer = provider.getSigner();
     } else {
+        if (idNo === -1) {
+            const poolSize = config.infuraId.length;
+            const idStart = Math.floor(Math.random() * poolSize);
+            for (let i = 0; i < poolSize; i++) {
+                if (await checkInfuraID(config.infuraId[(idStart + i) % poolSize])) {
+                    idNo = (idStart + i) % poolSize;
+                    break;
+                }
+            }
+        }
+
         provider = new ethers.providers.InfuraProvider(config.rns.test ? 'ropsten' : 'homestead', {
-            projectId: config.infuraId,
+            projectId: config.infuraId[idNo],
         });
     }
 
@@ -34,6 +48,23 @@ async function callRNSContract<T>(
         isView = abi.stateMutability === 'view';
     }
     return contract[method](...args, isView ? null : await makeTxParams(speed));
+}
+
+async function checkInfuraID(id: string) {
+    try {
+        const res = await axios.post(`https://mainnet.infura.io/v3/${id}`, {
+            jsonrpc: '2.0',
+            id: 1,
+            method: 'eth_accounts',
+            params: [],
+        });
+        if (res.data) {
+            return true;
+        }
+    } catch (e) {
+        console.log(e);
+    }
+    return false;
 }
 
 async function makeTxParams(speed: SPEED): Promise<ethers.Overrides> {
