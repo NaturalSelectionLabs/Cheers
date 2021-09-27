@@ -42,6 +42,7 @@ import FollowerCard from '@/components/FollowerCard.vue';
 import RSS3, { IRSS3 } from '@/common/rss3';
 import RNSUtils from '@/common/rns';
 import config from '@/config';
+import * as _ from 'lodash';
 
 interface Profile {
     avatar: string;
@@ -89,7 +90,8 @@ export default class Followers extends Vue {
         }
         const rss3 = await RSS3.visitor();
         const profile = await rss3.profile.get(this.ethAddress);
-        const followersList = await rss3.backlinks.get(this.ethAddress, 'following');
+        const initFollowersList = await rss3.backlinks.get(this.ethAddress, 'following');
+        const followersList = _.reverse(initFollowersList);
 
         this.rss3Profile.avatar = profile?.avatar?.[0] || config.defaultAvatar;
         this.rss3Profile.username = profile?.name || '';
