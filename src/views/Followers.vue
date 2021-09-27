@@ -78,7 +78,7 @@ export default class Followers extends Vue {
             this.ethAddress = (await RNSUtils.name2Addr(address + config.rns.suffix)).toString();
         } else {
             this.ethAddress = address;
-            this.rns = await RNSUtils.addr2Name(address);
+            this.rns = (await RNSUtils.addr2Name(address)).replace(config.rns.suffix, '');
         }
     }
 

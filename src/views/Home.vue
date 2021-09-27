@@ -488,7 +488,7 @@ export default class Home extends Vue {
                 this.ethAddress = (await RNSUtils.name2Addr(address + config.rns.suffix)).toString();
             } else {
                 this.ethAddress = address;
-                this.rns = await RNSUtils.addr2Name(address);
+                this.rns = (await RNSUtils.addr2Name(address)).replace(config.rns.suffix, '');
             }
         } else {
             this.rss3 = await RSS3.visitor();
@@ -518,8 +518,9 @@ export default class Home extends Vue {
         this.rss3 = await RSS3.visitor();
         const owner: string = <string>this.rss3.account.address;
         if (this.$route.params.address) {
-            if (this.rns !== '') {
+            if ((<string>this.$route.params.address).startsWith('0x') && this.rns !== '') {
                 await this.$router.push(`/${this.rns}`);
+                return;
             } else if (this.ethAddress === owner) {
                 this.isOwner = true;
             }
@@ -537,6 +538,10 @@ export default class Home extends Vue {
                 this.isAccountExist = false;
                 return;
             }
+
+            setTimeout(() => {
+                this.checkIsFollowing();
+            }, 0);
         } else {
             if (!isValidRSS3) {
                 sessionStorage.setItem('redirectFrom', this.$route.fullPath);
@@ -586,17 +591,8 @@ export default class Home extends Vue {
     }
 
     async setProfile() {
-        this.rss3Profile = {
-            avatar: config.defaultAvatar,
-            username: '...',
-            address: '',
-            bio: '...',
-        };
-
         const rss3 = await RSS3.visitor();
         const profile = await rss3.profile.get(this.ethAddress);
-
-        await this.checkIsFollowing();
 
         this.rss3Profile.avatar = profile?.avatar?.[0] || config.defaultAvatar;
         this.rss3Profile.username = profile?.name || '';
@@ -1004,6 +1000,18 @@ export default class Home extends Vue {
     }
 
     async activated() {
+        if (this.lastRoute !== this.$route.fullPath) {
+            this.rss3Profile = {
+                avatar: config.defaultAvatar,
+                username: '...',
+                address: '',
+                bio: '...',
+            };
+
+            const favicon = <HTMLLinkElement>document.getElementById('favicon');
+            favicon.href = '/favicon.ico';
+            document.title = 'Web3 Pass';
+        }
         await this.setupAddress();
         // Split time-consuming methods from main thread, so it won't stuck the page loading progress
         setTimeout(async () => {
