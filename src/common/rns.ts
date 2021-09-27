@@ -6,8 +6,6 @@ import { utils } from 'ethers/lib';
 type SPEED = 'fast' | 'average' | 'fastest' | 'safeLow' | undefined;
 type CNAME = 'resolver' | 'token';
 
-let idNo = -1;
-
 async function callRNSContract<T>(
     cname: CNAME,
     providerType: 'web3' | 'infura',
@@ -15,26 +13,16 @@ async function callRNSContract<T>(
     method: string,
     ...args: any
 ): Promise<T> {
-    let provider: ethers.providers.Web3Provider | ethers.providers.InfuraProvider;
+    let provider: ethers.providers.Web3Provider | ethers.providers.AlchemyProvider;
     let signer; // TODO
     if (providerType === 'web3') {
         provider = new ethers.providers.Web3Provider((window as any).ethereum);
         signer = provider.getSigner();
     } else {
-        if (idNo === -1) {
-            const poolSize = config.infuraId.length;
-            const idStart = Math.floor(Math.random() * poolSize);
-            for (let i = 0; i < poolSize; i++) {
-                if (await checkInfuraID(config.infuraId[(idStart + i) % poolSize])) {
-                    idNo = (idStart + i) % poolSize;
-                    break;
-                }
-            }
-        }
-
-        provider = new ethers.providers.InfuraProvider(config.rns.test ? 'ropsten' : 'homestead', {
-            projectId: config.infuraId[idNo],
-        });
+        provider = new ethers.providers.AlchemyProvider(
+            config.rns.test ? 'ropsten' : 'homestead',
+            config.alchemyApiKey,
+        );
     }
 
     const contract = await new ethers.Contract(
@@ -108,6 +96,10 @@ const addrCache: {
     [key: string]: string;
 } = {};
 
+const nameCache: {
+    [key: string]: string;
+} = {};
+
 export default {
     // We have checked network and account in verifyRNS method in RNS.vue, so we don't need to check it here.
     async register(name: string, speed: SPEED = 'average') {
@@ -125,9 +117,17 @@ export default {
             return name;
         }
     },
-    name2Addr(name: string, speed: SPEED = 'average') {
+    async name2Addr(name: string, speed: SPEED = 'average') {
         name = name.toLowerCase();
-        return callRNSContract<string>('resolver', 'infura', speed, 'addr', utils.namehash(name));
+        if (nameCache[name]) {
+            return nameCache[name];
+        } else {
+            const addr = await callRNSContract<string>('resolver', 'infura', speed, 'addr', utils.namehash(name));
+            if (addr) {
+                nameCache[name] = addr;
+            }
+            return addr;
+        }
     },
     async balanceOfPass3(addr: string, speed: SPEED = 'average') {
         await (window as any).ethereum?.enable();
