@@ -479,6 +479,24 @@ export default class Home extends Vue {
         this.mountScrollEvent();
     }
 
+    async setupAddress() {
+        if (this.$route.params.address) {
+            const address = <string>this.$route.params.address;
+            if (!address.startsWith('0x')) {
+                this.rns = address;
+                this.ethAddress = (await RNSUtils.name2Addr(address + config.rns.suffix)).toString();
+            } else {
+                this.ethAddress = address;
+                this.rns = await RNSUtils.addr2Name(address);
+            }
+        } else {
+            this.rss3 = await RSS3.visitor();
+            const owner: string = <string>this.rss3.account.address;
+            this.rns = (await RNSUtils.addr2Name(owner)).replace(config.rns.suffix, '');
+            this.ethAddress = owner;
+        }
+    }
+
     async initLoad() {
         this.lastRoute = this.$route.fullPath;
         this.accounts = [];
@@ -493,42 +511,24 @@ export default class Home extends Vue {
         this.isShowingShareCard = false;
         this.isLoadingAssets = true;
         this.isLoadingContents = false;
-        this.rss3Profile = {
-            avatar: config.defaultAvatar,
-            username: '...',
-            address: '',
-            bio: '...',
-        };
         this.isContentsHaveMore = true;
-        (<HTMLLinkElement>document.getElementById('favicon')).href = '/favicon.ico';
-        document.title = 'Web3 Pass';
 
         const isValidRSS3 = await RSS3.reconnect();
         this.rss3 = await RSS3.visitor();
         const owner: string = <string>this.rss3.account.address;
-        let address: string = <string>this.rss3.account.address;
         if (this.$route.params.address) {
-            address = <string>this.$route.params.address;
-            if (address.startsWith('0x')) {
-                // Might be address type
-                // Get RNS and redirect
-                this.ethAddress = address;
-                this.rns = (await RNSUtils.addr2Name(address)).replace(config.rns.suffix, '');
-                if (this.rns !== '') {
-                    await this.$router.push(`/${this.rns}`);
-                } else if (this.ethAddress === owner) {
-                    this.isOwner = true;
-                }
+
+            if (this.rns !== '') {
+                await this.$router.push(`/${this.rns}`);
+            } else if (this.ethAddress === owner) {
+                this.isOwner = true;
+            }
+
+            if (parseInt(this.ethAddress) !== 0) {
+                this.isOwner = this.ethAddress === owner;
             } else {
-                // RNS
-                this.rns = address;
-                this.ethAddress = (await RNSUtils.name2Addr(address + config.rns.suffix)).toString();
-                if (parseInt(this.ethAddress) !== 0) {
-                    this.isOwner = this.ethAddress === owner;
-                } else {
-                    this.isAccountExist = false;
-                    return;
-                }
+                this.isAccountExist = false;
+                return;
             }
 
             const file = <RSS3Index>await this.rss3.files.get(this.ethAddress);
@@ -542,39 +542,9 @@ export default class Home extends Vue {
                 sessionStorage.setItem('redirectFrom', this.$route.fullPath);
                 await this.$router.push('/');
             } else {
-                this.rns = (await RNSUtils.addr2Name(owner)).replace(config.rns.suffix, '');
-                this.ethAddress = owner;
                 this.isOwner = true;
             }
         }
-
-        // Split time-consuming methods from main thread, so it won't stuck the page loading progress
-        setTimeout(async () => {
-            const profile = await (<IRSS3>this.rss3).profile.get(this.ethAddress);
-            await this.checkIsFollowing();
-
-            this.rss3Profile.avatar = profile?.avatar?.[0] || config.defaultAvatar;
-            this.rss3Profile.username = profile?.name || '';
-            this.rss3Profile.bio = profile?.bio || '';
-            this.rss3Profile.address = this.ethAddress;
-
-            if (profile?.avatar?.[0]) {
-                const favicon = <HTMLLinkElement>document.getElementById('favicon');
-                favicon.href = profile.avatar[0];
-            }
-            if (profile?.name) {
-                document.title = profile.name;
-            }
-
-            // Setup theme
-            const themes = RSS3.getAvailableThemes(await (<IRSS3>this.rss3).assets.get(this.ethAddress));
-            if (themes[0]) {
-                this.currentTheme = themes[0].name;
-                document.body.classList.add(themes[0].class);
-            } else {
-                document.body.classList.remove(...document.body.classList);
-            }
-        }, 0);
 
         setTimeout(async () => {
             // Push original account
@@ -602,6 +572,44 @@ export default class Home extends Vue {
             await this.loadLatestContents();
             this.initIntersectionObserver();
         }, 0);
+    }
+
+    async setupTheme() {
+        const rss3 = await RSS3.visitor();
+        // Setup theme
+        const themes = RSS3.getAvailableThemes(await rss3.assets.get(this.ethAddress));
+        if (themes[0]) {
+            document.body.classList.add(themes[0].class);
+        } else {
+            document.body.classList.remove(...document.body.classList);
+        }
+    }
+
+    async setProfile() {
+        this.rss3Profile = {
+            avatar: config.defaultAvatar,
+            username: '...',
+            address: '',
+            bio: '...',
+        };
+
+        const rss3 = await RSS3.visitor();
+        const profile = await rss3.profile.get(this.ethAddress);
+
+        await this.checkIsFollowing();
+
+        this.rss3Profile.avatar = profile?.avatar?.[0] || config.defaultAvatar;
+        this.rss3Profile.username = profile?.name || '';
+        this.rss3Profile.bio = profile?.bio || '';
+        this.rss3Profile.address = this.ethAddress;
+    }
+
+    async setPageTitleFavicon() {
+        const rss3 = await RSS3.visitor();
+        const profile = await rss3.profile.get(this.ethAddress);
+        const favicon = <HTMLLinkElement>document.getElementById('favicon');
+        favicon.href = profile?.avatar?.[0] || '/favicon.ico';
+        document.title = profile?.name || 'Web3 Pass';
     }
 
     startLoadingAssets() {
@@ -992,25 +1000,33 @@ export default class Home extends Vue {
         }
     }
 
-    activated() {
-        if (this.lastRoute === this.$route.fullPath) {
-            const el = document.getElementById('main');
-            const nfts = document.getElementById('nfts-card')?.getElementsByClassName('card-content')?.[0];
-            const gitcoins = document.getElementById('gitcoins-card')?.getElementsByClassName('card-content')?.[0];
-            if (el) {
-                el.scrollTop = this.scrollTop;
+    async activated() {
+        await this.setupAddress();
+        // Split time-consuming methods from main thread, so it won't stuck the page loading progress
+        setTimeout(async () => {
+            await this.setupTheme();
+            await this.setPageTitleFavicon();
+            if (this.lastRoute === this.$route.fullPath) {
+                const el = document.getElementById('main');
+                const nfts = document.getElementById('nfts-card')?.getElementsByClassName('card-content')?.[0];
+                const gitcoins = document.getElementById('gitcoins-card')?.getElementsByClassName('card-content')?.[0];
+                if (el) {
+                    el.scrollTop = this.scrollTop;
+                }
+                if (nfts) {
+                    nfts.scrollLeft = this.scrollNftsLeft;
+                }
+                if (gitcoins) {
+                    gitcoins.scrollLeft = this.scrollGitcoinsLeft;
+                }
+                if (this.isOwner) {
+                    this.startLoadingAssets();
+                }
+            } else {
+                await this.setProfile();
+                await this.initLoad();
             }
-            if (nfts) {
-                nfts.scrollLeft = this.scrollNftsLeft;
-            }
-            if (gitcoins) {
-                gitcoins.scrollLeft = this.scrollGitcoinsLeft;
-            }
-            if (this.isOwner) {
-                this.startLoadingAssets();
-            }
-        } else {
-            this.initLoad();
+        }, 0);
         }
     }
 }

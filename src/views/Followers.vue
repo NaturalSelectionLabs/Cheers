@@ -71,15 +71,7 @@ export default class Followers extends Vue {
     ethAddress: string = '';
     lastRoute: string = '';
 
-    async mounted() {
-        await this.initLoad();
-    }
-
-    async initLoad() {
-        this.lastRoute = this.$route.fullPath;
-        this.followerList = [];
-        this.rss3Profile.avatar = config.defaultAvatar;
-
+    async setupAddress() {
         const address = <string>this.$route.params.address;
         if (!address.startsWith('0x')) {
             this.rns = address;
@@ -88,22 +80,15 @@ export default class Followers extends Vue {
             this.ethAddress = address;
             this.rns = await RNSUtils.addr2Name(address);
         }
+    }
+
+    async initLoad() {
+        this.lastRoute = this.$route.fullPath;
+        this.followerList = [];
+
         const rss3 = await RSS3.visitor();
-        const profile = await rss3.profile.get(this.ethAddress);
         const initFollowersList = await rss3.backlinks.get(this.ethAddress, 'following');
         const followersList = _.reverse(initFollowersList);
-
-        this.rss3Profile.avatar = profile?.avatar?.[0] || config.defaultAvatar;
-        this.rss3Profile.username = profile?.name || '';
-        this.rss3Profile.address = this.ethAddress;
-
-        // Setup theme
-        const themes = RSS3.getAvailableThemes(await rss3.assets.get(this.ethAddress));
-        if (themes[0]) {
-            document.body.classList.add(themes[0].class);
-        } else {
-            document.body.classList.remove(...document.body.classList);
-        }
 
         if (rss3 && followersList) {
             for (const item of followersList) {
@@ -129,6 +114,33 @@ export default class Followers extends Vue {
         }
     }
 
+    async setupTheme() {
+        const rss3 = await RSS3.visitor();
+        // Setup theme
+        const themes = RSS3.getAvailableThemes(await rss3.assets.get(this.ethAddress));
+        if (themes[0]) {
+            document.body.classList.add(themes[0].class);
+        } else {
+            document.body.classList.remove(...document.body.classList);
+        }
+    }
+
+    async setProfile() {
+        const rss3 = await RSS3.visitor();
+        const profile = await rss3.profile.get(this.ethAddress);
+        this.rss3Profile.avatar = profile?.avatar?.[0] || config.defaultAvatar;
+        this.rss3Profile.username = profile?.name || '';
+        this.rss3Profile.address = this.ethAddress;
+    }
+
+    async setPageTitleFavicon() {
+        const rss3 = await RSS3.visitor();
+        const profile = await rss3.profile.get(this.ethAddress);
+        const favicon = <HTMLLinkElement>document.getElementById('favicon');
+        favicon.href = profile?.avatar?.[0] || '/favicon.ico';
+        document.title = profile?.name || 'Web3 Pass';
+    }
+
     filter(address: string) {
         return `${address.slice(0, 6)}...${address.slice(-4)}`;
     }
@@ -141,10 +153,16 @@ export default class Followers extends Vue {
         this.$router.push(`/${this.rns || this.ethAddress}`);
     }
 
-    activated() {
-        if (this.lastRoute !== this.$route.fullPath) {
-            this.initLoad();
-        }
+    async activated() {
+        await this.setupAddress();
+        setTimeout(async () => {
+            await this.setupTheme();
+            await this.setPageTitleFavicon();
+            if (this.lastRoute !== this.$route.fullPath) {
+                await this.setProfile();
+                await this.initLoad();
+            }
+        }, 0);
     }
 }
 </script>
