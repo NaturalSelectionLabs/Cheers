@@ -448,6 +448,7 @@ export default class Home extends Vue {
     isAccountExist: boolean = true;
     isShowingShareCard: boolean = false;
     isLoadingAssets: boolean = true;
+    loadingAssetsIntervalID: ReturnType<typeof setInterval> | null = null;
     isLoadingContents: boolean = false;
     currentTheme: string = '';
 
@@ -517,7 +518,6 @@ export default class Home extends Vue {
         this.rss3 = await RSS3.visitor();
         const owner: string = <string>this.rss3.account.address;
         if (this.$route.params.address) {
-
             if (this.rns !== '') {
                 await this.$router.push(`/${this.rns}`);
             } else if (this.ethAddress === owner) {
@@ -613,7 +613,7 @@ export default class Home extends Vue {
     }
 
     startLoadingAssets() {
-        const iv = setInterval(async () => {
+        this.loadingAssetsIntervalID = setInterval(async () => {
             const data = await RSS3.getAssetProfile(this.ethAddress, true);
             if (data && data.status !== false) {
                 await this.mergeAssets(
@@ -621,7 +621,10 @@ export default class Home extends Vue {
                     <GeneralAsset[]>data.assets,
                 );
                 this.isLoadingAssets = false;
-                clearInterval(iv);
+                if (this.loadingAssetsIntervalID) {
+                    clearInterval(this.loadingAssetsIntervalID);
+                    this.loadingAssetsIntervalID = null;
+                }
             }
         }, 2000);
     }
@@ -1027,6 +1030,12 @@ export default class Home extends Vue {
                 await this.initLoad();
             }
         }, 0);
+    }
+
+    async deactivated() {
+        if (this.loadingAssetsIntervalID) {
+            clearInterval(this.loadingAssetsIntervalID);
+            this.loadingAssetsIntervalID = null;
         }
     }
 }
