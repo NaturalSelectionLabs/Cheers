@@ -538,7 +538,9 @@ export default class Home extends Vue {
         } else {
             if (!isValidRSS3) {
                 sessionStorage.setItem('redirectFrom', this.$route.fullPath);
+                this.ethAddress = '';
                 await this.$router.push('/');
+                return;
             } else {
                 this.rns = (await RNSUtils.addr2Name(owner)).replace(config.rns.suffix, '');
                 this.ethAddress = owner;
@@ -576,22 +578,28 @@ export default class Home extends Vue {
     }
 
     async setupTheme() {
-        // Setup theme
-        const themes = RSS3.getAvailableThemes(await (<IRSS3>this.rss3).assets.get(this.ethAddress));
-        if (themes[0]) {
-            this.currentTheme = themes[0].name;
-            document.body.classList.add(themes[0].class);
+        if (this.ethAddress) {
+            // Setup theme
+            const themes = RSS3.getAvailableThemes(await (<IRSS3>this.rss3).assets.get(this.ethAddress));
+            if (themes[0]) {
+                this.currentTheme = themes[0].name;
+                document.body.classList.add(themes[0].class);
+            } else {
+                document.body.classList.remove(...document.body.classList);
+            }
         } else {
             document.body.classList.remove(...document.body.classList);
         }
     }
 
     async setPageTitleFavicon() {
-        const rss3 = await RSS3.visitor();
-        const profile = await rss3.profile.get(this.ethAddress);
-        const favicon = <HTMLLinkElement>document.getElementById('favicon');
-        favicon.href = profile?.avatar?.[0] || '/favicon.ico';
-        document.title = profile?.name || 'Web3 Pass';
+        if (this.ethAddress) {
+            const rss3 = await RSS3.visitor();
+            const profile = await rss3.profile.get(this.ethAddress);
+            const favicon = <HTMLLinkElement>document.getElementById('favicon');
+            favicon.href = profile?.avatar?.[0] || '/favicon.ico';
+            document.title = profile?.name || 'Web3 Pass';
+        }
     }
 
     startLoadingAccounts() {

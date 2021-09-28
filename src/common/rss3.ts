@@ -36,7 +36,13 @@ async function walletConnect(skipSign?: boolean) {
     });
 
     //  Enable session (triggers QR Code modal)
-    await provider.enable();
+    let session;
+    try {
+        session = await provider.enable();
+    } catch (e) {}
+    if (!session) {
+        return null;
+    }
 
     //  Create Web3 instance
     web3 = new Web3(provider as any);
@@ -125,12 +131,18 @@ async function disconnect() {
 
 export default {
     walletConnect: async () => {
-        localStorage.setItem('lastConnect', 'walletConnect');
-        return await walletConnect();
+        await walletConnect();
+        if (isValidRSS3()) {
+            localStorage.setItem('lastConnect', 'walletConnect');
+        }
+        return rss3;
     },
     metamaskConnect: async () => {
-        localStorage.setItem('lastConnect', 'metamask');
-        return await metamaskConnect();
+        await metamaskConnect();
+        if (isValidRSS3()) {
+            localStorage.setItem('lastConnect', 'metamask');
+        }
+        return rss3;
     },
     disconnect: async () => {
         disconnect();
@@ -141,12 +153,15 @@ export default {
             switch (lastConnect) {
                 case 'walletConnect':
                     await walletConnect(true);
-                    return true;
+                    break;
                 case 'metamask':
                     await metamaskConnect(true);
-                    return true;
-                default:
-                    return false;
+                    break;
+            }
+            if (isValidRSS3()) {
+                return true;
+            } else {
+                return false;
             }
         }
         return true;
