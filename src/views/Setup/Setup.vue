@@ -318,19 +318,17 @@ export default class Setup extends Vue {
     }
 
     startLoadingAssets() {
-        setTimeout(async () => {
-            this.loadingAssetsIntervalID = setInterval(async () => {
-                const data = await RSS3.getAssetProfile((<IRSS3>this.rss3).account.address);
-                if (data && data.status !== false) {
-                    await this.mergeAssets(await (<IRSS3>this.rss3).assets.get(), <GeneralAsset[]>data.assets);
-                    this.isLoadingAssets = false;
-                    if (this.loadingAssetsIntervalID) {
-                        clearInterval(this.loadingAssetsIntervalID);
-                        this.loadingAssetsIntervalID = null;
-                    }
+        this.loadingAssetsIntervalID = setInterval(async () => {
+            const data = await RSS3.getAssetProfile((<IRSS3>this.rss3).account.address);
+            if (data && data.status !== false) {
+                await this.mergeAssets(await (<IRSS3>this.rss3).assets.get(), <GeneralAsset[]>data.assets);
+                this.isLoadingAssets = false;
+                if (this.loadingAssetsIntervalID) {
+                    clearInterval(this.loadingAssetsIntervalID);
+                    this.loadingAssetsIntervalID = null;
                 }
-            }, 2000);
-        }, 0);
+            }
+        }, 2000);
     }
 
     getTaggedOrder(taggedElement: RSS3Account | RSS3Asset): number {
