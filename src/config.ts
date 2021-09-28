@@ -1,5 +1,5 @@
 export default {
-    infuraId: '76af1228cdf345d2bff6a9c0f35112e1',
+    alchemyApiKey: 'HldygkzebeQRTEDHgjwhuaXwY4eUf5R1',
     hubEndpoint: 'https://hub.pass3.me',
     defaultAvatar: 'https://rss3.mypinata.cloud/ipfs/QmVFq9qimnudPcs6QkQv8ZVEsvwD3aqETHWtS5yXgdbYY5',
     theme: [

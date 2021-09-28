@@ -36,7 +36,7 @@ app.use(Hotjar, {
 /* IFTRUE_isNDevelop */
 Sentry.init({
     app,
-    dsn: 'https://82351be1cb9a445e87c3c7183bc13d9f@o947126.ingest.sentry.io/5936111',
+    dsn: 'https://19adad3122ef486cbd3201112af00024@sentry.rss3.dev/2',
     integrations: [
         new Integrations.BrowserTracing({
             routingInstrumentation: Sentry.vueRouterInstrumentation(router),

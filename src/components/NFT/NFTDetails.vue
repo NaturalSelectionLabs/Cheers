@@ -15,7 +15,7 @@
         </div>
         <div v-if="details.description">
             <h3>Description</h3>
-            <p>{{ details.description }}</p>
+            <div v-html="getMarkdown(details.description)"></div>
         </div>
         <div v-if="details.traits && details.traits.length > 0">
             <h3>Properties</h3>
@@ -30,7 +30,7 @@
         </div>
         <div v-if="details.collection?.description">
             <h3>About {{ details.collection?.name }}</h3>
-            <p>{{ details.collection?.description }}</p>
+            <div v-html="getMarkdown(details.collection?.description)"></div>
         </div>
     </div>
 </template>
@@ -40,6 +40,8 @@ import { Vue, Options } from 'vue-class-component';
 import Trait from '@/components/NFT/Trait.vue';
 import ScanTag from '@/components/NFT/ScanTag.vue';
 import MarketTag from '@/components/NFT/MarketTag.vue';
+import marked from 'marked';
+
 @Options({
     components: { Trait, ScanTag, MarketTag },
     props: {
@@ -73,6 +75,10 @@ export default class NFTDetail extends Vue {
                 window.open(`https://etherscan.io/token/${address}?a=${tokenId}`);
                 break;
         }
+    }
+
+    public getMarkdown(description: string): string {
+        return marked(description);
     }
 }
 </script>

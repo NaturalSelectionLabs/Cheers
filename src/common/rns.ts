@@ -5,6 +5,7 @@ import { utils } from 'ethers/lib';
 
 type SPEED = 'fast' | 'average' | 'fastest' | 'safeLow' | undefined;
 type CNAME = 'resolver' | 'token';
+
 async function callRNSContract<T>(
     cname: CNAME,
     providerType: 'web3' | 'infura',
@@ -12,15 +13,16 @@ async function callRNSContract<T>(
     method: string,
     ...args: any
 ): Promise<T> {
-    let provider: ethers.providers.Web3Provider | ethers.providers.InfuraProvider;
+    let provider: ethers.providers.Web3Provider | ethers.providers.AlchemyProvider;
     let signer; // TODO
     if (providerType === 'web3') {
         provider = new ethers.providers.Web3Provider((window as any).ethereum);
         signer = provider.getSigner();
     } else {
-        provider = new ethers.providers.InfuraProvider(config.rns.test ? 'ropsten' : 'homestead', {
-            projectId: config.infuraId,
-        });
+        provider = new ethers.providers.AlchemyProvider(
+            config.rns.test ? 'ropsten' : 'homestead',
+            config.alchemyApiKey,
+        );
     }
 
     const contract = await new ethers.Contract(
@@ -34,6 +36,23 @@ async function callRNSContract<T>(
         isView = abi.stateMutability === 'view';
     }
     return contract[method](...args, isView ? null : await makeTxParams(speed));
+}
+
+async function checkInfuraID(id: string) {
+    try {
+        const res = await axios.post(`https://mainnet.infura.io/v3/${id}`, {
+            jsonrpc: '2.0',
+            id: 1,
+            method: 'eth_accounts',
+            params: [],
+        });
+        if (res.data) {
+            return true;
+        }
+    } catch (e) {
+        console.log(e);
+    }
+    return false;
 }
 
 async function makeTxParams(speed: SPEED): Promise<ethers.Overrides> {
@@ -77,6 +96,10 @@ const addrCache: {
     [key: string]: string;
 } = {};
 
+const nameCache: {
+    [key: string]: string;
+} = {};
+
 export default {
     // We have checked network and account in verifyRNS method in RNS.vue, so we don't need to check it here.
     async register(name: string, speed: SPEED = 'average') {
@@ -90,13 +113,23 @@ export default {
             const addrHex = sha3HexAddress(addr.toLowerCase());
             const node = utils.keccak256(utils.defaultAbiCoder.encode(['bytes32', 'bytes32'], [reverseNode, addrHex]));
             const name = (await callRNSContract<string>('resolver', 'infura', speed, 'name', node)).toLowerCase();
-            addrCache[addr] = name;
+            if (name) {
+                addrCache[addr] = name;
+            }
             return name;
         }
     },
-    name2Addr(name: string, speed: SPEED = 'average') {
+    async name2Addr(name: string, speed: SPEED = 'average') {
         name = name.toLowerCase();
-        return callRNSContract<string>('resolver', 'infura', speed, 'addr', utils.namehash(name));
+        if (nameCache[name]) {
+            return nameCache[name];
+        } else {
+            const addr = await callRNSContract<string>('resolver', 'infura', speed, 'addr', utils.namehash(name));
+            if (parseInt(addr) !== 0) {
+                nameCache[name] = addr;
+            }
+            return addr;
+        }
     },
     async balanceOfPass3(addr: string, speed: SPEED = 'average') {
         await (window as any).ethereum?.enable();

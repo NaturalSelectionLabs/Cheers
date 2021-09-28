@@ -23,6 +23,7 @@ import RNSUtils from '@/common/rns';
 export default class RNSPending extends Vue {
     rss3: IRSS3 | null = null;
     rns: string = '';
+    loadingIntervalID: ReturnType<typeof setTimeout> | null = null;
     $gtag: any;
 
     async mounted() {
@@ -31,10 +32,13 @@ export default class RNSPending extends Vue {
             await this.$router.push('/');
         } else {
             this.rss3 = await RSS3.get();
-            const iv = setInterval(async () => {
+            this.loadingIntervalID = setInterval(async () => {
                 if ((await RNSUtils.addr2Name((<IRSS3>this.rss3).account.address)) !== '') {
                     // Already setup RNS
-                    clearInterval(iv);
+                    if (this.loadingIntervalID) {
+                        clearInterval(this.loadingIntervalID);
+                        this.loadingIntervalID = null;
+                    }
                     const profile = await (<IRSS3>this.rss3).profile.get();
                     if (!profile) {
                         // Setup Profile
