@@ -448,6 +448,7 @@ export default class Home extends Vue {
     isAccountExist: boolean = true;
     isShowingShareCard: boolean = false;
     isLoadingAssets: boolean = true;
+    loadingAssetsIntervalID: ReturnType<typeof setInterval> | null = null;
     isLoadingContents: boolean = false;
     currentTheme: string = '';
 
@@ -557,23 +558,6 @@ export default class Home extends Vue {
             this.rss3Profile.username = profile?.name || '';
             this.rss3Profile.bio = profile?.bio || '';
             this.rss3Profile.address = this.ethAddress;
-
-            if (profile?.avatar?.[0]) {
-                const favicon = <HTMLLinkElement>document.getElementById('favicon');
-                favicon.href = profile.avatar[0];
-            }
-            if (profile?.name) {
-                document.title = profile.name;
-            }
-
-            // Setup theme
-            const themes = RSS3.getAvailableThemes(await (<IRSS3>this.rss3).assets.get(this.ethAddress));
-            if (themes[0]) {
-                this.currentTheme = themes[0].name;
-                document.body.classList.add(themes[0].class);
-            } else {
-                document.body.classList.remove(...document.body.classList);
-            }
         }, 0);
 
         setTimeout(async () => {
@@ -604,8 +588,27 @@ export default class Home extends Vue {
         }, 0);
     }
 
+    async setupTheme() {
+        // Setup theme
+        const themes = RSS3.getAvailableThemes(await (<IRSS3>this.rss3).assets.get(this.ethAddress));
+        if (themes[0]) {
+            this.currentTheme = themes[0].name;
+            document.body.classList.add(themes[0].class);
+        } else {
+            document.body.classList.remove(...document.body.classList);
+        }
+    }
+
+    async setPageTitleFavicon() {
+        const rss3 = await RSS3.visitor();
+        const profile = await rss3.profile.get(this.ethAddress);
+        const favicon = <HTMLLinkElement>document.getElementById('favicon');
+        favicon.href = profile?.avatar?.[0] || '/favicon.ico';
+        document.title = profile?.name || 'Web3 Pass';
+    }
+
     startLoadingAssets() {
-        const iv = setInterval(async () => {
+        this.loadingAssetsIntervalID = setInterval(async () => {
             const data = await RSS3.getAssetProfile(this.ethAddress, true);
             if (data && data.status !== false) {
                 await this.mergeAssets(
@@ -613,7 +616,10 @@ export default class Home extends Vue {
                     <GeneralAsset[]>data.assets,
                 );
                 this.isLoadingAssets = false;
-                clearInterval(iv);
+                if (this.loadingAssetsIntervalID) {
+                    clearInterval(this.loadingAssetsIntervalID);
+                    this.loadingAssetsIntervalID = null;
+                }
             }
         }, 2000);
     }
@@ -992,8 +998,11 @@ export default class Home extends Vue {
         }
     }
 
-    activated() {
+    async activated() {
         if (this.lastRoute === this.$route.fullPath) {
+            if (this.isLoadingAssets) {
+                this.startLoadingAssets();
+            }
             const el = document.getElementById('main');
             const nfts = document.getElementById('nfts-card')?.getElementsByClassName('card-content')?.[0];
             const gitcoins = document.getElementById('gitcoins-card')?.getElementsByClassName('card-content')?.[0];
@@ -1010,7 +1019,16 @@ export default class Home extends Vue {
                 this.startLoadingAssets();
             }
         } else {
-            this.initLoad();
+            await this.initLoad();
+        }
+        await this.setPageTitleFavicon();
+        await this.setupTheme();
+    }
+
+    async deactivated() {
+        if (this.loadingAssetsIntervalID) {
+            clearInterval(this.loadingAssetsIntervalID);
+            this.loadingAssetsIntervalID = null;
         }
     }
 }

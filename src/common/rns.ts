@@ -113,7 +113,9 @@ export default {
             const addrHex = sha3HexAddress(addr.toLowerCase());
             const node = utils.keccak256(utils.defaultAbiCoder.encode(['bytes32', 'bytes32'], [reverseNode, addrHex]));
             const name = (await callRNSContract<string>('resolver', 'infura', speed, 'name', node)).toLowerCase();
-            addrCache[addr] = name;
+            if (name) {
+                addrCache[addr] = name;
+            }
             return name;
         }
     },
@@ -123,7 +125,7 @@ export default {
             return nameCache[name];
         } else {
             const addr = await callRNSContract<string>('resolver', 'infura', speed, 'addr', utils.namehash(name));
-            if (addr) {
+            if (parseInt(addr) !== 0) {
                 nameCache[name] = addr;
             }
             return addr;

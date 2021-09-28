@@ -256,6 +256,7 @@ export default class Setup extends Vue {
     rss3: IRSS3 | null = null;
     isLoading: Boolean = true;
     isLoadingAssets: Boolean = true;
+    loadingAssetsIntervalID: ReturnType<typeof setInterval> | null = null;
     maxValueLength: Number = 280;
     notice: String = '';
     isShowingNotice: Boolean = false;
@@ -312,12 +313,15 @@ export default class Setup extends Vue {
     }
 
     startLoadingAssets() {
-        const iv = setInterval(async () => {
+        this.loadingAssetsIntervalID = setInterval(async () => {
             const data = await RSS3.getAssetProfile((<IRSS3>this.rss3).account.address);
             if (data && data.status !== false) {
                 await this.mergeAssets(await (<IRSS3>this.rss3).assets.get(), <GeneralAsset[]>data.assets);
                 this.isLoadingAssets = false;
-                clearInterval(iv);
+                if (this.loadingAssetsIntervalID) {
+                    clearInterval(this.loadingAssetsIntervalID);
+                    this.loadingAssetsIntervalID = null;
+                }
             }
         }, 2000);
     }
@@ -486,6 +490,13 @@ export default class Setup extends Vue {
 
     activated() {
         this.startLoadingAssets();
+    }
+
+    deactivated() {
+        if (this.loadingAssetsIntervalID) {
+            clearInterval(this.loadingAssetsIntervalID);
+            this.loadingAssetsIntervalID = null;
+        }
     }
 }
 </script>
