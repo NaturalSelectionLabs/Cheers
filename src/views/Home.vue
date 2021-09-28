@@ -272,7 +272,7 @@
                 </div>
             </div>
 
-            <Modal v-show="isdisplaying">
+            <Modal v-show="isShowingAccount">
                 <template #header>
                     <Button
                         size="sm"
@@ -284,16 +284,32 @@
                 </template>
                 <template #body>
                     <div class="flex flex-col gap-y-4 items-center">
-                        <AccountItem class="m-auto mt-4" :size="90" :chain="dialogChain"></AccountItem>
+                        <AccountItem
+                            class="m-auto mt-4"
+                            :size="90"
+                            :chain="showingAccountDetails.platform"
+                        ></AccountItem>
                         <span class="address text-xl font-semibold break-all text-center mt-4">
-                            {{ dialogAddress }}
+                            {{ showingAccountDetails.address }}
                         </span>
                         <Button
                             size="sm"
-                            class="text-md bg-account-btn-m text-account-btn-m-text shadow-account-btn-m m-auto mt-4"
-                            @click="copyToClipboard(dialogAddress)"
+                            class="
+                                text-md
+                                bg-account-btn-m
+                                text-account-btn-m-text
+                                shadow-account-btn-m
+                                m-auto
+                                mt-4
+                                w-1/4
+                            "
+                            @click="
+                                showingAccountDetails.isLink
+                                    ? toExternalLink(showingAccountDetails.link)
+                                    : copyToClipboard(showingAccountDetails.address)
+                            "
                         >
-                            Copy
+                            {{ showingAccountDetails.isLink ? 'Go' : 'Copy' }}
                         </Button>
                     </div>
                 </template>
@@ -442,9 +458,17 @@ export default class Home extends Vue {
     rss3?: IRSS3;
     isFollowing: boolean = false;
     isOwner: boolean = false;
-    isdisplaying: boolean = false;
-    dialogAddress: string = '';
-    dialogChain: string = '';
+    isShowingAccount: boolean = false;
+    showingAccountDetails: {
+        address: string;
+        platform: string;
+        isLink: boolean;
+        link?: string;
+    } = {
+        address: '',
+        platform: 'Ethereum',
+        isLink: false,
+    };
     isAccountExist: boolean = true;
     isShowingShareCard: boolean = false;
     isLoadingAssets: boolean = true;
@@ -490,9 +514,12 @@ export default class Home extends Vue {
         this.contents = [];
         this.isFollowing = false;
         this.isOwner = false;
-        this.isdisplaying = false;
-        this.dialogAddress = '';
-        this.dialogChain = '';
+        this.isShowingAccount = false;
+        this.showingAccountDetails = {
+            address: '',
+            platform: 'Ethereum',
+            isLink: false,
+        };
         this.isShowingShareCard = false;
         this.isLoadingContents = false;
         this.rss3Profile = {
@@ -988,14 +1015,27 @@ export default class Home extends Vue {
         window.open(link);
     }
 
-    public displayDialog(address: string, chain: string) {
-        this.dialogAddress = address;
-        this.dialogChain = chain;
-        this.isdisplaying = true;
+    public displayDialog(address: string, platform: string) {
+        if (platform === 'Misskey') {
+            this.showingAccountDetails = {
+                address,
+                platform,
+                isLink: true,
+                link: ContentProviders.misskey.getAccountLink(address),
+            };
+        } else {
+            this.showingAccountDetails = {
+                address,
+                platform,
+                isLink: false,
+            };
+        }
+
+        this.isShowingAccount = true;
     }
 
     public closeDialog() {
-        this.isdisplaying = false;
+        this.isShowingAccount = false;
     }
 
     public copyToClipboard(address: string) {
@@ -1007,6 +1047,10 @@ export default class Home extends Vue {
                 console.error('Async: Could not copy the account: ', err);
             },
         );
+    }
+
+    toExternalLink(link: string) {
+        window.open(link);
     }
 
     clickAddress() {
