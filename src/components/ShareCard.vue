@@ -46,7 +46,9 @@ export default class ShareCard extends Vue {
         // console.log(this.deepColor);
         // console.log(this.lightColor);
 
-        (<HTMLDivElement>this.$refs.card).style.background = this.createBackgroundString();
+        if (this.$refs.card) {
+            (<HTMLDivElement>this.$refs.card).style.background = this.createBackgroundString();
+        }
     }
 
     public createBackgroundString() {

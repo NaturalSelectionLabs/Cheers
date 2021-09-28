@@ -47,7 +47,9 @@ export default class FollowerCard extends Vue {
     setBGColor(rgb: [number, number, number]) {
         const hsl = rgbToHsl(...rgb);
         const newRGB = hslToRgb(hsl[0], hsl[1], 0.925);
-        (<HTMLDivElement>this.$refs.card).style.backgroundColor = `rgb(${newRGB[0]}, ${newRGB[1]}, ${newRGB[2]})`;
+        if (this.$refs.card) {
+            (<HTMLDivElement>this.$refs.card).style.backgroundColor = `rgb(${newRGB[0]}, ${newRGB[1]}, ${newRGB[2]})`;
+        }
         this.$emit('color', rgb);
     }
 }
