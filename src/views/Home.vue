@@ -573,7 +573,7 @@ export default class Home extends Vue {
         }, 0);
 
         // Load assets
-        this.startLoadingAssets();
+        this.startLoadingAssets(true);
 
         // Load Contents
         setTimeout(async () => {
@@ -616,9 +616,12 @@ export default class Home extends Vue {
         }, 0);
     }
 
-    startLoadingAssets() {
-        this.nfts = [];
-        this.gitcoins = [];
+    startLoadingAssets(clear: boolean) {
+        if (clear) {
+            this.nfts = [];
+            this.gitcoins = [];
+            this.isLoadingAssets = true;
+        }
         this.loadingAssetsIntervalID = setInterval(async () => {
             const data = await RSS3.getAssetProfile(this.ethAddress, true);
             if (data && data.status !== false) {
@@ -1091,7 +1094,7 @@ export default class Home extends Vue {
             // Reload
             if (this.isLoadingAssets || this.isOwner) {
                 this.startLoadingAccounts(await (<IRSS3>this.rss3).accounts.get(this.ethAddress));
-                this.startLoadingAssets();
+                this.startLoadingAssets(false);
             }
         } else {
             await this.initLoad();
