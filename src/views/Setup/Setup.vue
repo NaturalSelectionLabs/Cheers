@@ -262,8 +262,9 @@ export default class Setup extends Vue {
     isShowingNotice: Boolean = false;
     currentTheme: string = '';
     $gtag: any;
+    lastRoute: string = '';
 
-    async mounted() {
+    async initLoad() {
         if (!(await RSS3.reconnect())) {
             sessionStorage.setItem('redirectFrom', this.$route.fullPath);
             await this.$router.push('/');
@@ -313,22 +314,30 @@ export default class Setup extends Vue {
                 tags: ['pass:order:-1'],
             });
 
-            await this.loadAccounts(await (<IRSS3>this.rss3).accounts.get());
+            await this.loadMoreAccounts(await (<IRSS3>this.rss3).accounts.get());
         }, 0);
     }
 
-    startLoadingAssets() {
-        this.loadingAssetsIntervalID = setInterval(async () => {
-            const data = await RSS3.getAssetProfile((<IRSS3>this.rss3).account.address);
-            if (data && data.status !== false) {
-                await this.mergeAssets(await (<IRSS3>this.rss3).assets.get(), <GeneralAsset[]>data.assets);
-                this.isLoadingAssets = false;
-                if (this.loadingAssetsIntervalID) {
-                    clearInterval(this.loadingAssetsIntervalID);
-                    this.loadingAssetsIntervalID = null;
-                }
+    async ivLoadAssets(): Promise<boolean> {
+        const data = await RSS3.getAssetProfile((<IRSS3>this.rss3).account.address);
+        if (data && data.status !== false) {
+            await this.mergeAssets(await (<IRSS3>this.rss3).assets.get(), <GeneralAsset[]>data.assets);
+            this.isLoadingAssets = false;
+            if (this.loadingAssetsIntervalID) {
+                clearInterval(this.loadingAssetsIntervalID);
+                this.loadingAssetsIntervalID = null;
             }
-        }, 2000);
+            return true;
+        }
+        return false;
+    }
+
+    async startLoadingAssets() {
+        if (!(await this.ivLoadAssets())) {
+            this.loadingAssetsIntervalID = setInterval(async () => {
+                await this.ivLoadAssets();
+            }, 2000);
+        }
     }
 
     getTaggedOrder(taggedElement: RSS3Account | RSS3Asset): number {
@@ -354,7 +363,7 @@ export default class Setup extends Vue {
         return order;
     }
 
-    async loadAccounts(accounts: RSS3Account[]) {
+    async loadMoreAccounts(accounts: RSS3Account[]) {
         // Get accounts
         if (accounts) {
             accounts.forEach((account: RSS3Account) => {
@@ -493,7 +502,10 @@ export default class Setup extends Vue {
         await this.$router.push(redirectFrom || '/home');
     }
 
-    activated() {
+    async activated() {
+        if (this.lastRoute !== this.$route.fullPath) {
+            await this.initLoad();
+        }
         this.startLoadingAccounts();
         this.startLoadingAssets();
     }

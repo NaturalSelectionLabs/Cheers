@@ -494,7 +494,6 @@ export default class Home extends Vue {
         this.dialogAddress = '';
         this.dialogChain = '';
         this.isShowingShareCard = false;
-        this.isLoadingAssets = true;
         this.isLoadingContents = false;
         this.rss3Profile = {
             avatar: config.defaultAvatar,
@@ -544,7 +543,9 @@ export default class Home extends Vue {
         } else {
             if (!isValidRSS3) {
                 sessionStorage.setItem('redirectFrom', this.$route.fullPath);
+                this.ethAddress = '';
                 await this.$router.push('/');
+                return;
             } else {
                 this.rns = (await RNSUtils.addr2Name(owner)).replace(config.rns.suffix, '');
                 this.ethAddress = owner;
@@ -573,7 +574,7 @@ export default class Home extends Vue {
         }, 0);
 
         // Load assets
-        this.startLoadingAssets(true);
+        await this.startLoadingAssets(true);
 
         // Load Contents
         setTimeout(async () => {
@@ -583,22 +584,28 @@ export default class Home extends Vue {
     }
 
     async setupTheme() {
-        // Setup theme
-        const themes = RSS3.getAvailableThemes(await (<IRSS3>this.rss3).assets.get(this.ethAddress));
-        if (themes[0]) {
-            this.currentTheme = themes[0].name;
-            document.body.classList.add(themes[0].class);
+        if (this.ethAddress) {
+            // Setup theme
+            const themes = RSS3.getAvailableThemes(await (<IRSS3>this.rss3).assets.get(this.ethAddress));
+            if (themes[0]) {
+                this.currentTheme = themes[0].name;
+                document.body.classList.add(themes[0].class);
+            } else {
+                document.body.classList.remove(...document.body.classList);
+            }
         } else {
             document.body.classList.remove(...document.body.classList);
         }
     }
 
     async setPageTitleFavicon() {
-        const rss3 = await RSS3.visitor();
-        const profile = await rss3.profile.get(this.ethAddress);
-        const favicon = <HTMLLinkElement>document.getElementById('favicon');
-        favicon.href = profile?.avatar?.[0] || '/favicon.ico';
-        document.title = profile?.name || 'Web3 Pass';
+        if (this.ethAddress) {
+            const rss3 = await RSS3.visitor();
+            const profile = await rss3.profile.get(this.ethAddress);
+            const favicon = <HTMLLinkElement>document.getElementById('favicon');
+            favicon.href = profile?.avatar?.[0] || '/favicon.ico';
+            document.title = profile?.name || 'Web3 Pass';
+        }
     }
 
     startLoadingAccounts(accounts: RSS3Account[]) {
@@ -616,26 +623,31 @@ export default class Home extends Vue {
         }, 0);
     }
 
-    startLoadingAssets(clear: boolean) {
-        if (clear) {
+    async ivLoadAsset(refresh: boolean): Promise<boolean> {
+        const data = await RSS3.getAssetProfile(this.ethAddress, refresh);
+        if (data && data.status !== false) {
+            await this.mergeAssets(await (<IRSS3>this.rss3).assets.get(this.ethAddress), <GeneralAsset[]>data.assets);
+            this.isLoadingAssets = false;
+            if (this.loadingAssetsIntervalID) {
+                clearInterval(this.loadingAssetsIntervalID);
+                this.loadingAssetsIntervalID = null;
+            }
+            return true;
+        }
+        return false;
+    }
+
+    async startLoadingAssets(refresh: boolean) {
+        if (refresh) {
             this.nfts = [];
             this.gitcoins = [];
             this.isLoadingAssets = true;
         }
-        this.loadingAssetsIntervalID = setInterval(async () => {
-            const data = await RSS3.getAssetProfile(this.ethAddress, true);
-            if (data && data.status !== false) {
-                await this.mergeAssets(
-                    await (<IRSS3>this.rss3).assets.get(this.ethAddress),
-                    <GeneralAsset[]>data.assets,
-                );
-                this.isLoadingAssets = false;
-                if (this.loadingAssetsIntervalID) {
-                    clearInterval(this.loadingAssetsIntervalID);
-                    this.loadingAssetsIntervalID = null;
-                }
-            }
-        }, 2000);
+        if (!(await this.ivLoadAsset(refresh))) {
+            this.loadingAssetsIntervalID = setInterval(async () => {
+                await this.ivLoadAsset(refresh);
+            }, 2000);
+        }
     }
 
     getTaggedOrder(taggedElement: RSS3Account | RSS3Asset): number {
@@ -1094,7 +1106,7 @@ export default class Home extends Vue {
             // Reload
             if (this.isLoadingAssets || this.isOwner) {
                 this.startLoadingAccounts(await (<IRSS3>this.rss3).accounts.get(this.ethAddress));
-                this.startLoadingAssets(false);
+                await this.startLoadingAssets(false);
             }
         } else {
             await this.initLoad();

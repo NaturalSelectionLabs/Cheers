@@ -31,12 +31,19 @@ async function walletConnect(skipSign?: boolean) {
         // so here's just something crashing our API limits.
         // For infura, 403 requests are also seen as
         // consumed (57.13% of all requests).
-        rpc: '/void',
-        infuraId: 'useless_thing',
+        rpc: {
+            1: 'https://cloudflare-eth.com',
+        },
     });
 
     //  Enable session (triggers QR Code modal)
-    await provider.enable();
+    let session;
+    try {
+        session = await provider.enable();
+    } catch (e) {}
+    if (!session) {
+        return null;
+    }
 
     //  Create Web3 instance
     web3 = new Web3(provider as any);
@@ -125,12 +132,18 @@ async function disconnect() {
 
 export default {
     walletConnect: async () => {
-        localStorage.setItem('lastConnect', 'walletConnect');
-        return await walletConnect();
+        await walletConnect();
+        if (isValidRSS3()) {
+            localStorage.setItem('lastConnect', 'walletConnect');
+        }
+        return rss3;
     },
     metamaskConnect: async () => {
-        localStorage.setItem('lastConnect', 'metamask');
-        return await metamaskConnect();
+        await metamaskConnect();
+        if (isValidRSS3()) {
+            localStorage.setItem('lastConnect', 'metamask');
+        }
+        return rss3;
     },
     disconnect: async () => {
         disconnect();
@@ -141,12 +154,15 @@ export default {
             switch (lastConnect) {
                 case 'walletConnect':
                     await walletConnect(true);
-                    return true;
+                    break;
                 case 'metamask':
                     await metamaskConnect(true);
-                    return true;
-                default:
-                    return false;
+                    break;
+            }
+            if (isValidRSS3()) {
+                return true;
+            } else {
+                return false;
             }
         }
         return true;
