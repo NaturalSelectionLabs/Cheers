@@ -489,7 +489,6 @@ export default class Home extends Vue {
         this.dialogAddress = '';
         this.dialogChain = '';
         this.isShowingShareCard = false;
-        this.isLoadingAssets = true;
         this.isLoadingContents = false;
         this.rss3Profile = {
             avatar: config.defaultAvatar,
@@ -568,7 +567,7 @@ export default class Home extends Vue {
         }, 0);
 
         // Load assets
-        this.startLoadingAssets();
+        await this.startLoadingAssets(true);
 
         // Load contents
         setTimeout(async () => {
@@ -617,23 +616,31 @@ export default class Home extends Vue {
         }, 0);
     }
 
-    startLoadingAssets() {
-        this.nfts = [];
-        this.gitcoins = [];
-        this.loadingAssetsIntervalID = setInterval(async () => {
-            const data = await RSS3.getAssetProfile(this.ethAddress, true);
-            if (data && data.status !== false) {
-                await this.mergeAssets(
-                    await (<IRSS3>this.rss3).assets.get(this.ethAddress),
-                    <GeneralAsset[]>data.assets,
-                );
-                this.isLoadingAssets = false;
-                if (this.loadingAssetsIntervalID) {
-                    clearInterval(this.loadingAssetsIntervalID);
-                    this.loadingAssetsIntervalID = null;
-                }
+    async ivLoadAsset(refresh: boolean): Promise<boolean> {
+        const data = await RSS3.getAssetProfile(this.ethAddress, refresh);
+        if (data && data.status !== false) {
+            await this.mergeAssets(await (<IRSS3>this.rss3).assets.get(this.ethAddress), <GeneralAsset[]>data.assets);
+            this.isLoadingAssets = false;
+            if (this.loadingAssetsIntervalID) {
+                clearInterval(this.loadingAssetsIntervalID);
+                this.loadingAssetsIntervalID = null;
             }
-        }, 2000);
+            return true;
+        }
+        return false;
+    }
+
+    async startLoadingAssets(refresh: boolean) {
+        if (refresh) {
+            this.nfts = [];
+            this.gitcoins = [];
+            this.isLoadingAssets = true;
+        }
+        if (!(await this.ivLoadAsset(refresh))) {
+            this.loadingAssetsIntervalID = setInterval(async () => {
+                await this.ivLoadAsset(refresh);
+            }, 2000);
+        }
     }
 
     getTaggedOrder(taggedElement: RSS3Account | RSS3Asset): number {
@@ -1029,7 +1036,7 @@ export default class Home extends Vue {
             // Reload
             if (this.isLoadingAssets || this.isOwner) {
                 this.startLoadingAccounts();
-                this.startLoadingAssets();
+                await this.startLoadingAssets(false);
             }
         } else {
             await this.initLoad();
