@@ -89,6 +89,7 @@ async function visitor() {
 
 async function metamaskConnect(skipSign?: boolean) {
     const metamaskEthereum = (window as any).ethereum;
+    await metamaskEthereum.enable();
     web3 = new Web3(metamaskEthereum);
 
     let address: string;
