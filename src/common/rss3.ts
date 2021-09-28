@@ -31,8 +31,7 @@ async function walletConnect(skipSign?: boolean) {
         // so here's just something crashing our API limits.
         // For infura, 403 requests are also seen as
         // consumed (57.13% of all requests).
-        rpc: '//void',
-        pollingInterval: 2147483647,
+        rpc: '/void',
         infuraId: 'useless_thing',
     });
 

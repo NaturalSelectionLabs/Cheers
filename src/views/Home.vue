@@ -482,9 +482,6 @@ export default class Home extends Vue {
 
     async initLoad() {
         this.lastRoute = this.$route.fullPath;
-        this.accounts = [];
-        this.nfts = [];
-        this.gitcoins = [];
         this.contents = [];
         this.isFollowing = false;
         this.isOwner = false;
@@ -560,17 +557,7 @@ export default class Home extends Vue {
             this.rss3Profile.address = this.ethAddress;
         }, 0);
 
-        setTimeout(async () => {
-            // Push original account
-            this.accounts.push({
-                platform: 'Ethereum',
-                identity: this.ethAddress,
-                signature: '',
-                tags: ['pass:order:-1'],
-            });
-
-            await this.loadAccounts(await (<IRSS3>this.rss3).accounts.get(this.ethAddress));
-        }, 0);
+        this.startLoadingAccounts();
 
         setTimeout(async () => {
             this.rss3Relations.followers = (await (<IRSS3>this.rss3).backlinks.get(this.ethAddress, 'following')) || [];
@@ -607,7 +594,24 @@ export default class Home extends Vue {
         document.title = profile?.name || 'Web3 Pass';
     }
 
+    startLoadingAccounts() {
+        this.accounts = [];
+        setTimeout(async () => {
+            // Push original account
+            this.accounts.push({
+                platform: 'Ethereum',
+                identity: this.ethAddress,
+                signature: '',
+                tags: ['pass:order:-1'],
+            });
+
+            await this.loadAccounts(await (<IRSS3>this.rss3).accounts.get(this.ethAddress));
+        }, 0);
+    }
+
     startLoadingAssets() {
+        this.nfts = [];
+        this.gitcoins = [];
         this.loadingAssetsIntervalID = setInterval(async () => {
             const data = await RSS3.getAssetProfile(this.ethAddress, true);
             if (data && data.status !== false) {
@@ -1000,9 +1004,7 @@ export default class Home extends Vue {
 
     async activated() {
         if (this.lastRoute === this.$route.fullPath) {
-            if (this.isLoadingAssets) {
-                this.startLoadingAssets();
-            }
+            // Recover scroll position
             const el = document.getElementById('main');
             const nfts = document.getElementById('nfts-card')?.getElementsByClassName('card-content')?.[0];
             const gitcoins = document.getElementById('gitcoins-card')?.getElementsByClassName('card-content')?.[0];
@@ -1015,7 +1017,10 @@ export default class Home extends Vue {
             if (gitcoins) {
                 gitcoins.scrollLeft = this.scrollGitcoinsLeft;
             }
-            if (this.isOwner) {
+
+            // Reload
+            if (this.isLoadingAssets || this.isOwner) {
+                this.startLoadingAccounts();
                 this.startLoadingAssets();
             }
         } else {
