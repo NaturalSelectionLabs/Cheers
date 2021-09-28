@@ -42,7 +42,7 @@
                     >
                         <template #item="{ element }">
                             <NFTItem
-                                class="inline-flex m-0.5"
+                                class="inline-flex m-0.5 cursor-pointer"
                                 :size="64"
                                 :image-url="element.info?.image_preview_url"
                                 :data-info="JSON.stringify(element)"
@@ -91,7 +91,7 @@
                         >
                             <template #item="{ element }">
                                 <NFTItem
-                                    class="inline-flex m-0.5"
+                                    class="inline-flex m-0.5 cursor-pointer"
                                     :size="64"
                                     :image-url="element.info?.image_preview_url"
                                 />
