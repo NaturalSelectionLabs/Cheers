@@ -98,12 +98,13 @@ function validateNetwork(chain: number | null, cb?: (chain: number | null) => vo
     if (config.rns.test && chain !== 0x3) {
         alert('Please switch to ropsten network.');
         cb ? cb(chain) : '';
-        throw 'Network error';
+        return false;
     } else if (!config.rns.test && chain !== 0x1) {
         alert('Please switch to mainnet network.');
         cb ? cb(chain) : '';
-        throw 'Network error';
+        return false;
     }
+    return true;
 }
 @Options({
     name: 'RNS',
@@ -144,11 +145,15 @@ export default class RNS extends Vue {
                 method: 'eth_requestAccounts',
             });
             const chain: string | null = await metamaskEthereum.request({ method: 'eth_chainId' });
-            validateNetwork(Number(chain));
-            const rns = (await RNSUtils.addr2Name((<IRSS3>this.rss3).account.address)).replace(config.rns.suffix, '');
-            if (rns !== '') {
-                this.rns = rns;
-                this.isDisabled = true;
+            if (validateNetwork(Number(chain))) {
+                const rns = (await RNSUtils.addr2Name((<IRSS3>this.rss3).account.address)).replace(
+                    config.rns.suffix,
+                    '',
+                );
+                if (rns !== '') {
+                    this.rns = rns;
+                    this.isDisabled = true;
+                }
             }
         }
     }
