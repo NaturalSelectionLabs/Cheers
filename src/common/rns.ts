@@ -6,6 +6,8 @@ import { utils } from 'ethers/lib';
 type SPEED = 'fast' | 'average' | 'fastest' | 'safeLow' | undefined;
 type CNAME = 'resolver' | 'token';
 
+let idNo = -1;
+
 async function callRNSContract<T>(
     cname: CNAME,
     providerType: 'web3' | 'infura',
@@ -13,16 +15,26 @@ async function callRNSContract<T>(
     method: string,
     ...args: any
 ): Promise<T> {
-    let provider: ethers.providers.Web3Provider | ethers.providers.AlchemyProvider;
+    let provider: ethers.providers.Web3Provider | ethers.providers.InfuraProvider;
     let signer; // TODO
     if (providerType === 'web3') {
         provider = new ethers.providers.Web3Provider((window as any).ethereum);
         signer = provider.getSigner();
     } else {
-        provider = new ethers.providers.AlchemyProvider(
-            config.rns.test ? 'ropsten' : 'homestead',
-            config.alchemyApiKey,
-        );
+        if (idNo === -1) {
+            const poolSize = config.infuraId.length;
+            const idStart = Math.floor(Math.random() * poolSize);
+            for (let i = 0; i < poolSize; i++) {
+                if (await checkInfuraID(config.infuraId[(idStart + i) % poolSize])) {
+                    idNo = (idStart + i) % poolSize;
+                    break;
+                }
+            }
+        }
+
+        provider = new ethers.providers.InfuraProvider(config.rns.test ? 'ropsten' : 'homestead', {
+            projectId: config.infuraId[idNo],
+        });
     }
 
     const contract = await new ethers.Contract(
