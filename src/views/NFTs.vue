@@ -177,7 +177,7 @@ export default class NFTs extends Vue {
             }
         }
 
-        this.nfts = NFTList.filter((asset) => !asset.tags || asset.tags.indexOf('pass:hidden') === -1).sort(
+        this.nfts = NFTList.filter((asset) => asset.tags?.indexOf('pass:hidden') === -1).sort(
             (a, b) => this.getAssetOrder(a) - this.getAssetOrder(b),
         );
     }
