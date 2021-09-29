@@ -34,7 +34,11 @@
         />
         <iframe
             v-else-if="
-                ((imageUrl?.endsWith('embed') || imageUrl?.includes('farmhero.io') || imageUrl?.endsWith('.html')) &&
+                ((imageUrl?.endsWith('embed') ||
+                    imageUrl?.includes('farmhero.io') ||
+                    imageUrl?.includes('0xAdventures.com') ||
+                    imageUrl?.includes('crudefingers.com') ||
+                    imageUrl?.endsWith('.html')) &&
                     isShowingDetails) ||
                 imageUrl?.includes('artblocks.io')
             "
@@ -63,11 +67,7 @@
         />
         <img
             v-else
-            :src="
-                (imageUrl?.endsWith('.glb') || imageUrl?.endsWith('.gltf') || imageUrl?.endsWith('.html')
-                    ? posterUrl
-                    : imageUrl) || defaultImage
-            "
+            :src="isShowingDetails ? imageUrl || posterUrl || defaultImage : posterUrl || imageUrl || defaultImage"
             class="nft-item"
             :class="[!isShowingDetails ? 'object-cover' : 'object-contain']"
             :style="{
