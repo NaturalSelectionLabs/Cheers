@@ -29,18 +29,18 @@
             loop
             webkit-playsinline
             playsinline
-            :muted="true"
+            muted
             :controls="isShowingDetails"
         />
         <iframe
             v-else-if="
-                ((imageUrl?.endsWith('embed') ||
+                (imageUrl?.endsWith('embed') ||
                     imageUrl?.includes('farmhero.io') ||
                     imageUrl?.includes('0xAdventures.com') ||
                     imageUrl?.includes('crudefingers.com') ||
+                    imageUrl?.includes('artblocks.io') ||
                     imageUrl?.endsWith('.html')) &&
-                    isShowingDetails) ||
-                imageUrl?.includes('artblocks.io')
+                isShowingDetails
             "
             :src="imageUrl"
             class="nft-item"
