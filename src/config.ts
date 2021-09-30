@@ -1,7 +1,14 @@
 export default {
-    alchemyApiKey: 'HldygkzebeQRTEDHgjwhuaXwY4eUf5R1',
+    infuraId: [
+        '76af1228cdf345d2bff6a9c0f35112e1',
+        'cddf9c43e60e4fee9dd875f3f88f6c0a',
+        'b2a1e1f49ce04af49b304cb281364053',
+        'a34494c90ca24f30b003a41b5a4c7752',
+        'bad1e9a0ade24a0da20859746c54ad32',
+    ],
     hubEndpoint: 'https://hub.pass3.me',
     defaultAvatar: 'https://rss3.mypinata.cloud/ipfs/QmVFq9qimnudPcs6QkQv8ZVEsvwD3aqETHWtS5yXgdbYY5',
+    hideUnlistedAsstes: false,
     theme: [
         {
             name: 'loot',

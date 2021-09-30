@@ -29,14 +29,18 @@
             loop
             webkit-playsinline
             playsinline
-            :muted="true"
+            muted
             :controls="isShowingDetails"
         />
         <iframe
             v-else-if="
-                ((imageUrl?.endsWith('embed') || imageUrl?.includes('farmhero.io') || imageUrl?.endsWith('.html')) &&
-                    isShowingDetails) ||
-                imageUrl?.includes('artblocks.io')
+                (imageUrl?.endsWith('embed') ||
+                    imageUrl?.includes('farmhero.io') ||
+                    imageUrl?.includes('0xAdventures.com') ||
+                    imageUrl?.includes('crudefingers.com') ||
+                    imageUrl?.includes('artblocks.io') ||
+                    imageUrl?.endsWith('.html')) &&
+                isShowingDetails
             "
             :src="imageUrl"
             class="nft-item"
@@ -63,11 +67,7 @@
         />
         <img
             v-else
-            :src="
-                (imageUrl?.endsWith('.glb') || imageUrl?.endsWith('.gltf') || imageUrl?.endsWith('.html')
-                    ? posterUrl
-                    : imageUrl) || defaultImage
-            "
+            :src="isShowingDetails ? imageUrl || posterUrl || defaultImage : posterUrl || imageUrl || defaultImage"
             class="nft-item"
             :class="[!isShowingDetails ? 'object-cover' : 'object-contain']"
             :style="{

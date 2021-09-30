@@ -149,7 +149,9 @@ export default class NFTs extends Vue {
         const assetsMerge: GeneralAssetWithTags[] = await Promise.all(
             (assetsGrabbed || []).map(async (ag: GeneralAssetWithTags) => {
                 const origType = ag.type;
-                ag.type = 'Invalid'; // Using as a match mark
+                if (config.hideUnlistedAsstes) {
+                    ag.type = 'Invalid'; // Using as a match mark
+                }
                 for (const airf of assetsInRSS3File) {
                     if (
                         airf.platform === ag.platform &&
