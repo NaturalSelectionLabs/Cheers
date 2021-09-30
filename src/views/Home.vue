@@ -763,7 +763,7 @@ export default class Home extends Vue {
         // Default by hub
         this.isContentsHaveMoreEachProvider.push({
             provider: {
-                platform: 'Ethereum',
+                platform: 'RSS3',
                 identity: 'hub',
                 signature: '',
             },
@@ -771,15 +771,15 @@ export default class Home extends Vue {
             lastTS: 0xffffffff,
         });
         // Accounts
-        for (const account of accounts) {
-            if (account.platform === 'Misskey') {
-                this.isContentsHaveMoreEachProvider.push({
-                    provider: account,
-                    more: true,
-                    lastTS: 0xffffffff,
-                });
-            }
-        }
+        // for (const account of accounts) {
+        //     if (account.platform === 'Misskey') {
+        //         this.isContentsHaveMoreEachProvider.push({
+        //             provider: account,
+        //             more: true,
+        //             lastTS: 0xffffffff,
+        //         });
+        //     }
+        // }
 
         await this.loadMoreContents();
     }
@@ -793,9 +793,9 @@ export default class Home extends Vue {
         let isHavingMore: boolean = false;
         const contentsMerge: Content[] = [];
         for (const provider of this.isContentsHaveMoreEachProvider) {
-            if (provider.provider.platform === 'Ethereum' && provider.provider.identity === 'hub') {
+            if (provider.provider.platform === 'RSS3' && provider.provider.identity === 'hub') {
                 if (provider.more) {
-                    const contents = await ContentProviders.mirror.get(this.ethAddress, 0, provider.lastTS);
+                    const contents = await ContentProviders.hub.get(this.ethAddress, 0, provider.lastTS);
                     if (contents.length < config.contentRequestLimit) {
                         // No more
                         provider.more = false;
@@ -810,24 +810,6 @@ export default class Home extends Vue {
                         ) {
                             contentsMerge.push(content);
                         }
-
-                        if (provider.lastTS >= content.info.timestamp) {
-                            provider.lastTS = content.info.timestamp - 1;
-                        }
-                    }
-                }
-            } else if (provider.provider.platform === 'Misskey') {
-                if (provider.more) {
-                    const contents = await ContentProviders.misskey.get(provider.provider.identity, 0, provider.lastTS);
-                    if (contents.length < config.contentRequestLimit) {
-                        // No more
-                        provider.more = false;
-                    } else {
-                        isHavingMore = true;
-                    }
-
-                    for (const content of contents) {
-                        contentsMerge.push(content);
 
                         if (provider.lastTS >= content.info.timestamp) {
                             provider.lastTS = content.info.timestamp - 1;

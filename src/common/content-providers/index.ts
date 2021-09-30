@@ -1,4 +1,4 @@
-import mirror from './mirror';
+import hub from './hub';
 import misskey from './misskey';
 
 interface ContentInfo {
@@ -19,6 +19,6 @@ export interface Content {
 }
 
 export default {
-    mirror,
+    hub,
     misskey,
 };
