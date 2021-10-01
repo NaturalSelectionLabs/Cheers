@@ -406,7 +406,7 @@ export default class SetupAccounts extends Vue {
                 this.toAdd.push(newAccount);
             }
         } else {
-            this.addAccountNotice = newAccount.signature;
+            this.addAccountNotice = newAccount.signature || '';
             this.isShowingAddAccountNotice = true;
         }
         this.mode = 'normal';
