@@ -618,6 +618,7 @@ export default class Home extends Vue {
 
     async ivLoadAsset(refresh: boolean): Promise<boolean> {
         const data = await RSS3.getAssetProfile(this.ethAddress, refresh);
+        console.log(data);
         if (data && data.status !== false) {
             await this.mergeAssets(await (<IRSS3>this.rss3).assets.get(this.ethAddress), <GeneralAsset[]>data.assets);
             this.isLoadingAssets = false;
@@ -703,6 +704,7 @@ export default class Home extends Vue {
                 return ag;
             }),
         );
+        console.log('assetsMerge', assetsMerge);
 
         const NFTList: GeneralAssetWithTags[] = [];
         const GitcoinList: GeneralAssetWithTags[] = [];
@@ -715,10 +717,10 @@ export default class Home extends Vue {
             } // else Invalid
         }
 
-        this.nfts = NFTList.filter((asset) => asset.tags?.indexOf('pass:hidden') === -1).sort(
+        this.nfts = NFTList.filter((asset) => !asset.tags || asset.tags.indexOf('pass:hidden') === -1).sort(
             (a, b) => this.getAssetOrder(a) - this.getAssetOrder(b),
         );
-        this.gitcoins = GitcoinList.filter((asset) => asset.tags?.indexOf('pass:hidden') === -1).sort(
+        this.gitcoins = GitcoinList.filter((asset) => !asset.tags || asset.tags.indexOf('pass:hidden') === -1).sort(
             (a, b) => this.getAssetOrder(a) - this.getAssetOrder(b),
         );
     }
