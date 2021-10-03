@@ -618,7 +618,6 @@ export default class Home extends Vue {
 
     async ivLoadAsset(refresh: boolean): Promise<boolean> {
         const data = await RSS3.getAssetProfile(this.ethAddress, refresh);
-        console.log(data);
         if (data && data.status !== false) {
             await this.mergeAssets(await (<IRSS3>this.rss3).assets.get(this.ethAddress), <GeneralAsset[]>data.assets);
             this.isLoadingAssets = false;
@@ -704,7 +703,6 @@ export default class Home extends Vue {
                 return ag;
             }),
         );
-        console.log('assetsMerge', assetsMerge);
 
         const NFTList: GeneralAssetWithTags[] = [];
         const GitcoinList: GeneralAssetWithTags[] = [];
