@@ -283,7 +283,7 @@ import Input from '@/components/Input.vue';
 export default class SetupAccounts extends Vue {
     avatar: String = '';
     additionalMetamaskAccounts: String[] = ['Ethereum', 'BSC'];
-    additionalNoSignAccounts: String[] = ['Misskey'];
+    additionalNoSignAccounts: String[] = ['Misskey', 'Twitter'];
     show: RSS3Account[] = [];
     hide: RSS3Account[] = [];
     toAdd: RSS3Account[] = [];
@@ -413,9 +413,11 @@ export default class SetupAccounts extends Vue {
     }
 
     async addNoSignAccount(platform: string) {
+        this.specifyNoSignAccount.platform = platform;
         if (platform === 'Misskey') {
-            this.specifyNoSignAccount.platform = platform;
             this.specifyNoSignAccount.notice = 'username@instance.ltd';
+        } else if (platform === 'Twitter') {
+            this.specifyNoSignAccount.notice = 'username';
         }
         this.isShowingAddSpecifyAccountInput = true;
     }
@@ -428,6 +430,18 @@ export default class SetupAccounts extends Vue {
         if (
             this.specifyNoSignAccount.platform === 'Misskey' &&
             (await ContentProviders.misskey.verify(this.specifyNoSignAccount.account, rns, ethAddres))
+        ) {
+            // Pass
+            const newAccount = {
+                platform: this.specifyNoSignAccount.platform,
+                identity: this.specifyNoSignAccount.account,
+                signature: '',
+            };
+            this.show.push(newAccount);
+            this.toAdd.push(newAccount);
+        } else if (
+            this.specifyNoSignAccount.platform === 'Twitter' &&
+            (await ContentProviders.twitter.verify(this.specifyNoSignAccount.account, rns, ethAddres))
         ) {
             // Pass
             const newAccount = {

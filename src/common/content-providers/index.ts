@@ -1,5 +1,6 @@
 import hub from './hub';
 import misskey from './misskey';
+import twitter from './twitter';
 
 interface ContentInfo {
     title: string;
@@ -21,4 +22,5 @@ export interface Content {
 export default {
     hub,
     misskey,
+    twitter,
 };

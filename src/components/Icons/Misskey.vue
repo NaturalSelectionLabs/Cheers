@@ -4,7 +4,7 @@
         data-name="Misskey Logo"
         xmlns="http://www.w3.org/2000/svg"
         xmlns:xlink="http://www.w3.org/1999/xlink"
-        viewBox="0 0 304 304"
+        viewBox="0 0 304 222"
         :width="size"
         :height="size"
     >

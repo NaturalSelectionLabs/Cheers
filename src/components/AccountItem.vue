@@ -7,6 +7,7 @@
                 'bg-Ethereum': chain === 'Ethereum',
                 'bg-Ronin': chain === 'Ronin',
                 'bg-Misskey': chain === 'Misskey',
+                'bg-Twitter': chain === 'Twitter',
             }"
             :style="{ width: size + 'px', height: size + 'px' }"
         ></div>
