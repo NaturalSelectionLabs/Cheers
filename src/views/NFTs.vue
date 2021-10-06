@@ -19,11 +19,11 @@
                     @click="toPublicPage(rns || ethAddress)"
                 />
             </div>
-            <div class="nft-list grid grid-cols-2 lg:grid-cols-3 gap-6 justify-items-center">
+            <div class="nft-list grid grid-cols-2 sm:grid-cols-3 gap-6 justify-items-center">
                 <div class="relative" v-for="item in nfts" :key="item.platform + item.identity + item.id">
                     <NFTItem
                         class="cursor-pointer"
-                        :size="NFTWidth > 300 ? 300 : NFTWidth"
+                        :size="NFTWidth"
                         :imageUrl="item.info.animation_url || item.info.image_preview_url"
                         :poster-url="item.info.image_preview_url"
                         @click="toSingleNFTPage(item.platform, item.identity, item.id)"
@@ -79,7 +79,7 @@ interface Profile {
 export default class NFTs extends Vue {
     rns: string = '';
     ethAddress: string = '';
-    NFTWidth: number = (window.innerWidth - 52) / 2;
+    NFTWidth: number = 0;
     isOwner: boolean = false;
     nfts: GeneralAssetWithTags[] = [];
     rss3Profile: Profile = {
@@ -93,6 +93,12 @@ export default class NFTs extends Vue {
     lastRoute: string = '';
 
     async mounted() {
+        this.setNFTItemSize();
+        window.onresize = () => {
+            return (() => {
+                this.setNFTItemSize();
+            })();
+        };
         this.mountScrollEvent();
     }
 
@@ -132,6 +138,14 @@ export default class NFTs extends Vue {
 
         if (data) {
             await this.loadNFTs(await rss3.assets.get(this.ethAddress), <GeneralAsset[]>data.assets);
+        }
+    }
+
+    private setNFTItemSize() {
+        if (window.innerWidth <= 640) {
+            this.NFTWidth = Math.min((window.innerWidth - 52) / 2, 250);
+        } else {
+            this.NFTWidth = Math.min((window.innerWidth - 78) / 3, 300);
         }
     }
 
