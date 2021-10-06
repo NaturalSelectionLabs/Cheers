@@ -457,6 +457,7 @@ export default class SetupAccounts extends Vue {
             this.isShowingAddAccountNotice = true;
         }
 
+        this.specifyNoSignAccount.account = '';
         this.isLoading = false;
         this.mode = 'normal';
     }
