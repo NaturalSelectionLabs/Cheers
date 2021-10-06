@@ -148,6 +148,16 @@ export default {
     },
     disconnect: disconnect,
     reconnect: async (): Promise<boolean> => {
+        // Migrate
+        if (localStorage.getItem('lastConnect')) {
+            Cookies.set('LAST_CONNECT_METHOD', localStorage.getItem('lastConnect'));
+            localStorage.removeItem('lastConnect');
+        }
+        if (localStorage.getItem('lastAddress')) {
+            Cookies.set('LAST_CONNECT_ADDRESS', localStorage.getItem('lastAddress'));
+            localStorage.removeItem('lastAddress');
+        }
+
         if (!isValidRSS3()) {
             const lastConnect = Cookies.get('LAST_CONNECT_METHOD');
             switch (lastConnect) {
