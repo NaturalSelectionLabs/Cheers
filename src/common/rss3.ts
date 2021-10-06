@@ -95,7 +95,7 @@ async function metamaskConnect(skipSign?: boolean) {
 
     let address: string;
     if (Cookies.get('LAST_CONNECT_METHOD') === 'metamask' && Cookies.get('LAST_CONNECT_ADDRESS')) {
-        address = Cookies.get('lastAddress');
+        address = Cookies.get('LAST_CONNECT_ADDRESS');
     } else {
         const accounts = await metamaskEthereum.request({
             method: 'eth_requestAccounts',
