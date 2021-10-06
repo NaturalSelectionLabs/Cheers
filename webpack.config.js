@@ -143,11 +143,9 @@ module.exports = (env, argv) => ({
     plugins: [
         new HtmlWebpackPlugin({
             chunks: ['index'],
-            filename: 'index.html',
-            title: 'RSS3 Page',
-            // favicon: 'public/favicon.ico',
+            filename: 'index.ejs',
             hash: true,
-            template: 'src/assets/index.ejs',
+            template: '!!raw-loader!src/assets/index.ejs',
         }),
         new CopyPlugin({
             patterns: [
