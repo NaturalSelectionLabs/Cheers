@@ -42,12 +42,7 @@ async function callRNSContract<T>(
         config.rns.contract[cname],
         signer ? signer : provider,
     );
-    let isView = false;
-    const abi = config.rns.contract[cname].find((item: any) => item.name === method);
-    if (abi) {
-        isView = abi.stateMutability === 'view';
-    }
-    return contract[method](...args, isView ? null : await makeTxParams(speed));
+    return contract[method](...args);
 }
 
 async function checkInfuraID(id: string) {
@@ -65,23 +60,6 @@ async function checkInfuraID(id: string) {
         console.log(e);
     }
     return false;
-}
-
-async function makeTxParams(speed: SPEED): Promise<ethers.Overrides> {
-    speed = speed ? speed : 'average';
-    const gasPrice = (
-        await axios.get('https://ethgasstation.info/api/ethgasAPI.json', {
-            params: {
-                'api-key': '403f08c04612ca8c165ae6855136505f7acf017b2662126699e43a874ef6',
-            },
-        })
-    ).data;
-    let gasGwei: string = '30';
-    gasGwei = (gasPrice[speed] / 10).toString();
-    return {
-        gasLimit: 1000000,
-        gasPrice: ethers.utils.parseUnits(gasGwei, 'gwei'),
-    };
 }
 
 function getRNSContract(cname: CNAME) {

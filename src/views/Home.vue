@@ -808,6 +808,13 @@ export default class Home extends Vue {
                     }
 
                     for (const content of contents) {
+                        // temp. fix mirror undefined error
+                        if (content.info.link.includes('//undefined.mirror.xyz/')) {
+                            content.info.link = `https://mirror.xyz/${content.identity}/${content.info.link
+                                .split('/')
+                                .pop()}`;
+                        }
+
                         if (
                             content.accessible !== false &&
                             contentsMerge.findIndex((ctx) => ctx.info.title === content.info.title) === -1 // todo: opt-out this

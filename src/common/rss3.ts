@@ -5,6 +5,7 @@ import { RSS3AccountInput, RSS3Account, RSS3Asset } from 'rss3-next/types/rss3';
 import axios from 'axios';
 import { GitcoinResponse, GeneralAsset, NFTResponse } from './types';
 import config from '@/config';
+import Cookies from 'js-cookie';
 
 let rss3: RSS3 | null;
 let web3: Web3 | null;
@@ -92,8 +93,8 @@ async function metamaskConnect(skipSign?: boolean) {
     web3 = new Web3(metamaskEthereum);
 
     let address: string;
-    if (localStorage.getItem('lastConnect') === 'metamask' && localStorage.getItem('lastAddress')) {
-        address = <string>localStorage.getItem('lastAddress');
+    if (Cookies.get('LAST_CONNECT_METHOD') === 'metamask' && Cookies.get('LAST_CONNECT_ADDRESS')) {
+        address = Cookies.get('LAST_CONNECT_ADDRESS');
     } else {
         const accounts = await metamaskEthereum.request({
             method: 'eth_requestAccounts',
@@ -125,31 +126,39 @@ async function disconnect() {
     if (provider) {
         await provider.disconnect();
     }
-    localStorage.removeItem('lastConnect');
-    localStorage.removeItem('lastAddress');
+    Cookies.remove('LAST_CONNECT_METHOD');
+    Cookies.remove('LAST_CONNECT_ADDRESS');
 }
 
 export default {
     walletConnect: async () => {
         await walletConnect();
         if (isValidRSS3()) {
-            localStorage.setItem('lastConnect', 'walletConnect');
+            Cookies.set('LAST_CONNECT_METHOD', 'walletConnect');
         }
         return rss3;
     },
     metamaskConnect: async () => {
         await metamaskConnect();
         if (isValidRSS3()) {
-            localStorage.setItem('lastConnect', 'metamask');
+            Cookies.set('LAST_CONNECT_METHOD', 'metamask');
         }
         return rss3;
     },
-    disconnect: async () => {
-        disconnect();
-    },
+    disconnect: disconnect,
     reconnect: async (): Promise<boolean> => {
+        // Migrate
+        if (localStorage.getItem('lastConnect')) {
+            Cookies.set('LAST_CONNECT_METHOD', localStorage.getItem('lastConnect'));
+            localStorage.removeItem('lastConnect');
+        }
+        if (localStorage.getItem('lastAddress')) {
+            Cookies.set('LAST_CONNECT_ADDRESS', localStorage.getItem('lastAddress'));
+            localStorage.removeItem('lastAddress');
+        }
+
         if (!isValidRSS3()) {
-            const lastConnect = localStorage.getItem('lastConnect');
+            const lastConnect = Cookies.get('LAST_CONNECT_METHOD');
             switch (lastConnect) {
                 case 'walletConnect':
                     await walletConnect(true);
@@ -158,11 +167,7 @@ export default {
                     await metamaskConnect(true);
                     break;
             }
-            if (isValidRSS3()) {
-                return true;
-            } else {
-                return false;
-            }
+            return isValidRSS3();
         }
         return true;
     },
