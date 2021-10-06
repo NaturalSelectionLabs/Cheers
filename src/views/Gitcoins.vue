@@ -1,6 +1,6 @@
 <template>
     <div id="main" class="h-screen bg-gitcoin-bg overflow-y-auto">
-        <div class="px-4 pt-8 pb-32 max-w-md m-auto">
+        <div class="px-4 pt-8 pb-32 max-w-screen-lg m-auto">
             <div class="header flex justify-between items-center pb-4">
                 <Button
                     size="sm"
@@ -26,12 +26,12 @@
                     @click="toPublicPage(rns || ethAddress)"
                 />
             </div>
+            <GitcoinTitle class="mb-6" :grants="grants" :contributions="contribs" />
             <div
-                class="gitcoin-gitcoins flex flex-col gap-y-4"
+                class="gitcoin-gitcoins grid grid-cols-1 sm:grid-cols-2 gap-6"
                 :class="{ 'pb-16': isOwner }"
                 v-show="gitcoins.length !== 0"
             >
-                <GitcoinTitle :grants="grants" :contributions="contribs"></GitcoinTitle>
                 <GitcoinCard
                     v-for="item in gitcoins"
                     :key="item.platform + item.identity + item.id"
@@ -66,7 +66,7 @@ import GitcoinTitle from '@/components/GitcoinTitle.vue';
 import GitcoinCard from '@/components/GitcoinCard.vue';
 import config from '@/config';
 import RNSUtils from '@/common/rns';
-import RSS3, { IRSS3 } from '@/common/rss3';
+import RSS3 from '@/common/rss3';
 import { GeneralAsset, GeneralAssetWithTags } from '@/common/types';
 import { RSS3Asset } from 'rss3-next/types/rss3';
 import { debounce } from 'lodash';
@@ -85,11 +85,11 @@ interface Profile {
 export default class Gitcoins extends Vue {
     rns: string = '';
     ethAddress: string = '';
-    public grants: number = 0;
-    public contribs: number = 0;
-    public gitcoins: GeneralAssetWithTags[] = [];
-    public isOwner: boolean = false;
-    public rss3Profile: Profile = {
+    grants: number = 0;
+    contribs: number = 0;
+    gitcoins: GeneralAssetWithTags[] = [];
+    isOwner: boolean = false;
+    rss3Profile: Profile = {
         avatar: config.defaultAvatar,
         username: '',
         address: '',
@@ -192,23 +192,23 @@ export default class Gitcoins extends Vue {
         this.grants = this.gitcoins.length;
     }
 
-    public toPublicPage(address: string) {
+    toPublicPage(address: string) {
         this.$router.push(`/${address}`);
     }
 
-    public back() {
+    back() {
         this.$router.push(`/${this.rns || this.ethAddress}`);
     }
 
-    public toSetupGitcoins() {
+    toSetupGitcoins() {
         this.$router.push(`/setup/gitcoins`);
     }
 
-    public toGitcoin() {
+    toGitcoin() {
         window.open(`https://gitcoin.co/`);
     }
 
-    public toSingleGitcoin(platform: string, identity: string, id: string) {
+    toSingleGitcoin(platform: string, identity: string, id: string) {
         this.$router.push(`/${this.rns || this.ethAddress}/singlegitcoin/${platform}/${identity}/${id}`);
     }
 
