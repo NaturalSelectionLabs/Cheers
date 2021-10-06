@@ -42,7 +42,7 @@ async function callRNSContract<T>(
         config.rns.contract[cname],
         signer ? signer : provider,
     );
-    return contract[method](...args, null);
+    return contract[method](...args);
 }
 
 async function checkInfuraID(id: string) {
