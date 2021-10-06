@@ -255,19 +255,23 @@
                 <div class="px-4 py-2 max-w-md m-auto flex justify-between items-center bg-footer-bg">
                     <Logo class="cursor-pointer" :size="18" @click="toHomePage" />
                     <div class="text-body-text font-normal text-xs text-right">
-                        Made with 🌀 by
-                        <a
-                            href="https://rss3.io"
-                            class="
-                                text-body-text
-                                font-normal
-                                text-xs
-                                no-underline
-                                visited:no-underline
-                                active:no-underline
-                            "
-                            >RSS3</a
-                        >
+                        <a href="https://rss3.io/privacy"> Privacy </a>
+                        |
+                        <span>
+                            Made with 🌀 by
+                            <a
+                                href="https://rss3.io"
+                                class="
+                                    text-body-text
+                                    font-normal
+                                    text-xs
+                                    no-underline
+                                    visited:no-underline
+                                    active:no-underline
+                                "
+                                >RSS3</a
+                            >
+                        </span>
                     </div>
                 </div>
             </div>

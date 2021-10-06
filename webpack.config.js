@@ -39,12 +39,25 @@ module.exports = (env, argv) => ({
         strictExportPresence: true,
         rules: [
             {
+                test: /\.vue$/,
+                loader: 'vue-loader',
+                options: {
+                    compilerOptions: {
+                        isCustomElement: (tag) => tag === 'model-viewer',
+                    },
+                },
+            },
+            {
                 test: /\.tsx?$/,
                 use: [
                     {
                         loader: 'ts-loader',
                         options: {
                             appendTsSuffixTo: [/\.vue$/],
+                            ignoreDiagnostics: [
+                                2339, 2551, 2556, 2571, 2345, 2322, 2531, 2769, 2554, 2363, 2683, 2774, 2630, 2304,
+                                2683, 2630, 2695,
+                            ],
                         },
                     },
                     {
@@ -54,8 +67,42 @@ module.exports = (env, argv) => ({
                             isNDevelop: process.env.NODE_ENV === 'production',
                         },
                     },
+                    {
+                        loader: 'babel-loader',
+                        options: {
+                            presets: ['@babel/preset-env', '@babel/preset-typescript'],
+                            plugins: [
+                                [
+                                    '@babel/plugin-proposal-decorators',
+                                    {
+                                        legacy: true,
+                                    },
+                                ],
+                                '@babel/plugin-transform-typescript',
+                                '@babel/plugin-proposal-optional-chaining',
+                                [
+                                    '@babel/plugin-transform-runtime',
+                                    {
+                                        regenerator: true,
+                                    },
+                                ],
+                            ],
+                        },
+                    },
                 ],
                 exclude: /node_modules/,
+            },
+            {
+                test: /\.js$/,
+                use: [
+                    {
+                        loader: 'babel-loader',
+                        options: {
+                            presets: ['@babel/preset-env'],
+                            plugins: ['@babel/plugin-proposal-optional-chaining'],
+                        },
+                    },
+                ],
             },
             {
                 test: /\.(postcss|css)$/,
@@ -84,15 +131,6 @@ module.exports = (env, argv) => ({
                     },
                     // 'less-loader'
                 ],
-            },
-            {
-                test: /\.vue$/,
-                loader: 'vue-loader',
-                options: {
-                    compilerOptions: {
-                        isCustomElement: (tag) => tag === 'model-viewer',
-                    },
-                },
             },
             {
                 test: /\.mjs$/,
