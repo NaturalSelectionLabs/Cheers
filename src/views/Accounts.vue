@@ -158,10 +158,7 @@ export default class Accounts extends Vue {
      * filter
      */
     public filter(address: string) {
-        let res: string = address.slice(0, 6);
-        res += '....';
-        res += address.slice(-4);
-        return res;
+        return address.length > 14 ? `${address.slice(0, 6)}....${address.slice(-4)}` : address;
     }
 
     public copyToClipboard(address: string) {
