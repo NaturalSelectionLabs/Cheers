@@ -217,6 +217,9 @@ export default class Accounts extends Vue {
             case 'Misskey':
                 window.open(ContentProviders.misskey.getAccountLink(address));
                 break;
+            case 'Twitter':
+                window.open(ContentProviders.twitter.getAccountLink(address));
+                break;
         }
     }
 

@@ -1007,6 +1007,13 @@ export default class Home extends Vue {
                 isLink: true,
                 link: ContentProviders.misskey.getAccountLink(address),
             };
+        } else if (platform === 'Twitter') {
+            this.showingAccountDetails = {
+                address,
+                platform,
+                isLink: true,
+                link: ContentProviders.twitter.getAccountLink(address),
+            };
         } else {
             this.showingAccountDetails = {
                 address,

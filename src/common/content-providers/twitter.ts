@@ -7,6 +7,9 @@ export default {
         // Let hub to do the verify works
         return true;
     },
+    getAccountLink: (account: string) => {
+        return `https://twitter.com/${account}`;
+    },
     // get: async (address: string, sinceOffset: number = 0, untilTimeStamp: number = 0xffffffff): Promise<Content[]> => {
     //     try {
     //         const res = await axios.get(
