@@ -9,6 +9,10 @@ export default {
     hubEndpoint: 'https://hub.pass3.me',
     defaultAvatar: 'https://rss3.mypinata.cloud/ipfs/QmVFq9qimnudPcs6QkQv8ZVEsvwD3aqETHWtS5yXgdbYY5',
     hideUnlistedAsstes: false,
+    subDomain: {
+        isSubDomainMode: true,
+        domain: 'rss3.bio',
+    },
     theme: [
         {
             name: 'loot',
