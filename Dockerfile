@@ -6,8 +6,9 @@ FROM base AS builder
 
 COPY . ./
 
-RUN npm install
-RUN npm build
+RUN apk add git
+RUN yarn install
+RUN yarn build
 
 FROM base AS runner
 
