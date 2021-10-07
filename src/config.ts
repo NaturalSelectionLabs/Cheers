@@ -24,6 +24,7 @@ export default {
     rns: {
         test: true,
         suffix: '.pass3.me',
+        prefix: 'pass3.me/',
         contractNetworks: {
             ropsten: {
                 resolver: '0x028A03A4E9Af3f5E078938c69b88740E81391A6a',
