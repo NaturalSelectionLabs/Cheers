@@ -65,7 +65,7 @@ export default class Input extends Vue {}
     }
 
     .additional {
-        @apply flex;
+        @apply flex font-medium mx-2;
     }
 
     .input {
