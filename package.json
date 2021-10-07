@@ -4,7 +4,7 @@
     "description": "",
     "main": "server.js",
     "scripts": {
-        "dev": "webpack serve --mode development",
+        "dev": "npm run serv:dev",
         "build": "NODE_ENV=production webpack --mode production",
         "build:dev": "webpack --mode development",
         "prepare": "husky install",
