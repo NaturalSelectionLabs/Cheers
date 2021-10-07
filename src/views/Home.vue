@@ -1027,7 +1027,11 @@ export default class Home extends Vue {
             document.title = 'Web3 Pass';
 
             await RSS3.disconnect();
-            await this.$router.push('/');
+            if (config.subDomain.isSubDomainMode) {
+                window.location.href = '//' + config.subDomain.rootDomain;
+            } else {
+                await this.$router.push('/');
+            }
             this.lastRoute = '';
         }
     }
