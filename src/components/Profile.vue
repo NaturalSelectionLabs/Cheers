@@ -20,7 +20,7 @@
         <span class="font-bold text-2xl">{{ username }}</span>
         <div @click="emitClickAddress" class="inline-block relative align-middle">
             <LinkButton v-if="rns">
-                <span>pass3.me/{{ rns }}</span>
+                <span>{{ rns }}{{ suffix }}</span>
             </LinkButton>
             <LinkButton v-else>
                 <span>{{ filter(address) }}</span>
@@ -63,22 +63,18 @@ export default class Profile extends Vue {
     address!: String;
     rns!: String;
     website!: String;
-    suffix: string = config.rns.suffix;
+    suffix: string = '.' + config.subDomain.rootDomain;
     isShowingTooltip: boolean = false;
 
     public toFollowersPage() {
-        this.$router.push(`/${this.rns || this.address}/followers`);
+        this.$router.push((config.subDomain.isSubDomainMode ? '' : `/${this.rns || this.address}`) + `/followers`);
     }
     public toFollowingsPage() {
-        this.$router.push(`/${this.rns || this.address}/followings`);
+        this.$router.push((config.subDomain.isSubDomainMode ? '' : `/${this.rns || this.address}`) + `/followings`);
     }
 
     public filter(address: string) {
         return `${address.slice(0, 6)}...${address.slice(-4)}`;
-    }
-
-    public toNFTsPage() {
-        this.$router.push(`/${this.rns || this.address}/nfts`);
     }
 
     public toExternalLink() {

@@ -38,6 +38,7 @@ import Metamask from '@/components/Icons/Metamask.vue';
 import Loading from '@/components/Loading.vue';
 import LoadingContainer from '@/components/LoadingContainer.vue';
 import Logo from '@/components/Logo.vue';
+import config from '@/config';
 @Options({
     name: 'Index',
     components: {
@@ -70,6 +71,7 @@ export default class Index extends Vue {
     }
 
     async initRedirect() {
+        this.isLoading = true;
         let profile: RSS3Profile | null = null;
         let address: string = '';
         try {
@@ -81,8 +83,9 @@ export default class Index extends Vue {
         }
         this.$gtag.config(address);
 
+        const rns = (await RNSUtils.addr2Name(address)).replace(config.rns.suffix, '');
         // Check if setup RNS
-        if ((await RNSUtils.addr2Name(address)) === '' && (await this.isPassEnough())) {
+        if (rns === '' && (await this.isPassEnough())) {
             // Setup RNS
             this.$gtag.event('rns', { userid: address });
             await this.$router.push('/rns');
@@ -93,10 +96,15 @@ export default class Index extends Vue {
         } else {
             // Login
             this.$gtag.event('login', { userid: address });
-            const redirectFrom = sessionStorage.getItem('redirectFrom');
+            const redirectFrom = sessionStorage.getItem('redirectFrom') || '';
             sessionStorage.removeItem('redirectFrom');
-            await this.$router.push(redirectFrom || '/home');
+            if (rns) {
+                window.location.href = '//' + rns + '.' + config.subDomain.rootDomain + redirectFrom;
+            } else {
+                await this.$router.push(redirectFrom || `/${rns || address}`);
+            }
         }
+        this.isLoading = false;
     }
 
     async walletConnect() {

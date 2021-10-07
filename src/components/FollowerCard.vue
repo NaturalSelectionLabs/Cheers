@@ -29,7 +29,7 @@ import config from '@/config';
 })
 export default class FollowerCard extends Vue {
     name!: string;
-    suffix: string = config.rns.suffix;
+    suffix: string = '.' + config.subDomain.rootDomain;
 
     mounted() {
         const colorThief = new ColorThief();

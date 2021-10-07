@@ -135,14 +135,24 @@ export default {
     walletConnect: async () => {
         await walletConnect();
         if (isValidRSS3()) {
-            Cookies.set('LAST_CONNECT_METHOD', 'walletConnect');
+            Cookies.set('LAST_CONNECT_METHOD', 'walletConnect', {
+                domain: '.' + config.subDomain.rootDomain,
+                secure: true,
+                sameSite: 'strict',
+                expires: config.subDomain.cookieExpires,
+            });
         }
         return rss3;
     },
     metamaskConnect: async () => {
         await metamaskConnect();
         if (isValidRSS3()) {
-            Cookies.set('LAST_CONNECT_METHOD', 'metamask');
+            Cookies.set('LAST_CONNECT_METHOD', 'metamask', {
+                domain: '.' + config.subDomain.rootDomain,
+                secure: true,
+                sameSite: 'strict',
+                expires: config.subDomain.cookieExpires,
+            });
         }
         return rss3;
     },
@@ -150,11 +160,21 @@ export default {
     reconnect: async (): Promise<boolean> => {
         // Migrate
         if (localStorage.getItem('lastConnect')) {
-            Cookies.set('LAST_CONNECT_METHOD', localStorage.getItem('lastConnect'));
+            Cookies.set('LAST_CONNECT_METHOD', localStorage.getItem('lastConnect'), {
+                domain: '.' + config.subDomain.rootDomain,
+                secure: true,
+                sameSite: 'strict',
+                expires: config.subDomain.cookieExpires,
+            });
             localStorage.removeItem('lastConnect');
         }
         if (localStorage.getItem('lastAddress')) {
-            Cookies.set('LAST_CONNECT_ADDRESS', localStorage.getItem('lastAddress'));
+            Cookies.set('LAST_CONNECT_ADDRESS', localStorage.getItem('lastAddress'), {
+                domain: '.' + config.subDomain.rootDomain,
+                secure: true,
+                sameSite: 'strict',
+                expires: config.subDomain.cookieExpires,
+            });
             localStorage.removeItem('lastAddress');
         }
 

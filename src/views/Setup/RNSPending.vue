@@ -15,6 +15,7 @@ import { Options, Vue } from 'vue-class-component';
 import Loading from '@/components/Loading.vue';
 import RSS3, { IRSS3 } from '@/common/rss3';
 import RNSUtils from '@/common/rns';
+import config from '@/config';
 
 @Options({
     name: 'RNSPending',
@@ -33,7 +34,9 @@ export default class RNSPending extends Vue {
         } else {
             this.rss3 = await RSS3.get();
             this.loadingIntervalID = setInterval(async () => {
-                if ((await RNSUtils.addr2Name((<IRSS3>this.rss3).account.address)) !== '') {
+                const address = (<IRSS3>this.rss3).account.address;
+                const rns = await RNSUtils.addr2Name(address);
+                if (rns !== '') {
                     // Already setup RNS
                     if (this.loadingIntervalID) {
                         clearInterval(this.loadingIntervalID);
@@ -50,7 +53,12 @@ export default class RNSPending extends Vue {
                         this.$gtag.event('login', { userid: (<IRSS3>this.rss3).account.address });
                         const redirectFrom = sessionStorage.getItem('redirectFrom');
                         sessionStorage.removeItem('redirectFrom');
-                        await this.$router.push(redirectFrom || '/home');
+                        if (rns && config.subDomain.isSubDomainMode) {
+                            window.location.href =
+                                '//' + 'https://' + rns + '.' + config.subDomain.rootDomain + redirectFrom;
+                        } else {
+                            await this.$router.push(redirectFrom || `/${rns || address}`);
+                        }
                     }
                 }
             }, 10000);

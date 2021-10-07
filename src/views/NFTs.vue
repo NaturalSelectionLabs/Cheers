@@ -16,7 +16,7 @@
                     :is-border="false"
                     :src="rss3Profile.avatar"
                     :alt="rss3Profile.username"
-                    @click="toPublicPage(rns || ethAddress)"
+                    @click="toPublicPage(rns, ethAddress)"
                 />
             </div>
             <div class="nft-list flex flex-wrap justify-between items-center gap-y-4" :class="{ 'pb-16': isOwner }">
@@ -101,19 +101,10 @@ export default class NFTs extends Vue {
         this.nfts = [];
         this.rss3Profile.avatar = config.defaultAvatar;
 
-        const address = <string>this.$route.params.address;
-        if (!address.startsWith('0x')) {
-            this.rns = address;
-            this.ethAddress = (await RNSUtils.name2Addr(address + config.rns.suffix)).toString();
-        } else {
-            this.ethAddress = address;
-            this.rns = (await RNSUtils.addr2Name(address)).replace(config.rns.suffix, '');
-        }
         await RSS3.reconnect();
         const rss3 = await RSS3.visitor();
         const owner: string = <string>rss3.account.address;
-
-        this.isOwner = owner === this.ethAddress;
+        await this.getAddress(owner);
 
         const profile = await rss3.profile.get(this.ethAddress);
 
@@ -133,6 +124,45 @@ export default class NFTs extends Vue {
         if (data) {
             await this.loadNFTs(await rss3.assets.get(this.ethAddress), <GeneralAsset[]>data.assets);
         }
+    }
+
+    async getAddress(owner: string) {
+        let address: string = '';
+        if (config.subDomain.isSubDomainMode) {
+            // Is subdomain mode
+            address = window.location.host.split('.')[0];
+        } else if (this.$route.params.address) {
+            address = <string>this.$route.params.address;
+        } else {
+            return false;
+        }
+
+        if (address) {
+            if (address.startsWith('0x')) {
+                // Might be address type
+                // Get RNS and redirect
+                this.ethAddress = address;
+                this.rns = (await RNSUtils.addr2Name(address)).replace(config.rns.suffix, '');
+                if (this.rns !== '') {
+                    if (config.subDomain.isSubDomainMode) {
+                        window.location.host = this.rns + '.' + config.subDomain.rootDomain;
+                    } else {
+                        await this.$router.push(`/${this.rns}`);
+                    }
+                }
+            } else {
+                // RNS
+                this.rns = address;
+                this.ethAddress = (await RNSUtils.name2Addr(address + config.rns.suffix)).toString();
+                if (parseInt(this.ethAddress) === 0) {
+                    return false;
+                }
+            }
+
+            this.isOwner = this.ethAddress === owner;
+        }
+
+        return true;
     }
 
     private getAssetOrder(nft: RSS3Asset) {
@@ -191,11 +221,18 @@ export default class NFTs extends Vue {
             nftidentity: identity,
             nftid: id,
         });
-        this.$router.push(`/${this.rns || this.ethAddress}/singlenft/${platform}/${identity}/${id}`);
+        this.$router.push(
+            (config.subDomain.isSubDomainMode ? '' : `/${this.rns || this.ethAddress}`) +
+                `/singlenft/${platform}/${identity}/${id}`,
+        );
     }
 
-    public toPublicPage(address: string) {
-        this.$router.push(`/${address}`);
+    toPublicPage(rns: string, ethAddress: string) {
+        if (rns && config.subDomain.isSubDomainMode) {
+            this.$router.push('/');
+        } else {
+            this.$router.push(`/${rns || ethAddress}`);
+        }
     }
 
     public toSetupNfts() {
@@ -203,7 +240,7 @@ export default class NFTs extends Vue {
     }
 
     public back() {
-        this.$router.push(`/${this.rns || this.ethAddress}`);
+        this.$router.push(config.subDomain.isSubDomainMode ? '/' : `/${this.rns || this.ethAddress}`);
     }
 
     mountScrollEvent() {

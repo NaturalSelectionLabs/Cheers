@@ -19,13 +19,9 @@ import RNSPending from '@/views/Setup/RNSPending.vue';
 import Gitcoins from '@/views/Gitcoins.vue';
 import SetupGitcoins from '@/views/Setup/SetupGitcoins.vue';
 import SingleGitcoin from '@/views/SingleGitcoin.vue';
+import config from '@/config';
 
 export const routes = [
-    {
-        path: '/',
-        name: 'Index',
-        component: Index,
-    },
     /* IFTRUE_isDevelop */
     {
         path: '/test',
@@ -33,48 +29,49 @@ export const routes = [
         component: Test,
     },
     /* FITRUE_isDevelop */
+    config.subDomain.isSubDomainMode
+        ? {
+              path: '/',
+              name: 'OwnedHome',
+              component: Home,
+          }
+        : {
+              path: '/:address',
+              name: 'NamedHome',
+              component: Home,
+          },
     {
-        path: '/:address',
-        name: 'NamedHome',
-        component: Home,
-    },
-    {
-        path: '/home',
-        name: 'OwnedHome',
-        component: Home,
-    },
-    {
-        path: '/:address/followers',
+        path: (config.subDomain.isSubDomainMode ? '' : '/:address') + '/followers',
         name: 'Followers',
         component: Followers,
     },
     {
-        path: '/:address/followings',
+        path: (config.subDomain.isSubDomainMode ? '' : '/:address') + '/followings',
         name: 'Followings',
         component: Followings,
     },
     {
-        path: '/:address/accounts',
+        path: (config.subDomain.isSubDomainMode ? '' : '/:address') + '/accounts',
         name: 'Accounts',
         component: Accounts,
     },
     {
-        path: '/:address/nfts',
+        path: (config.subDomain.isSubDomainMode ? '' : '/:address') + '/nfts',
         name: 'NFTs',
         component: NFTs,
     },
     {
-        path: '/:address/singlenft/:platform/:identity/:id',
+        path: (config.subDomain.isSubDomainMode ? '' : '/:address') + '/singlenft/:platform/:identity/:id',
         name: 'SingleNFT',
         component: SingleNFT,
     },
     {
-        path: '/:address/gitcoins',
+        path: (config.subDomain.isSubDomainMode ? '' : '/:address') + '/gitcoins',
         name: 'Gitcoins',
         component: Gitcoins,
     },
     {
-        path: '/:address/singlegitcoin/:platform/:identity/:id',
+        path: (config.subDomain.isSubDomainMode ? '' : '/:address') + '/singlegitcoin/:platform/:identity/:id',
         name: 'SingleGitcoin',
         component: SingleGitcoin,
     },
@@ -115,6 +112,14 @@ export const routes = [
         component: RNSPending,
     },
 ];
+
+if (!config.subDomain.isSubDomainMode) {
+    routes.push({
+        path: '/',
+        name: 'Index',
+        component: Index,
+    });
+}
 
 const router = createRouter({
     history: createWebHistory(),

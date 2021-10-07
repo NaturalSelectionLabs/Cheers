@@ -10,8 +10,9 @@ export default {
     defaultAvatar: 'https://rss3.mypinata.cloud/ipfs/QmVFq9qimnudPcs6QkQv8ZVEsvwD3aqETHWtS5yXgdbYY5',
     hideUnlistedAsstes: false,
     subDomain: {
-        isSubDomainMode: true,
-        domain: 'rss3.bio',
+        isSubDomainMode: window.location.host.split('.').length === 3,
+        rootDomain: 'rss3.bio',
+        cookieExpires: 14,
     },
     theme: [
         {
@@ -24,7 +25,6 @@ export default {
     rns: {
         test: true,
         suffix: '.pass3.me',
-        prefix: 'pass3.me/',
         contractNetworks: {
             ropsten: {
                 resolver: '0x028A03A4E9Af3f5E078938c69b88740E81391A6a',

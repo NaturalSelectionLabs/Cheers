@@ -479,6 +479,8 @@ export default class Home extends Vue {
     notice: string = '';
     isShowingNotice: boolean = false;
     isContentsHaveMore: boolean = true;
+    isOwnerValidRSS3: boolean = false;
+    ownerETHAddress: string = '';
 
     async mounted() {
         this.mountScrollEvent();
@@ -504,50 +506,27 @@ export default class Home extends Vue {
         (<HTMLLinkElement>document.getElementById('favicon')).href = '/favicon.ico';
         document.title = 'Web3 Pass';
 
-        const isValidRSS3 = await RSS3.reconnect();
+        this.isOwnerValidRSS3 = await RSS3.reconnect();
         this.rss3 = await RSS3.visitor();
         const owner: string = <string>this.rss3.account.address;
-        let address: string = <string>this.rss3.account.address;
-        if (this.$route.params.address) {
-            address = <string>this.$route.params.address;
-            if (address.startsWith('0x')) {
-                // Might be address type
-                // Get RNS and redirect
-                this.ethAddress = address;
-                this.rns = (await RNSUtils.addr2Name(address)).replace(config.rns.suffix, '');
-                if (this.rns !== '') {
-                    await this.$router.push(`/${this.rns}`);
-                } else if (this.ethAddress === owner) {
-                    this.isOwner = true;
-                }
-            } else {
-                // RNS
-                this.rns = address;
-                this.ethAddress = (await RNSUtils.name2Addr(address + config.rns.suffix)).toString();
-                if (parseInt(this.ethAddress) !== 0) {
-                    this.isOwner = this.ethAddress === owner;
-                } else {
-                    this.isAccountExist = false;
-                    return;
-                }
-            }
-
-            const file = <RSS3Index>await this.rss3.files.get(this.ethAddress);
-
-            if (!file.signature) {
-                this.isAccountExist = false;
-                return;
-            }
-        } else {
-            if (!isValidRSS3) {
-                sessionStorage.setItem('redirectFrom', this.$route.fullPath);
-                this.ethAddress = '';
-                await this.$router.push('/');
-                return;
-            } else {
+        this.ownerETHAddress = owner;
+        if (!(await this.getAddress(owner))) {
+            if (this.isOwnerValidRSS3) {
                 this.rns = (await RNSUtils.addr2Name(owner)).replace(config.rns.suffix, '');
                 this.ethAddress = owner;
                 this.isOwner = true;
+                if (this.rns && config.subDomain.rootDomain) {
+                    window.location.href = '//' + this.rns + '.' + config.subDomain.rootDomain;
+                }
+            } else {
+                sessionStorage.setItem('redirectFrom', this.$route.fullPath);
+                this.ethAddress = '';
+                if (config.subDomain.isSubDomainMode) {
+                    window.location.href = '//' + config.subDomain.rootDomain;
+                } else {
+                    await this.$router.push('/');
+                }
+                return;
             }
         }
 
@@ -578,6 +557,50 @@ export default class Home extends Vue {
             await this.loadLatestContents();
             this.initIntersectionObserver();
         }, 0);
+    }
+
+    async getAddress(owner: string) {
+        console.log('Is subdomain mode:', config.subDomain.isSubDomainMode);
+
+        let address: string = '';
+        if (config.subDomain.isSubDomainMode) {
+            // Is subdomain mode
+            address = window.location.host.split('.')[0];
+        } else if (this.$route.params.address) {
+            address = <string>this.$route.params.address;
+        } else {
+            return false;
+        }
+
+        if (address) {
+            if (address.startsWith('0x')) {
+                // Might be address type
+                // Get RNS and redirect
+                this.ethAddress = address;
+                this.rns = (await RNSUtils.addr2Name(address)).replace(config.rns.suffix, '');
+                if (this.rns !== '') {
+                    window.location.href = '//' + this.rns + '.' + config.subDomain.rootDomain;
+                }
+            } else {
+                // RNS
+                this.rns = address;
+                this.ethAddress = (await RNSUtils.name2Addr(address + config.rns.suffix)).toString();
+                if (parseInt(this.ethAddress) === 0) {
+                    this.isAccountExist = false;
+                    return false;
+                }
+            }
+
+            const file = <RSS3Index>await (<IRSS3>this.rss3).files.get(this.ethAddress);
+
+            if (!file.signature) {
+                this.isAccountExist = false;
+            }
+
+            this.isOwner = this.ethAddress === owner;
+        }
+
+        return true;
     }
 
     async setupTheme() {
@@ -809,7 +832,11 @@ export default class Home extends Vue {
             await (<IRSS3>this.rss3).files.sync();
         } else {
             sessionStorage.setItem('redirectFrom', this.$route.fullPath);
-            await this.$router.push('/');
+            if (config.subDomain.isSubDomainMode) {
+                window.location.href = '//' + config.subDomain.rootDomain;
+            } else {
+                await this.$router.push('/');
+            }
         }
     }
 
@@ -870,22 +897,48 @@ export default class Home extends Vue {
         }
     }
 
-    public toAccountsPage() {
+    toAccountsPage() {
         this.$gtag.event('visitAccountsPage', { userid: this.rns || this.ethAddress });
-        this.$router.push(`/${this.rns || this.ethAddress}/accounts`);
+        this.$router.push((config.subDomain.isSubDomainMode ? '' : `/${this.rns || this.ethAddress}`) + `/accounts`);
     }
 
-    public toNFTsPage() {
+    toNFTsPage() {
         this.$gtag.event('visitNftPage', { userid: this.rns || this.ethAddress });
-        this.$router.push(`/${this.rns || this.ethAddress}/nfts`);
+        this.$router.push((config.subDomain.isSubDomainMode ? '' : `/${this.rns || this.ethAddress}`) + `/nfts`);
     }
 
-    public toGitcoinsPage() {
+    toGitcoinsPage() {
         this.$gtag.event('visitGitcoinPage', { userid: this.rns || this.ethAddress });
-        this.$router.push(`/${this.rns || this.ethAddress}/gitcoins`);
+        this.$router.push((config.subDomain.isSubDomainMode ? '' : `/${this.rns || this.ethAddress}`) + `/gitcoins`);
     }
 
-    public toSetupPage() {
+    toSingleNFTPage(platform: string, identity: string, id: string) {
+        this.$gtag.event('visitSingleNft', {
+            userid: this.rns || this.ethAddress,
+            platform: platform,
+            nftidentity: identity,
+            nftid: id,
+        });
+        this.$router.push(
+            (config.subDomain.isSubDomainMode ? '' : `/${this.rns || this.ethAddress}`) +
+                `/singlenft/${platform}/${identity}/${id}`,
+        );
+    }
+
+    toSingleGitcoin(platform: string, identity: string, id: string) {
+        this.$gtag.event('visitSingleGitcoin', {
+            userid: this.rns || this.ethAddress,
+            platform: platform,
+            identity: identity,
+            id: id,
+        });
+        this.$router.push(
+            (config.subDomain.isSubDomainMode ? '' : `/${this.rns || this.ethAddress}`) +
+                `/singlegitcoin/${platform}/${identity}/${id}`,
+        );
+    }
+
+    toSetupPage() {
         this.$gtag.event('visitSetupPage', { userid: this.rns || this.ethAddress });
         this.$router.push(`/profile`);
     }
@@ -896,33 +949,14 @@ export default class Home extends Vue {
     }
 
     async toHomePage() {
-        if (this.$route.fullPath !== '/home') {
-            await this.$router.push('/home');
-            this.isAccountExist = true;
-            await this.initLoad();
-        } else {
-            // To top
+        if (!this.isOwner && this.isOwnerValidRSS3) {
+            const ownerRNS = (await RNSUtils.addr2Name(this.ownerETHAddress)).replace(config.rns.suffix, '');
+            if (ownerRNS) {
+                window.location.href = '//' + ownerRNS + '.' + config.subDomain.rootDomain;
+            } else {
+                window.location.href = '//' + config.subDomain.rootDomain + `/${ownerRNS || this.ownerETHAddress}`;
+            }
         }
-    }
-
-    public toSingleNFTPage(platform: string, identity: string, id: string) {
-        this.$gtag.event('visitSingleNft', {
-            userid: this.rns || this.ethAddress,
-            platform: platform,
-            nftidentity: identity,
-            nftid: id,
-        });
-        this.$router.push(`/${this.rns || this.ethAddress}/singlenft/${platform}/${identity}/${id}`);
-    }
-
-    public toSingleGitcoin(platform: string, identity: string, id: string) {
-        this.$gtag.event('visitSingleGitcoin', {
-            userid: this.rns || this.ethAddress,
-            platform: platform,
-            identity: identity,
-            id: id,
-        });
-        this.$router.push(`/${this.rns || this.ethAddress}/singlegitcoin/${platform}/${identity}/${id}`);
     }
 
     toContentLink(link: string) {
