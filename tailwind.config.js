@@ -227,6 +227,7 @@ module.exports = {
             20: '5rem', // Min height of card content
         },
         maxHeight: {
+            36: '9rem',
             128: '33rem',
         },
     },
