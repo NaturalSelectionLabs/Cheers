@@ -104,10 +104,10 @@ export default class SingleNFT extends Vue {
             document.body.classList.remove(...document.body.classList);
         }
 
-        const data = await RSS3.getAssetProfile(this.ethAddress);
+        const nftData = await RSS3.getAssetProfile(this.ethAddress, 'NFT');
 
-        if (data) {
-            const asset = data.assets.find(
+        if (nftData) {
+            const asset = nftData.assets.find(
                 (ag) => ag.platform === platform && ag.identity === identity && ag.id === id,
             );
             if (asset) {

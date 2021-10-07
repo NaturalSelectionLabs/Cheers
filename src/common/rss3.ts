@@ -177,16 +177,16 @@ export default {
     get: async () => {
         return rss3;
     },
-    getAssetProfile: async (address: string, refresh: boolean = false) => {
-        if (assets.has(address) && !refresh) {
-            return <IAssetProfile>assets.get(address);
+    getAssetProfile: async (address: string, type: string, refresh: boolean = false) => {
+        if (assets.has(address + type) && !refresh) {
+            return <IAssetProfile>assets.get(address + type);
         } else {
             let data: IAssetProfile | null = null;
             try {
-                const res = await axios.get(`${config.hubEndpoint}/asset-profile/${address}`);
+                const res = await axios.get(`${config.hubEndpoint}/asset-profile/${address}/${type.toLowerCase()}/`);
                 if (res && res.data) {
                     data = res.data;
-                    assets.set(address, <IAssetProfile>data);
+                    assets.set(address + type, <IAssetProfile>data);
                 }
             } catch (error) {
                 data = null;
