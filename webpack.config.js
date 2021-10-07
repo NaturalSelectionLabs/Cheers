@@ -51,23 +51,6 @@ module.exports = (env, argv) => ({
                 test: /\.tsx?$/,
                 use: [
                     {
-                        loader: 'ts-loader',
-                        options: {
-                            appendTsSuffixTo: [/\.vue$/],
-                            ignoreDiagnostics: [
-                                2339, 2551, 2556, 2571, 2345, 2322, 2531, 2769, 2554, 2363, 2683, 2774, 2630, 2304,
-                                2683, 2630, 2695,
-                            ],
-                        },
-                    },
-                    {
-                        loader: 'js-conditional-compile-loader',
-                        options: {
-                            isDevelop: process.env.NODE_ENV !== 'production',
-                            isNDevelop: process.env.NODE_ENV === 'production',
-                        },
-                    },
-                    {
                         loader: 'babel-loader',
                         options: {
                             presets: ['@babel/preset-env', '@babel/preset-typescript'],
@@ -87,6 +70,23 @@ module.exports = (env, argv) => ({
                                     },
                                 ],
                             ],
+                        },
+                    },
+                    {
+                        loader: 'ts-loader',
+                        options: {
+                            appendTsSuffixTo: [/\.vue$/],
+                            ignoreDiagnostics: [
+                                2339, 2551, 2556, 2571, 2345, 2322, 2531, 2769, 2554, 2363, 2683, 2774, 2630, 2304,
+                                2683, 2630, 2695,
+                            ],
+                        },
+                    },
+                    {
+                        loader: 'js-conditional-compile-loader',
+                        options: {
+                            isDevelop: process.env.NODE_ENV !== 'production',
+                            isNDevelop: process.env.NODE_ENV === 'production',
                         },
                     },
                 ],
