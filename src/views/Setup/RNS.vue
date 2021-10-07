@@ -17,6 +17,7 @@
                     v-model="rns"
                     @keyup.enter.native="verifyRNS"
                     :is-disabled="isDisabled"
+                    :prefix="rnsPrefix"
                 />
                 <span class="about">
                     <i class="bx bx-info-circle" />
@@ -124,6 +125,7 @@ export default class RNS extends Vue {
     isLoading: Boolean = false;
     isShowingConfirm: Boolean = false;
     isDisabled: Boolean = false;
+    rnsPrefix: string = config.rns.prefix;
     $gtag: any;
 
     async redirect() {
