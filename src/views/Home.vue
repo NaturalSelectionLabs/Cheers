@@ -1,51 +1,56 @@
 <template>
     <div id="main" class="h-screen bg-body-bg overflow-y-auto text-body-text">
-        <div v-if="isAccountExist" class="px-4 pt-8 pb-12 flex flex-col gap-y-2 max-w-md m-auto select-none">
-            <Profile
-                :avatar="rss3Profile.avatar"
-                :username="rss3Profile.username"
-                :address="ethAddress"
-                :rns="rns"
-                :followers="rss3Relations.followers"
-                :followings="rss3Relations.followings"
-                :bio="rss3Profile.bio"
-                @click-address="clickAddress"
-                click-address-notice="Copied!"
-            />
-            <Button
-                size="sm"
-                class="w-auto text-lg mb-4 duration-200"
-                v-if="!isOwner"
-                v-bind:class="[
-                    isFollowing
-                        ? 'bg-secondary-btn text-secondary-btn-text shadow-secondary-btn'
-                        : 'bg-primary-btn text-primary-btn-text shadow-primary-btn',
-                ]"
-                @click="action()"
-            >
-                <span>{{ isFollowing ? 'Following' : 'Follow' }}</span>
-                <i class="bx bx-sm no-underline" v-bind:class="[isFollowing ? 'bx-check' : 'bx-plus']"></i>
-            </Button>
-
-            <div class="flex mb-4 h-13 gap-2 mt-2" v-else>
+        <div
+            v-if="isAccountExist"
+            class="px-4 pt-8 pb-12 grid grid-cols-1 md:grid-cols-2 gap-4 max-w-screen-lg m-auto select-none"
+        >
+            <section class="md:col-span-2">
+                <Profile
+                    :avatar="rss3Profile.avatar"
+                    :username="rss3Profile.username"
+                    :address="ethAddress"
+                    :rns="rns"
+                    :followers="rss3Relations.followers"
+                    :followings="rss3Relations.followings"
+                    :bio="rss3Profile.bio"
+                    @click-address="clickAddress"
+                    click-address-notice="Copied!"
+                />
                 <Button
-                    size="lg"
-                    class="text-lg bg-secondary-btn text-secondary-btn-text shadow-secondary-btn flex-1"
-                    @click="toSetupPage"
+                    size="sm"
+                    class="w-full text-lg mb-4 duration-200"
+                    v-if="!isOwner"
+                    v-bind:class="[
+                        isFollowing
+                            ? 'bg-secondary-btn text-secondary-btn-text shadow-secondary-btn'
+                            : 'bg-primary-btn text-primary-btn-text shadow-primary-btn',
+                    ]"
+                    @click="action()"
                 >
-                    <span>Edit Profile</span>
-                    <i class="bx bx-pencil bx-sm"></i>
+                    <span>{{ isFollowing ? 'Following' : 'Follow' }}</span>
+                    <i class="bx bx-sm no-underline" v-bind:class="[isFollowing ? 'bx-check' : 'bx-plus']"></i>
                 </Button>
-                <Button
-                    size="lg"
-                    class="w-13 text-lg bg-primary-btn text-primary-btn-text shadow-primary-btn"
-                    @click="logout"
-                >
-                    <i class="bx bx-log-out bx-sm"></i>
-                </Button>
-            </div>
 
-            <AccountCard>
+                <div class="flex mb-4 h-13 gap-2 mt-2" v-else>
+                    <Button
+                        size="lg"
+                        class="text-lg bg-secondary-btn text-secondary-btn-text shadow-secondary-btn flex-1"
+                        @click="toSetupPage"
+                    >
+                        <span>Edit Profile</span>
+                        <i class="bx bx-pencil bx-sm"></i>
+                    </Button>
+                    <Button
+                        size="lg"
+                        class="w-13 text-lg bg-primary-btn text-primary-btn-text shadow-primary-btn"
+                        @click="logout"
+                    >
+                        <i class="bx bx-log-out bx-sm"></i>
+                    </Button>
+                </div>
+            </section>
+
+            <AccountCard class="md:order-1">
                 <template #header-button>
                     <div v-if="isOwner" class="flex flex-row gap-2">
                         <Button
@@ -89,9 +94,10 @@
                 color-title="text-nft-title"
                 color-tips="text-nft-title"
                 color-background="bg-nft-bg"
-                class="w-full border-nft-border"
+                class="w-full border-nft-border md:order-3"
                 :is-having-content="nfts.length !== 0"
-                :is-single-line="nfts.length !== 0"
+                :isPClayout="isPCLayout"
+                :is-single-line="!isPCLayout && nfts.length !== 0"
                 :tips="isLoadingAssets ? 'Loading...' : nfts.length === 0 ? 'Haven\'t found anything yet...' : ''"
                 id="nfts-card"
             >
@@ -130,7 +136,7 @@
                         :key="item.platform + item.identity + item.id"
                         :image-url="item.info.animation_url || item.info.image_preview_url"
                         :poster-url="item.info.image_preview_url"
-                        :size="70"
+                        :size="isPCLayout ? 140 : 70"
                         @click="toSingleNFTPage(item.platform, item.identity, item.id)"
                     />
                 </template>
@@ -141,9 +147,10 @@
                 color-title="text-gitcoin-title"
                 color-tips="text-gitcoin-title"
                 color-background="bg-gitcoin-bg"
-                class="w-full border-gitcoin-border"
+                class="w-full border-gitcoin-border md:order-4"
                 :is-having-content="true"
-                :is-single-line="gitcoins.length !== 0"
+                :isPClayout="isPCLayout"
+                :is-single-line="!isPCLayout && gitcoins.length !== 0"
                 id="gitcoins-card"
             >
                 <template #title-icon>
@@ -182,13 +189,13 @@
                             class="inline-flex mx-0.5 cursor-pointer"
                             v-for="item in gitcoins"
                             :key="item.platform + item.identity + item.id"
-                            :size="70"
+                            :size="isPCLayout ? 140 : 70"
                             :imageUrl="item.info.image_preview_url || defaultAvatar"
                             @click="toSingleGitcoin(item.platform, item.identity, item.id)"
                         />
                     </template>
                     <div v-else-if="isLoadingAssets" class="text-gitcoin-title m-auto text-center mt-4">Loading...</div>
-                    <div v-else-if="!isOwner" class="text-gitcoin-title m-auto text-center mt-4">
+                    <div v-else-if="!isOwner" class="text-gitcoin-title m-auto text-center mt-4 overflow-hidden">
                         Haven't found anything yet...
                     </div>
                     <div v-else class="flex justify-center">
@@ -216,12 +223,12 @@
                 color-title="text-content-title"
                 color-tips="text-content-title"
                 color-background="bg-content-bg"
-                class="w-auto border-content-border"
+                class="w-auto border-content-border md:order-2 md:row-span-3"
                 :is-having-content="true"
             >
                 <template #title-icon><ContentIcon /></template>
                 <template #content>
-                    <div class="flex flex-col overflow-y-auto" v-if="contents.length !== 0">
+                    <div class="flex flex-col overflow-y-scroll md:max-h-128" v-if="contents.length !== 0">
                         <ContentCard
                             class="mb-4"
                             v-for="item in contents"
@@ -479,8 +486,15 @@ export default class Home extends Vue {
     notice: string = '';
     isShowingNotice: boolean = false;
     isContentsHaveMore: boolean = true;
+    isPCLayout: boolean = false;
 
     async mounted() {
+        this.isPCLayout = window.innerWidth >= 768;
+        window.onresize = () => {
+            return (() => {
+                this.isPCLayout = window.innerWidth >= 768;
+            })();
+        };
         this.mountScrollEvent();
     }
 

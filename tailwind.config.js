@@ -226,6 +226,9 @@ module.exports = {
         minHeight: {
             20: '5rem', // Min height of card content
         },
+        maxHeight: {
+            128: '33rem',
+        },
     },
     variants: {
         extend: {
