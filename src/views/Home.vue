@@ -809,7 +809,7 @@ export default class Home extends Vue {
 
                     for (const content of contents) {
                         // temp. fix mirror undefined error
-                        if (content.info.link.includes('//undefined.mirror.xyz/')) {
+                        if (content?.info?.link?.includes('//undefined.mirror.xyz/')) {
                             content.info.link = `https://mirror.xyz/${content.identity}/${content.info.link
                                 .split('/')
                                 .pop()}`;
