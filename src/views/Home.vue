@@ -985,7 +985,11 @@ export default class Home extends Vue {
     }
 
     clickAddress() {
-        navigator.clipboard.writeText(`https://pass3.me/${this.rns || this.ethAddress}`);
+        navigator.clipboard.writeText(
+            config.subDomain.isSubDomainMode && this.rns
+                ? `https://${this.rns}.${config.subDomain.rootDomain}`
+                : `https://${config.subDomain.rootDomain}/${this.rns || this.ethAddress}`,
+        );
     }
 
     showShareCard() {
