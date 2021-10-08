@@ -809,6 +809,11 @@ export default class Home extends Vue {
             await (<IRSS3>this.rss3).files.sync();
         } else {
             sessionStorage.setItem('redirectFrom', this.$route.fullPath);
+
+            // Clear last user status
+            (<HTMLLinkElement>document.getElementById('favicon')).href = '/favicon.ico';
+            document.title = 'Web3 Pass';
+
             await this.$router.push('/');
         }
     }
