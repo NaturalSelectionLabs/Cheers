@@ -70,6 +70,7 @@ export default class Followings extends Vue {
     rns: string = '';
     ethAddress: string = '';
     lastRoute: string = '';
+    isPageActive: boolean = false;
 
     async setupAddress() {
         const address = <string>this.$route.params.address;
@@ -92,23 +93,28 @@ export default class Followings extends Vue {
 
         if (rss3 && followersList) {
             for (const item of followersList) {
-                try {
-                    const profile = await rss3.profile.get(item);
-                    this.followingList.push({
-                        avatar: profile?.avatar?.[0] || config.defaultAvatar,
-                        username: profile?.name || '',
-                        bio: profile.bio || '',
-                        address: item,
-                        displayAddress: this.filter(item),
-                        rns: '',
-                    });
-                } catch (e) {
-                    console.log(item, e);
-                }
+                this.followingList.push({
+                    avatar: config.defaultAvatar,
+                    username: '',
+                    bio: '',
+                    address: item,
+                    displayAddress: this.filter(item),
+                    rns: '',
+                });
             }
             setTimeout(async () => {
                 for (const item of this.followingList) {
-                    item.rns = (await RNSUtils.addr2Name(item.address)).replace(config.rns.suffix, '');
+                    if (this.isPageActive) {
+                        try {
+                            const profile = (await rss3.profile.get(item.address)) || {};
+                            item.avatar = profile.avatar?.[0] || config.defaultAvatar;
+                            item.username = profile.name || '';
+                            item.bio = profile.bio || '';
+                            item.rns = (await RNSUtils.addr2Name(item.address)).replace(config.rns.suffix, '');
+                        } catch (e) {
+                            console.log(item, e);
+                        }
+                    }
                 }
             });
         }
@@ -154,6 +160,7 @@ export default class Followings extends Vue {
     }
 
     async activated() {
+        this.isPageActive = true;
         await this.setupAddress();
         setTimeout(async () => {
             await this.setupTheme();
@@ -163,6 +170,10 @@ export default class Followings extends Vue {
                 await this.initLoad();
             }
         }, 0);
+    }
+
+    async deactivated() {
+        this.isPageActive = false;
     }
 }
 </script>
