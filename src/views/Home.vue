@@ -13,43 +13,14 @@
                     :followers="rss3Relations.followers"
                     :followings="rss3Relations.followings"
                     :bio="rss3Profile.bio"
-                    @click-address="clickAddress"
                     click-address-notice="Copied!"
+                    :isOwner="isOwner"
+                    :isFollowing="isFollowing"
+                    @click-address="clickAddress"
+                    @to-setup-page="toSetupPage"
+                    @logout="logout"
+                    @action="action"
                 />
-                <div class="">
-                    <Button
-                        size="sm"
-                        class="w-full text-lg mb-4 duration-200"
-                        v-if="!isOwner"
-                        v-bind:class="[
-                            isFollowing
-                                ? 'bg-secondary-btn text-secondary-btn-text shadow-secondary-btn'
-                                : 'bg-primary-btn text-primary-btn-text shadow-primary-btn',
-                        ]"
-                        @click="action()"
-                    >
-                        <span>{{ isFollowing ? 'Following' : 'Follow' }}</span>
-                        <i class="bx bx-sm no-underline" v-bind:class="[isFollowing ? 'bx-check' : 'bx-plus']"></i>
-                    </Button>
-
-                    <div class="flex mb-4 h-13 gap-2 mt-2" v-else>
-                        <Button
-                            size="lg"
-                            class="text-lg bg-secondary-btn text-secondary-btn-text shadow-secondary-btn flex-1"
-                            @click="toSetupPage"
-                        >
-                            <span>Edit Profile</span>
-                            <i class="bx bx-pencil bx-sm"></i>
-                        </Button>
-                        <Button
-                            size="lg"
-                            class="w-13 text-lg bg-primary-btn text-primary-btn-text shadow-primary-btn"
-                            @click="logout"
-                        >
-                            <i class="bx bx-log-out bx-sm"></i>
-                        </Button>
-                    </div>
-                </div>
             </section>
 
             <AccountCard class="md:order-1">
@@ -269,7 +240,6 @@
                         m-auto
                         flex flex-row
                         gap-x-2
-                        md:justify-start
                         justify-between
                         items-center
                         bg-footer-bg
