@@ -1,24 +1,25 @@
 <template>
-    <div class="profile-container flex flex-col justify-start items-start gap-y-2">
-        <div class="w-full pr-8 flex flex-row font-medium text-lg justify-between items-end leading-5">
-            <div class="w-24 h-24">
-                <ImgHolder class="w-24 h-24" :is-rounded="true" :is-border="false" :src="avatar" />
-            </div>
-            <div class="stats-container" @click="toFollowersPage">
-                <div class="stats-number">
-                    {{ followers.length }}
-                </div>
-                <div class="stats-type">Followers</div>
-            </div>
-            <div class="stats-container" @click="toFollowingsPage">
-                <div class="stats-number">
-                    {{ followings.length }}
-                </div>
-                <div class="stats-type">Followings</div>
-            </div>
+    <div class="profile-container grid grid-cols-3 md:grid-cols-4 items-center md:justify-start gap-2">
+        <div class="col-span-1 md:row-span-3 w-24 h-24 md:w-36 md:h-36">
+            <ImgHolder class="w-24 h-24 md:w-36 md:h-36" :is-rounded="true" :is-border="false" :src="avatar" />
         </div>
-        <span class="font-bold text-2xl">{{ username }}</span>
-        <div @click="emitClickAddress" class="inline-block relative align-middle">
+        <div class="col-span-1 md:order-2 stats-container leading-5" @click="toFollowersPage">
+            <div class="stats-number">
+                {{ followers.length }}
+            </div>
+            <div class="stats-type">Followers</div>
+        </div>
+        <div class="col-span-1 md:order-2 stats-container leading-5" @click="toFollowingsPage">
+            <div class="stats-number">
+                {{ followings.length }}
+            </div>
+            <div class="stats-type">Followings</div>
+        </div>
+        <span class="col-span-full md:col-span-3 md:order-0 font-bold text-2xl">{{ username }}</span>
+        <div
+            @click="emitClickAddress"
+            class="col-span-full md:col-span-3 md:order-3 inline-block relative align-middle"
+        >
             <LinkButton v-if="rns">
                 <span>pass3.me/{{ rns }}</span>
             </LinkButton>
@@ -30,7 +31,7 @@
         <LinkButton v-if="website">
             <span>{{ website }}</span>
         </LinkButton>
-        <div class="bio w-full font-medium text-lg whitespace-pre-line">
+        <div class="bio col-span-full md:order-5 md:my-2 font-medium text-lg whitespace-pre-line">
             {{ bio }}
         </div>
     </div>

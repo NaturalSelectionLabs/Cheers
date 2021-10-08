@@ -4,7 +4,7 @@
             v-if="isAccountExist"
             class="px-4 pt-8 pb-12 grid grid-cols-1 md:grid-cols-2 gap-4 max-w-screen-lg m-auto select-none"
         >
-            <section class="md:col-span-2">
+            <section class="relative md:col-span-2">
                 <Profile
                     :avatar="rss3Profile.avatar"
                     :username="rss3Profile.username"
@@ -16,37 +16,39 @@
                     @click-address="clickAddress"
                     click-address-notice="Copied!"
                 />
-                <Button
-                    size="sm"
-                    class="w-full text-lg mb-4 duration-200"
-                    v-if="!isOwner"
-                    v-bind:class="[
-                        isFollowing
-                            ? 'bg-secondary-btn text-secondary-btn-text shadow-secondary-btn'
-                            : 'bg-primary-btn text-primary-btn-text shadow-primary-btn',
-                    ]"
-                    @click="action()"
-                >
-                    <span>{{ isFollowing ? 'Following' : 'Follow' }}</span>
-                    <i class="bx bx-sm no-underline" v-bind:class="[isFollowing ? 'bx-check' : 'bx-plus']"></i>
-                </Button>
+                <div class="">
+                    <Button
+                        size="sm"
+                        class="w-full text-lg mb-4 duration-200"
+                        v-if="!isOwner"
+                        v-bind:class="[
+                            isFollowing
+                                ? 'bg-secondary-btn text-secondary-btn-text shadow-secondary-btn'
+                                : 'bg-primary-btn text-primary-btn-text shadow-primary-btn',
+                        ]"
+                        @click="action()"
+                    >
+                        <span>{{ isFollowing ? 'Following' : 'Follow' }}</span>
+                        <i class="bx bx-sm no-underline" v-bind:class="[isFollowing ? 'bx-check' : 'bx-plus']"></i>
+                    </Button>
 
-                <div class="flex mb-4 h-13 gap-2 mt-2" v-else>
-                    <Button
-                        size="lg"
-                        class="text-lg bg-secondary-btn text-secondary-btn-text shadow-secondary-btn flex-1"
-                        @click="toSetupPage"
-                    >
-                        <span>Edit Profile</span>
-                        <i class="bx bx-pencil bx-sm"></i>
-                    </Button>
-                    <Button
-                        size="lg"
-                        class="w-13 text-lg bg-primary-btn text-primary-btn-text shadow-primary-btn"
-                        @click="logout"
-                    >
-                        <i class="bx bx-log-out bx-sm"></i>
-                    </Button>
+                    <div class="flex mb-4 h-13 gap-2 mt-2" v-else>
+                        <Button
+                            size="lg"
+                            class="text-lg bg-secondary-btn text-secondary-btn-text shadow-secondary-btn flex-1"
+                            @click="toSetupPage"
+                        >
+                            <span>Edit Profile</span>
+                            <i class="bx bx-pencil bx-sm"></i>
+                        </Button>
+                        <Button
+                            size="lg"
+                            class="w-13 text-lg bg-primary-btn text-primary-btn-text shadow-primary-btn"
+                            @click="logout"
+                        >
+                            <i class="bx bx-log-out bx-sm"></i>
+                        </Button>
+                    </div>
                 </div>
             </section>
 
@@ -259,7 +261,20 @@
             </Card>
 
             <div class="mt-2 fixed bottom-0 left-0 w-full center">
-                <div class="px-4 py-2 max-w-md m-auto flex justify-between items-center bg-footer-bg">
+                <div
+                    class="
+                        px-4
+                        py-2
+                        max-w-screen-lg
+                        m-auto
+                        flex flex-row
+                        gap-x-2
+                        md:justify-start
+                        justify-between
+                        items-center
+                        bg-footer-bg
+                    "
+                >
                     <Logo class="cursor-pointer" :size="18" @click="toHomePage" />
                     <div class="text-body-text font-normal text-xs text-right">
                         <a href="https://rss3.io/privacy"> Privacy </a>
