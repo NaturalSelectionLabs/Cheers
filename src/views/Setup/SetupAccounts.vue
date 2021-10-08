@@ -426,7 +426,7 @@ export default class SetupAccounts extends Vue {
         this.isShowingAddSpecifyAccountInput = false;
         this.isLoading = true;
         const ethAddres = (<IRSS3>this.rss3).account.address;
-        const rns = await RNS.addr2Name(ethAddres);
+        const rns = (await RNS.addr2Name(ethAddres)).replace(config.rns.suffix, '.' + config.subDomain.rootDomain);
         if (
             this.specifyNoSignAccount.platform === 'Misskey' &&
             (await ContentProviders.misskey.verify(this.specifyNoSignAccount.account, rns, ethAddres))
