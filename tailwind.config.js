@@ -206,6 +206,8 @@ module.exports = {
                 BSC: 'url(@/assets/images/chains/BSC.png)',
                 Ethereum: 'url(@/assets/images/chains/Ethereum.png)',
                 Ronin: 'url(@/assets/images/chains/Ronin.png)',
+                Misskey: 'url(@/assets/images/chains/Misskey.png)',
+                Twitter: 'url(@/assets/images/chains/Twitter.png)',
                 Roninscan: 'url(@/assets/images/scans/Roninscan.png)',
                 pass3gif: 'url(@/assets/images/pass3.gif)',
                 pass3logo: 'url(@/assets/images/pass3logo.svg)',
