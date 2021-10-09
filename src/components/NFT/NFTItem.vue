@@ -51,8 +51,9 @@
             }"
         />
         <model-viewer
-            v-else-if="(imageUrl?.endsWith('.glb') || imageUrl?.endsWith('.gltf')) && isShowingDetails"
+            v-else-if="modelView"
             :src="imageUrl"
+            :poster="posterUrl"
             class="nft-item"
             :class="[!isShowingDetails ? 'object-cover' : 'object-contain']"
             :style="{
@@ -64,6 +65,7 @@
             environment-image="neutral"
             auto-rotate
             camera-controls
+            loading="eager"
         />
         <img
             v-else
@@ -80,7 +82,6 @@
 
 <script lang="ts">
 import { Vue, Options } from 'vue-class-component';
-import * as viewer from '@google/model-viewer';
 import config from '@/config';
 
 @Options({
@@ -90,14 +91,20 @@ import config from '@/config';
         imageUrl: String, // This should be detailed URL
         isShowingDetails: Boolean,
     },
-    components: {
-        viewer,
-    },
 })
 export default class NFTItem extends Vue {
     size!: Number;
     imageUrl!: String;
     defaultImage: String = config.defaultAvatar;
+    isShowingDetails!: boolean;
+
+    get modelView() {
+        const result = (this.imageUrl?.endsWith('.glb') || this.imageUrl?.endsWith('.gltf')) && this.isShowingDetails;
+        if (result) {
+            import(/* webpackChunkName: "model-viewer" */ '@google/model-viewer');
+        }
+        return result;
+    }
 }
 </script>
 
