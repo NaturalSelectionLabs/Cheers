@@ -173,11 +173,4 @@ module.exports = (env, argv) => ({
         hot: true,
         historyApiFallback: true,
     },
-
-    optimization: {
-        splitChunks: {
-            chunks: 'all',
-            maxSize: 20000,
-        },
-    },
 });
