@@ -6,7 +6,7 @@ export default {
         'a34494c90ca24f30b003a41b5a4c7752',
         'bad1e9a0ade24a0da20859746c54ad32',
     ],
-    hubEndpoint: 'https://hub.pass3.me',
+    hubEndpoint: PAGE_ENV === 'production' ? 'https://hub.pass3.me' : 'https://hub-dev.pass3.me',
     defaultAvatar: 'https://rss3.mypinata.cloud/ipfs/QmVFq9qimnudPcs6QkQv8ZVEsvwD3aqETHWtS5yXgdbYY5',
     hideUnlistedAsstes: false,
     theme: [
