@@ -525,6 +525,10 @@ export default class SetupAccounts extends Vue {
             await (<IRSS3>this.rss3).accounts.delete(account);
         }
 
+        // Empty arrays before sync
+        this.toAdd.splice(0, this.toAdd.length);
+        this.toDelete.splice(0, this.toDelete.length);
+
         try {
             await (<IRSS3>this.rss3).files.sync();
         } catch (e) {

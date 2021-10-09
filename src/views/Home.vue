@@ -832,7 +832,7 @@ export default class Home extends Vue {
 
                     for (const content of contents) {
                         // temp. fix mirror undefined error
-                        if (content.info.link.includes('//undefined.mirror.xyz/')) {
+                        if (content?.info?.link?.includes('//undefined.mirror.xyz/')) {
                             content.info.link = `https://mirror.xyz/${content.identity}/${content.info.link
                                 .split('/')
                                 .pop()}`;
@@ -912,6 +912,10 @@ export default class Home extends Vue {
             }
             await (<IRSS3>this.rss3).files.sync();
         } else {
+            // Clear last user status
+            (<HTMLLinkElement>document.getElementById('favicon')).href = '/favicon.ico';
+            document.title = 'Web3 Pass';
+
             sessionStorage.setItem('redirectFrom', this.$route.fullPath);
             if (config.subDomain.isSubDomainMode) {
                 window.location.href = '//' + config.subDomain.rootDomain;
