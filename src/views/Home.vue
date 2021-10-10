@@ -485,7 +485,7 @@ export default class Home extends Vue {
         Gitcoin: true,
     };
     loadingAssetsIntervalID: ReturnType<typeof setInterval> | null = null;
-    isLoadingContents: boolean = false;
+    isLoadingContents: boolean = true;
     currentTheme: string = '';
 
     rss3Profile: ProfileInfo = {
@@ -535,7 +535,7 @@ export default class Home extends Vue {
             isLink: false,
         };
         this.isShowingShareCard = false;
-        this.isLoadingContents = false;
+        this.isLoadingContents = true;
         this.rss3Profile = {
             avatar: config.defaultAvatar,
             username: '...',
@@ -853,11 +853,11 @@ export default class Home extends Vue {
         //     }
         // }
 
-        await this.loadMoreContents();
+        await this.loadMoreContents(true);
     }
 
-    async loadMoreContents() {
-        if (this.isLoadingContents || !this.isContentsHaveMore) {
+    async loadMoreContents(isInitLoad: boolean = false) {
+        if ((!isInitLoad && this.isLoadingContents) || !this.isContentsHaveMore) {
             // Is already loading or not having more
             return;
         }
@@ -867,7 +867,7 @@ export default class Home extends Vue {
         for (const provider of this.isContentsHaveMoreEachProvider) {
             if (provider.provider.platform === 'RSS3' && provider.provider.identity === 'Hub') {
                 if (provider.more) {
-                    const contents = await ContentProviders[provider.provider.identity].get(
+                    const contents: Content[] = await ContentProviders[provider.provider.identity].get(
                         this.ethAddress,
                         0,
                         provider.lastTS,
@@ -889,7 +889,9 @@ export default class Home extends Vue {
 
                         if (
                             content.accessible !== false &&
-                            contentsMerge.findIndex((ctx) => ctx.info.title === content.info.title) === -1 // todo: opt-out this
+                            // Opt-out edited mirror contents
+                            (content.platform !== 'Mirror-XYZ' ||
+                                contentsMerge.findIndex((ctx) => ctx.info.title === content.info.title) === -1) // todo: opt-out this
                         ) {
                             contentsMerge.push(content);
                         }
