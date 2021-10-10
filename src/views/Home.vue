@@ -416,7 +416,6 @@ import AccountCard from '@/components/AccountCard.vue';
 import GitcoinItem from '@/components/GitcoinItem.vue';
 import { GeneralAsset, GeneralAssetWithTags } from '@/common/types';
 import ShareCard from '@/components/ShareCard.vue';
-import html2canvas from '@/common/html2canvas.js';
 import NFTIcon from '@/components/Icons/NFTIcon.vue';
 import GitcoinIcon from '@/components/Icons/GitcoinIcon.vue';
 import ContentIcon from '@/components/Icons/ContentIcon.vue';
@@ -1115,6 +1114,8 @@ export default class Home extends Vue {
     async saveShareCard() {
         const shareCard = document.getElementById(`share-card-${this.rns}`);
         if (shareCard) {
+            const html2canvas: any = (await import(/* webpackChunkName: "html2canvas" */ '@/common/html2canvas.js'))
+                .default;
             const canvas = await html2canvas(shareCard, {
                 useCORS: true,
                 logging: false,

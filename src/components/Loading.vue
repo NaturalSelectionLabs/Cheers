@@ -11,7 +11,6 @@
 
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
-import lottie from 'lottie-web';
 import animationData from '@/assets/loadingAnimationData.json';
 @Options({
     props: {
@@ -21,7 +20,8 @@ import animationData from '@/assets/loadingAnimationData.json';
 export default class Loading extends Vue {
     size!: Number;
     defaultOptions: Object = { animationData: animationData };
-    mounted() {
+    async mounted() {
+        const lottie: any = await import(/* webpackChunkName: "lottie" */ 'lottie-web');
         lottie.loadAnimation({
             container: <Element>this.$refs.lottieContainer,
             renderer: 'svg',
