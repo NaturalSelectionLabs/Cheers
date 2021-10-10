@@ -25,6 +25,13 @@ export interface Theme {
     nftIdPrefix: string;
 }
 
+const cookieOptions: Cookies.CookieAttributes = {
+    domain: '.' + config.subDomain.rootDomain,
+    secure: true,
+    sameSite: 'none',
+    expires: config.subDomain.cookieExpires,
+};
+
 async function walletConnect(skipSign?: boolean) {
     provider = new WalletConnectProvider({
         // We are not using WalletConnect for transactions now,
@@ -94,7 +101,7 @@ async function metamaskConnect(skipSign?: boolean) {
 
     let address: string;
     if (Cookies.get('LAST_CONNECT_METHOD') === 'metamask' && Cookies.get('LAST_CONNECT_ADDRESS')) {
-        address = Cookies.get('LAST_CONNECT_ADDRESS');
+        address = Cookies.get('LAST_CONNECT_ADDRESS') || '';
     } else {
         const accounts = await metamaskEthereum.request({
             method: 'eth_requestAccounts',
@@ -134,31 +141,62 @@ export default {
     walletConnect: async () => {
         await walletConnect();
         if (isValidRSS3()) {
-            Cookies.set('LAST_CONNECT_METHOD', 'walletConnect');
+            Cookies.set('LAST_CONNECT_METHOD', 'walletConnect', cookieOptions);
+            Cookies.set('LAST_CONNECT_ADDRESS', (<RSS3>rss3).account.address, cookieOptions);
         }
         return rss3;
     },
     metamaskConnect: async () => {
         await metamaskConnect();
         if (isValidRSS3()) {
-            Cookies.set('LAST_CONNECT_METHOD', 'metamask');
+            Cookies.set('LAST_CONNECT_METHOD', 'metamask', cookieOptions);
+            Cookies.set('LAST_CONNECT_ADDRESS', (<RSS3>rss3).account.address, cookieOptions);
         }
         return rss3;
     },
     disconnect: disconnect,
     reconnect: async (): Promise<boolean> => {
         // Migrate
-        if (localStorage.getItem('lastConnect')) {
-            Cookies.set('LAST_CONNECT_METHOD', localStorage.getItem('lastConnect'));
+        const lastConnectMigrate = localStorage.getItem('lastConnect');
+        const lastAddressMigrate = localStorage.getItem('lastAddress');
+        if (lastConnectMigrate) {
+            Cookies.set('LAST_CONNECT_METHOD', lastConnectMigrate, cookieOptions);
             localStorage.removeItem('lastConnect');
         }
-        if (localStorage.getItem('lastAddress')) {
-            Cookies.set('LAST_CONNECT_ADDRESS', localStorage.getItem('lastAddress'));
+        if (lastAddressMigrate) {
+            Cookies.set('LAST_CONNECT_ADDRESS', lastAddressMigrate, cookieOptions);
             localStorage.removeItem('lastAddress');
         }
 
-        if (!isValidRSS3()) {
-            const lastConnect = Cookies.get('LAST_CONNECT_METHOD');
+        const lastConnect = Cookies.get('LAST_CONNECT_METHOD');
+        const address = Cookies.get('LAST_CONNECT_ADDRESS');
+        console.log(address);
+        if (address) {
+            switch (lastConnect) {
+                case 'walletConnect':
+                    provider = new WalletConnectProvider({
+                        rpc: {
+                            1: 'https://cloudflare-eth.com',
+                        },
+                    });
+                    //  Create Web3 instance
+                    web3 = new Web3(provider as any);
+                    break;
+                case 'metamask':
+                    const metamaskEthereum = (window as any).ethereum;
+                    web3 = new Web3(metamaskEthereum);
+                    break;
+            }
+            rss3 = new RSS3({
+                endpoint: config.hubEndpoint,
+                address: address,
+                agentSign: true,
+                sign: async (data: string) => {
+                    alert('Ready to sign... You may need to prepare your wallet.');
+                    return await (<Web3>web3).eth.personal.sign(data, address, '');
+                },
+            });
+        } else if (!isValidRSS3()) {
             switch (lastConnect) {
                 case 'walletConnect':
                     await walletConnect(true);

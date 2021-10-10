@@ -17,7 +17,7 @@
                     v-model="rns"
                     @keyup.enter.native="verifyRNS"
                     :is-disabled="isDisabled"
-                    :prefix="rnsPrefix"
+                    :suffix="rnsSuffix"
                 />
                 <span class="about">
                     <i class="bx bx-info-circle" />
@@ -125,14 +125,14 @@ export default class RNS extends Vue {
     isLoading: Boolean = false;
     isShowingConfirm: Boolean = false;
     isDisabled: Boolean = false;
-    rnsPrefix: string = config.rns.prefix;
+    rnsSuffix: string = '.rss3';
     $gtag: any;
 
     async redirect() {
         // Login
         const redirectFrom = sessionStorage.getItem('redirectFrom');
         sessionStorage.removeItem('redirectFrom');
-        await this.$router.push(redirectFrom || '/home');
+        await this.$router.push(redirectFrom || (config.subDomain.isSubDomainMode ? '/' : '/home'));
     }
 
     async refreshAccount() {
@@ -193,7 +193,7 @@ export default class RNS extends Vue {
         await this.refreshAccount();
         this.rns = this.rns.toLowerCase();
         for (const r of routes) {
-            if (`/${this.rns}` === r.path) {
+            if (`/${this.rns}` === r?.path) {
                 this.notice = 'Sorry, but this RNS is conflict with Routes and thus will not work properly.';
                 this.isLoading = false;
                 return;

@@ -15,7 +15,7 @@
                     :is-border="false"
                     :src="rss3Profile.avatar"
                     :alt="rss3Profile.username"
-                    @click="toPublicPage(rns || ethAddress)"
+                    @click="toPublicPage(rns, ethAddress)"
                 />
             </div>
             <GitcoinItem :imageUrl="grant.logo || defaultAvatar" :size="Width > 416 ? 416 : Width"></GitcoinItem>
@@ -122,6 +122,7 @@ import config from '@/config';
 import RNSUtils from '@/common/rns';
 import RSS3, { IRSS3 } from '@/common/rss3';
 import Vue3Autocounter from 'vue3-autocounter';
+import { RSS3Index } from 'rss3-next/types/rss3';
 
 interface Profile {
     avatar: string;
@@ -183,15 +184,9 @@ export default class SingleGitcoin extends Vue {
     public donationInfo?: DonationInfo[] = [];
 
     async mounted() {
-        const address = <string>this.$route.params.address;
-        if (!address.startsWith('0x')) {
-            this.rns = address;
-            this.ethAddress = (await RNSUtils.name2Addr(address + config.rns.suffix)).toString();
-        } else {
-            this.ethAddress = address;
-            this.rns = (await RNSUtils.addr2Name(address)).toString();
-        }
+        await RSS3.reconnect();
         const rss3 = await RSS3.visitor();
+        await this.getAddress();
 
         const profile = await rss3.profile.get(this.ethAddress);
         this.rss3Profile.avatar = profile?.avatar?.[0] || config.defaultAvatar;
@@ -207,6 +202,43 @@ export default class SingleGitcoin extends Vue {
         }
 
         await this.loadGitcoin();
+    }
+
+    async getAddress() {
+        let address: string = '';
+        if (config.subDomain.isSubDomainMode) {
+            // Is subdomain mode
+            address = window.location.host.split('.')[0];
+        } else if (this.$route.params.address) {
+            address = <string>this.$route.params.address;
+        } else {
+            return false;
+        }
+
+        if (address) {
+            if (address.startsWith('0x')) {
+                // Might be address type
+                // Get RNS and redirect
+                this.ethAddress = address;
+                this.rns = (await RNSUtils.addr2Name(address)).replace(config.rns.suffix, '');
+                if (this.rns !== '') {
+                    if (config.subDomain.isSubDomainMode) {
+                        window.location.host = this.rns + '.' + config.subDomain.rootDomain;
+                    } else {
+                        await this.$router.push(`/${this.rns}`);
+                    }
+                }
+            } else {
+                // RNS
+                this.rns = address;
+                this.ethAddress = (await RNSUtils.name2Addr(address + config.rns.suffix)).toString();
+                if (parseInt(this.ethAddress) === 0) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 
     public async loadGitcoin() {
@@ -250,15 +282,22 @@ export default class SingleGitcoin extends Vue {
         }
     }
 
-    toPublicPage(address: string) {
-        this.$router.push(`/${address}`);
+    toPublicPage(rns: string, ethAddress: string) {
+        if (rns && config.subDomain.isSubDomainMode) {
+            this.$router.push('/');
+        } else {
+            this.$router.push(`/${rns || ethAddress}`);
+        }
     }
 
     back() {
         if (window.history.length > 2) {
             window.history.back();
         } else {
-            this.$router.push(`/${this.rns || this.ethAddress}/gitcoins`);
+            this.$router.push(
+                (config.subDomain.isSubDomainMode ? '' : `/${this.rns || this.ethAddress}`) +
+                    `/${this.rns || this.ethAddress}/gitcoins`,
+            );
         }
     }
 }

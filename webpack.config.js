@@ -143,8 +143,6 @@ module.exports = (env, argv) => ({
         new HtmlWebpackPlugin({
             chunks: ['index'],
             filename: 'index.html',
-            title: 'RSS3 Page',
-            // favicon: 'public/favicon.ico',
             hash: true,
             template: 'src/assets/index.ejs',
         }),
@@ -175,5 +173,6 @@ module.exports = (env, argv) => ({
         compress: true,
         hot: true,
         historyApiFallback: true,
+        allowedHosts: 'all',
     },
 });

@@ -16,7 +16,7 @@
                     :is-border="false"
                     :src="rss3Profile.avatar"
                     :alt="rss3Profile.username"
-                    @click="toPublicPage(rns || ethAddress)"
+                    @click="toPublicPage(rns, ethAddress)"
                 />
             </div>
             <div class="follow-list flex flex-col gap-y-4">
@@ -27,7 +27,7 @@
                     :avatar="item.avatar"
                     :name="item.username"
                     :address="item.rns || item.displayAddress"
-                    @click="toPublicPage(item.rns || item.address)"
+                    @click="toPublicPage(item.rns, item.address)"
                 />
             </div>
         </div>
@@ -74,14 +74,40 @@ export default class Followings extends Vue {
     loadingNo: number = 0;
 
     async setupAddress() {
-        const address = <string>this.$route.params.address;
-        if (!address.startsWith('0x')) {
-            this.rns = address;
-            this.ethAddress = (await RNSUtils.name2Addr(address + config.rns.suffix)).toString();
+        let address: string = '';
+        if (config.subDomain.isSubDomainMode) {
+            // Is subdomain mode
+            address = window.location.host.split('.')[0];
+        } else if (this.$route.params.address) {
+            address = <string>this.$route.params.address;
         } else {
-            this.ethAddress = address;
-            this.rns = (await RNSUtils.addr2Name(address)).replace(config.rns.suffix, '');
+            return false;
         }
+
+        if (address) {
+            if (address.startsWith('0x')) {
+                // Might be address type
+                // Get RNS and redirect
+                this.ethAddress = address;
+                this.rns = (await RNSUtils.addr2Name(address)).replace(config.rns.suffix, '');
+                if (this.rns !== '') {
+                    if (config.subDomain.isSubDomainMode) {
+                        window.location.host = this.rns + '.' + config.subDomain.rootDomain;
+                    } else {
+                        await this.$router.push(`/${this.rns}`);
+                    }
+                }
+            } else {
+                // RNS
+                this.rns = address;
+                this.ethAddress = (await RNSUtils.name2Addr(address + config.rns.suffix)).toString();
+                if (parseInt(this.ethAddress) === 0) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 
     async initLoad() {
@@ -161,12 +187,16 @@ export default class Followings extends Vue {
         return `${address.slice(0, 6)}...${address.slice(-4)}`;
     }
 
-    public toPublicPage(address: string) {
-        this.$router.push(`/${address}`);
+    toPublicPage(rns: string, ethAddress: string) {
+        if (rns && config.subDomain.isSubDomainMode) {
+            window.location.href = '//' + rns + '.' + config.subDomain.rootDomain;
+        } else {
+            window.location.href = '//' + config.subDomain.rootDomain + `/${rns || ethAddress}`;
+        }
     }
 
     public back() {
-        this.$router.push(`/${this.rns || this.ethAddress}`);
+        this.$router.push(config.subDomain.isSubDomainMode ? '/' : `/${this.rns || this.ethAddress}`);
     }
 
     async activated() {

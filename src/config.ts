@@ -1,3 +1,11 @@
+let currentRootDomain;
+const split = window.location.hostname.split('.');
+if (split.length > 2) {
+    currentRootDomain = split[split.length - 2] + '.' + split[split.length - 1];
+} else {
+    currentRootDomain = window.location.hostname;
+}
+
 export default {
     infuraId: [
         '76af1228cdf345d2bff6a9c0f35112e1',
@@ -9,6 +17,11 @@ export default {
     hubEndpoint: PAGE_ENV === 'production' ? 'https://hub.pass3.me' : 'https://hub-dev.pass3.me',
     defaultAvatar: 'https://rss3.mypinata.cloud/ipfs/QmVFq9qimnudPcs6QkQv8ZVEsvwD3aqETHWtS5yXgdbYY5',
     hideUnlistedAsstes: false,
+    subDomain: {
+        isSubDomainMode: window.location.host.split('.').length === 3,
+        rootDomain: PAGE_ENV === 'production' ? 'rss3.bio' : currentRootDomain,
+        cookieExpires: 14,
+    },
     theme: [
         {
             name: 'loot',
@@ -20,7 +33,6 @@ export default {
     rns: {
         test: true,
         suffix: '.pass3.me',
-        prefix: 'pass3.me/',
         contractNetworks: {
             ropsten: {
                 resolver: '0x028A03A4E9Af3f5E078938c69b88740E81391A6a',
