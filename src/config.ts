@@ -1,3 +1,11 @@
+let currentRootDomain;
+const split = window.location.hostname.split('.');
+if (split.length > 2) {
+    currentRootDomain = split[split.length - 2] + '.' + split[split.length - 1];
+} else {
+    currentRootDomain = window.location.hostname;
+}
+
 export default {
     infuraId: [
         '76af1228cdf345d2bff6a9c0f35112e1',
@@ -11,7 +19,7 @@ export default {
     hideUnlistedAsstes: false,
     subDomain: {
         isSubDomainMode: window.location.host.split('.').length === 3,
-        rootDomain: 'rss3.bio',
+        rootDomain: PAGE_ENV === 'production' ? 'rss3.bio' : currentRootDomain,
         cookieExpires: 14,
     },
     theme: [
