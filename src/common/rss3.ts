@@ -79,7 +79,7 @@ async function walletConnect(skipSign?: boolean) {
     return rss3;
 }
 
-async function visitor() {
+async function visitor(): Promise<RSS3> {
     if (rss3) {
         return rss3;
     } else {

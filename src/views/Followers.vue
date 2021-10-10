@@ -71,6 +71,7 @@ export default class Followers extends Vue {
     ethAddress: string = '';
     lastRoute: string = '';
     isPageActive: boolean = false;
+    loadingNo: number = 0;
 
     async setupAddress() {
         const address = <string>this.$route.params.address;
@@ -86,6 +87,7 @@ export default class Followers extends Vue {
     async initLoad() {
         this.lastRoute = this.$route.fullPath;
         this.followerList = [];
+        this.loadingNo = 0;
 
         const rss3 = await RSS3.visitor();
         const initFollowersList = await rss3.backlinks.get(this.ethAddress, 'following');
@@ -102,21 +104,29 @@ export default class Followers extends Vue {
                     rns: '',
                 });
             }
-            setTimeout(async () => {
-                for (const item of this.followerList) {
-                    if (this.isPageActive) {
-                        try {
-                            const profile = (await rss3.profile.get(item.address)) || {};
-                            item.avatar = profile.avatar?.[0] || config.defaultAvatar;
-                            item.username = profile.name || '';
-                            item.bio = profile.bio || '';
-                            item.rns = (await RNSUtils.addr2Name(item.address)).replace(config.rns.suffix, '');
-                        } catch (e) {
-                            console.log(item, e);
-                        }
-                    }
+            setTimeout(() => {
+                this.loadDetails(rss3);
+            }, 0);
+        }
+    }
+
+    async loadDetails(rss3: IRSS3) {
+        const startNo = this.loadingNo;
+        const endNo = this.followerList.length;
+        for (let i = startNo; i < endNo; i++) {
+            if (this.isPageActive) {
+                const item = this.followerList[i];
+                try {
+                    const profile = (await rss3.profile.get(item.address)) || {};
+                    item.avatar = profile.avatar?.[0] || config.defaultAvatar;
+                    item.username = profile.name || '';
+                    item.bio = profile.bio || '';
+                    item.rns = (await RNSUtils.addr2Name(item.address)).replace(config.rns.suffix, '');
+                } catch (e) {
+                    console.log(item, e);
                 }
-            });
+                this.loadingNo = i;
+            }
         }
     }
 
@@ -168,6 +178,8 @@ export default class Followers extends Vue {
             if (this.lastRoute !== this.$route.fullPath) {
                 await this.setProfile();
                 await this.initLoad();
+            } else if (this.loadingNo < this.followerList.length) {
+                await this.loadDetails(await RSS3.visitor());
             }
         }, 0);
     }
