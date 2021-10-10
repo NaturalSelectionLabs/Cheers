@@ -142,9 +142,9 @@ module.exports = (env, argv) => ({
     plugins: [
         new HtmlWebpackPlugin({
             chunks: ['index'],
-            filename: 'index.ejs',
+            filename: 'index.html',
             hash: true,
-            template: '!!raw-loader!src/assets/index.ejs',
+            template: 'src/assets/index.ejs',
         }),
         new CopyPlugin({
             patterns: [
@@ -173,6 +173,7 @@ module.exports = (env, argv) => ({
         compress: true,
         hot: true,
         historyApiFallback: true,
+        allowedHosts: 'all',
     },
 
     optimization: {

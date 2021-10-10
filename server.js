@@ -19,13 +19,6 @@ app.use(
     }),
 );
 
-app.use(async (ctx) => {
-    const title = 'Web3 Pass';
-    await ctx.render('index', {
-        title,
-    });
-});
-
 console.log('Dev server start...');
 
 app.listen(8080);
