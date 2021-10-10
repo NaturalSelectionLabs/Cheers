@@ -212,10 +212,8 @@ export default class Accounts extends Vue {
                 window.open(`https://etherscan.io/address/${address}`);
                 break;
             case 'Misskey':
-                window.open(ContentProviders.misskey.getAccountLink(address));
-                break;
             case 'Twitter':
-                window.open(ContentProviders.twitter.getAccountLink(address));
+                window.open(ContentProviders[platform].getAccountLink(address));
                 break;
         }
     }

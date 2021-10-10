@@ -20,7 +20,7 @@ export interface Content {
 }
 
 export default {
-    hub,
-    misskey,
-    twitter,
+    Hub: hub,
+    Misskey: misskey,
+    Twitter: twitter,
 };

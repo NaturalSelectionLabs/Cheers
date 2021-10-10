@@ -768,7 +768,7 @@ export default class Home extends Vue {
         this.isContentsHaveMoreEachProvider.push({
             provider: {
                 platform: 'RSS3',
-                identity: 'hub',
+                identity: 'Hub',
                 signature: '',
             },
             more: true,
@@ -797,9 +797,13 @@ export default class Home extends Vue {
         let isHavingMore: boolean = false;
         const contentsMerge: Content[] = [];
         for (const provider of this.isContentsHaveMoreEachProvider) {
-            if (provider.provider.platform === 'RSS3' && provider.provider.identity === 'hub') {
+            if (provider.provider.platform === 'RSS3' && provider.provider.identity === 'Hub') {
                 if (provider.more) {
-                    const contents = await ContentProviders.hub.get(this.ethAddress, 0, provider.lastTS);
+                    const contents = await ContentProviders[provider.provider.identity].get(
+                        this.ethAddress,
+                        0,
+                        provider.lastTS,
+                    );
                     if (contents.length < config.contentRequestLimit) {
                         // No more
                         provider.more = false;
@@ -1016,19 +1020,12 @@ export default class Home extends Vue {
     }
 
     public displayDialog(address: string, platform: string) {
-        if (platform === 'Misskey') {
+        if (platform === 'Misskey' || platform === 'Twitter') {
             this.showingAccountDetails = {
                 address,
                 platform,
                 isLink: true,
-                link: ContentProviders.misskey.getAccountLink(address),
-            };
-        } else if (platform === 'Twitter') {
-            this.showingAccountDetails = {
-                address,
-                platform,
-                isLink: true,
-                link: ContentProviders.twitter.getAccountLink(address),
+                link: ContentProviders[platform].getAccountLink(address),
             };
         } else {
             this.showingAccountDetails = {
