@@ -485,7 +485,7 @@ export default class Home extends Vue {
         Gitcoin: true,
     };
     loadingAssetsIntervalID: ReturnType<typeof setInterval> | null = null;
-    isLoadingContents: boolean = false;
+    isLoadingContents: boolean = true;
     currentTheme: string = '';
 
     rss3Profile: ProfileInfo = {
@@ -533,7 +533,7 @@ export default class Home extends Vue {
             isLink: false,
         };
         this.isShowingShareCard = false;
-        this.isLoadingContents = false;
+        this.isLoadingContents = true;
         this.rss3Profile = {
             avatar: config.defaultAvatar,
             username: '...',
@@ -830,11 +830,11 @@ export default class Home extends Vue {
         //     }
         // }
 
-        await this.loadMoreContents();
+        await this.loadMoreContents(true);
     }
 
-    async loadMoreContents() {
-        if (this.isLoadingContents || !this.isContentsHaveMore) {
+    async loadMoreContents(isInitLoad: boolean = false) {
+        if ((!isInitLoad && this.isLoadingContents) || !this.isContentsHaveMore) {
             // Is already loading or not having more
             return;
         }
