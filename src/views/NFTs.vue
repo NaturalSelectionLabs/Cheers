@@ -119,10 +119,10 @@ export default class NFTs extends Vue {
             document.body.classList.remove(...document.body.classList);
         }
 
-        const data = await RSS3.getAssetProfile(this.ethAddress);
+        const nftData = await RSS3.getAssetProfile(this.ethAddress, 'NFT');
 
-        if (data) {
-            await this.loadNFTs(await rss3.assets.get(this.ethAddress), <GeneralAsset[]>data.assets);
+        if (nftData) {
+            await this.loadNFTs(await rss3.assets.get(this.ethAddress), <GeneralAsset[]>nftData.assets);
         }
     }
 

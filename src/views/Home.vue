@@ -92,7 +92,7 @@
                 class="w-full border-nft-border"
                 :is-having-content="nfts.length !== 0"
                 :is-single-line="nfts.length !== 0"
-                :tips="isLoadingAssets ? 'Loading...' : nfts.length === 0 ? 'Haven\'t found anything yet...' : ''"
+                :tips="isLoadingAssets.NFT ? 'Loading...' : nfts.length === 0 ? 'Haven\'t found anything yet...' : ''"
                 id="nfts-card"
             >
                 <template #title-icon><NFTIcon /></template>
@@ -187,7 +187,9 @@
                             @click="toSingleGitcoin(item.platform, item.identity, item.id)"
                         />
                     </template>
-                    <div v-else-if="isLoadingAssets" class="text-gitcoin-title m-auto text-center mt-4">Loading...</div>
+                    <div v-else-if="isLoadingAssets.Gitcoin" class="text-gitcoin-title m-auto text-center mt-4">
+                        Loading...
+                    </div>
                     <div v-else-if="!isOwner" class="text-gitcoin-title m-auto text-center mt-4">
                         Haven't found anything yet...
                     </div>
@@ -255,7 +257,7 @@
                 <div class="px-4 py-2 max-w-md m-auto flex justify-between items-center bg-footer-bg">
                     <Logo class="cursor-pointer" :size="18" @click="toHomePage" />
                     <div class="text-body-text font-normal text-xs text-right">
-                        <a href="https://rss3.io/privacy"> Privacy </a>
+                        <a href="https://rss3.io/#/privacy"> Privacy </a>
                         |
                         <span>
                             Made with 🌀 by
@@ -475,7 +477,13 @@ export default class Home extends Vue {
     };
     isAccountExist: boolean = true;
     isShowingShareCard: boolean = false;
-    isLoadingAssets: boolean = true;
+    isLoadingAssets: {
+        NFT: boolean;
+        Gitcoin: boolean;
+    } = {
+        NFT: true,
+        Gitcoin: true,
+    };
     loadingAssetsIntervalID: ReturnType<typeof setInterval> | null = null;
     isLoadingContents: boolean = false;
     currentTheme: string = '';
@@ -677,25 +685,59 @@ export default class Home extends Vue {
         }, 0);
     }
 
-    async ivLoadAsset(refresh: boolean): Promise<boolean> {
-        const data = await RSS3.getAssetProfile(this.ethAddress, refresh);
+    async ivLoadNFT(refresh: boolean): Promise<boolean> {
+        const data = await RSS3.getAssetProfile(this.ethAddress, 'NFT', refresh);
         if (data && data.status !== false) {
-            await this.mergeAssets(await (<IRSS3>this.rss3).assets.get(this.ethAddress), <GeneralAsset[]>data.assets);
-            this.isLoadingAssets = false;
+            await this.mergeAssets(
+                await (<IRSS3>this.rss3).assets.get(this.ethAddress),
+                <GeneralAsset[]>data.assets,
+                'NFT',
+            );
+            this.isLoadingAssets.NFT = false;
+            return true;
+        }
+        return false;
+    }
+
+    async ivLoadGitcoin(refresh: boolean): Promise<boolean> {
+        const data = await RSS3.getAssetProfile(this.ethAddress, 'Gitcoin-Donation', refresh);
+        if (data && data.status !== false) {
+            await this.mergeAssets(
+                await (<IRSS3>this.rss3).assets.get(this.ethAddress),
+                <GeneralAsset[]>data.assets,
+                'Gitcoin-Donation',
+            );
+            this.isLoadingAssets.Gitcoin = false;
+            return true;
+        }
+        return false;
+    }
+
+    async ivLoadAsset(refresh: boolean): Promise<boolean> {
+        let isFinish = true;
+        if (this.isLoadingAssets.NFT) {
+            isFinish = isFinish && (await this.ivLoadNFT(refresh));
+        }
+        if (this.isLoadingAssets.Gitcoin) {
+            isFinish = isFinish && (await this.ivLoadGitcoin(refresh));
+        }
+        if (isFinish) {
             if (this.loadingAssetsIntervalID) {
                 clearInterval(this.loadingAssetsIntervalID);
                 this.loadingAssetsIntervalID = null;
             }
-            return true;
         }
-        return false;
+        return isFinish;
     }
 
     async startLoadingAssets(refresh: boolean) {
         if (refresh) {
             this.nfts = [];
             this.gitcoins = [];
-            this.isLoadingAssets = true;
+            this.isLoadingAssets = {
+                NFT: true,
+                Gitcoin: true,
+            };
         }
         if (!(await this.ivLoadAsset(refresh))) {
             this.loadingAssetsIntervalID = setInterval(async () => {
@@ -741,7 +783,7 @@ export default class Home extends Vue {
         }
     }
 
-    async mergeAssets(assetsInRSS3File: RSS3Asset[], assetsGrabbed: GeneralAsset[]) {
+    async mergeAssets(assetsInRSS3File: RSS3Asset[], assetsGrabbed: GeneralAsset[], type: string) {
         const assetsMerge: GeneralAssetWithTags[] = await Promise.all(
             (assetsGrabbed || []).map(async (ag: GeneralAssetWithTags) => {
                 const origType = ag.type;
@@ -778,12 +820,15 @@ export default class Home extends Vue {
             } // else Invalid
         }
 
-        this.nfts = NFTList.filter((asset) => !asset.tags || asset.tags.indexOf('pass:hidden') === -1).sort(
-            (a, b) => this.getAssetOrder(a) - this.getAssetOrder(b),
-        );
-        this.gitcoins = GitcoinList.filter((asset) => !asset.tags || asset.tags.indexOf('pass:hidden') === -1).sort(
-            (a, b) => this.getAssetOrder(a) - this.getAssetOrder(b),
-        );
+        if (type === 'NFT') {
+            this.nfts = NFTList.filter((asset) => !asset.tags || asset.tags.indexOf('pass:hidden') === -1).sort(
+                (a, b) => this.getAssetOrder(a) - this.getAssetOrder(b),
+            );
+        } else if (type === 'Gitcoin-Donation') {
+            this.gitcoins = GitcoinList.filter((asset) => !asset.tags || asset.tags.indexOf('pass:hidden') === -1).sort(
+                (a, b) => this.getAssetOrder(a) - this.getAssetOrder(b),
+            );
+        }
     }
 
     async initLoadContents(accounts: RSS3Account[]) {

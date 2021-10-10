@@ -3,7 +3,6 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
 const { VueLoaderPlugin } = require('vue-loader');
-const TerserPlugin = require('terser-webpack-plugin');
 
 module.exports = (env, argv) => ({
     devtool: argv.mode === 'production' ? false : 'inline-cheap-module-source-map',
@@ -159,6 +158,10 @@ module.exports = (env, argv) => ({
         new webpack.ProvidePlugin({
             process: 'process/browser',
             Buffer: ['buffer', 'Buffer'],
+        }),
+        new webpack.DefinePlugin({
+            PAGE_ENV:
+                process.env.PAGE_ENV === 'development' ? JSON.stringify('development') : JSON.stringify(argv.mode),
         }),
     ],
     experiments: {
