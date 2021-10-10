@@ -28,7 +28,7 @@
                     >
                         <AccountItem :size="70" :chain="item.platform"></AccountItem>
                         <span class="address text-2xl text-account-title font-semibold">{{
-                            filter(item.identity)
+                            getDisplayAddress(item)
                         }}</span>
                         <Button
                             size="sm"
@@ -72,6 +72,7 @@ import RSS3, { IRSS3 } from '@/common/rss3';
 import { RSS3Account } from 'rss3-next/types/rss3';
 import RNSUtils from '@/common/rns';
 import config from '@/config';
+import ContentProviders from '@/common/content-providers';
 
 interface Profile {
     avatar: string;
@@ -145,14 +146,19 @@ export default class Accounts extends Vue {
         const accounts = await rss3.accounts.get(this.ethAddress);
         await this.loadAccounts(accounts);
     }
+
+    getDisplayAddress(account: RSS3Account) {
+        if (account.platform === 'Misskey' && account.identity.length <= 14) {
+            return account.identity;
+        } else {
+            return this.filter(account.identity);
+        }
+    }
     /**
      * filter
      */
     public filter(address: string) {
-        let res: string = address.slice(0, 6);
-        res += '....';
-        res += address.slice(-4);
-        return res;
+        return address.length > 14 ? `${address.slice(0, 6)}....${address.slice(-4)}` : address;
     }
 
     public copyToClipboard(address: string) {
@@ -204,6 +210,12 @@ export default class Accounts extends Vue {
                 break;
             case 'Ethereum':
                 window.open(`https://etherscan.io/address/${address}`);
+                break;
+            case 'Misskey':
+                window.open(ContentProviders.misskey.getAccountLink(address));
+                break;
+            case 'Twitter':
+                window.open(ContentProviders.twitter.getAccountLink(address));
                 break;
         }
     }

@@ -1,8 +1,7 @@
 import WalletConnectProvider from '@walletconnect/web3-provider';
 import Web3 from 'web3';
 import RSS3 from 'rss3-next';
-import { RSS3Asset, RSS3Index } from 'rss3-next/types/rss3';
-import { RSS3Account, RSS3AccountInput } from 'rss3-next/types/rss3';
+import { RSS3Account, RSS3Asset } from 'rss3-next/types/rss3';
 import axios from 'axios';
 import { GitcoinResponse, GeneralAsset, NFTResponse } from './types';
 import config from '@/config';
@@ -234,7 +233,7 @@ export default {
         }
         return data;
     },
-    addNewAccount: async (platform: string): Promise<RSS3Account> => {
+    addNewMetamaskAccount: async (platform: string): Promise<RSS3Account> => {
         // js don't support multiple return values,
         // so here I'm using signature as a message provider
         if (!rss3) {
@@ -251,7 +250,7 @@ export default {
         });
         const address = metaMaskWeb3.utils.toChecksumAddress(accounts[0]);
 
-        const newTmpAddress: RSS3AccountInput = {
+        const newTmpAddress: RSS3Account = {
             platform: platform,
             identity: address,
         };

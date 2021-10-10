@@ -257,7 +257,7 @@
                 <div class="px-4 py-2 max-w-md m-auto flex justify-between items-center bg-footer-bg">
                     <Logo class="cursor-pointer" :size="18" @click="toHomePage" />
                     <div class="text-body-text font-normal text-xs text-right">
-                        <a href="https://rss3.io/privacy"> Privacy </a>
+                        <a href="https://rss3.io/#/privacy"> Privacy </a>
                         |
                         <span>
                             Made with 🌀 by
@@ -278,7 +278,7 @@
                 </div>
             </div>
 
-            <Modal v-show="isdisplaying">
+            <Modal v-show="isShowingAccount">
                 <template #header>
                     <Button
                         size="sm"
@@ -290,16 +290,32 @@
                 </template>
                 <template #body>
                     <div class="flex flex-col gap-y-4 items-center">
-                        <AccountItem class="m-auto mt-4" :size="90" :chain="dialogChain"></AccountItem>
+                        <AccountItem
+                            class="m-auto mt-4"
+                            :size="90"
+                            :chain="showingAccountDetails.platform"
+                        ></AccountItem>
                         <span class="address text-xl font-semibold break-all text-center mt-4">
-                            {{ dialogAddress }}
+                            {{ showingAccountDetails.address }}
                         </span>
                         <Button
                             size="sm"
-                            class="text-md bg-account-btn-m text-account-btn-m-text shadow-account-btn-m m-auto mt-4"
-                            @click="copyToClipboard(dialogAddress)"
+                            class="
+                                text-md
+                                bg-account-btn-m
+                                text-account-btn-m-text
+                                shadow-account-btn-m
+                                m-auto
+                                mt-4
+                                w-1/4
+                            "
+                            @click="
+                                showingAccountDetails.isLink
+                                    ? toExternalLink(showingAccountDetails.link)
+                                    : copyToClipboard(showingAccountDetails.address)
+                            "
                         >
-                            Copy
+                            {{ showingAccountDetails.isLink ? 'Go' : 'Copy' }}
                         </Button>
                     </div>
                 </template>
@@ -448,9 +464,17 @@ export default class Home extends Vue {
     rss3?: IRSS3;
     isFollowing: boolean = false;
     isOwner: boolean = false;
-    isdisplaying: boolean = false;
-    dialogAddress: string = '';
-    dialogChain: string = '';
+    isShowingAccount: boolean = false;
+    showingAccountDetails: {
+        address: string;
+        platform: string;
+        isLink: boolean;
+        link?: string;
+    } = {
+        address: '',
+        platform: 'Ethereum',
+        isLink: false,
+    };
     isAccountExist: boolean = true;
     isShowingShareCard: boolean = false;
     isLoadingAssets: {
@@ -487,6 +511,11 @@ export default class Home extends Vue {
     notice: string = '';
     isShowingNotice: boolean = false;
     isContentsHaveMore: boolean = true;
+    isContentsHaveMoreEachProvider: {
+        provider: RSS3Account;
+        more: boolean;
+        lastTS: number;
+    }[] = [];
 
     async mounted() {
         this.mountScrollEvent();
@@ -497,9 +526,12 @@ export default class Home extends Vue {
         this.contents = [];
         this.isFollowing = false;
         this.isOwner = false;
-        this.isdisplaying = false;
-        this.dialogAddress = '';
-        this.dialogChain = '';
+        this.isShowingAccount = false;
+        this.showingAccountDetails = {
+            address: '',
+            platform: 'Ethereum',
+            isLink: false,
+        };
         this.isShowingShareCard = false;
         this.isLoadingContents = false;
         this.rss3Profile = {
@@ -509,6 +541,7 @@ export default class Home extends Vue {
             bio: '...',
         };
         this.isContentsHaveMore = true;
+        this.isContentsHaveMoreEachProvider = [];
         (<HTMLLinkElement>document.getElementById('favicon')).href = '/favicon.ico';
         document.title = 'Web3 Pass';
 
@@ -570,7 +603,8 @@ export default class Home extends Vue {
             this.rss3Profile.address = this.ethAddress;
         }, 0);
 
-        this.startLoadingAccounts();
+        const accounts = await (<IRSS3>this.rss3).accounts.get(this.ethAddress);
+        this.startLoadingAccounts(accounts);
 
         setTimeout(async () => {
             this.rss3Relations.followers = (await (<IRSS3>this.rss3).backlinks.get(this.ethAddress, 'following')) || [];
@@ -581,9 +615,9 @@ export default class Home extends Vue {
         // Load assets
         await this.startLoadingAssets(true);
 
-        // Load contents
+        // Load Contents
         setTimeout(async () => {
-            await this.loadLatestContents();
+            await this.initLoadContents(accounts);
             this.initIntersectionObserver();
         }, 0);
     }
@@ -613,7 +647,7 @@ export default class Home extends Vue {
         }
     }
 
-    startLoadingAccounts() {
+    startLoadingAccounts(accounts: RSS3Account[]) {
         this.accounts = [];
         setTimeout(async () => {
             // Push original account
@@ -624,7 +658,7 @@ export default class Home extends Vue {
                 tags: ['pass:order:-1'],
             });
 
-            await this.loadAccounts(await (<IRSS3>this.rss3).accounts.get(this.ethAddress));
+            await this.loadAccounts(accounts);
         }, 0);
     }
 
@@ -774,7 +808,28 @@ export default class Home extends Vue {
         }
     }
 
-    async loadLatestContents() {
+    async initLoadContents(accounts: RSS3Account[]) {
+        // Default by hub
+        this.isContentsHaveMoreEachProvider.push({
+            provider: {
+                platform: 'RSS3',
+                identity: 'hub',
+                signature: '',
+            },
+            more: true,
+            lastTS: 0xffffffff,
+        });
+        // Accounts
+        // for (const account of accounts) {
+        //     if (account.platform === 'Misskey') {
+        //         this.isContentsHaveMoreEachProvider.push({
+        //             provider: account,
+        //             more: true,
+        //             lastTS: 0xffffffff,
+        //         });
+        //     }
+        // }
+
         await this.loadMoreContents();
     }
 
@@ -784,26 +839,52 @@ export default class Home extends Vue {
             return;
         }
         this.isLoadingContents = true;
-        // Get oldest timestamp
-        const nowTS = this.contents.length ? this.contents[this.contents.length - 1].info.timestamp - 1 : 0xffffffff;
-        const contents = await ContentProviders.mirror.get(this.ethAddress, 0, nowTS);
-        if (contents.length < config.contentRequestLimit) {
-            // No more
+        let isHavingMore: boolean = false;
+        const contentsMerge: Content[] = [];
+        for (const provider of this.isContentsHaveMoreEachProvider) {
+            if (provider.provider.platform === 'RSS3' && provider.provider.identity === 'hub') {
+                if (provider.more) {
+                    const contents = await ContentProviders.hub.get(this.ethAddress, 0, provider.lastTS);
+                    if (contents.length < config.contentRequestLimit) {
+                        // No more
+                        provider.more = false;
+                    } else {
+                        isHavingMore = true;
+                    }
+
+                    for (const content of contents) {
+                        // temp. fix mirror undefined error
+                        if (content?.info?.link?.includes('//undefined.mirror.xyz/')) {
+                            content.info.link = `https://mirror.xyz/${content.identity}/${content.info.link
+                                .split('/')
+                                .pop()}`;
+                        }
+
+                        if (
+                            content.accessible !== false &&
+                            contentsMerge.findIndex((ctx) => ctx.info.title === content.info.title) === -1 // todo: opt-out this
+                        ) {
+                            contentsMerge.push(content);
+                        }
+
+                        if (provider.lastTS >= content.info.timestamp) {
+                            provider.lastTS = content.info.timestamp - 1;
+                        }
+                    }
+                }
+            }
+        }
+
+        if (!isHavingMore) {
             this.isContentsHaveMore = false;
         }
-        for (const content of contents) {
-            // temp. fix mirror undefined error
-            if (content.info.link.includes('//undefined.mirror.xyz/')) {
-                content.info.link = `https://mirror.xyz/${content.identity}/${content.info.link.split('/').pop()}`;
-            }
 
-            if (
-                content.accessible !== false &&
-                this.contents.findIndex((ctx) => ctx.info.title === content.info.title) === -1 // todo: opt-out this
-            ) {
-                this.contents.push(content);
-            }
-        }
+        contentsMerge.sort((a, b) => {
+            return b.info.timestamp - a.info.timestamp;
+        });
+
+        this.contents.push(...contentsMerge);
+
         this.isLoadingContents = false;
     }
 
@@ -854,6 +935,11 @@ export default class Home extends Vue {
             await (<IRSS3>this.rss3).files.sync();
         } else {
             sessionStorage.setItem('redirectFrom', this.$route.fullPath);
+
+            // Clear last user status
+            (<HTMLLinkElement>document.getElementById('favicon')).href = '/favicon.ico';
+            document.title = 'Web3 Pass';
+
             await this.$router.push('/');
         }
     }
@@ -974,14 +1060,34 @@ export default class Home extends Vue {
         window.open(link);
     }
 
-    public displayDialog(address: string, chain: string) {
-        this.dialogAddress = address;
-        this.dialogChain = chain;
-        this.isdisplaying = true;
+    public displayDialog(address: string, platform: string) {
+        if (platform === 'Misskey') {
+            this.showingAccountDetails = {
+                address,
+                platform,
+                isLink: true,
+                link: ContentProviders.misskey.getAccountLink(address),
+            };
+        } else if (platform === 'Twitter') {
+            this.showingAccountDetails = {
+                address,
+                platform,
+                isLink: true,
+                link: ContentProviders.twitter.getAccountLink(address),
+            };
+        } else {
+            this.showingAccountDetails = {
+                address,
+                platform,
+                isLink: false,
+            };
+        }
+
+        this.isShowingAccount = true;
     }
 
     public closeDialog() {
-        this.isdisplaying = false;
+        this.isShowingAccount = false;
     }
 
     public copyToClipboard(address: string) {
@@ -993,6 +1099,10 @@ export default class Home extends Vue {
                 console.error('Async: Could not copy the account: ', err);
             },
         );
+    }
+
+    toExternalLink(link: string) {
+        window.open(link);
     }
 
     clickAddress() {
@@ -1091,7 +1201,7 @@ export default class Home extends Vue {
 
             // Reload
             if (this.isLoadingAssets || this.isOwner) {
-                this.startLoadingAccounts();
+                this.startLoadingAccounts(await (<IRSS3>this.rss3).accounts.get(this.ethAddress));
                 await this.startLoadingAssets(false);
             }
         } else {

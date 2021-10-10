@@ -507,7 +507,7 @@ export default class Setup extends Vue {
             await this.initLoad();
         }
         this.startLoadingAccounts();
-        this.startLoadingAssets();
+        await this.startLoadingAssets();
     }
 
     deactivated() {
@@ -515,6 +515,7 @@ export default class Setup extends Vue {
             clearInterval(this.loadingAssetsIntervalID);
             this.loadingAssetsIntervalID = null;
         }
+        this.isLoading = false;
     }
 }
 </script>
