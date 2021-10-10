@@ -425,37 +425,14 @@ export default class SetupAccounts extends Vue {
     async addNoSignAccountConfirm() {
         this.isShowingAddSpecifyAccountInput = false;
         this.isLoading = true;
-        const ethAddres = (<IRSS3>this.rss3).account.address;
-        const rns = await RNS.addr2Name(ethAddres);
-        if (
-            this.specifyNoSignAccount.platform === 'Misskey' &&
-            (await ContentProviders.misskey.verify(this.specifyNoSignAccount.account, rns, ethAddres))
-        ) {
-            // Pass
-            const newAccount = {
-                platform: this.specifyNoSignAccount.platform,
-                identity: this.specifyNoSignAccount.account,
-                signature: '',
-            };
-            this.show.push(newAccount);
-            this.toAdd.push(newAccount);
-        } else if (
-            this.specifyNoSignAccount.platform === 'Twitter' &&
-            (await ContentProviders.twitter.verify(this.specifyNoSignAccount.account, rns, ethAddres))
-        ) {
-            // Pass
-            const newAccount = {
-                platform: this.specifyNoSignAccount.platform,
-                identity: this.specifyNoSignAccount.account,
-                signature: '',
-            };
-            this.show.push(newAccount);
-            this.toAdd.push(newAccount);
-        } else {
-            // Unverified
-            this.addAccountNotice = 'Sorry, but this account cannot be verified.';
-            this.isShowingAddAccountNotice = true;
-        }
+
+        const newAccount = {
+            platform: this.specifyNoSignAccount.platform,
+            identity: this.specifyNoSignAccount.account,
+            signature: '',
+        };
+        this.show.push(newAccount);
+        this.toAdd.push(newAccount);
 
         this.specifyNoSignAccount.account = '';
         this.isLoading = false;
