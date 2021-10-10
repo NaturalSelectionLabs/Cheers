@@ -3,3 +3,9 @@
     font-weight: 400;
     src: url('./fonts/SF-Compact-Rounded-Regular.otf') format('opentype');
 }
+
+@font-face {
+    font-family: SFCompactRounded;
+    font-weight: 600;
+    src: url('./fonts/SF-Compact-Rounded-Semibold.otf') format('opentype');
+}
