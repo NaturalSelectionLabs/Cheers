@@ -844,7 +844,7 @@ export default class Home extends Vue {
         for (const provider of this.isContentsHaveMoreEachProvider) {
             if (provider.provider.platform === 'RSS3' && provider.provider.identity === 'Hub') {
                 if (provider.more) {
-                    const contents = await ContentProviders[provider.provider.identity].get(
+                    const contents: Content[] = await ContentProviders[provider.provider.identity].get(
                         this.ethAddress,
                         0,
                         provider.lastTS,
@@ -866,6 +866,8 @@ export default class Home extends Vue {
 
                         if (
                             content.accessible !== false &&
+                            // Opt-out edited mirror contents
+                            content.platform === 'Mirror-XYZ' &&
                             contentsMerge.findIndex((ctx) => ctx.info.title === content.info.title) === -1 // todo: opt-out this
                         ) {
                             contentsMerge.push(content);
