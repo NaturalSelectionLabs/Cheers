@@ -26,7 +26,7 @@
                 </LinkButton>
                 <Input class="mb-4 w-full" :is-single-line="true" placeholder="Username" v-model="profile.name" />
                 <!-- The input of Personal link -->
-                <Input class="mb-4 w-full" :is-single-line="true" placeholder="Personal link" />
+                <Input class="mb-4 w-full" :is-single-line="true" placeholder="Personal link" v-model="profile.link" />
                 <Input class="mb-4 w-full" :is-single-line="false" placeholder="Bio" v-model="profile.bio" />
 
                 <div class="px-4 py-4 flex gap-5 fixed left-0 right-0 max-w-md m-auto w-full">
@@ -109,10 +109,12 @@ export default class EditProfile extends Vue {
         avatar: string;
         name: string;
         bio: string;
+        link: string;
     } = {
         avatar: config.defaultAvatar,
         name: '',
         bio: '',
+        link: '',
     };
     rss3: IRSS3 | null = null;
     isLoading: Boolean = false;
@@ -135,9 +137,26 @@ export default class EditProfile extends Vue {
         }
 
         const profile = await (<IRSS3>this.rss3).profile.get();
+
         this.profile.avatar = profile?.avatar?.[0] || config.defaultAvatar;
         this.profile.name = profile?.name || '';
-        this.profile.bio = profile?.bio || '';
+        if (profile?.bio) {
+            const fieldPattern = /<([A-Z]+?)#(.+?)>/gi;
+            const fields = profile.bio.match(fieldPattern) || [];
+            this.profile.bio = profile.bio.replace(fieldPattern, '');
+
+            for (const field of fields) {
+                const splits = fieldPattern.exec(field) || [];
+                switch (splits[1]) {
+                    case 'SITE':
+                        this.profile.link = splits[2];
+                        break;
+                    default:
+                        // Do nothing
+                        break;
+                }
+            }
+        }
 
         // Setup theme
         const themes = RSS3.getAvailableThemes(await (<IRSS3>this.rss3).assets.get());
@@ -163,6 +182,12 @@ export default class EditProfile extends Vue {
     //     sessionStorage.removeItem('profile');
     // }
 
+    setOversizeNotice(field: string) {
+        this.notice = `${field} cannot be longer than ${this.maxValueLength} chars`;
+        this.isLoading = false;
+        this.isShowingNotice = true;
+    }
+
     async back() {
         // this.clearEdited();
         this.$gtag.event('cancelEditProfile', { userid: (<IRSS3>this.rss3).account.address });
@@ -174,26 +199,26 @@ export default class EditProfile extends Vue {
             this.rss3 = await RSS3.get();
         }
         if (this.profile.name.length > this.maxValueLength) {
-            this.notice = `Name cannot be longer than ${this.maxValueLength} chars`;
-            this.isLoading = false;
-            this.isShowingNotice = true;
+            this.setOversizeNotice('Name');
             return;
         }
-        if (this.profile.bio.length > this.maxValueLength) {
-            this.notice = `Bio cannot be longer than ${this.maxValueLength} chars`;
-            this.isLoading = false;
-            this.isShowingNotice = true;
+        if (this.profile.bio.length + this.profile.link.length + 8 > this.maxValueLength) {
+            this.setOversizeNotice('Bio');
             return;
         }
         const newProfile: RSS3Profile = {
             name: this.profile.name,
-            bio: this.profile.bio,
+            bio: this.profile.bio + `<SITE#${this.profile.link}>`,
         };
+
+        // Upload avatar
         const avatarUrl = await (<any>this.$refs.avatar).upload();
         if (avatarUrl) {
             newProfile.avatar = [avatarUrl];
         }
         await (<IRSS3>this.rss3).profile.patch(newProfile);
+
+        // Save
         try {
             await (<IRSS3>this.rss3).files.sync();
         } catch (e) {
@@ -206,7 +231,7 @@ export default class EditProfile extends Vue {
         this.isLoading = false;
         const redirectFrom = sessionStorage.getItem('redirectFrom');
         sessionStorage.removeItem('redirectFrom');
-        await this.$router.push(redirectFrom || '/home');
+        await this.$router.push(config.subDomain.isSubDomainMode ? redirectFrom || '/' : '/home');
     }
 
     async isPassEnough(): Promise<boolean> {
