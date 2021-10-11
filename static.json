@@ -1,5 +1,16 @@
 {
     "root": "dist/",
     "https_only": true,
-    "error_page": "index.html"
+    "error_page": "index.html",
+    "headers": {
+        "/*.js*": {
+            "Cache-Control": "public, max-age=86400"
+        },
+        "/*.otf": {
+            "Cache-Control": "public, max-age=604800"
+        },
+        "/*.woff2": {
+            "Cache-Control": "public, max-age=604800"
+        }
+    }
 }
