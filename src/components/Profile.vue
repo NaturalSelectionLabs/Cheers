@@ -29,7 +29,7 @@
             <Tooltip v-show="isShowingTooltip" :text="$props.clickAddressNotice" view-type="options" />
         </div>
         <div class="col-span-full md:col-span-1 md:row-start-3 md:col-start-3" v-if="website">
-            <LinkButton>
+            <LinkButton @click="toExternalLink">
                 <span>{{ website }}</span>
             </LinkButton>
         </div>
