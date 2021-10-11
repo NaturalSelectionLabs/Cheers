@@ -1,7 +1,7 @@
 <template>
     <div class="h-screen bg-body-bg overflow-y-auto">
-        <div class="px-4 pt-8 pb-20 max-w-md m-auto">
-            <div class="header flex justify-between items-center pb-4">
+        <div class="px-4 pt-8 pb-20 max-w-screen-lg m-auto">
+            <div class="flex justify-between items-center pb-4">
                 <Button
                     size="sm"
                     class="w-10 h-10 bg-secondary-btn text-secondary-btn-text shadow-secondary-btn"
@@ -19,7 +19,7 @@
                     @click="toPublicPage(rns || ethAddress)"
                 />
             </div>
-            <div class="follow-list flex flex-col gap-y-4">
+            <div class="flex flex-col gap-y-4 max-w-md m-auto">
                 <FollowerCard
                     class="w-auto cursor-pointer"
                     v-for="item in followerList"
@@ -58,8 +58,8 @@ interface Profile {
     components: { ImgHolder, Button, FollowerCard },
 })
 export default class Followers extends Vue {
-    public followerList: Array<Profile> = [];
-    public rss3Profile: Profile = {
+    followerList: Array<Profile> = [];
+    rss3Profile: Profile = {
         avatar: config.defaultAvatar,
         username: '',
         address: '',
@@ -145,11 +145,11 @@ export default class Followers extends Vue {
         return `${address.slice(0, 6)}...${address.slice(-4)}`;
     }
 
-    public toPublicPage(address: string) {
+    toPublicPage(address: string) {
         this.$router.push(`/${address}`);
     }
 
-    public back() {
+    back() {
         this.$router.push(`/${this.rns || this.ethAddress}`);
     }
 

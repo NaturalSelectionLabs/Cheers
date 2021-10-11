@@ -1,6 +1,6 @@
 <template>
     <div class="h-screen bg-nft-bg overflow-y-auto">
-        <div class="px-4 pt-8 pb-20 max-w-md m-auto">
+        <div class="px-4 pt-8 pb-20 max-w-screen-lg m-auto">
             <div class="header pb-4 relative">
                 <div
                     class="
@@ -37,17 +37,17 @@
                     />
                 </div>
             </div>
-            <div class="content">
+            <section class="max-w-screen-sm m-auto">
                 <div class="image pb-4">
                     <NFTItem
                         :imageUrl="details.animation_url || details.image_url"
                         :poster-url="details.image_url"
-                        :size="NFTWidth > 416 ? 416 : NFTWidth"
+                        :size="NFTWidth"
                         :is-showing-details="true"
                     />
                 </div>
                 <NFTDetail :chain="details.chain" :details="details" market="opensea" />
-            </div>
+            </section>
         </div>
     </div>
 </template>
@@ -71,7 +71,7 @@ import config from '@/config';
 export default class SingleNFT extends Vue {
     rns: string = '';
     ethAddress: string = '';
-    public NFTWidth: number = window.innerWidth - 32;
+    NFTWidth: number = Math.min(window.innerWidth - 32, 640);
     private details: NFT = {
         chain: '',
         token_id: '',

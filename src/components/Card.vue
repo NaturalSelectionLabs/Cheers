@@ -89,7 +89,7 @@ export default class Card extends Vue {}
                 }
             }
             &.PC-layout {
-                @apply overflow-y-scroll max-h-36;
+                @apply overflow-y-auto max-h-36;
             }
             .body-tips {
                 @apply flex w-full justify-center items-center;

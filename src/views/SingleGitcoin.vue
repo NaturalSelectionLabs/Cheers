@@ -1,6 +1,6 @@
 <template>
     <div class="h-screen bg-gitcoin-bg overflow-y-auto">
-        <div class="px-4 pt-8 pb-20 max-w-md m-auto">
+        <div class="px-4 pt-8 pb-20 max-w-screen-lg m-auto">
             <div class="header flex justify-between items-center pb-4">
                 <Button
                     size="sm"
@@ -18,97 +18,103 @@
                     @click="toPublicPage(rns || ethAddress)"
                 />
             </div>
-            <GitcoinItem :imageUrl="grant.logo || defaultAvatar" :size="Width > 416 ? 416 : Width"></GitcoinItem>
-            <div
-                class="
-                    w-full
-                    px-5
-                    py-4
-                    bg-body-bg
-                    rounded
-                    filter
-                    shadow-gitcoin
-                    border-card
-                    text-body-text
-                    flex flex-col
-                    justify-start
-                    items-start
-                    gap-4
-                    text-black
-                    mt-4
-                "
-            >
-                <div class="w-full">
-                    <h2 class="text-xl font-semibold break-words">
-                        {{ grant.title || 'Inactive Project' }}
-                    </h2>
-                    <div
-                        class="text-sm leading-normal text-gitcoin-title truncate cursor-pointer"
-                        @click="toExternalLink(grant.reference_url)"
-                    >
-                        {{ grant.reference_url }}
-                    </div>
-                </div>
-                <div class="w-full">
-                    <h2 class="text-xl font-semibold break-words">Description</h2>
-                    <div class="text-sm leading-normal break-words line-clamp-3">
-                        {{ grant.description || 'No information provided by Gitcoin.' }}
-                    </div>
-                </div>
-                <div>
-                    <h2 class="text-xl font-semibold">Contributions</h2>
-                    <h1 class="text-2xl font-semibold text-gitcoin-title">
-                        <vue3-autocounter
-                            ref="counter"
-                            :startAmount="0"
-                            :endAmount="parseInt(donationInfo.length)"
-                            :duration="1"
-                            separator=","
-                            :autoinit="true"
-                        />
-                    </h1>
-                </div>
-                <div class="w-full flex flex-col gap-y-2">
-                    <div class="flex flex-row justify-start gap-x-2" v-for="item in donationInfo" :key="item.txHash">
+            <section class="max-w-screen-sm m-auto">
+                <GitcoinItem :imageUrl="grant.logo || defaultAvatar" :size="Width"></GitcoinItem>
+                <div
+                    class="
+                        w-full
+                        px-5
+                        py-4
+                        bg-body-bg
+                        rounded
+                        filter
+                        shadow-gitcoin
+                        border-card
+                        text-body-text
+                        flex flex-col
+                        justify-start
+                        items-start
+                        gap-4
+                        text-black
+                        mt-4
+                    "
+                >
+                    <div class="w-full">
+                        <h2 class="text-xl font-semibold break-words">
+                            {{ grant.title || 'Inactive Project' }}
+                        </h2>
                         <div
-                            class="
-                                flex-1
-                                bg-gitcoin-bg
-                                text-black
-                                rounded rounded-xl
-                                flex flex-row
-                                justify-between
-                                items-center
-                                px-4
-                                py-2
-                            "
+                            class="text-sm leading-normal text-gitcoin-title truncate cursor-pointer"
+                            @click="toExternalLink(grant.reference_url)"
                         >
-                            <div class="text-gitcoin-title flex-shrink pr-2">
-                                <vue3-autocounter
-                                    ref="counter"
-                                    :startAmount="0"
-                                    :endAmount="parseFloat(item.formatedAmount)"
-                                    :duration="1"
-                                    separator=","
-                                    :decimals="item.formatedAmount.split('.')[1].length"
-                                    :suffix="item.symbol"
-                                    :autoinit="true"
-                                />
-                            </div>
-                            <div class="flex-1 truncate w-0 text-right text-gitcoin-title">
-                                {{ timeDifferent(item.timeStamp) }}
-                            </div>
+                            {{ grant.reference_url }}
                         </div>
-                        <Button
-                            size="sm"
-                            class="w-9 h-9 ml-1 bg-gitcoin-btn-m text-gitcoin-btn-m-text shadow-gitcoin-btn-m"
-                            @click="toScanTx(item)"
+                    </div>
+                    <div class="w-full">
+                        <h2 class="text-xl font-semibold break-words">Description</h2>
+                        <div class="text-sm leading-normal break-words line-clamp-3">
+                            {{ grant.description || 'No information provided by Gitcoin.' }}
+                        </div>
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-semibold">Contributions</h2>
+                        <h1 class="text-2xl font-semibold text-gitcoin-title">
+                            <vue3-autocounter
+                                ref="counter"
+                                :startAmount="0"
+                                :endAmount="parseInt(donationInfo.length)"
+                                :duration="1"
+                                separator=","
+                                :autoinit="true"
+                            />
+                        </h1>
+                    </div>
+                    <div class="w-full flex flex-col gap-y-2">
+                        <div
+                            class="flex flex-row justify-start gap-x-2"
+                            v-for="item in donationInfo"
+                            :key="item.txHash"
                         >
-                            <i class="bx bx-link-external bx-xs" />
-                        </Button>
+                            <div
+                                class="
+                                    flex-1
+                                    bg-gitcoin-bg
+                                    text-black
+                                    rounded-xl
+                                    flex flex-row
+                                    justify-between
+                                    items-center
+                                    px-4
+                                    py-2
+                                "
+                            >
+                                <div class="text-gitcoin-title flex-shrink pr-2">
+                                    <vue3-autocounter
+                                        ref="counter"
+                                        :startAmount="0"
+                                        :endAmount="parseFloat(item.formatedAmount)"
+                                        :duration="1"
+                                        separator=","
+                                        :decimals="item.formatedAmount.split('.')[1].length"
+                                        :suffix="item.symbol"
+                                        :autoinit="true"
+                                    />
+                                </div>
+                                <div class="flex-1 truncate w-0 text-right text-gitcoin-title">
+                                    {{ timeDifferent(item.timeStamp) }}
+                                </div>
+                            </div>
+                            <Button
+                                size="sm"
+                                class="w-9 h-9 ml-1 bg-gitcoin-btn-m text-gitcoin-btn-m-text shadow-gitcoin-btn-m"
+                                @click="toScanTx(item)"
+                            >
+                                <i class="bx bx-link-external bx-xs" />
+                            </Button>
+                        </div>
                     </div>
                 </div>
-            </div>
+            </section>
         </div>
     </div>
 </template>
@@ -162,7 +168,7 @@ export interface DonationInfo {
     components: { ImgHolder, Button, GitcoinItem, Vue3Autocounter },
 })
 export default class SingleGitcoin extends Vue {
-    public Width: number = window.innerWidth - 32;
+    public Width: number = Math.min(window.innerWidth - 32, 640);
     public rns: string = '';
     public ethAddress: string = '';
     public rss3Profile: Profile = {

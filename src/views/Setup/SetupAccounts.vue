@@ -1,6 +1,6 @@
 <template>
     <div class="h-screen bg-body-bg text-body-text overflow-y-auto">
-        <div class="px-4 pt-8 pb-32 max-w-md m-auto">
+        <div class="px-4 pt-8 pb-32 max-w-screen-lg m-auto">
             <div class="flex justify-between items-center mb-4">
                 <Button
                     size="sm"
@@ -28,135 +28,145 @@
                     />
                 </span>
             </div>
-            <Card
-                title="Default"
-                color-title="text-account-title"
-                color-tips="text-account-title"
-                color-background="bg-body-bg"
-                class="w-full mb-4 border-account-border"
-                :is-having-content="true"
-            >
-                <template #content>
-                    <AccountItem class="shadow-account-sm inline-flex m-0.5 rounded-full" :size="64" chain="Ethereum" />
-                </template>
-            </Card>
-            <Card
-                title="Listed"
-                color-title="text-account-title"
-                color-tips="text-account-title"
-                :color-background="mode === 'normal' ? 'bg-account-bg' : 'bg-card-overlay'"
-                class="w-full mb-4 border-account-border"
-                :is-having-content="true"
-                :tips="mode !== 'delete' ? 'Drag here to show and reorder' : 'Delete unwanted accounts'"
-            >
-                <template #header-button>
-                    <div class="flex flex-row gap-2">
-                        <Button
-                            v-if="mode === 'delete'"
-                            size="sm"
-                            class="w-8 h-8 bg-account-btn-s text-account-btn-s-text shadow-account-btn-s"
-                            @click="mode = 'normal'"
-                        >
-                            <i class="bx bx-check bx-xs" />
-                        </Button>
-                        <Button
-                            v-else
-                            size="sm"
-                            class="w-8 h-8 bg-account-btn-s text-account-btn-s-text shadow-account-btn-s"
-                            @click="mode = 'delete'"
-                        >
-                            <i class="bx bx-minus bx-xs" />
-                        </Button>
-                        <Button
-                            v-if="mode === 'add'"
-                            size="sm"
-                            class="w-8 h-8 bg-account-btn-s text-account-btn-s-text shadow-account-btn-s"
-                            @click="mode = 'normal'"
-                        >
-                            <i class="bx bx-x bx-xs" />
-                        </Button>
-                        <Button
-                            v-else
-                            size="sm"
-                            class="w-8 h-8 bg-account-btn-m text-account-btn-m-text shadow-account-btn-s"
-                            @click="addAccountPreTest"
-                        >
-                            <i class="bx bx-plus bx-xs" />
-                        </Button>
-                    </div>
-                </template>
-                <template #content>
-                    <div v-if="mode === 'add'" class="text-center">
+            <section class="max-w-md m-auto">
+                <Card
+                    title="Default"
+                    color-title="text-account-title"
+                    color-tips="text-account-title"
+                    color-background="bg-body-bg"
+                    class="w-full mb-4 border-account-border"
+                    :is-having-content="true"
+                >
+                    <template #content>
                         <AccountItem
-                            v-for="chain in additionalAccounts"
-                            :key="chain"
-                            class="inline-flex m-0.5 rounded-full shadow-account-item cursor-pointer"
+                            class="shadow-account-sm inline-flex m-0.5 rounded-full"
                             :size="64"
-                            :chain="chain"
-                            @click="addAccount(chain)"
+                            chain="Ethereum"
                         />
-                    </div>
-                    <div v-else>
-                        <draggable class="min-h-20" :list="show" group="accounts" itemKey="chain">
-                            <template #item="{ element, index }">
+                    </template>
+                </Card>
+                <Card
+                    title="Listed"
+                    color-title="text-account-title"
+                    color-tips="text-account-title"
+                    :color-background="mode === 'normal' ? 'bg-account-bg' : 'bg-card-overlay'"
+                    class="w-full mb-4 border-account-border"
+                    :is-having-content="true"
+                    :tips="mode !== 'delete' ? 'Drag here to show and reorder' : 'Delete unwanted accounts'"
+                >
+                    <template #header-button>
+                        <div class="flex flex-row gap-2">
+                            <Button
+                                v-if="mode === 'delete'"
+                                size="sm"
+                                class="w-8 h-8 bg-account-btn-s text-account-btn-s-text shadow-account-btn-s"
+                                @click="mode = 'normal'"
+                            >
+                                <i class="bx bx-check bx-xs" />
+                            </Button>
+                            <Button
+                                v-else
+                                size="sm"
+                                class="w-8 h-8 bg-account-btn-s text-account-btn-s-text shadow-account-btn-s"
+                                @click="mode = 'delete'"
+                            >
+                                <i class="bx bx-minus bx-xs" />
+                            </Button>
+                            <Button
+                                v-if="mode === 'add'"
+                                size="sm"
+                                class="w-8 h-8 bg-account-btn-s text-account-btn-s-text shadow-account-btn-s"
+                                @click="mode = 'normal'"
+                            >
+                                <i class="bx bx-x bx-xs" />
+                            </Button>
+                            <Button
+                                v-else
+                                size="sm"
+                                class="w-8 h-8 bg-account-btn-m text-account-btn-m-text shadow-account-btn-s"
+                                @click="addAccountPreTest"
+                            >
+                                <i class="bx bx-plus bx-xs" />
+                            </Button>
+                        </div>
+                    </template>
+                    <template #content>
+                        <div v-if="mode === 'add'" class="text-center">
+                            <AccountItem
+                                v-for="chain in additionalAccounts"
+                                :key="chain"
+                                class="inline-flex m-0.5 rounded-full shadow-account-item cursor-pointer"
+                                :size="64"
+                                :chain="chain"
+                                @click="addAccount(chain)"
+                            />
+                        </div>
+                        <div v-else>
+                            <draggable class="min-h-20" :list="show" group="accounts" itemKey="chain">
+                                <template #item="{ element, index }">
+                                    <AccountItem
+                                        class="shadow-account-item inline-flex m-0.5 rounded-full"
+                                        :size="64"
+                                        :chain="element.platform"
+                                        :delete-mode="mode === 'delete'"
+                                        @delete-account="deleteAccount(index)"
+                                    />
+                                </template>
+                            </draggable>
+                        </div>
+                    </template>
+                    <template #footer-button>
+                        <Button
+                            size="sm"
+                            class="text-xs bg-account-btn-s text-account-btn-s-text shadow-account-btn-s"
+                            :class="{
+                                'bg-btn-disabled cursor-not-allowed text-opacity-20': show.length === 0,
+                            }"
+                            :disabled="show.length === 0"
+                            @click="hideAll"
+                        >
+                            <span>Hide All</span>
+                        </Button>
+                    </template>
+                </Card>
+                <Card
+                    title="Unlisted"
+                    color-title="text-account-title"
+                    color-tips="text-account-title"
+                    color-background="bg-card-hide"
+                    class="w-full mb-4 border-account-border"
+                    :is-having-content="true"
+                    tips="Drag here to hide"
+                >
+                    <!-- <template #accessibility>
+                    <i class="bx bx-info-circle" style="color: rgba(0, 0, 0, 0.2)" />
+                </template> -->
+                    <template #header-button>
+                        <Button
+                            size="sm"
+                            class="text-xs bg-account-btn-s text-account-btn-s-text shadow-account-btn-s"
+                            :class="{
+                                'bg-btn-disabled cursor-not-allowed text-opacity-20': hide.length === 0,
+                            }"
+                            :disabled="hide.length === 0"
+                            @click="showAll"
+                        >
+                            <span>Show All</span>
+                        </Button>
+                    </template>
+                    <template #content>
+                        <draggable class="min-h-20" :list="hide" group="accounts" itemKey="chain">
+                            <template #item="{ element }">
                                 <AccountItem
-                                    class="shadow-account-item inline-flex m-0.5 rounded-full"
+                                    class="inline-flex m-0.5 rounded-full"
                                     :size="64"
                                     :chain="element.platform"
-                                    :delete-mode="mode === 'delete'"
-                                    @delete-account="deleteAccount(index)"
                                 />
                             </template>
                         </draggable>
-                    </div>
-                </template>
-                <template #footer-button>
-                    <Button
-                        size="sm"
-                        class="text-xs bg-account-btn-s text-account-btn-s-text shadow-account-btn-s"
-                        :class="{
-                            'bg-btn-disabled cursor-not-allowed text-opacity-20': show.length === 0,
-                        }"
-                        :disabled="show.length === 0"
-                        @click="hideAll"
-                    >
-                        <span>Hide All</span>
-                    </Button>
-                </template>
-            </Card>
-            <Card
-                title="Unlisted"
-                color-title="text-account-title"
-                color-tips="text-account-title"
-                color-background="bg-card-hide"
-                class="w-full mb-4 border-account-border"
-                :is-having-content="true"
-                tips="Drag here to hide"
-            >
-                <!-- <template #accessibility>
-                    <i class="bx bx-info-circle" style="color: rgba(0, 0, 0, 0.2)" />
-                </template> -->
-                <template #header-button>
-                    <Button
-                        size="sm"
-                        class="text-xs bg-account-btn-s text-account-btn-s-text shadow-account-btn-s"
-                        :class="{
-                            'bg-btn-disabled cursor-not-allowed text-opacity-20': hide.length === 0,
-                        }"
-                        :disabled="hide.length === 0"
-                        @click="showAll"
-                    >
-                        <span>Show All</span>
-                    </Button>
-                </template>
-                <template #content>
-                    <draggable class="min-h-20" :list="hide" group="accounts" itemKey="chain">
-                        <template #item="{ element }">
-                            <AccountItem class="inline-flex m-0.5 rounded-full" :size="64" :chain="element.platform" />
-                        </template>
-                    </draggable>
-                </template>
-            </Card>
+                    </template>
+                </Card>
+            </section>
             <div class="px-4 py-4 flex gap-5 fixed bottom-0 left-0 right-0 max-w-md m-auto w-full bg-btn-container">
                 <Button
                     size="lg"

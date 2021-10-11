@@ -104,12 +104,12 @@
                 </template>
                 <template #content>
                     <NFTItem
-                        class="inline-flex mx-0.5 cursor-pointer"
+                        class="inline-flex m-1 cursor-pointer"
                         v-for="item in nfts"
                         :key="item.platform + item.identity + item.id"
                         :image-url="item.info.animation_url || item.info.image_preview_url"
                         :poster-url="item.info.image_preview_url"
-                        :size="isPCLayout ? 140 : 70"
+                        :size="isPCLayout ? 130 : 70"
                         @click="toSingleNFTPage(item.platform, item.identity, item.id)"
                     />
                 </template>
@@ -159,10 +159,10 @@
                 <template #content>
                     <template v-if="gitcoins.length !== 0">
                         <GitcoinItem
-                            class="inline-flex mx-0.5 cursor-pointer"
+                            class="inline-flex mx-1 cursor-pointer"
                             v-for="item in gitcoins"
                             :key="item.platform + item.identity + item.id"
-                            :size="isPCLayout ? 140 : 70"
+                            :size="isPCLayout ? 130 : 70"
                             :imageUrl="item.info.image_preview_url || defaultAvatar"
                             @click="toSingleGitcoin(item.platform, item.identity, item.id)"
                         />
@@ -182,6 +182,7 @@
                                 cursor-pointer
                                 m-auto
                                 mt-4
+                                md:mt-0
                             "
                             @click="toMakeDonation"
                         >

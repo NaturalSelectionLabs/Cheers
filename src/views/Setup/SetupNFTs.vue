@@ -1,6 +1,6 @@
 <template>
     <div class="h-screen bg-body-bg text-body-text overflow-y-auto">
-        <div class="px-4 pt-8 pb-32 max-w-md m-auto">
+        <div class="px-4 pt-8 pb-32 max-w-screen-lg m-auto">
             <div class="flex justify-between items-center mb-4">
                 <Button
                     size="sm"
@@ -21,98 +21,102 @@
                     />
                 </span>
             </div>
-            <Card
-                title="Listed"
-                color-title="text-nft-title"
-                color-tips="text-nft-title"
-                color-background="bg-nft-bg"
-                class="w-full mb-4 border-nft-border"
-                :is-having-content="true"
-                :tips="displayedNFTs.length === 0 ? 'Add additional NFTs' : 'Drag here to show and reorder'"
-            >
-                <template #content>
-                    <draggable
-                        class="min-h-20"
-                        :list="displayedNFTs"
-                        group="nfts"
-                        @start="chooseAsset"
-                        @end="nftMoveEnd"
-                        data-type="displayed"
-                        item-key="displayed"
-                    >
-                        <template #item="{ element }">
-                            <NFTItem
-                                class="inline-flex m-0.5 cursor-pointer"
-                                :size="64"
-                                :image-url="element.info?.image_preview_url"
-                                :data-info="JSON.stringify(element)"
-                            />
-                        </template>
-                    </draggable>
-                </template>
-                <template #footer-button>
-                    <Button
-                        size="sm"
-                        class="text-xs bg-nft-btn-s text-nft-btn-s-text shadow-nft-btn-s ml-auto"
-                        :class="{
-                            'bg-btn-disabled cursor-not-allowed text-opacity-20': displayedNFTs.length === 0,
-                        }"
-                        :disabled="displayedNFTs.length === 0"
-                        @click="hideAll"
-                    >
-                        <span>Hide All</span>
-                    </Button>
-                </template>
-            </Card>
-            <Card
-                title="Unlisted"
-                color-title="text-nft-title"
-                color-tips="text-nft-title"
-                color-background="bg-card-hide"
-                class="w-full mb-4 border-nft-border"
-                :is-having-content="true"
-                tips="Drag here to hide"
-            >
-                <template #content>
-                    <details
-                        v-for="(collection, index) in collections"
-                        :key="collection"
-                        :open="activatedGroupID === index"
-                        @click.prevent="activatedGroupID = index"
-                    >
-                        <summary class="text-nft-btn-s-text">{{ collection }}</summary>
+            <section class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <Card
+                    title="Listed"
+                    color-title="text-nft-title"
+                    color-tips="text-nft-title"
+                    color-background="bg-nft-bg"
+                    class="w-full border-nft-border"
+                    :is-having-content="true"
+                    :tips="displayedNFTs.length === 0 ? 'Add additional NFTs' : 'Drag here to show and reorder'"
+                >
+                    <template #content>
                         <draggable
                             class="min-h-20"
-                            :list="hiddenList[collection]"
+                            :list="displayedNFTs"
                             group="nfts"
-                            data-type="hidden"
-                            :item-key="collection"
+                            @start="chooseAsset"
                             @end="nftMoveEnd"
+                            data-type="displayed"
+                            item-key="displayed"
                         >
                             <template #item="{ element }">
                                 <NFTItem
-                                    class="inline-flex m-0.5 cursor-pointer"
+                                    class="inline-flex m-0.5"
+                                    style="cursor: grab"
                                     :size="64"
                                     :image-url="element.info?.image_preview_url"
+                                    :data-info="JSON.stringify(element)"
                                 />
                             </template>
                         </draggable>
-                    </details>
-                </template>
-                <template #header-button>
-                    <Button
-                        size="sm"
-                        class="text-xs bg-nft-btn-s text-nft-btn-s-text shadow-nft-btn-s ml-auto"
-                        :class="{
-                            'bg-btn-disabled cursor-not-allowed text-opacity-20': hiddenNFTs.length === 0,
-                        }"
-                        :disabled="hiddenNFTs.length === 0"
-                        @click="showAll"
-                    >
-                        <span>Show All</span>
-                    </Button>
-                </template>
-            </Card>
+                    </template>
+                    <template #footer-button>
+                        <Button
+                            size="sm"
+                            class="text-xs bg-nft-btn-s text-nft-btn-s-text shadow-nft-btn-s ml-auto"
+                            :class="{
+                                'bg-btn-disabled cursor-not-allowed text-opacity-20': displayedNFTs.length === 0,
+                            }"
+                            :disabled="displayedNFTs.length === 0"
+                            @click="hideAll"
+                        >
+                            <span>Hide All</span>
+                        </Button>
+                    </template>
+                </Card>
+                <Card
+                    title="Unlisted"
+                    color-title="text-nft-title"
+                    color-tips="text-nft-title"
+                    color-background="bg-card-hide"
+                    class="w-full border-nft-border"
+                    :is-having-content="true"
+                    tips="Drag here to hide"
+                >
+                    <template #content>
+                        <details
+                            v-for="(collection, index) in collections"
+                            :key="collection"
+                            :open="activatedGroupID === index"
+                            @click.prevent="activatedGroupID = index"
+                        >
+                            <summary class="text-nft-btn-s-text">{{ collection }}</summary>
+                            <draggable
+                                class="min-h-20"
+                                :list="hiddenList[collection]"
+                                group="nfts"
+                                data-type="hidden"
+                                :item-key="collection"
+                                @end="nftMoveEnd"
+                            >
+                                <template #item="{ element }">
+                                    <NFTItem
+                                        class="inline-flex m-0.5"
+                                        style="cursor: grab"
+                                        :size="64"
+                                        :image-url="element.info?.image_preview_url"
+                                    />
+                                </template>
+                            </draggable>
+                        </details>
+                    </template>
+                    <template #header-button>
+                        <Button
+                            size="sm"
+                            class="text-xs bg-nft-btn-s text-nft-btn-s-text shadow-nft-btn-s ml-auto"
+                            :class="{
+                                'bg-btn-disabled cursor-not-allowed text-opacity-20': hiddenNFTs.length === 0,
+                            }"
+                            :disabled="hiddenNFTs.length === 0"
+                            @click="showAll"
+                        >
+                            <span>Show All</span>
+                        </Button>
+                    </template>
+                </Card>
+            </section>
             <div class="px-4 py-4 flex gap-5 fixed bottom-0 left-0 right-0 max-w-md m-auto w-full bg-btn-container">
                 <Button
                     size="lg"

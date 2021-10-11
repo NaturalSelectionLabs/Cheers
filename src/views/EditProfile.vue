@@ -1,6 +1,6 @@
 <template>
     <div class="h-screen bg-body-bg text-body-text overflow-y-auto">
-        <div class="px-4 py-9 max-w-md m-auto pb-20">
+        <div class="px-4 py-9 max-w-screen-lg m-auto pb-20">
             <div class="text-center mb-4 relative">
                 <Button
                     size="sm"
@@ -13,33 +13,37 @@
                     Edit Profile
                 </h1>
             </div>
-            <AvatarEditor class="m-auto mb-4" size="lg" :url="profile.avatar" ref="avatar" />
-            <LinkButton
-                class="m-auto mb-4"
-                :class="{
-                    'cursor-default': rns,
-                }"
-                @click="toSetupRNS"
-            >
-                <span>{{ rns ? rns : 'Claim Your RNS' }}</span>
-            </LinkButton>
-            <Input class="mb-4 w-full" :is-single-line="true" placeholder="Username" v-model="profile.name" />
-            <Input class="mb-4 w-full" :is-single-line="false" placeholder="Bio" v-model="profile.bio" />
+            <section class="max-w-md m-auto">
+                <AvatarEditor class="m-auto mb-4" size="lg" :url="profile.avatar" ref="avatar" />
+                <LinkButton
+                    class="m-auto mb-4"
+                    :class="{
+                        'cursor-default': rns,
+                    }"
+                    @click="toSetupRNS"
+                >
+                    <span>{{ rns ? rns : 'Claim Your RNS' }}</span>
+                </LinkButton>
+                <Input class="mb-4 w-full" :is-single-line="true" placeholder="Username" v-model="profile.name" />
+                <!-- The input of Personal link -->
+                <Input class="mb-4 w-full" :is-single-line="true" placeholder="Personal link" />
+                <Input class="mb-4 w-full" :is-single-line="false" placeholder="Bio" v-model="profile.bio" />
 
-            <div class="px-4 py-4 flex gap-5 fixed left-0 right-0 max-w-md m-auto w-full">
-                <Button
-                    size="lg"
-                    class="flex-1 text-lg bg-secondary-btn text-secondary-btn-text shadow-secondary-btn"
-                    @click="back"
-                    ><span>Discard</span></Button
-                >
-                <Button
-                    size="lg"
-                    class="flex-1 text-lg bg-primary-btn text-primary-btn-text shadow-primary-btn"
-                    @click="save"
-                    ><span>Save</span></Button
-                >
-            </div>
+                <div class="px-4 py-4 flex gap-5 fixed left-0 right-0 max-w-md m-auto w-full">
+                    <Button
+                        size="lg"
+                        class="flex-1 text-lg bg-secondary-btn text-secondary-btn-text shadow-secondary-btn"
+                        @click="back"
+                        ><span>Discard</span></Button
+                    >
+                    <Button
+                        size="lg"
+                        class="flex-1 text-lg bg-primary-btn text-primary-btn-text shadow-primary-btn"
+                        @click="save"
+                        ><span>Save</span></Button
+                    >
+                </div>
+            </section>
 
             <LoadingContainer v-show="isLoading" />
 
@@ -131,7 +135,6 @@ export default class EditProfile extends Vue {
         }
 
         const profile = await (<IRSS3>this.rss3).profile.get();
-        console.log(profile);
         this.profile.avatar = profile?.avatar?.[0] || config.defaultAvatar;
         this.profile.name = profile?.name || '';
         this.profile.bio = profile?.bio || '';

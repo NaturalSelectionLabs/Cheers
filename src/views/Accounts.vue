@@ -1,6 +1,6 @@
 <template>
     <div class="h-screen bg-account-bg overflow-y-auto">
-        <div class="px-4 pt-8 pb-32 max-w-md m-auto">
+        <div class="px-4 pt-8 pb-32 max-w-screen-lg m-auto">
             <div class="header flex justify-between items-center pb-4">
                 <Button
                     size="sm"
@@ -19,8 +19,8 @@
                     @click="toPublicPage(rss3Profile.address)"
                 />
             </div>
-            <div class="account-list">
-                <div class="flex flex-col gap-y-4" :class="{ 'pb-16': isOwner }">
+            <div class="max-w-md m-auto">
+                <div class="flex flex-col gap-y-4">
                     <div
                         class="account-wrapper flex flex-row justify-between items-center"
                         v-for="item in accounts"
