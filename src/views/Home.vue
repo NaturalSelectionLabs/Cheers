@@ -13,6 +13,7 @@
                     :followers="rss3Relations.followers"
                     :followings="rss3Relations.followings"
                     :bio="rss3Profile.bio"
+                    :website="rss3Profile.link"
                     click-address-notice="Copied!"
                     :isOwner="isOwner"
                     :isFollowing="isFollowing"
@@ -423,6 +424,7 @@ interface ProfileInfo {
     username: string;
     address: string;
     bio: string;
+    link: string;
 }
 
 interface Relations {
@@ -485,6 +487,7 @@ export default class Home extends Vue {
         username: '...',
         address: '',
         bio: '...',
+        link: '',
     };
     rss3Relations: Relations = {
         followers: [],
@@ -540,6 +543,7 @@ export default class Home extends Vue {
             username: '...',
             address: '',
             bio: '...',
+            link: '',
         };
         this.isContentsHaveMore = true;
         this.isContentsHaveMoreEachProvider = [];
@@ -577,7 +581,25 @@ export default class Home extends Vue {
 
             this.rss3Profile.avatar = profile?.avatar?.[0] || config.defaultAvatar;
             this.rss3Profile.username = profile?.name || '';
-            this.rss3Profile.bio = profile?.bio || '';
+
+            if (profile?.bio) {
+                const fieldPattern = /<([A-Z]+?)#(.+?)>/gi;
+                const fields = profile.bio.match(fieldPattern) || [];
+                this.rss3Profile.bio = profile.bio.replace(fieldPattern, '');
+
+                for (const field of fields) {
+                    const splits = fieldPattern.exec(field) || [];
+                    switch (splits[1]) {
+                        case 'SITE':
+                            this.rss3Profile.link = splits[2];
+                            break;
+                        default:
+                            // Do nothing
+                            break;
+                    }
+                }
+            }
+
             this.rss3Profile.address = this.ethAddress;
         }, 0);
 
