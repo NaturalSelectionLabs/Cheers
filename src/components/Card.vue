@@ -13,6 +13,7 @@
         <div
             class="card-content"
             :class="{
+                'PC-layout': isPClayout,
                 'single-line': isSingleLine,
             }"
         >
@@ -48,6 +49,7 @@ import { Options, Vue } from 'vue-class-component';
         tips: String,
         isHavingContent: Boolean,
         isSingleLine: Boolean,
+        isPClayout: Boolean,
     },
 })
 export default class Card extends Vue {}
@@ -74,7 +76,7 @@ export default class Card extends Vue {}
         .card-content {
             @apply break-all mx-auto w-full h-full;
             > .content-wrapper {
-                @apply min-h-20 h-full;
+                @apply min-h-20;
 
                 &:not(.content) {
                     @apply flex;
@@ -85,6 +87,9 @@ export default class Card extends Vue {}
                 > .content-wrapper {
                     @apply w-max px-4 pb-4;
                 }
+            }
+            &.PC-layout {
+                @apply overflow-y-auto max-h-36;
             }
             .body-tips {
                 @apply flex w-full justify-center items-center;

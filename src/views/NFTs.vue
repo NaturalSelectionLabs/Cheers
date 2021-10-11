@@ -1,6 +1,6 @@
 <template>
     <div id="main" class="h-screen bg-nft-bg overflow-y-auto">
-        <div class="px-4 pt-8 pb-32 max-w-md m-auto">
+        <div class="px-4 pt-8 pb-32 max-w-screen-lg m-auto">
             <div class="header flex justify-between items-center pb-4">
                 <Button
                     size="sm"
@@ -19,11 +19,11 @@
                     @click="toPublicPage(rns, ethAddress)"
                 />
             </div>
-            <div class="nft-list flex flex-wrap justify-between items-center gap-y-4" :class="{ 'pb-16': isOwner }">
+            <div class="nft-list grid grid-cols-2 sm:grid-cols-3 gap-6 justify-items-center">
                 <div class="relative" v-for="item in nfts" :key="item.platform + item.identity + item.id">
                     <NFTItem
                         class="cursor-pointer"
-                        :size="NFTWidth > 200 ? 200 : NFTWidth"
+                        :size="NFTWidth"
                         :imageUrl="item.info.animation_url || item.info.image_preview_url"
                         :poster-url="item.info.image_preview_url"
                         @click="toSingleNFTPage(item.platform, item.identity, item.id)"
@@ -37,7 +37,7 @@
                 </div>
             </div>
             <div
-                class="px-4 py-4 flex gap-5 fixed bottom-0 left-0 right-0 max-w-md m-auto w-full z-50 bg-btn-container"
+                class="px-4 py-4 flex gap-5 fixed bottom-2 left-0 right-0 max-w-md m-auto w-full z-50 bg-btn-container"
                 v-if="isOwner"
             >
                 <Button
@@ -79,10 +79,10 @@ interface Profile {
 export default class NFTs extends Vue {
     rns: string = '';
     ethAddress: string = '';
-    public NFTWidth: number = (window.innerWidth - 52) / 2;
-    public isOwner: boolean = false;
+    NFTWidth: number = 0;
+    isOwner: boolean = false;
     nfts: GeneralAssetWithTags[] = [];
-    public rss3Profile: Profile = {
+    rss3Profile: Profile = {
         avatar: config.defaultAvatar,
         username: '',
         address: '',
@@ -93,6 +93,12 @@ export default class NFTs extends Vue {
     lastRoute: string = '';
 
     async mounted() {
+        this.setNFTItemSize();
+        window.onresize = () => {
+            return (() => {
+                this.setNFTItemSize();
+            })();
+        };
         this.mountScrollEvent();
     }
 
@@ -165,6 +171,14 @@ export default class NFTs extends Vue {
         return true;
     }
 
+    private setNFTItemSize() {
+        if (window.innerWidth <= 640) {
+            this.NFTWidth = Math.min((window.innerWidth - 52) / 2, 250);
+        } else {
+            this.NFTWidth = Math.min((window.innerWidth - 78) / 3, 300);
+        }
+    }
+
     private getAssetOrder(nft: RSS3Asset) {
         let order = -1;
         nft.tags?.forEach((tag: string) => {
@@ -214,7 +228,7 @@ export default class NFTs extends Vue {
         );
     }
 
-    public toSingleNFTPage(platform: string, identity: string, id: string) {
+    toSingleNFTPage(platform: string, identity: string, id: string) {
         this.$gtag.event('visitSingleNft', {
             userid: this.rns || this.ethAddress,
             platform: platform,
@@ -235,11 +249,11 @@ export default class NFTs extends Vue {
         }
     }
 
-    public toSetupNfts() {
+    toSetupNfts() {
         this.$router.push(`/setup/nfts`);
     }
 
-    public back() {
+    back() {
         this.$router.push(config.subDomain.isSubDomainMode ? '/' : `/${this.rns || this.ethAddress}`);
     }
 
