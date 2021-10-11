@@ -28,7 +28,7 @@
                     >
                         <AccountItem :size="70" :chain="item.platform"></AccountItem>
                         <span class="address text-2xl text-account-title font-semibold">{{
-                            filter(item.identity)
+                            getDisplayAddress(item)
                         }}</span>
                         <Button
                             size="sm"
@@ -69,9 +69,10 @@ import Button from '@/components/Button.vue';
 import ImgHolder from '@/components/ImgHolder.vue';
 import AccountItem from '@/components/AccountItem.vue';
 import RSS3, { IRSS3 } from '@/common/rss3';
-import { RSS3Account } from 'rss3-next/types/rss3';
+import { RSS3Account, RSS3Index } from 'rss3-next/types/rss3';
 import RNSUtils from '@/common/rns';
 import config from '@/config';
+import ContentProviders from '@/common/content-providers';
 
 interface Profile {
     avatar: string;
@@ -106,21 +107,10 @@ export default class Accounts extends Vue {
         this.accounts = [];
         this.rss3Profile.avatar = config.defaultAvatar;
 
-        const address = <string>this.$route.params.address;
-        if (!address.startsWith('0x')) {
-            this.rns = address;
-            this.ethAddress = (await RNSUtils.name2Addr(address + config.rns.suffix)).toString();
-        } else {
-            this.ethAddress = address;
-            this.rns = await RNSUtils.addr2Name(address);
-        }
+        await RSS3.reconnect();
         const rss3 = await RSS3.visitor();
         const owner: string = <string>rss3.account.address;
-        // const owner: string = 'RSS3 Address';
-
-        if (owner === this.ethAddress) {
-            this.isOwner = true;
-        }
+        await this.getAddress(owner);
 
         const profile = await rss3.profile.get(this.ethAddress);
         this.rss3Profile.avatar = profile?.avatar?.[0] || config.defaultAvatar;
@@ -145,14 +135,58 @@ export default class Accounts extends Vue {
         const accounts = await rss3.accounts.get(this.ethAddress);
         await this.loadAccounts(accounts);
     }
+
+    async getAddress(owner: string) {
+        let address: string = '';
+        if (config.subDomain.isSubDomainMode) {
+            // Is subdomain mode
+            address = window.location.host.split('.')[0];
+        } else if (this.$route.params.address) {
+            address = <string>this.$route.params.address;
+        } else {
+            return false;
+        }
+
+        if (address) {
+            if (address.startsWith('0x')) {
+                // Might be address type
+                // Get RNS and redirect
+                this.ethAddress = address;
+                this.rns = (await RNSUtils.addr2Name(address)).replace(config.rns.suffix, '');
+                if (this.rns !== '') {
+                    if (config.subDomain.isSubDomainMode) {
+                        window.location.host = this.rns + '.' + config.subDomain.rootDomain;
+                    } else {
+                        await this.$router.push(`/${this.rns}`);
+                    }
+                }
+            } else {
+                // RNS
+                this.rns = address;
+                this.ethAddress = (await RNSUtils.name2Addr(address + config.rns.suffix)).toString();
+                if (parseInt(this.ethAddress) === 0) {
+                    return false;
+                }
+            }
+
+            this.isOwner = this.ethAddress === owner;
+        }
+
+        return true;
+    }
+
+    getDisplayAddress(account: RSS3Account) {
+        if (account.platform === 'Misskey' && account.identity.length <= 14) {
+            return account.identity;
+        } else {
+            return this.filter(account.identity);
+        }
+    }
     /**
      * filter
      */
     public filter(address: string) {
-        let res: string = address.slice(0, 6);
-        res += '....';
-        res += address.slice(-4);
-        return res;
+        return address.length > 14 ? `${address.slice(0, 6)}....${address.slice(-4)}` : address;
     }
 
     public copyToClipboard(address: string) {
@@ -205,6 +239,10 @@ export default class Accounts extends Vue {
             case 'Ethereum':
                 window.open(`https://etherscan.io/address/${address}`);
                 break;
+            case 'Misskey':
+            case 'Twitter':
+                window.open(ContentProviders[platform].getAccountLink(address));
+                break;
         }
     }
 
@@ -213,7 +251,14 @@ export default class Accounts extends Vue {
     }
 
     public back() {
-        this.$router.push(`/${this.rns || this.ethAddress}`);
+        if (window.history.length > 2) {
+            window.history.back();
+        } else {
+            this.$router.push(
+                (config.subDomain.isSubDomainMode ? '' : `/${this.rns || this.ethAddress}`) +
+                    `/${this.rns || this.ethAddress}/gitcoins`,
+            );
+        }
     }
 
     activated() {

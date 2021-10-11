@@ -3,7 +3,6 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
 const { VueLoaderPlugin } = require('vue-loader');
-const TerserPlugin = require('terser-webpack-plugin');
 
 module.exports = (env, argv) => ({
     devtool: argv.mode === 'production' ? false : 'inline-cheap-module-source-map',
@@ -16,6 +15,7 @@ module.exports = (env, argv) => ({
         path: path.resolve(__dirname, 'dist'),
         filename: '[name].js',
         publicPath: '/',
+        clean: true,
     },
 
     resolve: {
@@ -144,8 +144,6 @@ module.exports = (env, argv) => ({
         new HtmlWebpackPlugin({
             chunks: ['index'],
             filename: 'index.html',
-            title: 'RSS3 Page',
-            // favicon: 'public/favicon.ico',
             hash: true,
             template: 'src/assets/index.ejs',
         }),
@@ -162,6 +160,10 @@ module.exports = (env, argv) => ({
             process: 'process/browser',
             Buffer: ['buffer', 'Buffer'],
         }),
+        new webpack.DefinePlugin({
+            PAGE_ENV:
+                process.env.PAGE_ENV === 'development' ? JSON.stringify('development') : JSON.stringify(argv.mode),
+        }),
     ],
     experiments: {
         topLevelAwait: true,
@@ -172,12 +174,6 @@ module.exports = (env, argv) => ({
         compress: true,
         hot: true,
         historyApiFallback: true,
-    },
-
-    optimization: {
-        splitChunks: {
-            chunks: 'all',
-            maxSize: 20000,
-        },
+        allowedHosts: 'all',
     },
 });

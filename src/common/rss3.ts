@@ -1,11 +1,11 @@
 import WalletConnectProvider from '@walletconnect/web3-provider';
 import Web3 from 'web3';
 import RSS3 from 'rss3-next';
-import { RSS3Asset, RSS3Index } from 'rss3-next/types/rss3';
-import { RSS3Account, RSS3AccountInput } from 'rss3-next/types/rss3';
+import { RSS3Account, RSS3Asset } from 'rss3-next/types/rss3';
 import axios from 'axios';
 import { GitcoinResponse, GeneralAsset, NFTResponse } from './types';
 import config from '@/config';
+import Cookies from 'js-cookie';
 
 let rss3: RSS3 | null;
 let web3: Web3 | null;
@@ -24,6 +24,13 @@ export interface Theme {
     class: string;
     nftIdPrefix: string;
 }
+
+const cookieOptions: Cookies.CookieAttributes = {
+    domain: '.' + config.subDomain.rootDomain,
+    secure: true,
+    sameSite: 'none',
+    expires: config.subDomain.cookieExpires,
+};
 
 async function walletConnect(skipSign?: boolean) {
     provider = new WalletConnectProvider({
@@ -78,7 +85,7 @@ async function walletConnect(skipSign?: boolean) {
     return rss3;
 }
 
-async function visitor() {
+async function visitor(): Promise<RSS3> {
     if (rss3) {
         return rss3;
     } else {
@@ -93,8 +100,8 @@ async function metamaskConnect(skipSign?: boolean) {
     web3 = new Web3(metamaskEthereum);
 
     let address: string;
-    if (localStorage.getItem('lastConnect') === 'metamask' && localStorage.getItem('lastAddress')) {
-        address = <string>localStorage.getItem('lastAddress');
+    if (Cookies.get('LAST_CONNECT_METHOD') === 'metamask' && Cookies.get('LAST_CONNECT_ADDRESS')) {
+        address = Cookies.get('LAST_CONNECT_ADDRESS') || '';
     } else {
         const accounts = await metamaskEthereum.request({
             method: 'eth_requestAccounts',
@@ -126,31 +133,70 @@ async function disconnect() {
     if (provider) {
         await provider.disconnect();
     }
-    localStorage.removeItem('lastConnect');
-    localStorage.removeItem('lastAddress');
+    Cookies.remove('LAST_CONNECT_METHOD');
+    Cookies.remove('LAST_CONNECT_ADDRESS');
 }
 
 export default {
     walletConnect: async () => {
         await walletConnect();
         if (isValidRSS3()) {
-            localStorage.setItem('lastConnect', 'walletConnect');
+            Cookies.set('LAST_CONNECT_METHOD', 'walletConnect', cookieOptions);
+            Cookies.set('LAST_CONNECT_ADDRESS', (<RSS3>rss3).account.address, cookieOptions);
         }
         return rss3;
     },
     metamaskConnect: async () => {
         await metamaskConnect();
         if (isValidRSS3()) {
-            localStorage.setItem('lastConnect', 'metamask');
+            Cookies.set('LAST_CONNECT_METHOD', 'metamask', cookieOptions);
+            Cookies.set('LAST_CONNECT_ADDRESS', (<RSS3>rss3).account.address, cookieOptions);
         }
         return rss3;
     },
-    disconnect: async () => {
-        disconnect();
-    },
+    disconnect: disconnect,
     reconnect: async (): Promise<boolean> => {
-        if (!isValidRSS3()) {
-            const lastConnect = localStorage.getItem('lastConnect');
+        // Migrate
+        const lastConnectMigrate = localStorage.getItem('lastConnect');
+        const lastAddressMigrate = localStorage.getItem('lastAddress');
+        if (lastConnectMigrate) {
+            Cookies.set('LAST_CONNECT_METHOD', lastConnectMigrate, cookieOptions);
+            localStorage.removeItem('lastConnect');
+        }
+        if (lastAddressMigrate) {
+            Cookies.set('LAST_CONNECT_ADDRESS', lastAddressMigrate, cookieOptions);
+            localStorage.removeItem('lastAddress');
+        }
+
+        const lastConnect = Cookies.get('LAST_CONNECT_METHOD');
+        const address = Cookies.get('LAST_CONNECT_ADDRESS');
+        console.log(address);
+        if (address) {
+            switch (lastConnect) {
+                case 'walletConnect':
+                    provider = new WalletConnectProvider({
+                        rpc: {
+                            1: 'https://cloudflare-eth.com',
+                        },
+                    });
+                    //  Create Web3 instance
+                    web3 = new Web3(provider as any);
+                    break;
+                case 'metamask':
+                    const metamaskEthereum = (window as any).ethereum;
+                    web3 = new Web3(metamaskEthereum);
+                    break;
+            }
+            rss3 = new RSS3({
+                endpoint: config.hubEndpoint,
+                address: address,
+                agentSign: true,
+                sign: async (data: string) => {
+                    alert('Ready to sign... You may need to prepare your wallet.');
+                    return await (<Web3>web3).eth.personal.sign(data, address, '');
+                },
+            });
+        } else if (!isValidRSS3()) {
             switch (lastConnect) {
                 case 'walletConnect':
                     await walletConnect(true);
@@ -159,11 +205,7 @@ export default {
                     await metamaskConnect(true);
                     break;
             }
-            if (isValidRSS3()) {
-                return true;
-            } else {
-                return false;
-            }
+            return isValidRSS3();
         }
         return true;
     },
@@ -172,16 +214,16 @@ export default {
     get: async () => {
         return rss3;
     },
-    getAssetProfile: async (address: string, refresh: boolean = false) => {
-        if (assets.has(address) && !refresh) {
-            return <IAssetProfile>assets.get(address);
+    getAssetProfile: async (address: string, type: string, refresh: boolean = false) => {
+        if (assets.has(address + type) && !refresh) {
+            return <IAssetProfile>assets.get(address + type);
         } else {
             let data: IAssetProfile | null = null;
             try {
-                const res = await axios.get(`${config.hubEndpoint}/asset-profile/${address}`);
+                const res = await axios.get(`${config.hubEndpoint}/asset-profile/${address}/${type.toLowerCase()}/`);
                 if (res && res.data) {
                     data = res.data;
-                    assets.set(address, <IAssetProfile>data);
+                    assets.set(address + type, <IAssetProfile>data);
                 }
             } catch (error) {
                 data = null;
@@ -229,7 +271,7 @@ export default {
         }
         return data;
     },
-    addNewAccount: async (platform: string): Promise<RSS3Account> => {
+    addNewMetamaskAccount: async (platform: string): Promise<RSS3Account> => {
         // js don't support multiple return values,
         // so here I'm using signature as a message provider
         if (!rss3) {
@@ -246,7 +288,7 @@ export default {
         });
         const address = metaMaskWeb3.utils.toChecksumAddress(accounts[0]);
 
-        const newTmpAddress: RSS3AccountInput = {
+        const newTmpAddress: RSS3Account = {
             platform: platform,
             identity: address,
         };

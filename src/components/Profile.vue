@@ -21,7 +21,7 @@
             class="col-span-full md:col-span-1 md:row-start-3 md:col-start-2 inline-block relative align-middle"
         >
             <LinkButton v-if="rns">
-                <span>pass3.me/{{ rns }}</span>
+                <span>{{ rns }}{{ suffix }}</span>
             </LinkButton>
             <LinkButton v-else>
                 <span>{{ filter(address) }}</span>
@@ -103,17 +103,16 @@ export default class Profile extends Vue {
     address!: String;
     rns!: String;
     website!: String;
-    suffix: string = config.rns.suffix;
+    suffix: string = '.' + config.subDomain.rootDomain;
     isShowingTooltip: boolean = false;
     isOwner!: Boolean;
     isFollowing!: Boolean;
 
     toFollowersPage() {
-        this.$router.push(`/${this.rns || this.address}/followers`);
+        this.$router.push((config.subDomain.isSubDomainMode ? '' : `/${this.rns || this.address}`) + `/followers`);
     }
-
     toFollowingsPage() {
-        this.$router.push(`/${this.rns || this.address}/followings`);
+        this.$router.push((config.subDomain.isSubDomainMode ? '' : `/${this.rns || this.address}`) + `/followings`);
     }
 
     filter(address: string) {

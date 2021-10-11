@@ -81,20 +81,13 @@ export default class SingleNFT extends Vue {
     };
 
     async mounted() {
-        const address = <string>this.$route.params.address;
-        if (!address.startsWith('0x')) {
-            this.rns = address;
-            this.ethAddress = (await RNSUtils.name2Addr(address + config.rns.suffix)).toString();
-        } else {
-            this.ethAddress = address;
-            this.rns = await RNSUtils.addr2Name(address);
-        }
+        await RSS3.reconnect();
+        const rss3 = await RSS3.visitor();
+        await this.getAddress();
 
         const platform: string = String(this.$route.params.platform);
         const identity: string = String(this.$route.params.identity);
         const id: string = String(this.$route.params.id);
-
-        const rss3 = await RSS3.visitor();
 
         // Setup theme
         const themes = RSS3.getAvailableThemes(await rss3.assets.get(this.ethAddress));
@@ -104,10 +97,10 @@ export default class SingleNFT extends Vue {
             document.body.classList.remove(...document.body.classList);
         }
 
-        const data = await RSS3.getAssetProfile(this.ethAddress);
+        const nftData = await RSS3.getAssetProfile(this.ethAddress, 'NFT');
 
-        if (data) {
-            const asset = data.assets.find(
+        if (nftData) {
+            const asset = nftData.assets.find(
                 (ag) => ag.platform === platform && ag.identity === identity && ag.id === id,
             );
             if (asset) {
@@ -119,11 +112,51 @@ export default class SingleNFT extends Vue {
         }
     }
 
+    async getAddress() {
+        let address: string = '';
+        if (config.subDomain.isSubDomainMode) {
+            // Is subdomain mode
+            address = window.location.host.split('.')[0];
+        } else if (this.$route.params.address) {
+            address = <string>this.$route.params.address;
+        } else {
+            return false;
+        }
+
+        if (address) {
+            if (address.startsWith('0x')) {
+                // Might be address type
+                // Get RNS and redirect
+                this.ethAddress = address;
+                this.rns = (await RNSUtils.addr2Name(address)).replace(config.rns.suffix, '');
+                if (this.rns !== '') {
+                    if (config.subDomain.isSubDomainMode) {
+                        window.location.host = this.rns + '.' + config.subDomain.rootDomain;
+                    } else {
+                        await this.$router.push(`/${this.rns}`);
+                    }
+                }
+            } else {
+                // RNS
+                this.rns = address;
+                this.ethAddress = (await RNSUtils.name2Addr(address + config.rns.suffix)).toString();
+                if (parseInt(this.ethAddress) === 0) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
     public back() {
         if (window.history.length > 2) {
             window.history.back();
         } else {
-            this.$router.push(`/${this.rns || this.ethAddress}/nfts`);
+            this.$router.push(
+                (config.subDomain.isSubDomainMode ? '' : `/${this.rns || this.ethAddress}`) +
+                    `/${this.rns || this.ethAddress}/nfts`,
+            );
         }
     }
 }

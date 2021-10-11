@@ -71,7 +71,7 @@
                 :is-having-content="nfts.length !== 0"
                 :isPClayout="isPCLayout"
                 :is-single-line="!isPCLayout && nfts.length !== 0"
-                :tips="isLoadingAssets ? 'Loading...' : nfts.length === 0 ? 'Haven\'t found anything yet...' : ''"
+                :tips="isLoadingAssets.NFT ? 'Loading...' : nfts.length === 0 ? 'Haven\'t found anything yet...' : ''"
                 id="nfts-card"
             >
                 <template #title-icon><NFTIcon /></template>
@@ -167,7 +167,9 @@
                             @click="toSingleGitcoin(item.platform, item.identity, item.id)"
                         />
                     </template>
-                    <div v-else-if="isLoadingAssets" class="text-gitcoin-title m-auto text-center mt-4">Loading...</div>
+                    <div v-else-if="isLoadingAssets.Gitcoin" class="text-gitcoin-title m-auto text-center mt-4">
+                        Loading...
+                    </div>
                     <div v-else-if="!isOwner" class="text-gitcoin-title m-auto text-center mt-4 overflow-hidden">
                         Haven't found anything yet...
                     </div>
@@ -248,7 +250,7 @@
                 >
                     <Logo class="cursor-pointer" :size="18" @click="toHomePage" />
                     <div class="text-body-text font-normal text-xs text-right">
-                        <a href="https://rss3.io/privacy"> Privacy </a>
+                        <a href="https://rss3.io/#/privacy"> Privacy </a>
                         |
                         <span>
                             Made with 🌀 by
@@ -269,7 +271,7 @@
                 </div>
             </div>
 
-            <Modal v-show="isdisplaying">
+            <Modal v-show="isShowingAccount">
                 <template #header>
                     <Button
                         size="sm"
@@ -281,16 +283,32 @@
                 </template>
                 <template #body>
                     <div class="flex flex-col gap-y-4 items-center">
-                        <AccountItem class="m-auto mt-4" :size="90" :chain="dialogChain"></AccountItem>
+                        <AccountItem
+                            class="m-auto mt-4"
+                            :size="90"
+                            :chain="showingAccountDetails.platform"
+                        ></AccountItem>
                         <span class="address text-xl font-semibold break-all text-center mt-4">
-                            {{ dialogAddress }}
+                            {{ showingAccountDetails.address }}
                         </span>
                         <Button
                             size="sm"
-                            class="text-md bg-account-btn-m text-account-btn-m-text shadow-account-btn-m m-auto mt-4"
-                            @click="copyToClipboard(dialogAddress)"
+                            class="
+                                text-md
+                                bg-account-btn-m
+                                text-account-btn-m-text
+                                shadow-account-btn-m
+                                m-auto
+                                mt-4
+                                w-1/4
+                            "
+                            @click="
+                                showingAccountDetails.isLink
+                                    ? toExternalLink(showingAccountDetails.link)
+                                    : copyToClipboard(showingAccountDetails.address)
+                            "
                         >
-                            Copy
+                            {{ showingAccountDetails.isLink ? 'Go' : 'Copy' }}
                         </Button>
                     </div>
                 </template>
@@ -391,7 +409,6 @@ import AccountCard from '@/components/AccountCard.vue';
 import GitcoinItem from '@/components/GitcoinItem.vue';
 import { GeneralAsset, GeneralAssetWithTags } from '@/common/types';
 import ShareCard from '@/components/ShareCard.vue';
-import html2canvas from '@/common/html2canvas.js';
 import NFTIcon from '@/components/Icons/NFTIcon.vue';
 import GitcoinIcon from '@/components/Icons/GitcoinIcon.vue';
 import ContentIcon from '@/components/Icons/ContentIcon.vue';
@@ -439,14 +456,28 @@ export default class Home extends Vue {
     rss3?: IRSS3;
     isFollowing: boolean = false;
     isOwner: boolean = false;
-    isdisplaying: boolean = false;
-    dialogAddress: string = '';
-    dialogChain: string = '';
+    isShowingAccount: boolean = false;
+    showingAccountDetails: {
+        address: string;
+        platform: string;
+        isLink: boolean;
+        link?: string;
+    } = {
+        address: '',
+        platform: 'Ethereum',
+        isLink: false,
+    };
     isAccountExist: boolean = true;
     isShowingShareCard: boolean = false;
-    isLoadingAssets: boolean = true;
+    isLoadingAssets: {
+        NFT: boolean;
+        Gitcoin: boolean;
+    } = {
+        NFT: true,
+        Gitcoin: true,
+    };
     loadingAssetsIntervalID: ReturnType<typeof setInterval> | null = null;
-    isLoadingContents: boolean = false;
+    isLoadingContents: boolean = true;
     currentTheme: string = '';
 
     rss3Profile: ProfileInfo = {
@@ -473,6 +504,13 @@ export default class Home extends Vue {
     isShowingNotice: boolean = false;
     isContentsHaveMore: boolean = true;
     isPCLayout: boolean = false;
+    isOwnerValidRSS3: boolean = false;
+    ownerETHAddress: string = '';
+    isContentsHaveMoreEachProvider: {
+        provider: RSS3Account;
+        more: boolean;
+        lastTS: number;
+    }[] = [];
 
     async mounted() {
         this.isPCLayout = window.innerWidth >= 768;
@@ -489,11 +527,14 @@ export default class Home extends Vue {
         this.contents = [];
         this.isFollowing = false;
         this.isOwner = false;
-        this.isdisplaying = false;
-        this.dialogAddress = '';
-        this.dialogChain = '';
+        this.isShowingAccount = false;
+        this.showingAccountDetails = {
+            address: '',
+            platform: 'Ethereum',
+            isLink: false,
+        };
         this.isShowingShareCard = false;
-        this.isLoadingContents = false;
+        this.isLoadingContents = true;
         this.rss3Profile = {
             avatar: config.defaultAvatar,
             username: '...',
@@ -501,53 +542,31 @@ export default class Home extends Vue {
             bio: '...',
         };
         this.isContentsHaveMore = true;
+        this.isContentsHaveMoreEachProvider = [];
         (<HTMLLinkElement>document.getElementById('favicon')).href = '/favicon.ico';
         document.title = 'Web3 Pass';
 
-        const isValidRSS3 = await RSS3.reconnect();
+        this.isOwnerValidRSS3 = await RSS3.reconnect();
         this.rss3 = await RSS3.visitor();
         const owner: string = <string>this.rss3.account.address;
-        let address: string = <string>this.rss3.account.address;
-        if (this.$route.params.address) {
-            address = <string>this.$route.params.address;
-            if (address.startsWith('0x')) {
-                // Might be address type
-                // Get RNS and redirect
-                this.ethAddress = address;
-                this.rns = (await RNSUtils.addr2Name(address)).replace(config.rns.suffix, '');
-                if (this.rns !== '') {
-                    await this.$router.push(`/${this.rns}`);
-                } else if (this.ethAddress === owner) {
-                    this.isOwner = true;
-                }
-            } else {
-                // RNS
-                this.rns = address;
-                this.ethAddress = (await RNSUtils.name2Addr(address + config.rns.suffix)).toString();
-                if (parseInt(this.ethAddress) !== 0) {
-                    this.isOwner = this.ethAddress === owner;
-                } else {
-                    this.isAccountExist = false;
-                    return;
-                }
-            }
-
-            const file = <RSS3Index>await this.rss3.files.get(this.ethAddress);
-
-            if (!file.signature) {
-                this.isAccountExist = false;
-                return;
-            }
-        } else {
-            if (!isValidRSS3) {
-                sessionStorage.setItem('redirectFrom', this.$route.fullPath);
-                this.ethAddress = '';
-                await this.$router.push('/');
-                return;
-            } else {
+        this.ownerETHAddress = owner;
+        if (!(await this.getAddress(owner))) {
+            if (this.isOwnerValidRSS3) {
                 this.rns = (await RNSUtils.addr2Name(owner)).replace(config.rns.suffix, '');
                 this.ethAddress = owner;
                 this.isOwner = true;
+                if (this.rns && config.subDomain.rootDomain) {
+                    window.location.href = '//' + this.rns + '.' + config.subDomain.rootDomain;
+                }
+            } else {
+                sessionStorage.setItem('redirectFrom', this.$route.fullPath);
+                this.ethAddress = '';
+                if (config.subDomain.isSubDomainMode) {
+                    window.location.href = '//' + config.subDomain.rootDomain;
+                } else {
+                    await this.$router.push('/');
+                }
+                return;
             }
         }
 
@@ -562,7 +581,8 @@ export default class Home extends Vue {
             this.rss3Profile.address = this.ethAddress;
         }, 0);
 
-        this.startLoadingAccounts();
+        const accounts = await (<IRSS3>this.rss3).accounts.get(this.ethAddress);
+        this.startLoadingAccounts(accounts);
 
         setTimeout(async () => {
             this.rss3Relations.followers = (await (<IRSS3>this.rss3).backlinks.get(this.ethAddress, 'following')) || [];
@@ -573,11 +593,55 @@ export default class Home extends Vue {
         // Load assets
         await this.startLoadingAssets(true);
 
-        // Load contents
+        // Load Contents
         setTimeout(async () => {
-            await this.loadLatestContents();
+            await this.initLoadContents(accounts);
             this.initIntersectionObserver();
         }, 0);
+    }
+
+    async getAddress(owner: string) {
+        console.log('Is subdomain mode:', config.subDomain.isSubDomainMode);
+
+        let address: string = '';
+        if (config.subDomain.isSubDomainMode) {
+            // Is subdomain mode
+            address = window.location.host.split('.')[0];
+        } else if (this.$route.params.address) {
+            address = <string>this.$route.params.address;
+        } else {
+            return false;
+        }
+
+        if (address) {
+            if (address.startsWith('0x')) {
+                // Might be address type
+                // Get RNS and redirect
+                this.ethAddress = address;
+                this.rns = (await RNSUtils.addr2Name(address)).replace(config.rns.suffix, '');
+                if (this.rns !== '') {
+                    window.location.href = '//' + this.rns + '.' + config.subDomain.rootDomain;
+                }
+            } else {
+                // RNS
+                this.rns = address;
+                this.ethAddress = (await RNSUtils.name2Addr(address + config.rns.suffix)).toString();
+                if (parseInt(this.ethAddress) === 0) {
+                    this.isAccountExist = false;
+                    return false;
+                }
+            }
+
+            const file = <RSS3Index>await (<IRSS3>this.rss3).files.get(this.ethAddress);
+
+            if (!file.signature) {
+                this.isAccountExist = false;
+            }
+
+            this.isOwner = this.ethAddress === owner;
+        }
+
+        return true;
     }
 
     async setupTheme() {
@@ -605,7 +669,7 @@ export default class Home extends Vue {
         }
     }
 
-    startLoadingAccounts() {
+    startLoadingAccounts(accounts: RSS3Account[]) {
         this.accounts = [];
         setTimeout(async () => {
             // Push original account
@@ -616,29 +680,63 @@ export default class Home extends Vue {
                 tags: ['pass:order:-1'],
             });
 
-            await this.loadAccounts(await (<IRSS3>this.rss3).accounts.get(this.ethAddress));
+            await this.loadAccounts(accounts);
         }, 0);
     }
 
-    async ivLoadAsset(refresh: boolean): Promise<boolean> {
-        const data = await RSS3.getAssetProfile(this.ethAddress, refresh);
+    async ivLoadNFT(refresh: boolean): Promise<boolean> {
+        const data = await RSS3.getAssetProfile(this.ethAddress, 'NFT', refresh);
         if (data && data.status !== false) {
-            await this.mergeAssets(await (<IRSS3>this.rss3).assets.get(this.ethAddress), <GeneralAsset[]>data.assets);
-            this.isLoadingAssets = false;
+            await this.mergeAssets(
+                await (<IRSS3>this.rss3).assets.get(this.ethAddress),
+                <GeneralAsset[]>data.assets,
+                'NFT',
+            );
+            this.isLoadingAssets.NFT = false;
+            return true;
+        }
+        return false;
+    }
+
+    async ivLoadGitcoin(refresh: boolean): Promise<boolean> {
+        const data = await RSS3.getAssetProfile(this.ethAddress, 'Gitcoin-Donation', refresh);
+        if (data && data.status !== false) {
+            await this.mergeAssets(
+                await (<IRSS3>this.rss3).assets.get(this.ethAddress),
+                <GeneralAsset[]>data.assets,
+                'Gitcoin-Donation',
+            );
+            this.isLoadingAssets.Gitcoin = false;
+            return true;
+        }
+        return false;
+    }
+
+    async ivLoadAsset(refresh: boolean): Promise<boolean> {
+        let isFinish = true;
+        if (this.isLoadingAssets.NFT) {
+            isFinish = isFinish && (await this.ivLoadNFT(refresh));
+        }
+        if (this.isLoadingAssets.Gitcoin) {
+            isFinish = isFinish && (await this.ivLoadGitcoin(refresh));
+        }
+        if (isFinish) {
             if (this.loadingAssetsIntervalID) {
                 clearInterval(this.loadingAssetsIntervalID);
                 this.loadingAssetsIntervalID = null;
             }
-            return true;
         }
-        return false;
+        return isFinish;
     }
 
     async startLoadingAssets(refresh: boolean) {
         if (refresh) {
             this.nfts = [];
             this.gitcoins = [];
-            this.isLoadingAssets = true;
+            this.isLoadingAssets = {
+                NFT: true,
+                Gitcoin: true,
+            };
         }
         if (!(await this.ivLoadAsset(refresh))) {
             this.loadingAssetsIntervalID = setInterval(async () => {
@@ -684,7 +782,7 @@ export default class Home extends Vue {
         }
     }
 
-    async mergeAssets(assetsInRSS3File: RSS3Asset[], assetsGrabbed: GeneralAsset[]) {
+    async mergeAssets(assetsInRSS3File: RSS3Asset[], assetsGrabbed: GeneralAsset[], type: string) {
         const assetsMerge: GeneralAssetWithTags[] = await Promise.all(
             (assetsGrabbed || []).map(async (ag: GeneralAssetWithTags) => {
                 const origType = ag.type;
@@ -721,39 +819,100 @@ export default class Home extends Vue {
             } // else Invalid
         }
 
-        this.nfts = NFTList.filter((asset) => !asset.tags || asset.tags.indexOf('pass:hidden') === -1).sort(
-            (a, b) => this.getAssetOrder(a) - this.getAssetOrder(b),
-        );
-        this.gitcoins = GitcoinList.filter((asset) => !asset.tags || asset.tags.indexOf('pass:hidden') === -1).sort(
-            (a, b) => this.getAssetOrder(a) - this.getAssetOrder(b),
-        );
+        if (type === 'NFT') {
+            this.nfts = NFTList.filter((asset) => !asset.tags || asset.tags.indexOf('pass:hidden') === -1).sort(
+                (a, b) => this.getAssetOrder(a) - this.getAssetOrder(b),
+            );
+        } else if (type === 'Gitcoin-Donation') {
+            this.gitcoins = GitcoinList.filter((asset) => !asset.tags || asset.tags.indexOf('pass:hidden') === -1).sort(
+                (a, b) => this.getAssetOrder(a) - this.getAssetOrder(b),
+            );
+        }
     }
 
-    async loadLatestContents() {
-        await this.loadMoreContents();
+    async initLoadContents(accounts: RSS3Account[]) {
+        // Default by hub
+        this.isContentsHaveMoreEachProvider.push({
+            provider: {
+                platform: 'RSS3',
+                identity: 'Hub',
+                signature: '',
+            },
+            more: true,
+            lastTS: 0xffffffff,
+        });
+        // Accounts
+        // for (const account of accounts) {
+        //     if (account.platform === 'Misskey') {
+        //         this.isContentsHaveMoreEachProvider.push({
+        //             provider: account,
+        //             more: true,
+        //             lastTS: 0xffffffff,
+        //         });
+        //     }
+        // }
+
+        await this.loadMoreContents(true);
     }
 
-    async loadMoreContents() {
-        if (this.isLoadingContents || !this.isContentsHaveMore) {
+    async loadMoreContents(isInitLoad: boolean = false) {
+        if ((!isInitLoad && this.isLoadingContents) || !this.isContentsHaveMore) {
             // Is already loading or not having more
             return;
         }
         this.isLoadingContents = true;
-        // Get oldest timestamp
-        const nowTS = this.contents.length ? this.contents[this.contents.length - 1].info.timestamp - 1 : 0xffffffff;
-        const contents = await ContentProviders.mirror.get(this.ethAddress, 0, nowTS);
-        if (contents.length < config.contentRequestLimit) {
-            // No more
-            this.isContentsHaveMore = false;
-        }
-        for (const content of contents) {
-            if (
-                content.accessible !== false &&
-                this.contents.findIndex((ctx) => ctx.info.title === content.info.title) === -1 // todo: opt-out this
-            ) {
-                this.contents.push(content);
+        let isHavingMore: boolean = false;
+        const contentsMerge: Content[] = [];
+        for (const provider of this.isContentsHaveMoreEachProvider) {
+            if (provider.provider.platform === 'RSS3' && provider.provider.identity === 'Hub') {
+                if (provider.more) {
+                    const contents: Content[] = await ContentProviders[provider.provider.identity].get(
+                        this.ethAddress,
+                        0,
+                        provider.lastTS,
+                    );
+                    if (contents.length < config.contentRequestLimit) {
+                        // No more
+                        provider.more = false;
+                    } else {
+                        isHavingMore = true;
+                    }
+
+                    for (const content of contents) {
+                        // temp. fix mirror undefined error
+                        if (content?.info?.link?.includes('//undefined.mirror.xyz/')) {
+                            content.info.link = `https://mirror.xyz/${content.identity}/${content.info.link
+                                .split('/')
+                                .pop()}`;
+                        }
+
+                        if (
+                            content.accessible !== false &&
+                            // Opt-out edited mirror contents
+                            (content.platform !== 'Mirror-XYZ' ||
+                                contentsMerge.findIndex((ctx) => ctx.info.title === content.info.title) === -1) // todo: opt-out this
+                        ) {
+                            contentsMerge.push(content);
+                        }
+
+                        if (provider.lastTS >= content.info.timestamp) {
+                            provider.lastTS = content.info.timestamp - 1;
+                        }
+                    }
+                }
             }
         }
+
+        if (!isHavingMore) {
+            this.isContentsHaveMore = false;
+        }
+
+        contentsMerge.sort((a, b) => {
+            return b.info.timestamp - a.info.timestamp;
+        });
+
+        this.contents.push(...contentsMerge);
+
         this.isLoadingContents = false;
     }
 
@@ -803,8 +962,16 @@ export default class Home extends Vue {
             }
             await (<IRSS3>this.rss3).files.sync();
         } else {
+            // Clear last user status
+            (<HTMLLinkElement>document.getElementById('favicon')).href = '/favicon.ico';
+            document.title = 'Web3 Pass';
+
             sessionStorage.setItem('redirectFrom', this.$route.fullPath);
-            await this.$router.push('/');
+            if (config.subDomain.isSubDomainMode) {
+                window.location.href = '//' + config.subDomain.rootDomain;
+            } else {
+                await this.$router.push('/');
+            }
         }
     }
 
@@ -865,22 +1032,48 @@ export default class Home extends Vue {
         }
     }
 
-    public toAccountsPage() {
+    toAccountsPage() {
         this.$gtag.event('visitAccountsPage', { userid: this.rns || this.ethAddress });
-        this.$router.push(`/${this.rns || this.ethAddress}/accounts`);
+        this.$router.push((config.subDomain.isSubDomainMode ? '' : `/${this.rns || this.ethAddress}`) + `/accounts`);
     }
 
-    public toNFTsPage() {
+    toNFTsPage() {
         this.$gtag.event('visitNftPage', { userid: this.rns || this.ethAddress });
-        this.$router.push(`/${this.rns || this.ethAddress}/nfts`);
+        this.$router.push((config.subDomain.isSubDomainMode ? '' : `/${this.rns || this.ethAddress}`) + `/nfts`);
     }
 
-    public toGitcoinsPage() {
+    toGitcoinsPage() {
         this.$gtag.event('visitGitcoinPage', { userid: this.rns || this.ethAddress });
-        this.$router.push(`/${this.rns || this.ethAddress}/gitcoins`);
+        this.$router.push((config.subDomain.isSubDomainMode ? '' : `/${this.rns || this.ethAddress}`) + `/gitcoins`);
     }
 
-    public toSetupPage() {
+    toSingleNFTPage(platform: string, identity: string, id: string) {
+        this.$gtag.event('visitSingleNft', {
+            userid: this.rns || this.ethAddress,
+            platform: platform,
+            nftidentity: identity,
+            nftid: id,
+        });
+        this.$router.push(
+            (config.subDomain.isSubDomainMode ? '' : `/${this.rns || this.ethAddress}`) +
+                `/singlenft/${platform}/${identity}/${id}`,
+        );
+    }
+
+    toSingleGitcoin(platform: string, identity: string, id: string) {
+        this.$gtag.event('visitSingleGitcoin', {
+            userid: this.rns || this.ethAddress,
+            platform: platform,
+            identity: identity,
+            id: id,
+        });
+        this.$router.push(
+            (config.subDomain.isSubDomainMode ? '' : `/${this.rns || this.ethAddress}`) +
+                `/singlegitcoin/${platform}/${identity}/${id}`,
+        );
+    }
+
+    toSetupPage() {
         this.$gtag.event('visitSetupPage', { userid: this.rns || this.ethAddress });
         this.$router.push(`/profile`);
     }
@@ -891,47 +1084,41 @@ export default class Home extends Vue {
     }
 
     async toHomePage() {
-        if (this.$route.fullPath !== '/home') {
-            await this.$router.push('/home');
-            this.isAccountExist = true;
-            await this.initLoad();
-        } else {
-            // To top
+        if (!this.isOwner && this.isOwnerValidRSS3) {
+            const ownerRNS = (await RNSUtils.addr2Name(this.ownerETHAddress)).replace(config.rns.suffix, '');
+            if (ownerRNS) {
+                window.location.href = '//' + ownerRNS + '.' + config.subDomain.rootDomain;
+            } else {
+                window.location.href = '//' + config.subDomain.rootDomain + `/${ownerRNS || this.ownerETHAddress}`;
+            }
         }
-    }
-
-    public toSingleNFTPage(platform: string, identity: string, id: string) {
-        this.$gtag.event('visitSingleNft', {
-            userid: this.rns || this.ethAddress,
-            platform: platform,
-            nftidentity: identity,
-            nftid: id,
-        });
-        this.$router.push(`/${this.rns || this.ethAddress}/singlenft/${platform}/${identity}/${id}`);
-    }
-
-    public toSingleGitcoin(platform: string, identity: string, id: string) {
-        this.$gtag.event('visitSingleGitcoin', {
-            userid: this.rns || this.ethAddress,
-            platform: platform,
-            identity: identity,
-            id: id,
-        });
-        this.$router.push(`/${this.rns || this.ethAddress}/singlegitcoin/${platform}/${identity}/${id}`);
     }
 
     toContentLink(link: string) {
         window.open(link);
     }
 
-    public displayDialog(address: string, chain: string) {
-        this.dialogAddress = address;
-        this.dialogChain = chain;
-        this.isdisplaying = true;
+    public displayDialog(address: string, platform: string) {
+        if (platform === 'Misskey' || platform === 'Twitter') {
+            this.showingAccountDetails = {
+                address,
+                platform,
+                isLink: true,
+                link: ContentProviders[platform].getAccountLink(address),
+            };
+        } else {
+            this.showingAccountDetails = {
+                address,
+                platform,
+                isLink: false,
+            };
+        }
+
+        this.isShowingAccount = true;
     }
 
     public closeDialog() {
-        this.isdisplaying = false;
+        this.isShowingAccount = false;
     }
 
     public copyToClipboard(address: string) {
@@ -945,8 +1132,16 @@ export default class Home extends Vue {
         );
     }
 
+    toExternalLink(link: string) {
+        window.open(link);
+    }
+
     clickAddress() {
-        navigator.clipboard.writeText(`https://pass3.me/${this.rns || this.ethAddress}`);
+        navigator.clipboard.writeText(
+            config.subDomain.isSubDomainMode && this.rns
+                ? `https://${this.rns}.${config.subDomain.rootDomain}`
+                : `https://${config.subDomain.rootDomain}/${this.rns || this.ethAddress}`,
+        );
     }
 
     showShareCard() {
@@ -956,6 +1151,8 @@ export default class Home extends Vue {
     async saveShareCard() {
         const shareCard = document.getElementById(`share-card-${this.rns}`);
         if (shareCard) {
+            const html2canvas: any = (await import(/* webpackChunkName: "html2canvas" */ '@/common/html2canvas.js'))
+                .default;
             const canvas = await html2canvas(shareCard, {
                 useCORS: true,
                 logging: false,
@@ -988,7 +1185,11 @@ export default class Home extends Vue {
             document.title = 'Web3 Pass';
 
             await RSS3.disconnect();
-            await this.$router.push('/');
+            if (config.subDomain.isSubDomainMode) {
+                window.location.href = '//' + config.subDomain.rootDomain;
+            } else {
+                await this.$router.push('/');
+            }
             this.lastRoute = '';
         }
     }
@@ -1041,7 +1242,7 @@ export default class Home extends Vue {
 
             // Reload
             if (this.isLoadingAssets || this.isOwner) {
-                this.startLoadingAccounts();
+                this.startLoadingAccounts(await (<IRSS3>this.rss3).accounts.get(this.ethAddress));
                 await this.startLoadingAssets(false);
             }
         } else {
