@@ -133,8 +133,8 @@ async function disconnect() {
     if (provider) {
         await provider.disconnect();
     }
-    Cookies.remove('LAST_CONNECT_METHOD');
-    Cookies.remove('LAST_CONNECT_ADDRESS');
+    Cookies.remove('LAST_CONNECT_METHOD', cookieOptions);
+    Cookies.remove('LAST_CONNECT_ADDRESS', cookieOptions);
 }
 
 export default {
