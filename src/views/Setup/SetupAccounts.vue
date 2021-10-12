@@ -84,7 +84,7 @@
                                 v-else
                                 size="sm"
                                 class="w-8 h-8 bg-account-btn-m text-account-btn-m-text shadow-account-btn-s"
-                                @click="addAccountPreTest"
+                                @click="mode = 'add'"
                             >
                                 <i class="bx bx-plus bx-xs" />
                             </Button>
@@ -387,17 +387,13 @@ export default class SetupAccounts extends Vue {
         await window.history.back();
     }
 
-    async addAccountPreTest() {
+    async addMetamaskAccount(platform: string) {
         if (!(window as any).ethereum) {
             this.addAccountNotice =
                 'Adding accounts are now only supported with MetaMask browser extension enabled. (PC recommended)';
             this.isShowingAddAccountNotice = true;
-        } else {
-            this.mode = 'add';
+            return;
         }
-    }
-
-    async addMetamaskAccount(platform: string) {
         const newAccount = await RSS3.addNewMetamaskAccount(platform);
         if (newAccount.identity) {
             const equalDefaultAccount =
