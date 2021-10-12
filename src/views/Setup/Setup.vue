@@ -484,7 +484,7 @@ export default class Setup extends Vue {
     }
     toManageNFTs() {
         // this.saveEdited();
-        if (this.isLoadingAssets) {
+        if (this.isLoadingAssets.NFT) {
             this.notice = 'NFTs still loading... Maybe check back later?';
             this.isShowingNotice = true;
         } else {
@@ -492,7 +492,7 @@ export default class Setup extends Vue {
         }
     }
     toManageGitcoins() {
-        if (this.isLoadingAssets) {
+        if (this.isLoadingAssets.Gitcoin) {
             this.notice = 'Gitcoins still loading... Maybe check back later?';
             this.isShowingNotice = true;
         } else {
