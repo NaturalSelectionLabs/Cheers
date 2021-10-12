@@ -170,7 +170,6 @@ export default {
 
         const lastConnect = Cookies.get('LAST_CONNECT_METHOD');
         const address = Cookies.get('LAST_CONNECT_ADDRESS');
-        console.log(address);
         if (address) {
             switch (lastConnect) {
                 case 'walletConnect':
@@ -181,21 +180,27 @@ export default {
                     });
                     //  Create Web3 instance
                     web3 = new Web3(provider as any);
+                    rss3 = new RSS3({
+                        endpoint: config.hubEndpoint,
+                        address: address,
+                        agentSign: true,
+                        sign: async (data: string) => {
+                            alert('Ready to sign... You may need to prepare your wallet.');
+                            return await (<Web3>web3).eth.personal.sign(data, address, '');
+                        },
+                    });
                     break;
                 case 'metamask':
                     const metamaskEthereum = (window as any).ethereum;
                     web3 = new Web3(metamaskEthereum);
+                    rss3 = new RSS3({
+                        endpoint: config.hubEndpoint,
+                        address: address,
+                        agentSign: true,
+                        sign: async (data: string) => await (<Web3>web3).eth.personal.sign(data, address, ''),
+                    });
                     break;
             }
-            rss3 = new RSS3({
-                endpoint: config.hubEndpoint,
-                address: address,
-                agentSign: true,
-                sign: async (data: string) => {
-                    alert('Ready to sign... You may need to prepare your wallet.');
-                    return await (<Web3>web3).eth.personal.sign(data, address, '');
-                },
-            });
         } else if (!isValidRSS3()) {
             switch (lastConnect) {
                 case 'walletConnect':
