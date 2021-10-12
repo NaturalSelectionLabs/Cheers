@@ -84,7 +84,7 @@
                                 v-else
                                 size="sm"
                                 class="w-8 h-8 bg-account-btn-m text-account-btn-m-text shadow-account-btn-s"
-                                @click="addAccountPreTest"
+                                @click="mode = 'add'"
                             >
                                 <i class="bx bx-plus bx-xs" />
                             </Button>
@@ -207,13 +207,25 @@
                     </p>
                     <div class="flex">
                         <Input
-                            class="text-xl mt-6 text-primary-text"
+                            class="text-xl mt-4 text-primary-text"
                             :is-single-line="true"
-                            :placeholder="specifyNoSignAccount.notice"
+                            :placeholder="specifyNoSignAccount.style"
                             v-model="specifyNoSignAccount.account"
                             @keyup.enter.native="addNoSignAccountConfirm"
                         />
                     </div>
+                    <p class="mt-4 text-sm">
+                        <i class="bx bx-info-circle text-primary-text" />
+                        You need to place your
+                        <span class="text-primary-text cursor-pointer" @click="copyAddressToClipboard">
+                            {{ rns ? 'BioLink' : 'Address' }}
+                            <i class="bx bx-check-circle" v-if="isAddrCopied" />
+                            <i class="bx bx-paste" v-else />
+                        </span>
+                        into one of :
+                        <span>{{ specifyNoSignAccount.fields.join(', ') }}</span>
+                        .
+                    </p>
                 </template>
                 <template #footer>
                     <div class="flex flex-row gap-5">
@@ -303,17 +315,22 @@ export default class SetupAccounts extends Vue {
     isShowingAddAccountNotice: Boolean = false;
     addAccountNotice: String = '';
     isShowingAddSpecifyAccountInput: Boolean = false;
+    rns: string = '';
+    ethAddress: string = '';
+    isAddrCopied: boolean = false;
 
     mode: String = 'normal';
 
     specifyNoSignAccount: {
         platform: string;
-        notice: string;
+        style: string;
         account: string;
+        fields: string[];
     } = {
         platform: '',
-        notice: '',
+        style: '',
         account: '',
+        fields: [],
     };
 
     async mounted() {
@@ -329,6 +346,9 @@ export default class SetupAccounts extends Vue {
             const profile = await (<IRSS3>this.rss3).profile.get();
             this.avatar = profile?.avatar?.[0] || config.defaultAvatar;
         }
+
+        this.ethAddress = (<IRSS3>this.rss3).account.address;
+        this.rns = (await RNS.addr2Name(this.ethAddress)).replace(config.rns.suffix, '');
 
         // Setup theme
         const themes = RSS3.getAvailableThemes(await (<IRSS3>this.rss3).assets.get());
@@ -387,17 +407,13 @@ export default class SetupAccounts extends Vue {
         await window.history.back();
     }
 
-    async addAccountPreTest() {
+    async addMetamaskAccount(platform: string) {
         if (!(window as any).ethereum) {
             this.addAccountNotice =
                 'Adding accounts are now only supported with MetaMask browser extension enabled. (PC recommended)';
             this.isShowingAddAccountNotice = true;
-        } else {
-            this.mode = 'add';
+            return;
         }
-    }
-
-    async addMetamaskAccount(platform: string) {
         const newAccount = await RSS3.addNewMetamaskAccount(platform);
         if (newAccount.identity) {
             const equalDefaultAccount =
@@ -424,11 +440,8 @@ export default class SetupAccounts extends Vue {
 
     async addNoSignAccount(platform: string) {
         this.specifyNoSignAccount.platform = platform;
-        if (platform === 'Misskey') {
-            this.specifyNoSignAccount.notice = 'username@instance.ltd';
-        } else if (platform === 'Twitter') {
-            this.specifyNoSignAccount.notice = 'username';
-        }
+        this.specifyNoSignAccount.style = ContentProviders[platform].accountStyle;
+        this.specifyNoSignAccount.fields = ContentProviders[platform].availableFields;
         this.isShowingAddSpecifyAccountInput = true;
     }
 
@@ -458,6 +471,15 @@ export default class SetupAccounts extends Vue {
     }
     showAll() {
         this.show.push(...this.hide.splice(0, this.hide.length));
+    }
+
+    async copyAddressToClipboard() {
+        const addr = this.rns ? this.rns + '.' + config.subDomain.rootDomain : this.ethAddress;
+        await navigator.clipboard.writeText(addr);
+        this.isAddrCopied = true;
+        setTimeout(() => {
+            this.isAddrCopied = false;
+        }, 3000);
     }
 
     async save() {
@@ -521,6 +543,9 @@ export default class SetupAccounts extends Vue {
         } catch (e) {
             console.log(e);
             this.isLoading = false;
+            this.addAccountNotice =
+                "Fail to save. Maybe you'd like to check if every third-party account (Twitter / Misskey) works fine ?";
+            this.isShowingAddAccountNotice = true;
             return;
         }
         this.isLoading = false;

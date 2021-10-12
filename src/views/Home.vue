@@ -555,21 +555,25 @@ export default class Home extends Vue {
         const owner: string = <string>this.rss3.account.address;
         this.ownerETHAddress = owner;
         if (!(await this.getAddress(owner))) {
-            if (this.isOwnerValidRSS3) {
-                this.rns = (await RNSUtils.addr2Name(owner)).replace(config.rns.suffix, '');
-                this.ethAddress = owner;
-                this.isOwner = true;
-                if (this.rns && config.subDomain.rootDomain) {
-                    window.location.href = '//' + this.rns + '.' + config.subDomain.rootDomain;
+            if (this.isAccountExist) {
+                if (this.isOwnerValidRSS3) {
+                    this.rns = (await RNSUtils.addr2Name(owner)).replace(config.rns.suffix, '');
+                    this.ethAddress = owner;
+                    this.isOwner = true;
+                    if (this.rns && config.subDomain.rootDomain) {
+                        window.location.href = '//' + this.rns + '.' + config.subDomain.rootDomain;
+                    }
+                } else {
+                    sessionStorage.setItem('redirectFrom', this.$route.fullPath);
+                    this.ethAddress = '';
+                    if (config.subDomain.isSubDomainMode) {
+                        window.location.href = '//' + config.subDomain.rootDomain;
+                    } else {
+                        await this.$router.push('/');
+                    }
+                    return;
                 }
             } else {
-                sessionStorage.setItem('redirectFrom', this.$route.fullPath);
-                this.ethAddress = '';
-                if (config.subDomain.isSubDomainMode) {
-                    window.location.href = '//' + config.subDomain.rootDomain;
-                } else {
-                    await this.$router.push('/');
-                }
                 return;
             }
         }
@@ -598,6 +602,8 @@ export default class Home extends Vue {
                             break;
                     }
                 }
+            } else {
+                this.rss3Profile.bio = '';
             }
 
             this.rss3Profile.address = this.ethAddress;
@@ -737,10 +743,10 @@ export default class Home extends Vue {
     async ivLoadAsset(refresh: boolean): Promise<boolean> {
         let isFinish = true;
         if (this.isLoadingAssets.NFT) {
-            isFinish = isFinish && (await this.ivLoadNFT(refresh));
+            isFinish = (await this.ivLoadNFT(refresh)) && isFinish;
         }
         if (this.isLoadingAssets.Gitcoin) {
-            isFinish = isFinish && (await this.ivLoadGitcoin(refresh));
+            isFinish = (await this.ivLoadGitcoin(refresh)) && isFinish;
         }
         if (isFinish) {
             if (this.loadingAssetsIntervalID) {
@@ -911,8 +917,9 @@ export default class Home extends Vue {
                         if (
                             content.accessible !== false &&
                             // Opt-out edited mirror contents
-                            (content.platform !== 'Mirror-XYZ' ||
-                                contentsMerge.findIndex((ctx) => ctx.info.title === content.info.title) === -1) // todo: opt-out this
+                            (content.type !== 'Mirror-XYZ' ||
+                                (content.type === 'Mirror-XYZ' &&
+                                    contentsMerge.findIndex((ctx) => ctx.info.title === content.info.title) === -1))
                         ) {
                             contentsMerge.push(content);
                         }
@@ -1111,8 +1118,10 @@ export default class Home extends Vue {
             if (ownerRNS) {
                 window.location.href = '//' + ownerRNS + '.' + config.subDomain.rootDomain;
             } else {
-                window.location.href = '//' + config.subDomain.rootDomain + `/${ownerRNS || this.ownerETHAddress}`;
+                window.location.href = '//' + config.subDomain.rootDomain + `/${this.ownerETHAddress}`;
             }
+        } else {
+            window.location.href = '//' + config.subDomain.rootDomain;
         }
     }
 

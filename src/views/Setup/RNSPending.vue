@@ -35,7 +35,7 @@ export default class RNSPending extends Vue {
             this.rss3 = await RSS3.get();
             this.loadingIntervalID = setInterval(async () => {
                 const address = (<IRSS3>this.rss3).account.address;
-                const rns = await RNSUtils.addr2Name(address);
+                const rns = (await RNSUtils.addr2Name(address)).replace(config.rns.suffix, '');
                 if (rns !== '') {
                     // Already setup RNS
                     if (this.loadingIntervalID) {
@@ -43,7 +43,7 @@ export default class RNSPending extends Vue {
                         this.loadingIntervalID = null;
                     }
                     const profile = await (<IRSS3>this.rss3).profile.get();
-                    if (!profile) {
+                    if (!(profile?.name || profile?.bio || profile?.avatar)) {
                         // Setup Profile
                         await (<IRSS3>this.rss3).files.sync();
                         this.$gtag.event('sign_up', { userid: (<IRSS3>this.rss3).account.address });
@@ -53,9 +53,9 @@ export default class RNSPending extends Vue {
                         this.$gtag.event('login', { userid: (<IRSS3>this.rss3).account.address });
                         const redirectFrom = sessionStorage.getItem('redirectFrom');
                         sessionStorage.removeItem('redirectFrom');
-                        if (rns && config.subDomain.isSubDomainMode) {
+                        if (rns) {
                             window.location.href =
-                                '//' + 'https://' + rns + '.' + config.subDomain.rootDomain + redirectFrom;
+                                '//' + rns + '.' + config.subDomain.rootDomain + (redirectFrom || '');
                         } else {
                             await this.$router.push(redirectFrom || `/${rns || address}`);
                         }

@@ -16,7 +16,7 @@
                     :is-border="false"
                     :src="rss3Profile.avatar"
                     :alt="rss3Profile.username"
-                    @click="toPublicPage(rss3Profile.address)"
+                    @click="toPublicPage(rns, ethAddress)"
                 />
             </div>
             <div class="max-w-md m-auto">
@@ -227,8 +227,12 @@ export default class Accounts extends Vue {
         return -1;
     }
 
-    public toPublicPage(address: string) {
-        this.$router.push(`/${address}`);
+    toPublicPage(rns: string, ethAddress: string) {
+        if (rns && config.subDomain.isSubDomainMode) {
+            this.$router.push('/');
+        } else {
+            this.$router.push(`/${rns || ethAddress}`);
+        }
     }
 
     public toExternalLink(address: string, platform: string) {

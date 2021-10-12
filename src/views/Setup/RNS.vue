@@ -16,7 +16,7 @@
                     :is-error="notice !== ''"
                     v-model="rns"
                     @keyup.enter.native="verifyRNS"
-                    :is-disabled="isDisabled"
+                    :is-disabled="isWithoutMetamask || isAlreadyHavingRNS"
                     :suffix="rnsSuffix"
                 />
                 <span class="about">
@@ -119,20 +119,26 @@ function validateNetwork(chain: number | null, cb?: (chain: number | null) => vo
 })
 export default class RNS extends Vue {
     rss3: IRSS3 | null = null;
+    ethAddress: string = '';
     rns: string = '';
     notice: String = '';
     isErrorNotice: Boolean = true;
     isLoading: Boolean = false;
     isShowingConfirm: Boolean = false;
-    isDisabled: Boolean = false;
-    rnsSuffix: string = '.rss3';
+    isWithoutMetamask: boolean = false;
+    isAlreadyHavingRNS: boolean = false;
+    rnsSuffix: string = '.' + config.subDomain.rootDomain;
     $gtag: any;
 
-    async redirect() {
+    async skipRedirect() {
         // Login
         const redirectFrom = sessionStorage.getItem('redirectFrom');
         sessionStorage.removeItem('redirectFrom');
-        await this.$router.push(redirectFrom || (config.subDomain.isSubDomainMode ? '/' : '/home'));
+        if (this.isAlreadyHavingRNS) {
+            window.location.href = '//' + this.rns + '.' + config.subDomain.rootDomain + (redirectFrom || '');
+        } else {
+            await this.$router.push(redirectFrom || `/${this.ethAddress}`);
+        }
     }
 
     async refreshAccount() {
@@ -146,15 +152,13 @@ export default class RNS extends Vue {
             await metamaskEthereum.request({
                 method: 'eth_requestAccounts',
             });
+            this.ethAddress = (<IRSS3>this.rss3).account.address;
             const chain: string | null = await metamaskEthereum.request({ method: 'eth_chainId' });
             if (validateNetwork(Number(chain))) {
-                const rns = (await RNSUtils.addr2Name((<IRSS3>this.rss3).account.address)).replace(
-                    config.rns.suffix,
-                    '',
-                );
+                const rns = (await RNSUtils.addr2Name(this.ethAddress)).replace(config.rns.suffix, '');
                 if (rns !== '') {
                     this.rns = rns;
-                    this.isDisabled = true;
+                    this.isAlreadyHavingRNS = true;
                 }
             }
         }
@@ -170,7 +174,7 @@ export default class RNS extends Vue {
     }
 
     async skip() {
-        await this.redirect();
+        await this.skipRedirect();
     }
 
     async isPassEnough(): Promise<boolean> {
@@ -180,13 +184,13 @@ export default class RNS extends Vue {
     }
 
     async verifyRNS() {
-        if ((await RNSUtils.addr2Name((<IRSS3>this.rss3).account.address)) !== '') {
-            await this.redirect();
+        if (this.isAlreadyHavingRNS) {
+            await this.skipRedirect();
             return;
         }
         if (!(window as any).ethereum) {
             this.notice = 'You need MetaMask extension to sign';
-            this.isDisabled = true;
+            this.isWithoutMetamask = true;
             return;
         }
         this.isLoading = true;
@@ -208,7 +212,7 @@ export default class RNS extends Vue {
         } else if (!(await this.isPassEnough())) {
             // Check $PASS balance
             this.notice = 'Sorry, but you need 1 $PASS to register an RNS';
-        } else if (parseInt((await RNSUtils.name2Addr(this.rns + config.rns.suffix)).toString()) !== 0) {
+        } else if (parseInt(await RNSUtils.name2Addr(this.rns + config.rns.suffix)) !== 0) {
             // Already taken
             this.notice = 'Sorry, but this RNS has already been taken.';
         } else {

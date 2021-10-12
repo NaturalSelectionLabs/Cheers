@@ -40,7 +40,7 @@ Sentry.init({
     integrations: [
         new Integrations.BrowserTracing({
             routingInstrumentation: Sentry.vueRouterInstrumentation(router),
-            tracingOrigins: [/^.+\.pass3\.me/, 'pass3.me', /^\//],
+            tracingOrigins: [/^(.+\.)?pass3\.me/, /^(.+\.)?rss3\.bio/, /^\//],
         }),
     ],
     // Set tracesSampleRate to 1.0 to capture 100%
