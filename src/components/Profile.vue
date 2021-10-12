@@ -16,17 +16,12 @@
             <div class="stats-type">Followings</div>
         </div>
         <span class="col-span-full md:col-span-2 md:order-0 font-bold text-2xl">{{ username }}</span>
-        <div
-            @click="emitClickAddress"
-            class="col-span-full md:col-span-1 md:row-start-3 md:col-start-2 inline-block relative align-middle"
-        >
-            <LinkButton v-if="rns">
-                <span>{{ rns }}{{ suffix }}</span>
+        <div @click="emitClickAddress" class="col-span-full md:col-span-1 md:row-start-3 md:col-start-2 inline-block">
+            <LinkButton class="relative">
+                <span v-if="rns">{{ rns }}{{ suffix }}</span>
+                <span v-else>{{ filter(address) }}</span>
+                <Tooltip v-show="isShowingTooltip" :text="$props.clickAddressNotice" view-type="options" />
             </LinkButton>
-            <LinkButton v-else>
-                <span>{{ filter(address) }}</span>
-            </LinkButton>
-            <Tooltip v-show="isShowingTooltip" :text="$props.clickAddressNotice" view-type="options" />
         </div>
         <div class="col-span-full md:col-span-1 md:row-start-3 md:col-start-3" v-if="website">
             <LinkButton @click="toExternalLink">
