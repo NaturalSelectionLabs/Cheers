@@ -27,7 +27,6 @@
 <script lang="ts">
 import { Vue, Options } from 'vue-class-component';
 import ContentBadge from '@/components/ContentBadge.vue';
-
 import marked from 'marked';
 
 @Options({
