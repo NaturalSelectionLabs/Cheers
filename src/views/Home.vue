@@ -24,7 +24,7 @@
                 />
             </section>
 
-            <AccountCard class="md:order-1">
+            <AccountCard>
                 <template #header-button>
                     <div v-if="isOwner" class="flex flex-row gap-2">
                         <Button
@@ -68,7 +68,7 @@
                 color-title="text-nft-title"
                 color-tips="text-nft-title"
                 color-background="bg-nft-bg"
-                class="w-full border-nft-border md:order-3"
+                class="w-full border-nft-border"
                 :is-having-content="nfts.length !== 0"
                 :isPClayout="isPCLayout"
                 :is-single-line="!isPCLayout && nfts.length !== 0"
@@ -121,7 +121,7 @@
                 color-title="text-gitcoin-title"
                 color-tips="text-gitcoin-title"
                 color-background="bg-gitcoin-bg"
-                class="w-full border-gitcoin-border md:order-4"
+                class="w-full border-gitcoin-border"
                 :is-having-content="true"
                 :isPClayout="isPCLayout"
                 :is-single-line="!isPCLayout && gitcoins.length !== 0"
@@ -200,7 +200,7 @@
                 color-title="text-content-title"
                 color-tips="text-content-title"
                 color-background="bg-content-bg"
-                class="w-auto border-content-border md:order-2 md:row-span-3"
+                class="w-auto border-content-border md:col-start-2 md:row-start-2 md:row-span-3"
                 :is-having-content="true"
             >
                 <template #title-icon><ContentIcon /></template>
