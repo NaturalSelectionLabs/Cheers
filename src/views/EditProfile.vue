@@ -141,7 +141,7 @@ export default class EditProfile extends Vue {
         this.profile.avatar = profile?.avatar?.[0] || config.defaultAvatar;
         this.profile.name = profile?.name || '';
         if (profile?.bio) {
-            const fieldPattern = /<([A-Z]+?)#(.+?)>/gi;
+            const fieldPattern = /<([A-Z]+?)#(.+?)?>/gi;
             const fields = profile.bio.match(fieldPattern) || [];
             this.profile.bio = profile.bio.replace(fieldPattern, '');
 
@@ -202,13 +202,13 @@ export default class EditProfile extends Vue {
             this.setOversizeNotice('Name');
             return;
         }
-        if (this.profile.bio.length + this.profile.link.length + 8 > this.maxValueLength) {
+        if (this.profile.bio?.length + this.profile.link?.length + 8 > this.maxValueLength) {
             this.setOversizeNotice('Bio');
             return;
         }
         const newProfile: RSS3Profile = {
             name: this.profile.name,
-            bio: this.profile.bio + `<SITE#${this.profile.link}>`,
+            bio: this.profile.bio + (this.profile.link ? `<SITE#${this.profile.link}>` : ''),
         };
 
         // Upload avatar
