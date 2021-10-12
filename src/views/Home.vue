@@ -598,6 +598,8 @@ export default class Home extends Vue {
                             break;
                     }
                 }
+            } else {
+                this.rss3Profile.bio = '';
             }
 
             this.rss3Profile.address = this.ethAddress;
