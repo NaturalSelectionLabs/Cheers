@@ -126,7 +126,7 @@ export default class RNS extends Vue {
     isLoading: Boolean = false;
     isShowingConfirm: Boolean = false;
     isDisabled: Boolean = false;
-    rnsSuffix: string = '.rss3';
+    rnsSuffix: string = '.rss3.bio';
     $gtag: any;
 
     async redirect() {
