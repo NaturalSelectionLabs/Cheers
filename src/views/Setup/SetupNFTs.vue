@@ -4,7 +4,14 @@
             <div class="flex justify-between items-center mb-4">
                 <Button
                     size="sm"
-                    class="w-10 h-10 bg-secondary-btn text-secondary-btn-text shadow-secondary-btn"
+                    class="
+                        w-10
+                        h-10
+                        bg-secondary-btn
+                        text-secondary-btn-text
+                        shadow-secondary-btn
+                        border-secondary-btn-border
+                    "
                     @click="back"
                 >
                     <i class="bx bx-chevron-left bx-sm" />
