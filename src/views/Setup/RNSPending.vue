@@ -54,8 +54,7 @@ export default class RNSPending extends Vue {
                         const redirectFrom = sessionStorage.getItem('redirectFrom');
                         sessionStorage.removeItem('redirectFrom');
                         if (rns && config.subDomain.isSubDomainMode) {
-                            window.location.href =
-                                '//' + 'https://' + rns + '.' + config.subDomain.rootDomain + redirectFrom;
+                            window.location.href = '//' + rns + '.' + config.subDomain.rootDomain + redirectFrom || '';
                         } else {
                             await this.$router.push(redirectFrom || `/${rns || address}`);
                         }

@@ -208,7 +208,7 @@ export default class RNS extends Vue {
         } else if (!(await this.isPassEnough())) {
             // Check $PASS balance
             this.notice = 'Sorry, but you need 1 $PASS to register an RNS';
-        } else if (parseInt((await RNSUtils.name2Addr(this.rns + config.rns.suffix)).toString()) !== 0) {
+        } else if (parseInt(await RNSUtils.name2Addr(this.rns + config.rns.suffix)) !== 0) {
             // Already taken
             this.notice = 'Sorry, but this RNS has already been taken.';
         } else {

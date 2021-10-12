@@ -220,6 +220,7 @@ import AccountIcon from '@/components/Icons/AccountIcon.vue';
 
 import { GeneralAsset, GeneralAssetWithTags } from '@/common/types';
 import GitcoinItem from '@/components/GitcoinItem.vue';
+import RNSUtils from '@/common/rns';
 
 @Options({
     name: 'Setup',
@@ -499,7 +500,14 @@ export default class Setup extends Vue {
         this.isLoading = false;
         const redirectFrom = sessionStorage.getItem('redirectFrom');
         sessionStorage.removeItem('redirectFrom');
-        await this.$router.push(redirectFrom || '/home');
+
+        const ethAddress = (<IRSS3>this.rss3).account.address;
+        const rns = (await RNSUtils.addr2Name(ethAddress)).replace(config.rns.suffix, '');
+        if (rns && config.subDomain.isSubDomainMode) {
+            window.location.href = '//' + rns + '.' + config.subDomain.rootDomain;
+        } else {
+            await this.$router.push(redirectFrom || `/${ethAddress}`);
+        }
     }
 
     async activated() {
