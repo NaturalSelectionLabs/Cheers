@@ -555,21 +555,25 @@ export default class Home extends Vue {
         const owner: string = <string>this.rss3.account.address;
         this.ownerETHAddress = owner;
         if (!(await this.getAddress(owner))) {
-            if (this.isOwnerValidRSS3) {
-                this.rns = (await RNSUtils.addr2Name(owner)).replace(config.rns.suffix, '');
-                this.ethAddress = owner;
-                this.isOwner = true;
-                if (this.rns && config.subDomain.rootDomain) {
-                    window.location.href = '//' + this.rns + '.' + config.subDomain.rootDomain;
+            if (this.isAccountExist) {
+                if (this.isOwnerValidRSS3) {
+                    this.rns = (await RNSUtils.addr2Name(owner)).replace(config.rns.suffix, '');
+                    this.ethAddress = owner;
+                    this.isOwner = true;
+                    if (this.rns && config.subDomain.rootDomain) {
+                        window.location.href = '//' + this.rns + '.' + config.subDomain.rootDomain;
+                    }
+                } else {
+                    sessionStorage.setItem('redirectFrom', this.$route.fullPath);
+                    this.ethAddress = '';
+                    if (config.subDomain.isSubDomainMode) {
+                        window.location.href = '//' + config.subDomain.rootDomain;
+                    } else {
+                        await this.$router.push('/');
+                    }
+                    return;
                 }
             } else {
-                sessionStorage.setItem('redirectFrom', this.$route.fullPath);
-                this.ethAddress = '';
-                if (config.subDomain.isSubDomainMode) {
-                    window.location.href = '//' + config.subDomain.rootDomain;
-                } else {
-                    await this.$router.push('/');
-                }
                 return;
             }
         }
@@ -1111,8 +1115,10 @@ export default class Home extends Vue {
             if (ownerRNS) {
                 window.location.href = '//' + ownerRNS + '.' + config.subDomain.rootDomain;
             } else {
-                window.location.href = '//' + config.subDomain.rootDomain + `/${ownerRNS || this.ownerETHAddress}`;
+                window.location.href = '//' + config.subDomain.rootDomain + `/${this.ownerETHAddress}`;
             }
+        } else {
+            window.location.href = '//' + config.subDomain.rootDomain;
         }
     }
 
