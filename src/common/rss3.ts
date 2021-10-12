@@ -178,6 +178,8 @@ export default {
                             1: 'https://cloudflare-eth.com',
                         },
                     });
+                    // await enable
+                    await provider.enable();
                     //  Create Web3 instance
                     web3 = new Web3(provider as any);
                     rss3 = new RSS3({
@@ -192,6 +194,10 @@ export default {
                     break;
                 case 'metamask':
                     const metamaskEthereum = (window as any).ethereum;
+                    // await enable
+                    await metamaskEthereum.request({
+                        method: 'eth_requestAccounts',
+                    });
                     web3 = new Web3(metamaskEthereum);
                     rss3 = new RSS3({
                         endpoint: config.hubEndpoint,
