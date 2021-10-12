@@ -201,6 +201,10 @@ export default {
                     });
                     break;
             }
+            if (rss3) {
+                rss3.files.set(await rss3.files.get(address));
+                await rss3.files.sync();
+            }
         } else if (!isValidRSS3()) {
             switch (lastConnect) {
                 case 'walletConnect':
