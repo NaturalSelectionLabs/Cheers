@@ -6,4 +6,6 @@ export default {
     getAccountLink: (account: string) => {
         return `https://twitter.com/${account}`;
     },
+    accountStyle: 'username',
+    availableFields: ['Name', 'Bio', 'Screen Name', 'Website'],
 };

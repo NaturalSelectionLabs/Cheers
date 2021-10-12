@@ -23,4 +23,6 @@ export default {
         const { username, instance } = spliceAccountString(account);
         return `https://${instance}/@${username}`;
     },
+    accountStyle: 'username@instance.ltd',
+    availableFields: ['Name', 'Description', 'Fields', 'Pinned Notes'],
 };
