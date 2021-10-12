@@ -914,11 +914,14 @@ export default class Home extends Vue {
                                 .pop()}`;
                         }
 
+                        console.log(content);
+
                         if (
                             content.accessible !== false &&
                             // Opt-out edited mirror contents
-                            (content.platform !== 'Mirror-XYZ' ||
-                                contentsMerge.findIndex((ctx) => ctx.info.title === content.info.title) === -1) // todo: opt-out this
+                            (content.type !== 'Mirror-XYZ' ||
+                                (content.type === 'Mirror-XYZ' &&
+                                    contentsMerge.findIndex((ctx) => ctx.info.title === content.info.title) === -1))
                         ) {
                             contentsMerge.push(content);
                         }
