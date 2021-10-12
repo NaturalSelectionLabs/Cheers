@@ -108,7 +108,7 @@ module.exports = {
                 },
                 card: {
                     hide: 'var(--color-card-hide)',
-                    overlay: '--color-card-overlay',
+                    overlay: 'var(--color-card-overlay)',
                 },
                 btn: {
                     border: 'var(--color-btn-border)',
