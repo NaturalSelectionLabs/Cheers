@@ -914,8 +914,6 @@ export default class Home extends Vue {
                                 .pop()}`;
                         }
 
-                        console.log(content);
-
                         if (
                             content.accessible !== false &&
                             // Opt-out edited mirror contents
