@@ -1263,10 +1263,11 @@ export default class Home extends Vue {
             }
 
             // Reload
-            if (this.isLoadingAssets.NFT || this.isLoadingAssets.Gitcoin || this.isOwner) {
-                this.startLoadingAccounts(await (<IRSS3>this.rss3).accounts.get(this.ethAddress));
-                await this.startLoadingAssets(false);
-            }
+            // if (this.isLoadingAssets.NFT || this.isLoadingAssets.Gitcoin || this.isOwner) {
+            //     this.startLoadingAccounts(await (<IRSS3>this.rss3).accounts.get(this.ethAddress));
+            //     await this.startLoadingAssets(false);
+            // }
+            await this.initLoad(); // TODO temporary measure
         } else {
             await this.initLoad();
         }
