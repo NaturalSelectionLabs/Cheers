@@ -28,9 +28,12 @@ export interface Theme {
 const cookieOptions: Cookies.CookieAttributes = {
     domain: '.' + config.subDomain.rootDomain,
     secure: true,
-    sameSite: 'none',
+    sameSite: 'Strict',
     expires: config.subDomain.cookieExpires,
 };
+
+const methodKey = 'RSS3BioConnectMethod';
+const addressKey = 'RSS3BioConnectAddress';
 
 async function walletConnect(skipSign?: boolean) {
     provider = new WalletConnectProvider({
@@ -100,8 +103,8 @@ async function metamaskConnect(skipSign?: boolean) {
     web3 = new Web3(metamaskEthereum);
 
     let address: string;
-    if (Cookies.get('LAST_CONNECT_METHOD') === 'metamask' && Cookies.get('LAST_CONNECT_ADDRESS')) {
-        address = Cookies.get('LAST_CONNECT_ADDRESS') || '';
+    if (Cookies.get(methodKey) === 'metamask' && Cookies.get(addressKey)) {
+        address = Cookies.get(addressKey) || '';
     } else {
         const accounts = await metamaskEthereum.request({
             method: 'eth_requestAccounts',
@@ -133,24 +136,24 @@ async function disconnect() {
     if (provider) {
         await provider.disconnect();
     }
-    Cookies.remove('LAST_CONNECT_METHOD', cookieOptions);
-    Cookies.remove('LAST_CONNECT_ADDRESS', cookieOptions);
+    Cookies.remove(methodKey, cookieOptions);
+    Cookies.remove(addressKey, cookieOptions);
 }
 
 export default {
     walletConnect: async () => {
         await walletConnect();
         if (isValidRSS3()) {
-            Cookies.set('LAST_CONNECT_METHOD', 'walletConnect', cookieOptions);
-            Cookies.set('LAST_CONNECT_ADDRESS', (<RSS3>rss3).account.address, cookieOptions);
+            Cookies.set(methodKey, 'walletConnect', cookieOptions);
+            Cookies.set(addressKey, (<RSS3>rss3).account.address, cookieOptions);
         }
         return rss3;
     },
     metamaskConnect: async () => {
         await metamaskConnect();
         if (isValidRSS3()) {
-            Cookies.set('LAST_CONNECT_METHOD', 'metamask', cookieOptions);
-            Cookies.set('LAST_CONNECT_ADDRESS', (<RSS3>rss3).account.address, cookieOptions);
+            Cookies.set(methodKey, 'metamask', cookieOptions);
+            Cookies.set(addressKey, (<RSS3>rss3).account.address, cookieOptions);
         }
         return rss3;
     },
@@ -160,46 +163,75 @@ export default {
         const lastConnectMigrate = localStorage.getItem('lastConnect');
         const lastAddressMigrate = localStorage.getItem('lastAddress');
         if (lastConnectMigrate) {
-            Cookies.set('LAST_CONNECT_METHOD', lastConnectMigrate, cookieOptions);
+            Cookies.set(methodKey, lastConnectMigrate, cookieOptions);
             localStorage.removeItem('lastConnect');
         }
         if (lastAddressMigrate) {
-            Cookies.set('LAST_CONNECT_ADDRESS', lastAddressMigrate, cookieOptions);
+            Cookies.set(addressKey, lastAddressMigrate, cookieOptions);
             localStorage.removeItem('lastAddress');
         }
 
-        const lastConnect = Cookies.get('LAST_CONNECT_METHOD');
-        const address = Cookies.get('LAST_CONNECT_ADDRESS');
+        const lastConnect = Cookies.get(methodKey);
+        const address = Cookies.get(addressKey);
         if (address) {
             switch (lastConnect) {
                 case 'walletConnect':
-                    provider = new WalletConnectProvider({
-                        rpc: {
-                            1: 'https://cloudflare-eth.com',
-                        },
-                    });
-                    //  Create Web3 instance
-                    web3 = new Web3(provider as any);
+                    web3 = null;
                     rss3 = new RSS3({
                         endpoint: config.hubEndpoint,
                         address: address,
                         agentSign: true,
                         sign: async (data: string) => {
+                            if (!web3) {
+                                provider = new WalletConnectProvider({
+                                    rpc: {
+                                        1: 'https://cloudflare-eth.com',
+                                    },
+                                });
+                                let session;
+                                try {
+                                    session = await provider.enable();
+                                } catch (e) {}
+                                if (!session) {
+                                    return '';
+                                }
+                                web3 = new Web3(provider as any);
+                                if (!web3) {
+                                    return '';
+                                }
+                                provider.on('disconnect', (code: number, reason: string) => {
+                                    console.log(code, reason);
+                                    rss3 = null;
+                                    web3 = null;
+                                });
+                            }
                             alert('Ready to sign... You may need to prepare your wallet.');
                             return await (<Web3>web3).eth.personal.sign(data, address, '');
                         },
                     });
                     break;
                 case 'metamask':
-                    const metamaskEthereum = (window as any).ethereum;
-                    web3 = new Web3(metamaskEthereum);
+                    web3 = null;
                     rss3 = new RSS3({
                         endpoint: config.hubEndpoint,
                         address: address,
                         agentSign: true,
-                        sign: async (data: string) => await (<Web3>web3).eth.personal.sign(data, address, ''),
+                        sign: async (data: string) => {
+                            if (!web3) {
+                                const metamaskEthereum = (window as any).ethereum;
+                                web3 = new Web3(metamaskEthereum);
+                                await metamaskEthereum.request({
+                                    method: 'eth_requestAccounts',
+                                });
+                            }
+                            return await (<Web3>web3).eth.personal.sign(data, address, '');
+                        },
                     });
                     break;
+            }
+            if (rss3) {
+                rss3.files.set(await rss3.files.get(address));
+                await rss3.files.sync();
             }
         } else if (!isValidRSS3()) {
             switch (lastConnect) {
