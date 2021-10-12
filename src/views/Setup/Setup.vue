@@ -136,7 +136,7 @@
                             "
                             disabled
                         >
-                            Coming Soon
+                            View me at home !
                         </Button>
                     </div>
                 </template>
