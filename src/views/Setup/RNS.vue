@@ -16,7 +16,7 @@
                     :is-error="notice !== ''"
                     v-model="rns"
                     @keyup.enter.native="verifyRNS"
-                    :is-disabled="isDisabled"
+                    :is-disabled="isWithoutMetamask || isAlreadyHavingRNS"
                     :suffix="rnsSuffix"
                 />
                 <span class="about">
@@ -125,18 +125,19 @@ export default class RNS extends Vue {
     isErrorNotice: Boolean = true;
     isLoading: Boolean = false;
     isShowingConfirm: Boolean = false;
-    isDisabled: Boolean = false;
-    rnsSuffix: string = '.rss3.bio';
+    isWithoutMetamask: boolean = false;
+    isAlreadyHavingRNS: boolean = false;
+    rnsSuffix: string = '.' + config.subDomain.rootDomain;
     $gtag: any;
 
-    async redirect() {
+    async skipRedirect() {
         // Login
         const redirectFrom = sessionStorage.getItem('redirectFrom');
         sessionStorage.removeItem('redirectFrom');
-        if (this.rns) {
+        if (this.isAlreadyHavingRNS) {
             window.location.href = '//' + this.rns + '.' + config.subDomain.rootDomain + (redirectFrom || '');
         } else {
-            await this.$router.push(redirectFrom || `/${this.rns || this.ethAddress}`);
+            await this.$router.push(redirectFrom || `/${this.ethAddress}`);
         }
     }
 
@@ -157,7 +158,7 @@ export default class RNS extends Vue {
                 const rns = (await RNSUtils.addr2Name(this.ethAddress)).replace(config.rns.suffix, '');
                 if (rns !== '') {
                     this.rns = rns;
-                    this.isDisabled = true;
+                    this.isAlreadyHavingRNS = true;
                 }
             }
         }
@@ -173,7 +174,7 @@ export default class RNS extends Vue {
     }
 
     async skip() {
-        await this.redirect();
+        await this.skipRedirect();
     }
 
     async isPassEnough(): Promise<boolean> {
@@ -183,13 +184,13 @@ export default class RNS extends Vue {
     }
 
     async verifyRNS() {
-        if (this.rns) {
-            await this.redirect();
+        if (this.isAlreadyHavingRNS) {
+            await this.skipRedirect();
             return;
         }
         if (!(window as any).ethereum) {
             this.notice = 'You need MetaMask extension to sign';
-            this.isDisabled = true;
+            this.isWithoutMetamask = true;
             return;
         }
         this.isLoading = true;
