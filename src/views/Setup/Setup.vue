@@ -45,7 +45,7 @@
                 :is-having-content="nfts.length !== 0"
                 :is-single-line="nfts.length !== 0"
                 :tips="
-                    isLoadingAssets
+                    isLoadingAssets.NFT
                         ? 'Loading... Hold on a little bit or manage them later 🙌'
                         : nfts.length === 0
                         ? 'Haven\'t found anything yet...'
@@ -82,7 +82,7 @@
                 :is-having-content="gitcoins.length !== 0"
                 :is-single-line="gitcoins.length !== 0"
                 :tips="
-                    isLoadingAssets
+                    isLoadingAssets.Gitcoin
                         ? 'Loading... Hold on a little bit or manage them later 🙌'
                         : gitcoins.length === 0
                         ? 'Haven\'t found anything yet...'
@@ -256,7 +256,13 @@ export default class Setup extends Vue {
     gitcoins: GeneralAssetWithTags[] = [];
     rss3: IRSS3 | null = null;
     isLoading: Boolean = true;
-    isLoadingAssets: Boolean = true;
+    isLoadingAssets: {
+        NFT: boolean;
+        Gitcoin: boolean;
+    } = {
+        NFT: true,
+        Gitcoin: true,
+    };
     loadingAssetsIntervalID: ReturnType<typeof setInterval> | null = null;
     maxValueLength: Number = 280;
     notice: String = '';
@@ -319,18 +325,49 @@ export default class Setup extends Vue {
         }, 0);
     }
 
-    async ivLoadAssets(): Promise<boolean> {
-        const data = await RSS3.getAssetProfile((<IRSS3>this.rss3).account.address);
+    async ivLoadNFT(refresh: boolean): Promise<boolean> {
+        const data = await RSS3.getAssetProfile((<IRSS3>this.rss3).account.address, 'NFT', refresh);
         if (data && data.status !== false) {
-            await this.mergeAssets(await (<IRSS3>this.rss3).assets.get(), <GeneralAsset[]>data.assets);
-            this.isLoadingAssets = false;
+            await this.mergeAssets(
+                await (<IRSS3>this.rss3).assets.get((<IRSS3>this.rss3).account.address),
+                <GeneralAsset[]>data.assets,
+                'NFT',
+            );
+            this.isLoadingAssets.NFT = false;
+            return true;
+        }
+        return false;
+    }
+
+    async ivLoadGitcoin(refresh: boolean): Promise<boolean> {
+        const data = await RSS3.getAssetProfile((<IRSS3>this.rss3).account.address, 'Gitcoin-Donation', refresh);
+        if (data && data.status !== false) {
+            await this.mergeAssets(
+                await (<IRSS3>this.rss3).assets.get((<IRSS3>this.rss3).account.address),
+                <GeneralAsset[]>data.assets,
+                'Gitcoin-Donation',
+            );
+            this.isLoadingAssets.Gitcoin = false;
+            return true;
+        }
+        return false;
+    }
+
+    async ivLoadAssets(refresh: boolean = true): Promise<boolean> {
+        let isFinish = true;
+        if (this.isLoadingAssets.NFT) {
+            isFinish = isFinish && (await this.ivLoadNFT(refresh));
+        }
+        if (this.isLoadingAssets.Gitcoin) {
+            isFinish = isFinish && (await this.ivLoadGitcoin(refresh));
+        }
+        if (isFinish) {
             if (this.loadingAssetsIntervalID) {
                 clearInterval(this.loadingAssetsIntervalID);
                 this.loadingAssetsIntervalID = null;
             }
-            return true;
         }
-        return false;
+        return isFinish;
     }
 
     async startLoadingAssets() {
@@ -378,11 +415,13 @@ export default class Setup extends Vue {
         }
     }
 
-    async mergeAssets(assetsInRSS3File: RSS3Asset[], assetsGrabbed: GeneralAsset[]) {
+    async mergeAssets(assetsInRSS3File: RSS3Asset[], assetsGrabbed: GeneralAsset[], type: string) {
         const assetsMerge: GeneralAssetWithTags[] = await Promise.all(
             (assetsGrabbed || []).map(async (ag: GeneralAssetWithTags) => {
                 const origType = ag.type;
-                ag.type = 'Invalid'; // Using as a match mark
+                if (config.hideUnlistedAsstes) {
+                    ag.type = 'Invalid'; // Using as a match mark
+                }
                 for (const airf of assetsInRSS3File) {
                     if (
                         airf.platform === ag.platform &&
@@ -413,12 +452,15 @@ export default class Setup extends Vue {
             } // else Invalid
         }
 
-        this.nfts = NFTList.filter((asset) => !asset.tags || asset.tags.indexOf('pass:hidden') === -1).sort(
-            (a, b) => this.getAssetOrder(a) - this.getAssetOrder(b),
-        );
-        this.gitcoins = GitcoinList.filter((asset) => !asset.tags || asset.tags.indexOf('pass:hidden') === -1).sort(
-            (a, b) => this.getAssetOrder(a) - this.getAssetOrder(b),
-        );
+        if (type === 'NFT') {
+            this.nfts = NFTList.filter((asset) => !asset.tags || asset.tags.indexOf('pass:hidden') === -1).sort(
+                (a, b) => this.getAssetOrder(a) - this.getAssetOrder(b),
+            );
+        } else if (type === 'Gitcoin-Donation') {
+            this.gitcoins = GitcoinList.filter((asset) => !asset.tags || asset.tags.indexOf('pass:hidden') === -1).sort(
+                (a, b) => this.getAssetOrder(a) - this.getAssetOrder(b),
+            );
+        }
     }
 
     // loadEdited() {
