@@ -196,7 +196,7 @@ export default class SetupNFTs extends Vue {
         }
 
         const assetsInRSS3File = await (<IRSS3>this.rss3).assets.get();
-        const assetsGrabbed = (await RSS3.getAssetProfile((<IRSS3>this.rss3).account.address))?.assets;
+        const assetsGrabbed = (await RSS3.getAssetProfile((<IRSS3>this.rss3).account.address, 'NFT'))?.assets;
 
         // Setup theme
         const themes = RSS3.getAvailableThemes(assetsInRSS3File);

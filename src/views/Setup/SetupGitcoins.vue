@@ -185,7 +185,7 @@ export default class SetupGitcoins extends Vue {
             document.body.classList.remove(...document.body.classList);
         }
 
-        const data = await RSS3.getAssetProfile((<IRSS3>this.rss3).account.address);
+        const data = await RSS3.getAssetProfile((<IRSS3>this.rss3).account.address, 'Gitcoin-Donation');
         if (data) {
             await this.loadAssets(
                 await (<IRSS3>this.rss3).assets.get((<IRSS3>this.rss3).account.address),

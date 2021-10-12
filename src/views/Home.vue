@@ -1038,7 +1038,7 @@ export default class Home extends Vue {
     }
     toManageNFTs() {
         // this.saveEdited();
-        if (this.isLoadingAssets) {
+        if (this.isLoadingAssets.NFT) {
             this.notice = 'NFTs still loading... Maybe check back later?';
             this.isShowingNotice = true;
         } else {
@@ -1046,7 +1046,7 @@ export default class Home extends Vue {
         }
     }
     toManageGitcoins() {
-        if (this.isLoadingAssets) {
+        if (this.isLoadingAssets.Gitcoin) {
             this.notice = 'Gitcoins still loading... Maybe check back later?';
             this.isShowingNotice = true;
         } else {
@@ -1263,7 +1263,7 @@ export default class Home extends Vue {
             }
 
             // Reload
-            if (this.isLoadingAssets || this.isOwner) {
+            if (this.isLoadingAssets.NFT || this.isLoadingAssets.Gitcoin || this.isOwner) {
                 this.startLoadingAccounts(await (<IRSS3>this.rss3).accounts.get(this.ethAddress));
                 await this.startLoadingAssets(false);
             }
