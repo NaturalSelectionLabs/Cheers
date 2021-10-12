@@ -8414,10 +8414,10 @@ rlp@^2.0.0, rlp@^2.2.3, rlp@^2.2.4:
   dependencies:
     bn.js "^4.11.1"
 
-rss3-next@0.6.17:
-  version "0.6.17"
-  resolved "https://registry.yarnpkg.com/rss3-next/-/rss3-next-0.6.17.tgz#fc9c3fa6a983d2ffb76f2bcfe212ff8c5dff99a6"
-  integrity sha512-UEVpr9somInaz8kreZjUjVmo0cay/Q24CQSo8QJogChlphUpFyMAJSXtC7xS2p67ZSXL9CWPtzoPZtQ4wh0hBg==
+rss3-next@0.6.18:
+  version "0.6.18"
+  resolved "https://registry.yarnpkg.com/rss3-next/-/rss3-next-0.6.18.tgz#2228af71376ab9922b0cca539b0cf48d8e763c0b"
+  integrity sha512-PWALo04QPKrFzh2ZZrSLnIYFN5mDKW047VH3Vyzdqys8N0FtdVrXHorYTl7czc+2xl7TkLxvNBDajoaO0tDzfw==
   dependencies:
     axios "0.21.1"
     buffer "6.0.3"
