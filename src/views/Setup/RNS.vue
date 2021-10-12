@@ -119,6 +119,7 @@ function validateNetwork(chain: number | null, cb?: (chain: number | null) => vo
 })
 export default class RNS extends Vue {
     rss3: IRSS3 | null = null;
+    ethAddress: string = '';
     rns: string = '';
     notice: String = '';
     isErrorNotice: Boolean = true;
@@ -132,7 +133,11 @@ export default class RNS extends Vue {
         // Login
         const redirectFrom = sessionStorage.getItem('redirectFrom');
         sessionStorage.removeItem('redirectFrom');
-        await this.$router.push(redirectFrom || (config.subDomain.isSubDomainMode ? '/' : '/home'));
+        if (this.rns) {
+            window.location.href = '//' + this.rns + '.' + config.subDomain.rootDomain + (redirectFrom || '');
+        } else {
+            await this.$router.push(redirectFrom || `/${this.rns || this.ethAddress}`);
+        }
     }
 
     async refreshAccount() {
@@ -146,12 +151,10 @@ export default class RNS extends Vue {
             await metamaskEthereum.request({
                 method: 'eth_requestAccounts',
             });
+            this.ethAddress = (<IRSS3>this.rss3).account.address;
             const chain: string | null = await metamaskEthereum.request({ method: 'eth_chainId' });
             if (validateNetwork(Number(chain))) {
-                const rns = (await RNSUtils.addr2Name((<IRSS3>this.rss3).account.address)).replace(
-                    config.rns.suffix,
-                    '',
-                );
+                const rns = (await RNSUtils.addr2Name(this.ethAddress)).replace(config.rns.suffix, '');
                 if (rns !== '') {
                     this.rns = rns;
                     this.isDisabled = true;
@@ -180,7 +183,7 @@ export default class RNS extends Vue {
     }
 
     async verifyRNS() {
-        if ((await RNSUtils.addr2Name((<IRSS3>this.rss3).account.address)) !== '') {
+        if (this.rns) {
             await this.redirect();
             return;
         }
