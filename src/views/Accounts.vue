@@ -27,7 +27,7 @@
                         :key="item.platform + item.identity"
                     >
                         <AccountItem :size="70" :chain="item.platform"></AccountItem>
-                        <span class="address text-2xl text-account-title font-semibold">{{
+                        <span class="address text-2xl text-account-title font-semibold w-36 text-center">{{
                             getDisplayAddress(item)
                         }}</span>
                         <Button
