@@ -28,119 +28,121 @@
                     />
                 </span>
             </div>
-            <section class="max-w-md m-auto">
-                <Card
-                    title="Default"
-                    color-title="text-account-title"
-                    color-tips="text-account-title"
-                    color-background="bg-body-bg"
-                    class="w-full mb-4 border-account-border"
-                    :is-having-content="true"
-                >
-                    <template #content>
-                        <AccountItem
-                            class="shadow-account-sm inline-flex m-0.5 rounded-full"
-                            :size="64"
-                            chain="Ethereum"
-                        />
-                    </template>
-                </Card>
-                <Card
-                    title="Listed"
-                    color-title="text-account-title"
-                    color-tips="text-account-title"
-                    :color-background="mode === 'normal' ? 'bg-account-bg' : 'bg-card-overlay'"
-                    class="w-full mb-4 border-account-border"
-                    :is-having-content="true"
-                    :tips="mode !== 'delete' ? 'Drag here to show and reorder' : 'Delete unwanted accounts'"
-                >
-                    <template #header-button>
-                        <div class="flex flex-row gap-2">
-                            <Button
-                                v-if="mode === 'delete'"
-                                size="sm"
-                                class="w-8 h-8 bg-account-btn-s text-account-btn-s-text shadow-account-btn-s"
-                                @click="mode = 'normal'"
-                            >
-                                <i class="bx bx-check bx-xs" />
-                            </Button>
-                            <Button
-                                v-else
-                                size="sm"
-                                class="w-8 h-8 bg-account-btn-s text-account-btn-s-text shadow-account-btn-s"
-                                @click="mode = 'delete'"
-                            >
-                                <i class="bx bx-minus bx-xs" />
-                            </Button>
-                            <Button
-                                v-if="mode === 'add'"
-                                size="sm"
-                                class="w-8 h-8 bg-account-btn-s text-account-btn-s-text shadow-account-btn-s"
-                                @click="mode = 'normal'"
-                            >
-                                <i class="bx bx-x bx-xs" />
-                            </Button>
-                            <Button
-                                v-else
-                                size="sm"
-                                class="w-8 h-8 bg-account-btn-m text-account-btn-m-text shadow-account-btn-s"
-                                @click="mode = 'add'"
-                            >
-                                <i class="bx bx-plus bx-xs" />
-                            </Button>
-                        </div>
-                    </template>
-                    <template #content>
-                        <div v-if="mode === 'add'" class="text-center">
-                            <div>
-                                <AccountItem
-                                    v-for="chain in additionalMetamaskAccounts"
-                                    :key="chain"
-                                    class="inline-flex m-0.5 rounded-full shadow-account cursor-pointer"
-                                    :size="64"
-                                    :chain="chain"
-                                    @click="addMetamaskAccount(chain)"
-                                />
+            <section class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <Card
+                        title="Default"
+                        color-title="text-account-title"
+                        color-tips="text-account-title"
+                        color-background="bg-body-bg"
+                        class="w-full mb-4 border-account-border"
+                        :is-having-content="true"
+                    >
+                        <template #content>
+                            <AccountItem
+                                class="shadow-account-sm inline-flex m-0.5 rounded-full"
+                                :size="64"
+                                chain="Ethereum"
+                            />
+                        </template>
+                    </Card>
+                    <Card
+                        title="Listed"
+                        color-title="text-account-title"
+                        color-tips="text-account-title"
+                        :color-background="mode === 'normal' ? 'bg-account-bg' : 'bg-card-overlay'"
+                        class="w-full mb-4 border-account-border"
+                        :is-having-content="true"
+                        :tips="mode !== 'delete' ? 'Drag here to show and reorder' : 'Delete unwanted accounts'"
+                    >
+                        <template #header-button>
+                            <div class="flex flex-row gap-2">
+                                <Button
+                                    v-if="mode === 'delete'"
+                                    size="sm"
+                                    class="w-8 h-8 bg-account-btn-s text-account-btn-s-text shadow-account-btn-s"
+                                    @click="mode = 'normal'"
+                                >
+                                    <i class="bx bx-check bx-xs" />
+                                </Button>
+                                <Button
+                                    v-else
+                                    size="sm"
+                                    class="w-8 h-8 bg-account-btn-s text-account-btn-s-text shadow-account-btn-s"
+                                    @click="mode = 'delete'"
+                                >
+                                    <i class="bx bx-minus bx-xs" />
+                                </Button>
+                                <Button
+                                    v-if="mode === 'add'"
+                                    size="sm"
+                                    class="w-8 h-8 bg-account-btn-s text-account-btn-s-text shadow-account-btn-s"
+                                    @click="mode = 'normal'"
+                                >
+                                    <i class="bx bx-x bx-xs" />
+                                </Button>
+                                <Button
+                                    v-else
+                                    size="sm"
+                                    class="w-8 h-8 bg-account-btn-m text-account-btn-m-text shadow-account-btn-s"
+                                    @click="mode = 'add'"
+                                >
+                                    <i class="bx bx-plus bx-xs" />
+                                </Button>
                             </div>
-                            <div>
-                                <AccountItem
-                                    v-for="platform in additionalNoSignAccounts"
-                                    :key="platform"
-                                    class="inline-flex m-0.5 rounded-full shadow-account cursor-pointer"
-                                    :size="64"
-                                    :chain="platform"
-                                    @click="addNoSignAccount(platform)"
-                                />
-                            </div>
-                        </div>
-                        <div v-else>
-                            <draggable class="min-h-20" :list="show" group="accounts" itemKey="chain">
-                                <template #item="{ element, index }">
+                        </template>
+                        <template #content>
+                            <div v-if="mode === 'add'" class="text-center">
+                                <div>
                                     <AccountItem
-                                        class="shadow-account-item inline-flex m-0.5 rounded-full"
+                                        v-for="chain in additionalMetamaskAccounts"
+                                        :key="chain"
+                                        class="inline-flex m-0.5 rounded-full shadow-account cursor-pointer"
                                         :size="64"
-                                        :chain="element.platform"
-                                        :delete-mode="mode === 'delete'"
-                                        @delete-account="deleteAccount(index)"
+                                        :chain="chain"
+                                        @click="addMetamaskAccount(chain)"
                                     />
-                                </template>
-                            </draggable>
-                        </div>
-                    </template>
-                    <template #footer-button>
-                        <Button
-                            size="sm"
-                            class="text-xs bg-account-btn-s text-account-btn-s-text shadow-account-btn-s"
-                            :class="{
-                                'bg-btn-disabled cursor-not-allowed text-opacity-20': show.length === 0,
-                            }"
-                            :disabled="show.length === 0"
-                            @click="hideAll"
-                        >
-                            <span>Hide All</span>
-                        </Button>
-                    </template>
-                </Card>
+                                </div>
+                                <div>
+                                    <AccountItem
+                                        v-for="platform in additionalNoSignAccounts"
+                                        :key="platform"
+                                        class="inline-flex m-0.5 rounded-full shadow-account cursor-pointer"
+                                        :size="64"
+                                        :chain="platform"
+                                        @click="addNoSignAccount(platform)"
+                                    />
+                                </div>
+                            </div>
+                            <div v-else>
+                                <draggable class="min-h-20" :list="show" group="accounts" itemKey="chain">
+                                    <template #item="{ element, index }">
+                                        <AccountItem
+                                            class="shadow-account-item inline-flex m-0.5 rounded-full"
+                                            :size="64"
+                                            :chain="element.platform"
+                                            :delete-mode="mode === 'delete'"
+                                            @delete-account="deleteAccount(index)"
+                                        />
+                                    </template>
+                                </draggable>
+                            </div>
+                        </template>
+                        <template #footer-button>
+                            <Button
+                                size="sm"
+                                class="text-xs bg-account-btn-s text-account-btn-s-text shadow-account-btn-s"
+                                :class="{
+                                    'bg-btn-disabled cursor-not-allowed text-opacity-20': show.length === 0,
+                                }"
+                                :disabled="show.length === 0"
+                                @click="hideAll"
+                            >
+                                <span>Hide All</span>
+                            </Button>
+                        </template>
+                    </Card>
+                </div>
                 <Card
                     title="Unlisted"
                     color-title="text-account-title"
