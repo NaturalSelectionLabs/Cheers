@@ -255,13 +255,10 @@ export default class Accounts extends Vue {
     }
 
     public back() {
-        if (window.history.length > 2) {
+        if (window.history.state.back) {
             window.history.back();
         } else {
-            this.$router.push(
-                (config.subDomain.isSubDomainMode ? '' : `/${this.rns || this.ethAddress}`) +
-                    `/${this.rns || this.ethAddress}/gitcoins`,
-            );
+            this.$router.push(config.subDomain.isSubDomainMode ? '/' : `/${this.rns || this.ethAddress}`);
         }
     }
 
