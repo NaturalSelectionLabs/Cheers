@@ -737,10 +737,10 @@ export default class Home extends Vue {
     async ivLoadAsset(refresh: boolean): Promise<boolean> {
         let isFinish = true;
         if (this.isLoadingAssets.NFT) {
-            isFinish = isFinish && (await this.ivLoadNFT(refresh));
+            isFinish = (await this.ivLoadNFT(refresh)) && isFinish;
         }
         if (this.isLoadingAssets.Gitcoin) {
-            isFinish = isFinish && (await this.ivLoadGitcoin(refresh));
+            isFinish = (await this.ivLoadGitcoin(refresh)) && isFinish;
         }
         if (isFinish) {
             if (this.loadingAssetsIntervalID) {
