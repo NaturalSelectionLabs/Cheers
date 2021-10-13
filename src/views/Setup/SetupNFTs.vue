@@ -20,12 +20,7 @@
                     <h1 class="text-xl text-primary-text font-bold inline">Manage NFTs</h1>
                 </span>
                 <span class="avatar">
-                    <img
-                        :src="avatar"
-                        class="rounded-full w-10 h-10 inline-block cursor-pointer"
-                        alt="avatar"
-                        @click="toPublicPage()"
-                    />
+                    <img :src="avatar" class="rounded-full w-10 h-10 inline-block cursor-pointer" alt="avatar" />
                 </span>
             </div>
             <section class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -40,7 +35,7 @@
                 >
                     <template #content>
                         <draggable
-                            class="min-h-20"
+                            class="min-h-20 md:h-screen-60 md:overflow-y-auto"
                             :list="displayedNFTs"
                             group="nfts"
                             @start="chooseAsset"
@@ -91,7 +86,7 @@
                         >
                             <summary class="text-nft-btn-s-text">{{ collection }}</summary>
                             <draggable
-                                class="min-h-20"
+                                class="min-h-20 md:h-screen-60 md:overflow-y-auto"
                                 :list="hiddenList[collection]"
                                 group="nfts"
                                 data-type="hidden"
@@ -117,6 +112,21 @@
                                 'bg-btn-disabled cursor-not-allowed text-opacity-20': hiddenNFTs.length === 0,
                             }"
                             :disabled="hiddenNFTs.length === 0"
+                            v-if="!isPCLayout"
+                            @click="showAll"
+                        >
+                            <span>Show All</span>
+                        </Button>
+                    </template>
+                    <template #footer-button>
+                        <Button
+                            size="sm"
+                            class="text-xs bg-nft-btn-s text-nft-btn-s-text shadow-nft-btn-s ml-auto"
+                            :class="{
+                                'bg-btn-disabled cursor-not-allowed text-opacity-20': hiddenNFTs.length === 0,
+                            }"
+                            :disabled="hiddenNFTs.length === 0"
+                            v-if="isPCLayout"
                             @click="showAll"
                         >
                             <span>Show All</span>
@@ -186,6 +196,7 @@ export default class SetupNFTs extends Vue {
         [collection: string]: GeneralAssetWithTags[];
     } = {};
     collections: string[] = [];
+    isPCLayout: boolean = window.innerWidth > 768;
 
     async mounted() {
         if (!(await RSS3.reconnect())) {

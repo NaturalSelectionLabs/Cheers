@@ -40,7 +40,7 @@
                 >
                     <template #content>
                         <draggable
-                            class="min-h-20"
+                            class="min-h-20 md:h-screen-60 md:overflow-y-auto"
                             :list="show"
                             group="gitcoins"
                             data-type="displayed"
@@ -94,7 +94,7 @@
                     </template>
                     <template #content>
                         <draggable
-                            class="min-h-20"
+                            class="min-h-20 md:h-screen-60 md:overflow-y-auto"
                             :list="hide"
                             group="gitcoins"
                             data-type="displayed"
@@ -165,6 +165,8 @@ export default class SetupGitcoins extends Vue {
 
     show: GeneralAssetWithTags[] = [];
     hide: GeneralAssetWithTags[] = [];
+
+    isPCLayout: boolean = window.innerWidth > 768;
 
     async mounted() {
         if (!(await RSS3.reconnect())) {
