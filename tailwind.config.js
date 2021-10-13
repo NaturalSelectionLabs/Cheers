@@ -201,6 +201,8 @@ module.exports = {
             },
             height: {
                 50: '12.5rem', //200px
+                'screen-30': '30vh',
+                'screen-60': '60vh',
             },
             backgroundImage: (theme) => ({
                 BSC: 'url(@/assets/images/chains/BSC.png)',

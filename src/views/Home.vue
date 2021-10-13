@@ -106,7 +106,7 @@
                 </template>
                 <template #content>
                     <NFTItem
-                        class="inline-flex m-2 cursor-pointer"
+                        class="inline-flex mx-1 my-2 cursor-pointer"
                         v-for="item in nfts"
                         :key="item.platform + item.identity + item.id"
                         :image-url="item.info.animation_url || item.info.image_preview_url"
@@ -161,7 +161,7 @@
                 <template #content>
                     <template v-if="gitcoins.length !== 0">
                         <GitcoinItem
-                            class="inline-flex m-2 cursor-pointer"
+                            class="inline-flex mx-1 my-2 cursor-pointer"
                             v-for="item in gitcoins"
                             :key="item.platform + item.identity + item.id"
                             :size="isPCLayout ? 130 : 70"
