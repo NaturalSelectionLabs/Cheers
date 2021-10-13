@@ -22,12 +22,12 @@
             <div class="max-w-md m-auto">
                 <div class="flex flex-col gap-y-4">
                     <div
-                        class="account-wrapper flex flex-row justify-between items-center"
+                        class="account-wrapper grid grid-cols-6 items-center justify-items-center"
                         v-for="item in accounts"
                         :key="item.platform + item.identity"
                     >
                         <AccountItem :size="70" :chain="item.platform"></AccountItem>
-                        <span class="address text-2xl text-account-title font-semibold">{{
+                        <span class="address text-2xl text-account-title font-semibold col-span-3">{{
                             getDisplayAddress(item)
                         }}</span>
                         <Button
