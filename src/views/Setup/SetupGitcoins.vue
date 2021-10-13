@@ -21,7 +21,7 @@
                 </span>
                 <span class="avatar">
                     <ImgHolder
-                        class="w-10 h-10 inline-flex my-auto cursor-pointer"
+                        class="w-10 h-10 inline-flex my-auto"
                         :is-rounded="true"
                         :is-border="false"
                         :src="avatar"
@@ -86,6 +86,7 @@
                             :class="{
                                 'bg-gray-100 cursor-not-allowed': hide.length === 0,
                             }"
+                            v-if="!isPCLayout"
                             :disabled="hide.length === 0"
                             @click="showAll"
                         >
@@ -109,6 +110,20 @@
                                 />
                             </template>
                         </draggable>
+                    </template>
+                    <template #footer-button>
+                        <Button
+                            size="sm"
+                            class="text-xs bg-gitcoin-btn-s text-gitcoin-btn-s-text shadow-gitcoin-btn-s"
+                            :class="{
+                                'bg-gray-100 cursor-not-allowed': hide.length === 0,
+                            }"
+                            v-if="isPCLayout"
+                            :disabled="hide.length === 0"
+                            @click="showAll"
+                        >
+                            <span>Show All</span>
+                        </Button>
                     </template>
                 </Card>
             </section>

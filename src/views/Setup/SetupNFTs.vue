@@ -20,7 +20,7 @@
                     <h1 class="text-xl text-primary-text font-bold inline">Manage NFTs</h1>
                 </span>
                 <span class="avatar">
-                    <img :src="avatar" class="rounded-full w-10 h-10 inline-block cursor-pointer" alt="avatar" />
+                    <img :src="avatar" class="rounded-full w-10 h-10 inline-block" alt="avatar" />
                 </span>
             </div>
             <section class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -78,31 +78,35 @@
                     tips="Drag here to hide"
                 >
                     <template #content>
-                        <details
-                            v-for="(collection, index) in collections"
-                            :key="collection"
-                            :open="activatedGroupID === index"
-                            @click.prevent="activatedGroupID = index"
-                        >
-                            <summary class="text-nft-btn-s-text">{{ collection }}</summary>
-                            <draggable
-                                class="min-h-20 md:h-screen-60 md:overflow-y-auto"
-                                :list="hiddenList[collection]"
-                                group="nfts"
-                                data-type="hidden"
-                                :item-key="collection"
-                                @end="nftMoveEnd"
+                        <section class="md:h-screen-60 md:overflow-y-auto">
+                            <details
+                                v-for="(collection, index) in collections"
+                                :key="collection"
+                                :open="activatedGroupID === index"
+                                @click.prevent="activatedGroupID = index"
                             >
-                                <template #item="{ element }">
-                                    <NFTItem
-                                        class="inline-flex m-0.5"
-                                        style="cursor: grab"
-                                        :size="64"
-                                        :image-url="element.info?.image_preview_url"
-                                    />
-                                </template>
-                            </draggable>
-                        </details>
+                                <summary class="text-nft-btn-s-text">
+                                    {{ collection }}
+                                </summary>
+                                <draggable
+                                    class="min-h-20"
+                                    :list="hiddenList[collection]"
+                                    group="nfts"
+                                    data-type="hidden"
+                                    :item-key="collection"
+                                    @end="nftMoveEnd"
+                                >
+                                    <template #item="{ element }">
+                                        <NFTItem
+                                            class="inline-flex m-0.5"
+                                            style="cursor: grab"
+                                            :size="64"
+                                            :image-url="element.info?.image_preview_url"
+                                        />
+                                    </template>
+                                </draggable>
+                            </details>
+                        </section>
                     </template>
                     <template #header-button>
                         <Button

@@ -20,7 +20,7 @@
                     <h1 class="text-xl text-primary-text font-bold inline">Manage Accounts</h1>
                 </span>
                 <span class="avatar">
-                    <img :src="avatar" class="rounded-full w-10 h-10 inline-block cursor-pointer" alt="avatar" />
+                    <img :src="avatar" class="rounded-full w-10 h-10 inline-block" alt="avatar" />
                 </span>
             </div>
             <section class="grid grid-cols-1 md:grid-cols-2 gap-4">
