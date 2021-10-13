@@ -482,8 +482,21 @@ export default class SetupAccounts extends Vue {
             identity: this.specifyNoSignAccount.account,
             signature: '',
         };
-        this.show.push(newAccount);
-        this.toAdd.push(newAccount);
+
+        const showIndex = this.show.findIndex(
+            (account) => account.platform === newAccount.platform && account.identity === newAccount.identity,
+        );
+        const hideIndex = this.hide.findIndex(
+            (account) => account.platform === newAccount.platform && account.identity === newAccount.identity,
+        );
+
+        if (showIndex !== -1 || hideIndex !== -1) {
+            this.addAccountNotice = 'Account already exist';
+            this.isShowingAddAccountNotice = true;
+        } else {
+            this.show.push(newAccount);
+            this.toAdd.push(newAccount);
+        }
 
         this.specifyNoSignAccount.account = '';
         this.isLoading = false;
