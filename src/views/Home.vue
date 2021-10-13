@@ -17,6 +17,7 @@
                     click-address-notice="Copied!"
                     :isOwner="isOwner"
                     :isFollowing="isFollowing"
+                    :is-loading-persona="isLoadingPersona"
                     @click-address="clickAddress"
                     @to-setup-page="toSetupPage"
                     @logout="logout"
@@ -481,6 +482,7 @@ export default class Home extends Vue {
     loadingAssetsIntervalID: ReturnType<typeof setInterval> | null = null;
     isLoadingContents: boolean = true;
     currentTheme: string = '';
+    isLoadingPersona: boolean = true;
 
     rss3Profile: ProfileInfo = {
         avatar: config.defaultAvatar,
@@ -547,6 +549,7 @@ export default class Home extends Vue {
         };
         this.isContentsHaveMore = true;
         this.isContentsHaveMoreEachProvider = [];
+        this.isLoadingPersona = true;
         (<HTMLLinkElement>document.getElementById('favicon')).href = '/favicon.ico';
         document.title = 'Web3 Pass';
 
@@ -607,6 +610,8 @@ export default class Home extends Vue {
             }
 
             this.rss3Profile.address = this.ethAddress;
+
+            this.isLoadingPersona = false;
         }, 0);
 
         const accounts = await (<IRSS3>this.rss3).accounts.get(this.ethAddress);
