@@ -20,7 +20,13 @@
                     <h1 class="text-xl text-primary-text font-bold inline">Manage Accounts</h1>
                 </span>
                 <span class="avatar">
-                    <img :src="avatar" class="rounded-full w-10 h-10 inline-block" alt="avatar" />
+                    <ImgHolder
+                        class="w-10 h-10 inline-flex my-auto cursor-pointer"
+                        :is-rounded="true"
+                        :is-border="false"
+                        :src="avatar"
+                        @click="back"
+                    />
                 </span>
             </div>
             <section class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -307,6 +313,7 @@ import ContentProviders from '@/common/content-providers';
 
 import draggable from 'vuedraggable';
 import Input from '@/components/Input.vue';
+import ImgHolder from '@/components/ImgHolder.vue';
 
 @Options({
     name: 'SetupAccounts',
@@ -319,6 +326,7 @@ import Input from '@/components/Input.vue';
         draggable,
         Loading,
         LoadingContainer,
+        ImgHolder,
     },
 })
 export default class SetupAccounts extends Vue {
@@ -574,10 +582,6 @@ export default class SetupAccounts extends Vue {
         }
         this.isLoading = false;
         window.history.back(); // Back
-    }
-
-    public toPublicPage() {
-        this.$router.push(`/${(<IRSS3>this.rss3).account.address}`);
     }
 }
 </script>

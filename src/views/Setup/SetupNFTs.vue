@@ -20,7 +20,13 @@
                     <h1 class="text-xl text-primary-text font-bold inline">Manage NFTs</h1>
                 </span>
                 <span class="avatar">
-                    <img :src="avatar" class="rounded-full w-10 h-10 inline-block" alt="avatar" />
+                    <ImgHolder
+                        class="w-10 h-10 inline-flex my-auto cursor-pointer"
+                        :is-rounded="true"
+                        :is-border="false"
+                        :src="avatar"
+                        @click="back"
+                    />
                 </span>
             </div>
             <section class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -171,6 +177,7 @@ import config from '@/config';
 import draggable from 'vuedraggable';
 import LoadingContainer from '@/components/LoadingContainer.vue';
 import { GeneralAsset, GeneralAssetWithTags } from '@/common/types';
+import ImgHolder from '@/components/ImgHolder.vue';
 
 interface RSS3AssetCollectionShow {
     collection_name: string;
@@ -186,6 +193,7 @@ interface RSS3AssetCollectionShow {
         Card,
         NFTItem,
         draggable,
+        ImgHolder,
     },
 })
 export default class SetupNFTs extends Vue {
@@ -362,10 +370,6 @@ export default class SetupNFTs extends Vue {
         await this.rss3?.files.sync();
         this.isLoading = false;
         window.history.back();
-    }
-
-    public toPublicPage() {
-        this.$router.push(`/${(<IRSS3>this.rss3).account.address}`);
     }
 }
 </script>

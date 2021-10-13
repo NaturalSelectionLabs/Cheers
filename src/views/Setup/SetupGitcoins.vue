@@ -21,10 +21,11 @@
                 </span>
                 <span class="avatar">
                     <ImgHolder
-                        class="w-10 h-10 inline-flex my-auto"
+                        class="w-10 h-10 inline-flex my-auto cursor-pointer"
                         :is-rounded="true"
                         :is-border="false"
                         :src="avatar"
+                        @click="back"
                     />
                 </span>
             </div>
