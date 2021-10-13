@@ -1169,9 +1169,9 @@ export default class Home extends Vue {
 
     clickAddress() {
         navigator.clipboard.writeText(
-            config.subDomain.isSubDomainMode && this.rns
+            this.rns
                 ? `https://${this.rns}.${config.subDomain.rootDomain}`
-                : `https://${config.subDomain.rootDomain}/${this.rns || this.ethAddress}`,
+                : `https://${config.subDomain.rootDomain}/${this.ethAddress}`,
         );
     }
 
