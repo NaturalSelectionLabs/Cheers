@@ -117,29 +117,10 @@
                 color-tips="text-content-title"
                 color-background="bg-content-bg"
                 class="mb-4 w-full"
-                :is-having-content="true"
+                :is-having-content="false"
+                tips="Check out in homepage!"
             >
                 <template #title-icon><ContentIcon /></template>
-                <template #content>
-                    <div class="flex justify-center">
-                        <Button
-                            size="lg"
-                            class="
-                                text-lg
-                                bg-content-btn-m
-                                opacity-35
-                                text-content-btn-m-text
-                                shadow-content-btn-m
-                                cursor-not-allowed
-                                m-auto
-                                mt-4
-                            "
-                            disabled
-                        >
-                            View me at home !
-                        </Button>
-                    </div>
-                </template>
             </Card>
             <div
                 class="
