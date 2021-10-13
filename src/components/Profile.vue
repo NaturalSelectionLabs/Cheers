@@ -25,6 +25,7 @@
         </div>
         <div class="col-span-full md:col-span-2 md:row-start-3 md:col-start-3" v-if="website">
             <LinkButton @click="toExternalLink">
+                <i class="bx bx-link" />
                 <span>{{ website }}</span>
             </LinkButton>
         </div>
@@ -119,7 +120,7 @@ export default class Profile extends Vue {
     }
 
     toExternalLink() {
-        window.open(`${this.website}`);
+        window.open(`https://${this.website}`);
     }
 
     emitShare() {

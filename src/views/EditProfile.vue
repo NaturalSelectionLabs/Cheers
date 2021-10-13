@@ -26,7 +26,13 @@
                 </LinkButton>
                 <Input class="mb-4 w-full" :is-single-line="true" placeholder="Username" v-model="profile.name" />
                 <!-- The input of Personal link -->
-                <Input class="mb-4 w-full" :is-single-line="true" placeholder="Personal link" v-model="profile.link" />
+                <Input
+                    class="mb-4 w-full"
+                    :is-single-line="true"
+                    placeholder="Personal link"
+                    prefix="https://"
+                    v-model="profile.link"
+                />
                 <Input class="mb-4 w-full" :is-single-line="false" placeholder="Bio" v-model="profile.bio" />
 
                 <div class="px-4 py-4 flex gap-5 fixed left-0 right-0 max-w-md m-auto w-full">
