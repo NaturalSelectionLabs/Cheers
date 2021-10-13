@@ -473,7 +473,11 @@ export default class SetupAccounts extends Vue {
     }
 
     async copyAddressToClipboard() {
-        const addr = this.rns ? this.rns + '.' + config.subDomain.rootDomain : this.ethAddress;
+        const addr =
+            'https://' +
+            (this.rns
+                ? `${this.rns}.${config.subDomain.rootDomain}`
+                : `${config.subDomain.rootDomain}/${this.ethAddress}`);
         await navigator.clipboard.writeText(addr);
         this.isAddrCopied = true;
         setTimeout(() => {
