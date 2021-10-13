@@ -79,9 +79,6 @@
                     :is-having-content="true"
                     tips="Drag here to hide"
                 >
-                    <template #accessibility>
-                        <i class="bx bx-info-circle" style="color: rgba(0, 0, 0, 0.2)" />
-                    </template>
                     <template #header-button>
                         <Button
                             size="sm"
