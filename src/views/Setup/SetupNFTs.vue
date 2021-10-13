@@ -4,7 +4,14 @@
             <div class="flex justify-between items-center mb-4">
                 <Button
                     size="sm"
-                    class="w-10 h-10 bg-secondary-btn text-secondary-btn-text shadow-secondary-btn"
+                    class="
+                        w-10
+                        h-10
+                        bg-secondary-btn
+                        text-secondary-btn-text
+                        shadow-secondary-btn
+                        border-secondary-btn-border
+                    "
                     @click="back"
                 >
                     <i class="bx bx-chevron-left bx-sm" />
@@ -13,11 +20,12 @@
                     <h1 class="text-xl text-primary-text font-bold inline">Manage NFTs</h1>
                 </span>
                 <span class="avatar">
-                    <img
+                    <ImgHolder
+                        class="w-10 h-10 inline-flex my-auto cursor-pointer"
+                        :is-rounded="true"
+                        :is-border="false"
                         :src="avatar"
-                        class="rounded-full w-10 h-10 inline-block cursor-pointer"
-                        alt="avatar"
-                        @click="toPublicPage()"
+                        @click="back"
                     />
                 </span>
             </div>
@@ -33,7 +41,7 @@
                 >
                     <template #content>
                         <draggable
-                            class="min-h-20"
+                            class="min-h-20 md:h-screen-60 md:overflow-y-auto"
                             :list="displayedNFTs"
                             group="nfts"
                             @start="chooseAsset"
@@ -76,31 +84,35 @@
                     tips="Drag here to hide"
                 >
                     <template #content>
-                        <details
-                            v-for="(collection, index) in collections"
-                            :key="collection"
-                            :open="activatedGroupID === index"
-                            @click.prevent="activatedGroupID = index"
-                        >
-                            <summary class="text-nft-btn-s-text">{{ collection }}</summary>
-                            <draggable
-                                class="min-h-20"
-                                :list="hiddenList[collection]"
-                                group="nfts"
-                                data-type="hidden"
-                                :item-key="collection"
-                                @end="nftMoveEnd"
+                        <section class="md:h-screen-60 md:overflow-y-auto">
+                            <details
+                                v-for="(collection, index) in collections"
+                                :key="collection"
+                                :open="activatedGroupID === index"
+                                @click.prevent="activatedGroupID = index"
                             >
-                                <template #item="{ element }">
-                                    <NFTItem
-                                        class="inline-flex m-0.5"
-                                        style="cursor: grab"
-                                        :size="64"
-                                        :image-url="element.info?.image_preview_url"
-                                    />
-                                </template>
-                            </draggable>
-                        </details>
+                                <summary class="text-nft-btn-s-text">
+                                    {{ collection }}
+                                </summary>
+                                <draggable
+                                    class="min-h-20"
+                                    :list="hiddenList[collection]"
+                                    group="nfts"
+                                    data-type="hidden"
+                                    :item-key="collection"
+                                    @end="nftMoveEnd"
+                                >
+                                    <template #item="{ element }">
+                                        <NFTItem
+                                            class="inline-flex m-0.5"
+                                            style="cursor: grab"
+                                            :size="64"
+                                            :image-url="element.info?.image_preview_url"
+                                        />
+                                    </template>
+                                </draggable>
+                            </details>
+                        </section>
                     </template>
                     <template #header-button>
                         <Button
@@ -110,6 +122,21 @@
                                 'bg-btn-disabled cursor-not-allowed text-opacity-20': hiddenNFTs.length === 0,
                             }"
                             :disabled="hiddenNFTs.length === 0"
+                            v-if="!isPCLayout"
+                            @click="showAll"
+                        >
+                            <span>Show All</span>
+                        </Button>
+                    </template>
+                    <template #footer-button>
+                        <Button
+                            size="sm"
+                            class="text-xs bg-nft-btn-s text-nft-btn-s-text shadow-nft-btn-s ml-auto"
+                            :class="{
+                                'bg-btn-disabled cursor-not-allowed text-opacity-20': hiddenNFTs.length === 0,
+                            }"
+                            :disabled="hiddenNFTs.length === 0"
+                            v-if="isPCLayout"
                             @click="showAll"
                         >
                             <span>Show All</span>
@@ -150,6 +177,7 @@ import config from '@/config';
 import draggable from 'vuedraggable';
 import LoadingContainer from '@/components/LoadingContainer.vue';
 import { GeneralAsset, GeneralAssetWithTags } from '@/common/types';
+import ImgHolder from '@/components/ImgHolder.vue';
 
 interface RSS3AssetCollectionShow {
     collection_name: string;
@@ -165,6 +193,7 @@ interface RSS3AssetCollectionShow {
         Card,
         NFTItem,
         draggable,
+        ImgHolder,
     },
 })
 export default class SetupNFTs extends Vue {
@@ -179,6 +208,7 @@ export default class SetupNFTs extends Vue {
         [collection: string]: GeneralAssetWithTags[];
     } = {};
     collections: string[] = [];
+    isPCLayout: boolean = window.innerWidth > 768;
 
     async mounted() {
         if (!(await RSS3.reconnect())) {
@@ -340,10 +370,6 @@ export default class SetupNFTs extends Vue {
         await this.rss3?.files.sync();
         this.isLoading = false;
         window.history.back();
-    }
-
-    public toPublicPage() {
-        this.$router.push(`/${(<IRSS3>this.rss3).account.address}`);
     }
 }
 </script>

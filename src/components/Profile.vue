@@ -25,6 +25,7 @@
         </div>
         <div class="col-span-full md:col-span-2 md:row-start-3 md:col-start-3" v-if="website">
             <LinkButton @click="toExternalLink">
+                <i class="bx bx-link" />
                 <span>{{ website }}</span>
             </LinkButton>
         </div>
@@ -33,9 +34,18 @@
         </div>
         <div class="col-span-full md:col-span-1 md:col-start-4 md:row-start-1">
             <Button
+                size="lg"
+                class="w-full text-lg bg-secondary-btn text-secondary-btn-text shadow-secondary-btn cursor-wait"
+                v-if="isLoadingPersona"
+            >
+                <span>Loading...</span>
+                <i class="bx bx bx-loader-circle bx-spin" />
+            </Button>
+
+            <Button
                 size="sm"
                 class="w-full text-lg mb-4 md:m-0 duration-200"
-                v-if="!isOwner"
+                v-else-if="!isOwner"
                 v-bind:class="[
                     isFollowing
                         ? 'bg-secondary-btn text-secondary-btn-text shadow-secondary-btn'
@@ -91,6 +101,7 @@ import Button from '@/components/Button.vue';
         clickAddressNotice: String,
         isOwner: Boolean,
         isFollowing: Boolean,
+        isLoadingPersona: Boolean,
     },
     emits: ['share', 'clickAddress', 'action', 'toSetupPage', 'logout'],
 })
@@ -119,7 +130,7 @@ export default class Profile extends Vue {
     }
 
     toExternalLink() {
-        window.open(`${this.website}`);
+        window.open(`https://${this.website}`);
     }
 
     emitShare() {

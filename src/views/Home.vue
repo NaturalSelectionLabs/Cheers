@@ -17,6 +17,7 @@
                     click-address-notice="Copied!"
                     :isOwner="isOwner"
                     :isFollowing="isFollowing"
+                    :is-loading-persona="isLoadingPersona"
                     @click-address="clickAddress"
                     @to-setup-page="toSetupPage"
                     @logout="logout"
@@ -105,7 +106,7 @@
                 </template>
                 <template #content>
                     <NFTItem
-                        class="inline-flex m-2 cursor-pointer"
+                        class="inline-flex mx-1 my-2 cursor-pointer"
                         v-for="item in nfts"
                         :key="item.platform + item.identity + item.id"
                         :image-url="item.info.animation_url || item.info.image_preview_url"
@@ -160,7 +161,7 @@
                 <template #content>
                     <template v-if="gitcoins.length !== 0">
                         <GitcoinItem
-                            class="inline-flex m-2 cursor-pointer"
+                            class="inline-flex mx-1 my-2 cursor-pointer"
                             v-for="item in gitcoins"
                             :key="item.platform + item.identity + item.id"
                             :size="isPCLayout ? 130 : 70"
@@ -481,6 +482,7 @@ export default class Home extends Vue {
     loadingAssetsIntervalID: ReturnType<typeof setInterval> | null = null;
     isLoadingContents: boolean = true;
     currentTheme: string = '';
+    isLoadingPersona: boolean = true;
 
     rss3Profile: ProfileInfo = {
         avatar: config.defaultAvatar,
@@ -547,6 +549,7 @@ export default class Home extends Vue {
         };
         this.isContentsHaveMore = true;
         this.isContentsHaveMoreEachProvider = [];
+        this.isLoadingPersona = true;
         (<HTMLLinkElement>document.getElementById('favicon')).href = '/favicon.ico';
         document.title = 'Web3 Pass';
 
@@ -607,6 +610,8 @@ export default class Home extends Vue {
             }
 
             this.rss3Profile.address = this.ethAddress;
+
+            this.isLoadingPersona = false;
         }, 0);
 
         const accounts = await (<IRSS3>this.rss3).accounts.get(this.ethAddress);
@@ -1169,9 +1174,9 @@ export default class Home extends Vue {
 
     clickAddress() {
         navigator.clipboard.writeText(
-            config.subDomain.isSubDomainMode && this.rns
+            this.rns
                 ? `https://${this.rns}.${config.subDomain.rootDomain}`
-                : `https://${config.subDomain.rootDomain}/${this.rns || this.ethAddress}`,
+                : `https://${config.subDomain.rootDomain}/${this.ethAddress}`,
         );
     }
 

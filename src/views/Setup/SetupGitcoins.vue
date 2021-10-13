@@ -4,7 +4,14 @@
             <div class="flex justify-between items-center mb-4">
                 <Button
                     size="sm"
-                    class="w-10 h-10 bg-secondary-btn text-secondary-btn-text shadow-secondary-btn"
+                    class="
+                        w-10
+                        h-10
+                        bg-secondary-btn
+                        text-secondary-btn-text
+                        shadow-secondary-btn
+                        border-secondary-btn-border
+                    "
                     @click="back"
                 >
                     <i class="bx bx-chevron-left bx-sm" />
@@ -18,6 +25,7 @@
                         :is-rounded="true"
                         :is-border="false"
                         :src="avatar"
+                        @click="back"
                     />
                 </span>
             </div>
@@ -33,7 +41,7 @@
                 >
                     <template #content>
                         <draggable
-                            class="min-h-20"
+                            class="min-h-20 md:h-screen-60 md:overflow-y-auto"
                             :list="show"
                             group="gitcoins"
                             data-type="displayed"
@@ -72,9 +80,6 @@
                     :is-having-content="true"
                     tips="Drag here to hide"
                 >
-                    <template #accessibility>
-                        <i class="bx bx-info-circle" style="color: rgba(0, 0, 0, 0.2)" />
-                    </template>
                     <template #header-button>
                         <Button
                             size="sm"
@@ -82,6 +87,7 @@
                             :class="{
                                 'bg-gray-100 cursor-not-allowed': hide.length === 0,
                             }"
+                            v-if="!isPCLayout"
                             :disabled="hide.length === 0"
                             @click="showAll"
                         >
@@ -90,7 +96,7 @@
                     </template>
                     <template #content>
                         <draggable
-                            class="min-h-20"
+                            class="min-h-20 md:h-screen-60 md:overflow-y-auto"
                             :list="hide"
                             group="gitcoins"
                             data-type="displayed"
@@ -105,6 +111,20 @@
                                 />
                             </template>
                         </draggable>
+                    </template>
+                    <template #footer-button>
+                        <Button
+                            size="sm"
+                            class="text-xs bg-gitcoin-btn-s text-gitcoin-btn-s-text shadow-gitcoin-btn-s"
+                            :class="{
+                                'bg-gray-100 cursor-not-allowed': hide.length === 0,
+                            }"
+                            v-if="isPCLayout"
+                            :disabled="hide.length === 0"
+                            @click="showAll"
+                        >
+                            <span>Show All</span>
+                        </Button>
                     </template>
                 </Card>
             </section>
@@ -161,6 +181,8 @@ export default class SetupGitcoins extends Vue {
 
     show: GeneralAssetWithTags[] = [];
     hide: GeneralAssetWithTags[] = [];
+
+    isPCLayout: boolean = window.innerWidth > 768;
 
     async mounted() {
         if (!(await RSS3.reconnect())) {

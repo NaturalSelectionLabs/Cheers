@@ -20,21 +20,22 @@
                     <h1 class="text-xl text-primary-text font-bold inline">Manage Accounts</h1>
                 </span>
                 <span class="avatar">
-                    <img
+                    <ImgHolder
+                        class="w-10 h-10 inline-flex my-auto cursor-pointer"
+                        :is-rounded="true"
+                        :is-border="false"
                         :src="avatar"
-                        class="rounded-full w-10 h-10 inline-block cursor-pointer"
-                        alt="avatar"
-                        @click="toPublicPage()"
+                        @click="back"
                     />
                 </span>
             </div>
-            <section class="max-w-md m-auto">
+            <section class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <Card
                     title="Default"
                     color-title="text-account-title"
                     color-tips="text-account-title"
                     color-background="bg-body-bg"
-                    class="w-full mb-4 border-account-border"
+                    class="w-full border-account-border"
                     :is-having-content="true"
                 >
                     <template #content>
@@ -50,7 +51,7 @@
                     color-title="text-account-title"
                     color-tips="text-account-title"
                     :color-background="mode === 'normal' ? 'bg-account-bg' : 'bg-card-overlay'"
-                    class="w-full mb-4 border-account-border"
+                    class="w-full mb-4 border-account-border md:col-start-1"
                     :is-having-content="true"
                     :tips="mode !== 'delete' ? 'Drag here to show and reorder' : 'Delete unwanted accounts'"
                 >
@@ -91,7 +92,7 @@
                         </div>
                     </template>
                     <template #content>
-                        <div v-if="mode === 'add'" class="text-center">
+                        <div v-if="mode === 'add'" class="text-center md:h-screen-30">
                             <div>
                                 <AccountItem
                                     v-for="chain in additionalMetamaskAccounts"
@@ -114,10 +115,16 @@
                             </div>
                         </div>
                         <div v-else>
-                            <draggable class="min-h-20" :list="show" group="accounts" itemKey="chain">
+                            <draggable
+                                class="min-h-20 md:h-screen-30 md:overflow-y-auto"
+                                :list="show"
+                                group="accounts"
+                                itemKey="chain"
+                            >
                                 <template #item="{ element, index }">
                                     <AccountItem
                                         class="shadow-account-item inline-flex m-0.5 rounded-full"
+                                        style="cursor: grab"
                                         :size="64"
                                         :chain="element.platform"
                                         :delete-mode="mode === 'delete'"
@@ -146,13 +153,10 @@
                     color-title="text-account-title"
                     color-tips="text-account-title"
                     color-background="bg-card-hide"
-                    class="w-full mb-4 border-account-border"
+                    class="w-full mb-4 border-account-border md:row-start-1 md:col-start-2 md:row-span-2"
                     :is-having-content="true"
                     tips="Drag here to hide"
                 >
-                    <!-- <template #accessibility>
-                    <i class="bx bx-info-circle" style="color: rgba(0, 0, 0, 0.2)" />
-                </template> -->
                     <template #header-button>
                         <Button
                             size="sm"
@@ -160,6 +164,7 @@
                             :class="{
                                 'bg-btn-disabled cursor-not-allowed text-opacity-20': hide.length === 0,
                             }"
+                            v-if="!isPCLayout"
                             :disabled="hide.length === 0"
                             @click="showAll"
                         >
@@ -167,15 +172,35 @@
                         </Button>
                     </template>
                     <template #content>
-                        <draggable class="min-h-20" :list="hide" group="accounts" itemKey="chain">
+                        <draggable
+                            class="min-h-20 md:h-screen-60 md:overflow-y-auto"
+                            :list="hide"
+                            group="accounts"
+                            itemKey="chain"
+                        >
                             <template #item="{ element }">
                                 <AccountItem
                                     class="inline-flex m-0.5 rounded-full"
+                                    style="cursor: grab"
                                     :size="64"
                                     :chain="element.platform"
                                 />
                             </template>
                         </draggable>
+                    </template>
+                    <template #footer-button>
+                        <Button
+                            size="sm"
+                            class="text-xs bg-account-btn-s text-account-btn-s-text shadow-account-btn-s"
+                            :class="{
+                                'bg-btn-disabled cursor-not-allowed text-opacity-20': hide.length === 0,
+                            }"
+                            :disabled="hide.length === 0"
+                            v-if="isPCLayout"
+                            @click="showAll"
+                        >
+                            <span>Show All</span>
+                        </Button>
                     </template>
                 </Card>
             </section>
@@ -288,6 +313,7 @@ import ContentProviders from '@/common/content-providers';
 
 import draggable from 'vuedraggable';
 import Input from '@/components/Input.vue';
+import ImgHolder from '@/components/ImgHolder.vue';
 
 @Options({
     name: 'SetupAccounts',
@@ -300,6 +326,7 @@ import Input from '@/components/Input.vue';
         draggable,
         Loading,
         LoadingContainer,
+        ImgHolder,
     },
 })
 export default class SetupAccounts extends Vue {
@@ -318,6 +345,7 @@ export default class SetupAccounts extends Vue {
     rns: string = '';
     ethAddress: string = '';
     isAddrCopied: boolean = false;
+    isPCLayout: boolean = window.innerWidth > 768;
 
     mode: String = 'normal';
 
@@ -454,8 +482,21 @@ export default class SetupAccounts extends Vue {
             identity: this.specifyNoSignAccount.account,
             signature: '',
         };
-        this.show.push(newAccount);
-        this.toAdd.push(newAccount);
+
+        const showIndex = this.show.findIndex(
+            (account) => account.platform === newAccount.platform && account.identity === newAccount.identity,
+        );
+        const hideIndex = this.hide.findIndex(
+            (account) => account.platform === newAccount.platform && account.identity === newAccount.identity,
+        );
+
+        if (showIndex !== -1 || hideIndex !== -1) {
+            this.addAccountNotice = 'Account already exist';
+            this.isShowingAddAccountNotice = true;
+        } else {
+            this.show.push(newAccount);
+            this.toAdd.push(newAccount);
+        }
 
         this.specifyNoSignAccount.account = '';
         this.isLoading = false;
@@ -474,7 +515,11 @@ export default class SetupAccounts extends Vue {
     }
 
     async copyAddressToClipboard() {
-        const addr = this.rns ? this.rns + '.' + config.subDomain.rootDomain : this.ethAddress;
+        const addr =
+            'https://' +
+            (this.rns
+                ? `${this.rns}.${config.subDomain.rootDomain}`
+                : `${config.subDomain.rootDomain}/${this.ethAddress}`);
         await navigator.clipboard.writeText(addr);
         this.isAddrCopied = true;
         setTimeout(() => {
@@ -550,10 +595,6 @@ export default class SetupAccounts extends Vue {
         }
         this.isLoading = false;
         window.history.back(); // Back
-    }
-
-    public toPublicPage() {
-        this.$router.push(`/${(<IRSS3>this.rss3).account.address}`);
     }
 }
 </script>

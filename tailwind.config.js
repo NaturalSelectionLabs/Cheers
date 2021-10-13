@@ -108,7 +108,7 @@ module.exports = {
                 },
                 card: {
                     hide: 'var(--color-card-hide)',
-                    overlay: '--color-card-overlay',
+                    overlay: 'var(--color-card-overlay)',
                 },
                 btn: {
                     border: 'var(--color-btn-border)',
@@ -201,6 +201,8 @@ module.exports = {
             },
             height: {
                 50: '12.5rem', //200px
+                'screen-30': '30vh',
+                'screen-60': '60vh',
             },
             backgroundImage: (theme) => ({
                 BSC: 'url(@/assets/images/chains/BSC.png)',
