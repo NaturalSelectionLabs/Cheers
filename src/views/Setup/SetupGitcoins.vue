@@ -175,7 +175,7 @@ import GitcoinItem from '@/components/GitcoinItem.vue';
     },
 })
 export default class SetupGitcoins extends Vue {
-    avatar: String = '';
+    avatar: string = config.defaultAvatar;
     rss3: IRSS3 | null = null;
     isLoading: Boolean = false;
 

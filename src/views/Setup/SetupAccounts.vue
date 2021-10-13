@@ -330,7 +330,7 @@ import ImgHolder from '@/components/ImgHolder.vue';
     },
 })
 export default class SetupAccounts extends Vue {
-    avatar: String = '';
+    avatar: string = config.defaultAvatar;
     additionalMetamaskAccounts: String[] = ['Ethereum', 'BSC'];
     additionalNoSignAccounts: String[] = ['Misskey', 'Twitter'];
     show: RSS3Account[] = [];

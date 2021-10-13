@@ -197,7 +197,7 @@ interface RSS3AssetCollectionShow {
     },
 })
 export default class SetupNFTs extends Vue {
-    avatar: String = '';
+    avatar: string = config.defaultAvatar;
     rss3: IRSS3 | null = null;
     activatedGroupID: Number = 0;
     isLoading: Boolean = false;
