@@ -203,10 +203,14 @@
                 color-background="bg-content-bg"
                 class="w-auto border-content-border md:col-start-2 md:row-start-2 md:row-span-3"
                 :is-having-content="true"
+                id="contents-card"
             >
                 <template #title-icon><ContentIcon /></template>
                 <template #content>
-                    <div class="flex flex-col px-0.5 overflow-y-auto md:max-h-128" v-if="contents.length !== 0">
+                    <div
+                        class="flex flex-col px-0.5 overflow-y-auto md:max-h-128 contents-wrapper"
+                        v-if="contents.length !== 0"
+                    >
                         <ContentCard
                             class="mb-4"
                             v-for="item in contents"
@@ -500,9 +504,10 @@ export default class Home extends Vue {
     gitcoins: GeneralAssetWithTags[] = [];
     contents: Content[] = [];
     $gtag: any;
-    scrollTop: number = 0;
-    scrollNftsLeft: number = 0;
-    scrollGitcoinsLeft: number = 0;
+    scrollCards: string[] = ['main', 'nfts', 'gitcoins' /*, 'contents'*/];
+    scrollPosition: {
+        [key: string]: { top: number; left: number };
+    } = [];
     lastRoute: string = '';
     defaultAvatar = config.defaultAvatar;
     notice: string = '';
@@ -1231,49 +1236,48 @@ export default class Home extends Vue {
     }
 
     mountScrollEvent() {
-        const el = document.getElementById('main');
-        if (el) {
-            el.addEventListener(
-                'scroll',
-                debounce((ev) => {
-                    this.scrollTop = el.scrollTop;
-                }, 100),
-            );
-        }
-        const nfts = document.getElementById('nfts-card')?.getElementsByClassName('card-content')?.[0];
-        if (nfts) {
-            nfts.addEventListener(
-                'scroll',
-                debounce((ev) => {
-                    this.scrollNftsLeft = nfts.scrollLeft;
-                }, 100),
-            );
-        }
-        const gitcoins = document.getElementById('gitcoins-card')?.getElementsByClassName('card-content')?.[0];
-        if (gitcoins) {
-            gitcoins.addEventListener(
-                'scroll',
-                debounce((ev) => {
-                    this.scrollGitcoinsLeft = gitcoins.scrollLeft;
-                }, 100),
-            );
+        for (const card of this.scrollCards) {
+            let cardElement =
+                card === 'main' ? document.getElementById('main') : document.getElementById(`${card}-card`);
+            if (card !== 'main') {
+                cardElement = cardElement?.getElementsByClassName('card-content')?.[0];
+            }
+            // if (card === 'contents') {
+            //     cardElement = cardElement?.getElementsByClassName('contents-wrapper')?.[0];
+            // }
+
+            if (cardElement) {
+                cardElement.addEventListener(
+                    'scroll',
+                    debounce((ev) => {
+                        console.log(card, 'scroll');
+                        this.scrollPosition[card] = {
+                            top: cardElement.scrollTop,
+                            left: cardElement.scrollLeft,
+                        };
+                    }, 100),
+                );
+            }
         }
     }
 
     async activated() {
         if (this.lastRoute === this.$route.fullPath) {
             // Recover scroll position
-            const el = document.getElementById('main');
-            const nfts = document.getElementById('nfts-card')?.getElementsByClassName('card-content')?.[0];
-            const gitcoins = document.getElementById('gitcoins-card')?.getElementsByClassName('card-content')?.[0];
-            if (el) {
-                el.scrollTop = this.scrollTop;
-            }
-            if (nfts) {
-                nfts.scrollLeft = this.scrollNftsLeft;
-            }
-            if (gitcoins) {
-                gitcoins.scrollLeft = this.scrollGitcoinsLeft;
+            for (const card of this.scrollCards) {
+                let cardElement =
+                    card === 'main' ? document.getElementById('main') : document.getElementById(`${card}-card`);
+                if (card !== 'main') {
+                    cardElement = cardElement?.getElementsByClassName('card-content')?.[0];
+                }
+                // if (card === 'contents') {
+                //     cardElement = cardElement?.getElementsByClassName('contents-wrapper')?.[0];
+                // }
+
+                if (cardElement) {
+                    cardElement.scrollTop = this.scrollPosition[card]?.top || 0;
+                    cardElement.scrollLeft = this.scrollPosition[card]?.left || 0;
+                }
             }
 
             // Reload
