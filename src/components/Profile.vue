@@ -20,7 +20,7 @@
             <LinkButton class="relative">
                 <span v-if="rns">{{ rns }}{{ suffix }}</span>
                 <span v-else>{{ filter(address) }}</span>
-                <Tooltip v-show="isShowingTooltip" :text="$props.clickAddressNotice" view-type="options" />
+                <Tooltip v-show="isShowingTooltip" :text="$props.clickAddressNotice" />
             </LinkButton>
         </div>
         <div class="col-span-full md:col-span-2 md:row-start-3 md:col-start-3" v-if="website">

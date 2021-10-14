@@ -15,7 +15,6 @@ import { Vue, Options } from 'vue-class-component';
         heightClass: String,
         widthClass: String,
         marginLeftClass: String,
-        viewType: String,
     },
 })
 export default class Tooltip extends Vue {
@@ -23,15 +22,15 @@ export default class Tooltip extends Vue {
     heightClass!: String;
     widthClass!: String;
     marginLeftClass!: String;
-    viewType!: String;
 }
 </script>
 
 <style lang="postcss" scoped>
 @layer components {
     .tooltip {
-        @apply absolute transform -translate-x-1/2 inline-block top-0 left-1/2 rounded-sm px-2 py-1 text-primary-text bg-primary-link font-normal border-link border-primary-link-border;
-        left: calc(100% + 45px);
+        @apply absolute rounded-sm px-2 py-1 text-primary-text bg-primary-link font-normal border-link border-primary-link-border z-10;
+        left: calc(100% + 5px);
+        top: calc(50% - 14px);
     }
 
     .tooltip::after {

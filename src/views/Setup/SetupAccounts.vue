@@ -39,11 +39,14 @@
                     :is-having-content="true"
                 >
                     <template #content>
-                        <AccountItem
-                            class="shadow-account-sm inline-flex m-0.5 rounded-full"
-                            :size="64"
-                            chain="Ethereum"
-                        />
+                        <div class="relative">
+                            <AccountItem
+                                class="shadow-account-sm inline-flex m-0.5 rounded-full"
+                                :size="64"
+                                chain="Ethereum"
+                                :address="addressFilter(ethAddress)"
+                            />
+                        </div>
                     </template>
                 </Card>
                 <Card
@@ -122,8 +125,9 @@
                                     class="inline-flex m-0.5 rounded-full shadow-account cursor-pointer"
                                     :size="64"
                                     :chain="account.platform"
+                                    :address="addressFilter(account.identity)"
                                     :delete-mode="true"
-                                    @click="deleteAccount(index)"
+                                    @delete-account="deleteAccount(index)"
                                 />
                             </div>
                         </div>
@@ -140,6 +144,7 @@
                                         style="cursor: grab"
                                         :size="64"
                                         :chain="element.platform"
+                                        :address="addressFilter(element.identity)"
                                     />
                                 </template>
                             </draggable>
@@ -195,6 +200,7 @@
                                     style="cursor: grab"
                                     :size="64"
                                     :chain="element.platform"
+                                    :address="addressFilter(element.identity)"
                                 />
                             </template>
                         </draggable>
@@ -608,6 +614,10 @@ export default class SetupAccounts extends Vue {
         }
         this.isLoading = false;
         window.history.back(); // Back
+    }
+
+    addressFilter(address: string) {
+        return address.length > 14 ? `${address.slice(0, 6)}....${address.slice(-4)}` : address;
     }
 }
 </script>

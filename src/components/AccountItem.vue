@@ -10,7 +10,12 @@
                 'bg-Twitter': chain === 'Twitter',
             }"
             :style="{ width: size + 'px', height: size + 'px' }"
-        ></div>
+            @mouseenter="isHover = true"
+            @mouseout="isHover = false"
+            @touchstart="isHover = true"
+            @touchend="isHover = false"
+        />
+        <Tooltip v-if="$props.address" v-show="isHover" :text="$props.address" />
         <Button
             v-show="deleteMode"
             size="sm"
@@ -25,19 +30,23 @@
 <script lang="ts">
 import { Vue, Options } from 'vue-class-component';
 import Button from '@/components/Button.vue';
+import Tooltip from '@/components/Tooltip.vue';
 
 @Options({
-    components: { Button },
+    components: { Tooltip, Button },
     props: {
         size: Number,
         chain: String,
         deleteMode: Boolean,
+        address: String,
     },
 })
 export default class AccountItem extends Vue {
     size!: Number;
     chain!: String;
     deleteMode!: Boolean;
+
+    isHover: boolean = false;
 
     deleteAccount() {
         this.$emit('deleteAccount');
