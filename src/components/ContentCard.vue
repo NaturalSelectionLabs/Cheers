@@ -20,7 +20,7 @@
             </h2>
             <ContentBadge :contentProvider="$props.provider" />
         </div>
-        <div v-html="renderedContent" />
+        <div class="content-body" v-html="renderedContent" />
     </div>
 </template>
 
@@ -43,7 +43,7 @@ export default class ContentCard extends Vue {
     renderedContent: string = '';
 
     mounted() {
-        this.renderedContent = marked(this.content || '');
+        this.renderedContent = marked(this.content.replaceAll('\n', '<br>') || '');
     }
 
     getDate(timestamp: number): string {
@@ -52,4 +52,13 @@ export default class ContentCard extends Vue {
 }
 </script>
 
-<style scoped></style>
+<style lang="postcss">
+.content-body .emoji {
+    max-width: 1.8rem;
+    max-height: 1.8rem;
+    display: inline;
+}
+.content-body .media {
+    @apply mt-2 rounded-md;
+}
+</style>
