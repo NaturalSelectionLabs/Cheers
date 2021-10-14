@@ -29,7 +29,7 @@
                 <span>{{ website }}</span>
             </LinkButton>
         </div>
-        <div class="bio col-span-full md:order-5 md:my-2 font-medium text-lg whitespace-pre-line">
+        <div class="bio col-span-full md:order-5 md:my-2 font-normal text-lg whitespace-pre-line">
             {{ bio }}
         </div>
         <div class="col-span-full md:col-span-1 md:col-start-4 md:row-start-1">
