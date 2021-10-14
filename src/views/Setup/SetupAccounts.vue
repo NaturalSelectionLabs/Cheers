@@ -114,6 +114,19 @@
                                 />
                             </div>
                         </div>
+                        <div v-else-if="mode === 'delete'" class="md:h-screen-30">
+                            <div>
+                                <AccountItem
+                                    v-for="(account, index) in show"
+                                    :key="account.platform + account.identity"
+                                    class="inline-flex m-0.5 rounded-full shadow-account cursor-pointer"
+                                    :size="64"
+                                    :chain="account.platform"
+                                    :delete-mode="true"
+                                    @click="deleteAccount(index)"
+                                />
+                            </div>
+                        </div>
                         <div v-else>
                             <draggable
                                 class="min-h-20 md:h-screen-30 md:overflow-y-auto"
@@ -127,8 +140,6 @@
                                         style="cursor: grab"
                                         :size="64"
                                         :chain="element.platform"
-                                        :delete-mode="mode === 'delete'"
-                                        @delete-account="deleteAccount(index)"
                                     />
                                 </template>
                             </draggable>
@@ -504,7 +515,9 @@ export default class SetupAccounts extends Vue {
     }
 
     async deleteAccount(i: number) {
-        this.toDelete.push(...this.show.splice(i, 1));
+        if (confirm(`Sure to delete ${this.show[i].identity} ?`)) {
+            this.toDelete.push(...this.show.splice(i, 1));
+        }
     }
 
     hideAll() {
