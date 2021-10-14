@@ -1,7 +1,10 @@
 <template>
     <span
         class="tooltip"
-        :class="[marginLeftClass, widthClass, heightClass, !widthClass && !heightClass ? 'whitespace-nowrap' : '']"
+        :class="{
+            'color-default': viewOption === 'default' || !viewOption,
+            'color-account': viewOption === 'account',
+        }"
         >{{ text }}</span
     >
 </template>
@@ -12,23 +15,18 @@ import { Vue, Options } from 'vue-class-component';
 @Options({
     props: {
         text: String,
-        heightClass: String,
-        widthClass: String,
-        marginLeftClass: String,
+        viewOption: String,
     },
 })
 export default class Tooltip extends Vue {
     text!: String;
-    heightClass!: String;
-    widthClass!: String;
-    marginLeftClass!: String;
 }
 </script>
 
 <style lang="postcss" scoped>
 @layer components {
     .tooltip {
-        @apply absolute rounded-sm px-2 py-1 text-primary-text bg-primary-link font-normal border-link border-primary-link-border z-10;
+        @apply absolute rounded-sm px-2 py-1 font-normal border-link z-10 whitespace-nowrap;
         left: calc(100% + 5px);
         top: calc(50% - 14px);
     }
@@ -36,7 +34,20 @@ export default class Tooltip extends Vue {
     .tooltip::after {
         content: '';
         @apply absolute bottom-full left-0 -ml-2 top-3 border-solid border-4;
-        border-color: transparent var(--color-sharebutton-border) transparent transparent;
+    }
+
+    .color-default {
+        @apply text-primary-text bg-primary-link border-primary-link-border;
+        &.tooltip::after {
+            border-color: transparent var(--color-sharebutton-border) transparent transparent;
+        }
+    }
+
+    .color-account {
+        @apply text-account-title bg-account-bg shadow-account;
+        &.tooltip::after {
+            border-color: transparent var(--color-account-bg) transparent transparent;
+        }
     }
 }
 </style>

@@ -15,7 +15,7 @@
             @touchstart="isHover = true"
             @touchend="isHover = false"
         />
-        <Tooltip v-if="$props.address" v-show="isHover" :text="$props.address" />
+        <Tooltip v-if="$props.address" v-show="isHover" :text="$props.address" view-option="account" />
         <Button
             v-show="deleteMode"
             size="sm"
