@@ -1,6 +1,47 @@
 <template>
     <h1>Test page</h1>
     <div class="flex flex-col gap-8 items-center">
+        <BarCard color="account">
+            <template #header>
+                <span class="text-account-title w-16 inline-flex"> Accounts </span>
+            </template>
+            <template #content>
+                <AccountItem
+                    class="inline-block mr-1 cursor-pointer"
+                    :size="40"
+                    v-for="id in 8"
+                    :key="id"
+                    chain="Ethereum"
+                />
+            </template>
+            <template #footer>
+                <Button size="sm" class="w-8 h-8 bg-account-btn-s text-account-btn-s-text shadow-account-btn-s">
+                    <i class="bx bxs-pencil bx-xs" />
+                </Button>
+            </template>
+        </BarCard>
+
+        <BarCard color="nft">
+            <template #header>
+                <span class="text-nft-title w-16 inline-flex"> NFTs </span>
+            </template>
+            <template #content>
+                <NFTItem
+                    class="inline-flex mr-1 cursor-pointer"
+                    image-url="https://i.imgur.com/GdWEt4z.jpg"
+                    poster-url="https://i.imgur.com/GdWEt4z.jpg"
+                    :size="40"
+                    v-for="id in 8"
+                    :key="id"
+                />
+            </template>
+            <template #footer>
+                <Button size="sm" class="w-8 h-8 bg-nft-btn-s text-nft-btn-s-text shadow-nft-btn-s">
+                    <i class="bx bxs-pencil bx-xs" />
+                </Button>
+            </template>
+        </BarCard>
+
         <Button size="sm" class="w-10 h-10 bg-white text-primary shadow-secondary">
             <i class="bx bx-chevron-left bx-sm"></i>
         </Button>
@@ -539,10 +580,14 @@ import html2canvas from 'html2canvas';
 import draggable from 'vuedraggable';
 
 import Loading from '@/components/Loading.vue';
+import BarCard from '@/components/BarCard.vue';
+
+import config from '@/config';
 
 @Options({
     name: 'Test',
     components: {
+        BarCard,
         ScanTag,
         Modal,
         FollowerCard,
@@ -559,6 +604,7 @@ import Loading from '@/components/Loading.vue';
     },
 })
 export default class Test extends Vue {
+    config: typeof config = config;
     value: String = 'value';
     accounts: Object = {
         array1: [
