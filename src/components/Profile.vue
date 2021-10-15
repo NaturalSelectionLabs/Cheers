@@ -130,7 +130,8 @@ export default class Profile extends Vue {
     }
 
     toExternalLink() {
-        window.open(`https://${this.website}`);
+        const normalizedLink = (this.website.includes('://') ? '' : 'https://') + this.website;
+        window.open(normalizedLink);
     }
 
     emitShare() {
