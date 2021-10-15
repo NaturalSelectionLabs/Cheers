@@ -5,7 +5,7 @@
             relative
             p-4
             pb-8
-            bg-body-bg
+            bg-transparent
             border-card
             text-body-text
             rounded

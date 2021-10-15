@@ -207,7 +207,14 @@
                 <template #title-icon><ContentIcon /></template>
                 <template #content>
                     <div
-                        class="flex flex-col px-0.5 overflow-y-auto md:max-h-128 scrollbar-hide"
+                        class="
+                            flex flex-col
+                            px-0.5
+                            overflow-y-auto
+                            md:max-h-128
+                            scrollbar-hide
+                            divider-y-xs divider-content-divider divider-opacity-10
+                        "
                         v-if="contents.length !== 0"
                     >
                         <ContentCard
