@@ -31,6 +31,7 @@ export default class BarCard extends Vue {}
         @apply box-border rounded-xl px-5 py-1 flex flex-row items-center border-card h-16;
 
         .card-body {
+            scrollbar-width: thin;
             @apply w-full overflow-y-auto p-2;
 
             .content-wrapper {
