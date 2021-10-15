@@ -4,7 +4,8 @@
             width: size + 'px',
             height: size + 'px',
         }"
-        class="rounded shadow-nft"
+        class="shadow-nft"
+        :class="size < 60 ? 'rounded-sm' : 'rounded'"
     >
         <video
             v-if="
@@ -20,7 +21,7 @@
                     : posterUrl
             "
             class="nft-item"
-            :class="[!isShowingDetails ? 'object-cover' : 'object-contain']"
+            :class="[!isShowingDetails ? 'object-cover' : 'object-contain', size < 60 ? 'rounded-sm' : 'rounded']"
             :style="{
                 width: size + 'px',
                 height: size + 'px',
@@ -44,7 +45,7 @@
             "
             :src="imageUrl"
             class="nft-item"
-            :class="[!isShowingDetails ? 'object-cover' : 'object-contain']"
+            :class="[!isShowingDetails ? 'object-cover' : 'object-contain', size < 60 ? 'rounded-sm' : 'rounded']"
             :style="{
                 width: size + 'px',
                 height: size + 'px',
@@ -55,7 +56,7 @@
             :src="imageUrl"
             :poster="posterUrl"
             class="nft-item"
-            :class="[!isShowingDetails ? 'object-cover' : 'object-contain']"
+            :class="[!isShowingDetails ? 'object-cover' : 'object-contain', size < 60 ? 'rounded-sm' : 'rounded']"
             :style="{
                 width: size + 'px',
                 height: size + 'px',
@@ -71,7 +72,7 @@
             v-else
             :src="isShowingDetails ? imageUrl || posterUrl || defaultImage : posterUrl || imageUrl || defaultImage"
             class="nft-item"
-            :class="[!isShowingDetails ? 'object-cover' : 'object-contain']"
+            :class="[!isShowingDetails ? 'object-cover' : 'object-contain', size < 60 ? 'rounded-sm' : 'rounded']"
             :style="{
                 width: size + 'px',
                 height: size + 'px',
@@ -111,7 +112,7 @@ export default class NFTItem extends Vue {
 <style scoped lang="postcss">
 @layer components {
     .nft-item {
-        @apply rounded border border-item-border filter shadow-nft bg-item-bg;
+        @apply border border-item-border filter bg-item-bg;
     }
 }
 </style>
