@@ -253,6 +253,8 @@
                             :is-single-line="true"
                             :placeholder="specifyNoSignAccount.style"
                             v-model="specifyNoSignAccount.account"
+                            :prefix="specifyNoSignAccount.prefix"
+                            :suffix="specifyNoSignAccount.suffix"
                             @keyup.enter.native="addNoSignAccountConfirm"
                         />
                     </div>
@@ -371,11 +373,15 @@ export default class SetupAccounts extends Vue {
         style: string;
         account: string;
         fields: string[];
+        prefix: string;
+        suffix: string;
     } = {
         platform: '',
         style: '',
         account: '',
         fields: [],
+        prefix: '',
+        suffix: '',
     };
 
     async mounted() {
@@ -487,6 +493,9 @@ export default class SetupAccounts extends Vue {
         this.specifyNoSignAccount.platform = platform;
         this.specifyNoSignAccount.style = ContentProviders[platform].accountStyle;
         this.specifyNoSignAccount.fields = ContentProviders[platform].availableFields;
+        this.specifyNoSignAccount.prefix = ContentProviders[platform].prefix || '';
+        this.specifyNoSignAccount.suffix = ContentProviders[platform].suffix || '';
+
         this.isShowingAddSpecifyAccountInput = true;
     }
 
