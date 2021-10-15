@@ -1,6 +1,6 @@
 <template>
     <div
-        class="box-border rounded-xl px-5 py-1 flex flex-row items-center border-card"
+        class="box-border rounded-xl px-5 py-1 flex flex-row items-center border-card h-16"
         :class="[`bg-${$props.color}-bg`, `border-${$props.color}-border`]"
     >
         <div class="p-2">
