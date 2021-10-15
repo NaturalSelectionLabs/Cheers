@@ -1,13 +1,12 @@
 <template>
-    <div
-        class="box-border rounded-xl px-5 py-1 flex flex-row items-center border-card h-16"
-        :class="[`bg-${$props.color}-bg`, `border-${$props.color}-border`]"
-    >
+    <div class="card" :class="[`bg-${$props.color}-bg`, `border-${$props.color}-border`]">
         <div class="p-2">
             <slot name="header" />
         </div>
-        <div class="flex flex-row items-center w-full overflow-y-auto p-2">
-            <slot name="content" />
+        <div class="card-body">
+            <div class="content-wrapper">
+                <slot name="content" />
+            </div>
         </div>
         <div class="p-2">
             <slot name="footer" />
@@ -26,4 +25,18 @@ import { Vue, Options } from 'vue-class-component';
 export default class BarCard extends Vue {}
 </script>
 
-<style></style>
+<style lang="postcss" scoped>
+@layer components {
+    .card {
+        @apply box-border rounded-xl px-5 py-1 flex flex-row items-center border-card h-16;
+
+        .card-body {
+            @apply w-full overflow-y-auto p-2;
+
+            .content-wrapper {
+                @apply flex items-center w-max;
+            }
+        }
+    }
+}
+</style>
