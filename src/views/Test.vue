@@ -1,7 +1,7 @@
 <template>
     <h1>Test page</h1>
     <div class="flex flex-col gap-8 items-center">
-        <BarCard color="account">
+        <BarCard color="account" class="w-96">
             <template #header>
                 <span class="text-account-title w-16 inline-flex"> Accounts </span>
             </template>
@@ -21,17 +21,17 @@
             </template>
         </BarCard>
 
-        <BarCard color="nft">
+        <BarCard color="nft" class="w-96">
             <template #header>
                 <span class="text-nft-title w-16 inline-flex"> NFTs </span>
             </template>
             <template #content>
                 <NFTItem
-                    class="inline-flex mr-1 cursor-pointer"
+                    class="flex mr-1 cursor-pointer"
                     image-url="https://i.imgur.com/GdWEt4z.jpg"
                     poster-url="https://i.imgur.com/GdWEt4z.jpg"
                     :size="40"
-                    v-for="id in 8"
+                    v-for="id in 32"
                     :key="id"
                 />
             </template>
