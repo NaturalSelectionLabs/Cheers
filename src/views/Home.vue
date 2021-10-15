@@ -1135,9 +1135,10 @@ export default class Home extends Vue {
     }
 
     public displayDialog(address: string, platform: string) {
-        if (platform === 'Misskey' || platform === 'Twitter') {
+        if (ContentProviders[platform]) {
             this.showingAccountDetails = {
-                address,
+                address:
+                    (ContentProviders[platform].prefix || '') + address + (ContentProviders[platform].suffix || ''),
                 platform,
                 isLink: true,
                 link: ContentProviders[platform].getAccountLink(address),

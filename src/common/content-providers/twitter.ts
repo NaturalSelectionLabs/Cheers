@@ -8,4 +8,5 @@ export default {
     },
     accountStyle: 'username',
     availableFields: ['Name', 'Bio', 'Screen Name', 'Website'],
+    prefix: '@',
 };
