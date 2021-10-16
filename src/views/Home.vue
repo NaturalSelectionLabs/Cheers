@@ -136,7 +136,7 @@
                 color-background="bg-footprint-bg"
                 class="w-full border-footprint-border"
                 :is-having-content="true"
-                :is-single-line="gitcoins.length !== 0"
+                :is-single-line="false"
                 id="footprint-card"
             >
                 <template #title-icon><FootprintIcon /> </template>
@@ -158,7 +158,7 @@
                         </Button>
                     </section>
                 </template>
-                <template #content> </template>
+                <template #content> <div class="h-64"></div> </template>
             </Card>
 
             <Card
@@ -167,6 +167,7 @@
                 color-tips="text-content-title"
                 color-background="bg-content-bg"
                 class="w-auto border-content-border md:col-start-2 md:row-start-2 md:row-span-3"
+                :isSingleLine="false"
                 :is-having-content="true"
             >
                 <template #title-icon><ContentIcon /></template>
@@ -176,14 +177,13 @@
                             flex flex-col
                             px-0.5
                             overflow-y-auto
-                            md:max-h-128
+                            md:max-h-112
                             scrollbar-hide
                             divider-y-xs divider-content-divider divider-opacity-10
                         "
                         v-if="contents.length !== 0"
                     >
                         <ContentCard
-                            class="mb-4"
                             v-for="item in contents"
                             :key="item.id"
                             :timestamp="parseInt(item.info.timestamp)"

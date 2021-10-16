@@ -1,13 +1,15 @@
 <template>
-    <div class="w-full relative p-4 pb-8 bg-transparent border-card text-body-text rounded cursor-pointer">
-        <div class="timestamp absolute right-4 bottom-2 font-light">{{ getDate(timestamp) }}</div>
-        <div class="content-header flex justify-between">
-            <h2 class="font-medium text-lg truncate">
-                {{ title }}
-            </h2>
-            <ContentBadge :contentProvider="$props.provider" />
-        </div>
+    <div class="w-full p-2 bg-transparent border-card text-body-text rounded cursor-pointer">
+        <h2 class="content-header font-medium text-lg truncate">
+            {{ title }}
+        </h2>
         <div class="content-body" v-html="renderedContent" />
+        <section class="flex flex-row justify-start items-center gap-2">
+            <span class="timestamp font-light opacity-50">
+                {{ getDate(timestamp) + ', on' }}
+            </span>
+            <ContentBadge :contentProvider="$props.provider" />
+        </section>
     </div>
 </template>
 
@@ -46,6 +48,6 @@ export default class ContentCard extends Vue {
     display: inline;
 }
 .content-body .media {
-    @apply mt-2 rounded-md;
+    @apply m-2 rounded-md w-3/4 mx-auto;
 }
 </style>
