@@ -24,7 +24,7 @@ export default class ScanTag extends Vue {
 <style scoped lang="postcss">
 @layer components {
     .scan-tag {
-        @apply rounded-sm border-sm border-nft-bg px-2 py-1.5 flex justify-center items-center bg-nft-tag-bg bg-origin-content bg-contain bg-center bg-no-repeat text-center leading-none;
+        @apply rounded-sm border-sm border-nft-bg px-2 py-1.5 flex justify-center items-center bg-white bg-origin-content bg-contain bg-center bg-no-repeat text-center leading-none shadow-nft;
     }
 }
 </style>
