@@ -10,19 +10,35 @@
                     :username="rss3Profile.username"
                     :address="ethAddress"
                     :rns="rns"
-                    :followers="rss3Relations.followers"
-                    :followings="rss3Relations.followings"
+                    :followers="rss3Relations.followers.length"
+                    :followings="rss3Relations.followings.length"
                     :bio="rss3Profile.bio"
                     :website="rss3Profile.link"
-                    click-address-notice="Copied!"
-                    :isOwner="isOwner"
-                    :isFollowing="isFollowing"
                     :is-loading-persona="isLoadingPersona"
                     @click-address="clickAddress"
-                    @to-setup-page="toSetupPage"
-                    @logout="logout"
-                    @action="action"
-                />
+                >
+                    <template #Accounts>
+                        <AccountItem
+                            class="inline-block mr-1 cursor-pointer"
+                            :size="30"
+                            :chain="item.platform"
+                            v-for="item in accounts"
+                            :key="item.platform + item.identity"
+                            @click="displayDialog(item.identity, item.platform)"
+                        />
+                    </template>
+
+                    <template #Toolbar>
+                        <Toolbar
+                            :isOwner="isOwner"
+                            :isFollowing="isFollowing"
+                            :is-loading-persona="isLoadingPersona"
+                            @to-setup-page="toSetupPage"
+                            @logout="logout"
+                            @action="action"
+                        />
+                    </template>
+                </Profile>
             </section>
 
             <AccountCard>
@@ -429,6 +445,7 @@ import ContentCard from '@/components/ContentCard.vue';
 import { debounce } from 'lodash';
 import ContentProviders, { Content } from '@/common/content-providers';
 import LinkButton from '@/components/LinkButton.vue';
+import Toolbar from '@/components/Toolbar.vue';
 
 interface ProfileInfo {
     avatar: string;
@@ -461,6 +478,7 @@ interface Relations {
         GitcoinIcon,
         ContentCard,
         Logo,
+        Toolbar,
     },
 })
 export default class Home extends Vue {
