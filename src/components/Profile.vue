@@ -40,10 +40,9 @@
                 <Tooltip v-show="isShowingTooltip" text="Copied" viewOption="default" />
             </LinkButton>
             <LinkButton @click="toExternalLink" v-if="website && !isLoadingPersona">
-                <i class="bx bx-link" />
-                <span>{{ website }}</span>
+                <span><i class="bx bx-link align-bottom" />{{ website }}</span>
             </LinkButton>
-            <div class="flex-1 flex flex-row scrollbar-hide max-h-5 flex-shrink" v-if="!isLoadingPersona">
+            <div class="flex-1 flex flex-row scrollbar-hide max-h-5 flex-shrink items-center" v-if="!isLoadingPersona">
                 <slot name="Accounts" />
             </div>
         </section>

@@ -1,18 +1,5 @@
 <template>
-    <div
-        class="
-            w-full
-            relative
-            p-4
-            pb-8
-            bg-transparent
-            border-card
-            text-body-text
-            rounded
-            shadow-content-item
-            cursor-pointer
-        "
-    >
+    <div class="w-full relative p-4 pb-8 bg-transparent border-card text-body-text rounded cursor-pointer">
         <div class="timestamp absolute right-4 bottom-2 font-light">{{ getDate(timestamp) }}</div>
         <div class="content-header flex justify-between">
             <h2 class="font-medium text-lg truncate">

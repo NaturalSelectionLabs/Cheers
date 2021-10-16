@@ -28,7 +28,7 @@ export default class BarCard extends Vue {}
 <style lang="postcss" scoped>
 @layer components {
     .card {
-        @apply box-border rounded-xl px-5 py-1 flex flex-row items-center border-card h-16;
+        @apply box-border rounded-xl px-3 py-1 flex flex-row items-center border-card h-16;
 
         .card-body {
             scrollbar-width: thin;

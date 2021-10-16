@@ -26,6 +26,23 @@
                             :key="item.platform + item.identity"
                             @click="displayDialog(item.identity, item.platform)"
                         />
+                        <Button
+                            v-if="isOwner"
+                            size="sm"
+                            shape="circle"
+                            class="w-8 h-8 mr-1 inline-block bg-account-btn-s text-account-btn-s-text shadow-account"
+                            @click="toManageAccounts"
+                        >
+                            <i class="bx bxs-pencil bx-xs" />
+                        </Button>
+                        <Button
+                            size="sm"
+                            shape="circle"
+                            class="w-8 h-8 mr-1 inline-block bg-account-btn-s text-account-btn-s-text shadow-account"
+                            @click="toAccountsPage"
+                        >
+                            <i class="bx bx-expand-alt bx-xs" />
+                        </Button>
                     </template>
 
                     <template #Toolbar>
@@ -41,62 +58,25 @@
                 </Profile>
             </section>
 
-            <AccountCard>
-                <template #header-button>
-                    <div v-if="isOwner" class="flex flex-row gap-2">
-                        <Button
-                            size="sm"
-                            class="w-8 h-8 bg-account-btn-s text-account-btn-s-text shadow-account-btn-s"
-                            @click="toManageAccounts"
-                        >
-                            <i class="bx bxs-pencil bx-xs" />
-                        </Button>
-                        <Button
-                            size="sm"
-                            class="w-8 h-8 bg-account-btn-s text-account-btn-s-text shadow-account-btn-s"
-                            @click="toAccountsPage"
-                        >
-                            <i class="bx bx-expand-alt bx-xs" />
-                        </Button>
-                    </div>
-                    <Button
-                        v-else
-                        size="sm"
-                        class="w-10 h-10 bg-account-btn-s text-account-btn-s-text shadow-account-btn-s"
-                        @click="toAccountsPage"
-                    >
-                        <i class="bx bx-expand-alt bx-xs"></i>
-                    </Button>
+            <BarCard color="nft">
+                <template #header>
+                    <NFTIcon />
                 </template>
                 <template #content>
-                    <AccountItem
-                        class="inline-block mr-1 cursor-pointer"
+                    <NFTItem
+                        class="mr-1 cursor-pointer"
+                        v-for="item in nfts"
+                        :key="item.platform + item.identity + item.id"
+                        :image-url="item.info.animation_url || item.info.image_preview_url"
+                        :poster-url="item.info.image_preview_url"
                         :size="40"
-                        :chain="item.platform"
-                        v-for="item in accounts"
-                        :key="item.platform + item.identity"
-                        @click="displayDialog(item.identity, item.platform)"
+                        @click="toSingleNFTPage(item.platform, item.identity, item.id)"
                     />
                 </template>
-            </AccountCard>
-
-            <Card
-                title="NFTs"
-                color-title="text-nft-title"
-                color-tips="text-nft-title"
-                color-background="bg-nft-bg"
-                class="w-full border-nft-border"
-                :is-having-content="nfts.length !== 0"
-                :isPClayout="isPCLayout"
-                :is-single-line="!isPCLayout && nfts.length !== 0"
-                :tips="isLoadingAssets.NFT ? 'Loading...' : nfts.length === 0 ? 'Haven\'t found anything yet...' : ''"
-                id="nfts-card"
-            >
-                <template #title-icon><NFTIcon /></template>
-
-                <template #header-button>
-                    <div v-if="isOwner" class="flex flex-row gap-2">
+                <template #footer>
+                    <section class="flex flex-row gap-2">
                         <Button
+                            v-if="isOwner"
                             size="sm"
                             class="w-8 h-8 bg-nft-btn-s text-nft-btn-s-text shadow-nft-btn-s"
                             @click="toManageNFTs"
@@ -110,47 +90,28 @@
                         >
                             <i class="bx bx-expand-alt bx-xs" />
                         </Button>
-                    </div>
-                    <Button
-                        v-else
-                        size="sm"
-                        class="w-10 h-10 bg-nft-btn-s text-nft-btn-s-text shadow-nft-btn-s"
-                        @click="toNFTsPage"
-                    >
-                        <i class="bx bx-expand-alt bx-xs" />
-                    </Button>
+                    </section>
                 </template>
-                <template #content>
-                    <NFTItem
-                        class="inline-flex m-2 cursor-pointer"
-                        v-for="item in nfts"
-                        :key="item.platform + item.identity + item.id"
-                        :image-url="item.info.animation_url || item.info.image_preview_url"
-                        :poster-url="item.info.image_preview_url"
-                        :size="isPCLayout ? 130 : 70"
-                        @click="toSingleNFTPage(item.platform, item.identity, item.id)"
-                    />
-                </template>
-            </Card>
+            </BarCard>
 
-            <Card
-                title="Donations"
-                color-title="text-gitcoin-title"
-                color-tips="text-gitcoin-title"
-                color-background="bg-gitcoin-bg"
-                class="w-full border-gitcoin-border"
-                :is-having-content="true"
-                :isPClayout="isPCLayout"
-                :is-single-line="!isPCLayout && gitcoins.length !== 0"
-                id="gitcoins-card"
-            >
-                <template #title-icon>
+            <BarCard color="gitcoin">
+                <template #header>
                     <GitcoinIcon :iconColor="currentTheme === 'loot' ? 'white' : 'black'" />
                 </template>
-
-                <template #header-button>
-                    <div v-if="isOwner" class="flex flex-row gap-2">
+                <template #content>
+                    <GitcoinItem
+                        class="mr-1 cursor-pointer"
+                        v-for="item in gitcoins"
+                        :key="item.platform + item.identity + item.id"
+                        :size="40"
+                        :imageUrl="item.info.image_preview_url || defaultAvatar"
+                        @click="toSingleGitcoin(item.platform, item.identity, item.id)"
+                    />
+                </template>
+                <template #footer>
+                    <section class="flex flex-row gap-2">
                         <Button
+                            v-if="isOwner"
                             size="sm"
                             class="w-8 h-8 bg-gitcoin-btn-s text-gitcoin-btn-s-text shadow-gitcoin-btn-s"
                             @click="toManageGitcoins"
@@ -164,52 +125,40 @@
                         >
                             <i class="bx bx-expand-alt bx-xs" />
                         </Button>
-                    </div>
-                    <Button
-                        v-else
-                        size="sm"
-                        class="w-10 h-10 bg-gitcoin-btn-s text-gitcoin-btn-s-text shadow-gitcoin-btn-s"
-                        @click="toGitcoinsPage"
-                    >
-                        <i class="bx bx-expand-alt bx-xs"></i>
-                    </Button>
+                    </section>
                 </template>
-                <template #content>
-                    <template v-if="gitcoins.length !== 0">
-                        <GitcoinItem
-                            class="inline-flex m-2 cursor-pointer"
-                            v-for="item in gitcoins"
-                            :key="item.platform + item.identity + item.id"
-                            :size="isPCLayout ? 130 : 70"
-                            :imageUrl="item.info.image_preview_url || defaultAvatar"
-                            @click="toSingleGitcoin(item.platform, item.identity, item.id)"
-                        />
-                    </template>
-                    <div v-else-if="isLoadingAssets.Gitcoin" class="text-gitcoin-title m-auto text-center mt-4">
-                        Loading...
-                    </div>
-                    <div v-else-if="!isOwner" class="text-gitcoin-title m-auto text-center mt-4 overflow-hidden">
-                        Haven't found anything yet...
-                    </div>
-                    <div v-else class="flex justify-center">
+            </BarCard>
+
+            <Card
+                title="Footprints"
+                color-title="text-footprint-title"
+                color-tips="text-footprint-title"
+                color-background="bg-footprint-bg"
+                class="w-full border-footprint-border"
+                :is-having-content="true"
+                :is-single-line="gitcoins.length !== 0"
+                id="footprint-card"
+            >
+                <template #title-icon><FootprintIcon /> </template>
+
+                <template #header-button>
+                    <section class="flex flex-row gap-2">
                         <Button
-                            size="lg"
-                            class="
-                                text-lg
-                                bg-gitcoin-btn-m
-                                text-gitcoin-btn-m-text
-                                shadow-gitcoin-btn-m
-                                cursor-pointer
-                                m-auto
-                                mt-4
-                                md:mt-0
-                            "
-                            @click="toMakeDonation"
+                            v-if="isOwner"
+                            size="sm"
+                            class="w-8 h-8 bg-footprint-btn-s text-footprint-btn-s-text shadow-footprint-btn-s"
                         >
-                            <span>Make your first donation!</span>
+                            <i class="bx bxs-pencil bx-xs" />
                         </Button>
-                    </div>
+                        <Button
+                            size="sm"
+                            class="w-8 h-8 bg-footprint-btn-s text-footprint-btn-s-text shadow-footprint-btn-s"
+                        >
+                            <i class="bx bx-expand-alt bx-xs" />
+                        </Button>
+                    </section>
                 </template>
+                <template #content> </template>
             </Card>
 
             <Card
@@ -391,6 +340,7 @@
 import { Options, Vue } from 'vue-class-component';
 import Button from '@/components/Button.vue';
 import Card from '@/components/Card.vue';
+import BarCard from '@/components/BarCard.vue';
 import Profile from '@/components/Profile.vue';
 import AccountItem from '@/components/AccountItem.vue';
 import NFTItem from '@/components/NFT/NFTItem.vue';
@@ -399,17 +349,16 @@ import { RSS3Account, RSS3Asset, RSS3ID, RSS3Index } from 'rss3-next/types/rss3'
 import Modal from '@/components/Modal.vue';
 import RNSUtils from '@/common/rns';
 import config from '@/config';
-import AccountCard from '@/components/AccountCard.vue';
 import GitcoinItem from '@/components/GitcoinItem.vue';
 import { GeneralAsset, GeneralAssetWithTags } from '@/common/types';
 import NFTIcon from '@/components/Icons/NFTIcon.vue';
 import GitcoinIcon from '@/components/Icons/GitcoinIcon.vue';
 import ContentIcon from '@/components/Icons/ContentIcon.vue';
+import FootprintIcon from '@/components/Icons/FootprintIcon.vue';
 import Logo from '@/components/Logo.vue';
 import ContentCard from '@/components/ContentCard.vue';
 import { debounce } from 'lodash';
 import ContentProviders, { Content } from '@/common/content-providers';
-import LinkButton from '@/components/LinkButton.vue';
 import Toolbar from '@/components/Toolbar.vue';
 
 interface ProfileInfo {
@@ -428,14 +377,13 @@ interface Relations {
 @Options({
     name: 'Home',
     components: {
-        LinkButton,
         Button,
+        BarCard,
         Card,
         Profile,
         AccountItem,
         NFTItem,
         Modal,
-        AccountCard,
         GitcoinItem,
         NFTIcon,
         ContentIcon,
@@ -443,6 +391,7 @@ interface Relations {
         ContentCard,
         Logo,
         Toolbar,
+        FootprintIcon,
     },
 })
 export default class Home extends Vue {
