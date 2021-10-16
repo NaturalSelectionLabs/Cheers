@@ -25,10 +25,8 @@
                         w-full
                         px-5
                         py-4
-                        bg-body-bg
                         rounded
                         filter
-                        shadow-gitcoin
                         border-card
                         text-body-text
                         flex flex-col
@@ -78,7 +76,7 @@
                             <div
                                 class="
                                     flex-1
-                                    bg-gitcoin-bg
+                                    bg-body-bg
                                     text-black
                                     rounded-xl
                                     flex flex-row
@@ -126,9 +124,8 @@ import ImgHolder from '@/components/ImgHolder.vue';
 import GitcoinItem from '@/components/GitcoinItem.vue';
 import config from '@/config';
 import RNSUtils from '@/common/rns';
-import RSS3, { IRSS3 } from '@/common/rss3';
+import RSS3 from '@/common/rss3';
 import Vue3Autocounter from 'vue3-autocounter';
-import { RSS3Index } from 'rss3-next/types/rss3';
 
 interface Profile {
     avatar: string;
