@@ -81,11 +81,11 @@
         --color-footprint-btn-m: transparent;
         --color-footprint-btn-m-text: white;
         --color-footprint-btn-m-border: transparent;
-        --color-footprint-btn-s: white;
-        --color-footprint-btn-s-text: transparent;
+        --color-footprint-btn-s: black;
+        --color-footprint-btn-s-text: white;
         --color-footprint-btn-s-border: transparent;
         --color-footprint-title: white;
-        --color-footprint-bg: white;
+        --color-footprint-bg: black;
         --color-footprint-border: white;
         --color-footprint-divider: white;
 
