@@ -342,40 +342,6 @@
                 </template>
             </Modal>
 
-            <!-- Share Card -->
-            <div
-                v-show="isShowingShareCard"
-                class="fixed w-screen h-screen m-0 p-0 top-0 left-0 flex justify-center items-center flex-col"
-            >
-                <div class="fixed w-screen h-screen bg-share-bg bg-opacity-70" @click="isShowingShareCard = false" />
-
-                <ShareCard
-                    class="max-w-md"
-                    :name="rss3Profile.username"
-                    :avatar="rss3Profile.avatar"
-                    :address="`${rns}`"
-                    ref="shareCard"
-                    :id="`share-card-${rns}`"
-                />
-
-                <div class="flex flex-row gap-7">
-                    <Button
-                        size="sm"
-                        class="w-12 h-12 bg-primary text-white shadow-primary mt-8"
-                        @click="saveShareCard"
-                    >
-                        <i class="bx bx-download bx-sm" />
-                    </Button>
-                    <Button
-                        size="sm"
-                        class="w-12 h-12 bg-primary text-white shadow-primary mt-8"
-                        @click="shareShareCard"
-                    >
-                        <i class="bx bx-share-alt bx-sm" />
-                    </Button>
-                </div>
-            </div>
-
             <Modal v-if="isShowingNotice">
                 <template #header>
                     <h1>Oops!</h1>
@@ -436,7 +402,6 @@ import config from '@/config';
 import AccountCard from '@/components/AccountCard.vue';
 import GitcoinItem from '@/components/GitcoinItem.vue';
 import { GeneralAsset, GeneralAssetWithTags } from '@/common/types';
-import ShareCard from '@/components/ShareCard.vue';
 import NFTIcon from '@/components/Icons/NFTIcon.vue';
 import GitcoinIcon from '@/components/Icons/GitcoinIcon.vue';
 import ContentIcon from '@/components/Icons/ContentIcon.vue';
@@ -472,7 +437,6 @@ interface Relations {
         Modal,
         AccountCard,
         GitcoinItem,
-        ShareCard,
         NFTIcon,
         ContentIcon,
         GitcoinIcon,
@@ -499,7 +463,6 @@ export default class Home extends Vue {
         isLink: false,
     };
     isAccountExist: boolean = true;
-    isShowingShareCard: boolean = false;
     isLoadingAssets: {
         NFT: boolean;
         Gitcoin: boolean;
@@ -566,7 +529,6 @@ export default class Home extends Vue {
             platform: 'Ethereum',
             isLink: false,
         };
-        this.isShowingShareCard = false;
         this.isLoadingContents = true;
         this.rss3Profile = {
             avatar: config.defaultAvatar,
@@ -902,16 +864,6 @@ export default class Home extends Vue {
             more: true,
             lastTS: 0xffffffff,
         });
-        // Accounts
-        // for (const account of accounts) {
-        //     if (account.platform === 'Misskey') {
-        //         this.isContentsHaveMoreEachProvider.push({
-        //             provider: account,
-        //             more: true,
-        //             lastTS: 0xffffffff,
-        //         });
-        //     }
-        // }
 
         await this.loadMoreContents(true);
     }
@@ -1006,7 +958,7 @@ export default class Home extends Vue {
         }
     }
 
-    public async action() {
+    async action() {
         if (RSS3.isValidRSS3()) {
             if (this.isFollowing) {
                 await this.unfollow();
@@ -1037,7 +989,7 @@ export default class Home extends Vue {
         }
     }
 
-    public async checkIsFollowing() {
+    async checkIsFollowing() {
         if (!this.ethAddress) {
             this.ethAddress = (await RNSUtils.name2Addr(this.rns + config.rns.suffix)).toString();
         }
@@ -1162,7 +1114,7 @@ export default class Home extends Vue {
         window.open(link);
     }
 
-    public displayDialog(address: string, platform: string) {
+    displayDialog(address: string, platform: string) {
         if (ContentProviders[platform]) {
             this.showingAccountDetails = {
                 address:
@@ -1182,11 +1134,11 @@ export default class Home extends Vue {
         this.isShowingAccount = true;
     }
 
-    public closeDialog() {
+    closeDialog() {
         this.isShowingAccount = false;
     }
 
-    public copyToClipboard(address: string) {
+    copyToClipboard(address: string) {
         navigator.clipboard.writeText(address).then(
             function () {
                 console.log('Async: Copying to clipboard was successful!');
@@ -1207,37 +1159,6 @@ export default class Home extends Vue {
                 ? `https://${this.rns}.${config.subDomain.rootDomain}`
                 : `https://${config.subDomain.rootDomain}/${this.ethAddress}`,
         );
-    }
-
-    showShareCard() {
-        this.isShowingShareCard = true;
-    }
-
-    async saveShareCard() {
-        const shareCard = document.getElementById(`share-card-${this.rns}`);
-        if (shareCard) {
-            const html2canvas: any = (await import(/* webpackChunkName: "html2canvas" */ '@/common/html2canvas.js'))
-                .default;
-            const canvas = await html2canvas(shareCard, {
-                useCORS: true,
-                logging: false,
-                scale: 3,
-            });
-            const link = document.createElement('a');
-            link.download = `${this.rns}.png`;
-            link.href = canvas.toDataURL();
-            link.click();
-        }
-    }
-
-    async shareShareCard() {
-        if (navigator.share) {
-            await navigator.share({
-                title: this.rss3Profile.username,
-                text: this.rss3Profile.bio,
-                url: `https://pass3.me/${this.rns}`, // Todo: Change to one's own RNS after SSR done
-            });
-        }
     }
 
     toMakeDonation() {

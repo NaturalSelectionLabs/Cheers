@@ -76,7 +76,7 @@ import Tooltip from '@/components/Tooltip.vue';
         rns: String,
         isLoadingPersona: Boolean,
     },
-    emits: ['share', 'clickAddress'],
+    emits: ['clickAddress'],
 })
 export default class Profile extends Vue {
     address!: String;
@@ -101,10 +101,6 @@ export default class Profile extends Vue {
     toExternalLink() {
         const normalizedLink = (this.website.includes('://') ? '' : 'https://') + this.website;
         window.open(normalizedLink);
-    }
-
-    emitShare() {
-        this.$emit('share');
     }
 
     emitClickAddress() {
