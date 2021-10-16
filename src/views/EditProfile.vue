@@ -25,7 +25,6 @@
                     <span>{{ rns ? rns : 'Claim Your RNS' }}</span>
                 </LinkButton>
                 <Input class="mb-4 w-full" :is-single-line="true" placeholder="Username" v-model="profile.name" />
-                <!-- The input of Personal link -->
                 <Input
                     class="mb-4 w-full"
                     :is-single-line="true"

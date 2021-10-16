@@ -19,12 +19,11 @@
                 />
             </div>
             <section class="max-w-screen-sm m-auto">
-                <GitcoinItem :imageUrl="grant.logo || defaultAvatar" :size="Width"></GitcoinItem>
+                <GitcoinItem class="mb-4" :imageUrl="grant.logo || defaultAvatar" :size="Width"></GitcoinItem>
                 <div
                     class="
                         w-full
                         px-5
-                        py-4
                         rounded
                         filter
                         border-card
@@ -45,6 +44,7 @@
                             class="text-sm leading-normal text-gitcoin-title truncate cursor-pointer"
                             @click="toExternalLink(grant.reference_url)"
                         >
+                            <i class="bx bx-link align-middle" />
                             {{ grant.reference_url }}
                         </div>
                     </div>

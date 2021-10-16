@@ -41,7 +41,7 @@ export default class ContentCard extends Vue {
 }
 </script>
 
-<style lang="postcss">
+<style lang="postcss" scoped>
 .content-body .emoji {
     max-width: 1.8rem;
     max-height: 1.8rem;

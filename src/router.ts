@@ -19,6 +19,7 @@ import RNSPending from '@/views/Setup/RNSPending.vue';
 import Gitcoins from '@/views/Gitcoins.vue';
 import SetupGitcoins from '@/views/Setup/SetupGitcoins.vue';
 import SingleGitcoin from '@/views/SingleGitcoin.vue';
+import SingleFootprint from '@/views/SingleFootprint.vue';
 import config from '@/config';
 
 export const routes = [
@@ -74,6 +75,12 @@ export const routes = [
         path: (config.subDomain.isSubDomainMode ? '' : '/:address') + '/singlegitcoin/:platform/:identity/:id',
         name: 'SingleGitcoin',
         component: SingleGitcoin,
+    },
+
+    {
+        path: '/singlefootprint',
+        name: 'SingleFootprint',
+        component: SingleFootprint,
     },
     {
         path: '/setup',
