@@ -34,6 +34,36 @@
                 />
                 <Input class="mb-4 w-full" :is-single-line="false" placeholder="Bio" v-model="profile.bio" />
 
+                <BarCard color="account" class="mb-4 w-full">
+                    <template #content>
+                        <AccountItem
+                            class="inline-block mr-1 cursor-pointer"
+                            :size="40"
+                            :chain="item.platform"
+                            v-for="item in accounts"
+                            :key="item.platform + item.identity"
+                        />
+                    </template>
+                    <template #footer>
+                        <section class="flex flex-row gap-2">
+                            <Button
+                                size="sm"
+                                class="w-8 h-8 bg-account-btn-s text-account-btn-s-text shadow-account-btn-s"
+                                @click="toManageAccounts"
+                            >
+                                <i class="bx bxs-pencil bx-xs" />
+                            </Button>
+                            <Button
+                                size="sm"
+                                class="w-8 h-8 bg-account-btn-s text-account-btn-s-text shadow-account-btn-s"
+                                @click="toAccountsPage"
+                            >
+                                <i class="bx bx-expand-alt bx-xs" />
+                            </Button>
+                        </section>
+                    </template>
+                </BarCard>
+
                 <div class="px-4 py-4 flex gap-5 fixed left-0 right-0 max-w-md m-auto w-full">
                     <Button
                         size="lg"
@@ -88,11 +118,12 @@ import Input from '@/components/Input.vue';
 import Modal from '@/components/Modal.vue';
 import Loading from '@/components/Loading.vue';
 import LoadingContainer from '@/components/LoadingContainer.vue';
-import { RSS3Account, RSS3Asset, RSS3Profile } from 'rss3-next/types/rss3';
+import { RSS3Account, RSS3Profile } from 'rss3-next/types/rss3';
 import RSS3, { IRSS3 } from '@/common/rss3';
 import config from '@/config';
 import LinkButton from '@/components/LinkButton.vue';
 import RNSUtils from '@/common/rns';
+import BarCard from '@/components/BarCard.vue';
 
 @Options({
     name: 'EditProfile',
@@ -107,6 +138,7 @@ import RNSUtils from '@/common/rns';
         Input,
         Loading,
         LoadingContainer,
+        BarCard,
     },
 })
 export default class EditProfile extends Vue {
@@ -128,8 +160,8 @@ export default class EditProfile extends Vue {
     isShowingNotice: Boolean = false;
     ethAddress: string = '';
     rns: string = '';
-
     $gtag: any;
+    accounts: RSS3Account[] = [];
 
     async mounted() {
         if (!(await RSS3.reconnect())) {
@@ -163,6 +195,9 @@ export default class EditProfile extends Vue {
             }
         }
 
+        const accounts = await (<IRSS3>this.rss3).accounts.get(this.ethAddress);
+        this.startLoadingAccounts(accounts);
+
         // Setup theme
         const themes = RSS3.getAvailableThemes(await (<IRSS3>this.rss3).assets.get());
         if (themes[0]) {
@@ -172,20 +207,47 @@ export default class EditProfile extends Vue {
         }
     }
 
-    // loadEdited() {
-    //     if (sessionStorage.getItem('profile')) {
-    //         this.profile = JSON.parse(sessionStorage.getItem('profile') || '');
-    //         return true;
-    //     } else {
-    //         return false;
-    //     }
-    // }
-    // saveEdited() {
-    //     sessionStorage.setItem('profile', JSON.stringify(this.profile));
-    // }
-    // clearEdited() {
-    //     sessionStorage.removeItem('profile');
-    // }
+    startLoadingAccounts(accounts: RSS3Account[]) {
+        this.accounts = [];
+        setTimeout(async () => {
+            // Push original account
+            this.accounts.push({
+                platform: 'Ethereum',
+                identity: this.ethAddress,
+                signature: '',
+                tags: ['pass:order:-1'],
+            });
+
+            await this.loadAccounts(accounts);
+        }, 0);
+    }
+
+    async loadAccounts(accounts: RSS3Account[]) {
+        // Get accounts
+        if (accounts) {
+            accounts.forEach((account: RSS3Account) => {
+                if (!account.tags?.includes('hidden')) {
+                    this.accounts.push(account);
+                }
+            });
+            this.accounts.sort((a, b) => {
+                return this.getTaggedOrder(a) - this.getTaggedOrder(b);
+            });
+        }
+    }
+
+    getTaggedOrder(taggedElement: RSS3Account): number {
+        if (!taggedElement.tags) {
+            return -1;
+        }
+        const orderPattern = /^pass:order:(-?\d+)$/i;
+        for (const tag of taggedElement.tags) {
+            if (orderPattern.test(tag)) {
+                return parseInt(orderPattern.exec(tag)?.[1] || '-1');
+            }
+        }
+        return -1;
+    }
 
     setOversizeNotice(field: string) {
         this.notice = `${field} cannot be longer than ${this.maxValueLength} chars`;
@@ -261,6 +323,15 @@ export default class EditProfile extends Vue {
                 await this.$router.push('/rns');
             }
         }
+    }
+
+    toManageAccounts() {
+        this.$router.push('/setup/accounts');
+    }
+
+    toAccountsPage() {
+        this.$gtag.event('visitAccountsPage', { userid: this.rns || this.ethAddress });
+        this.$router.push((config.subDomain.isSubDomainMode ? '' : `/${this.rns || this.ethAddress}`) + `/accounts`);
     }
 }
 </script>

@@ -351,11 +351,13 @@ import RNSUtils from '@/common/rns';
 import config from '@/config';
 import GitcoinItem from '@/components/GitcoinItem.vue';
 import { GeneralAsset, GeneralAssetWithTags } from '@/common/types';
+
 import NFTIcon from '@/components/Icons/NFTIcon.vue';
 import GitcoinIcon from '@/components/Icons/GitcoinIcon.vue';
 import ContentIcon from '@/components/Icons/ContentIcon.vue';
 import FootprintIcon from '@/components/Icons/FootprintIcon.vue';
 import Logo from '@/components/Logo.vue';
+
 import ContentCard from '@/components/ContentCard.vue';
 import { debounce } from 'lodash';
 import ContentProviders, { Content } from '@/common/content-providers';

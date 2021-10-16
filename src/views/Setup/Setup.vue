@@ -2,12 +2,42 @@
     <div class="h-screen bg-body-bg text-body-text overflow-y-auto">
         <div class="px-4 pt-8 pb-32 max-w-md m-auto">
             <div class="text-center mb-4">
-                <h1 class="text-5xl text-primary-text font-bold">Setup</h1>
+                <h1 class="text-xl text-primary-text font-bold">Setup</h1>
             </div>
             <AvatarEditor class="m-auto mb-4" size="lg" :url="profile.avatar" ref="avatar" />
             <Input class="mb-4 w-full" :is-single-line="true" placeholder="Username" v-model="profile.name" />
+            <Input
+                class="mb-4 w-full"
+                :is-single-line="true"
+                placeholder="Personal link"
+                prefix="https://"
+                v-model="profile.link"
+            />
             <Input class="mb-4 w-full" :is-single-line="false" placeholder="Bio" v-model="profile.bio" />
-            <Card
+
+            <BarCard color="account" class="mb-4 w-full">
+                <template #title-icon><AccountIcon /></template>
+                <template #content>
+                    <AccountItem
+                        v-for="account in accounts"
+                        :key="account.platform + account.identity"
+                        class="shadow-account-sm inline-flex m-0.5 rounded-full"
+                        :size="40"
+                        :chain="account.platform"
+                    />
+                </template>
+                <template #footer>
+                    <Button
+                        size="sm"
+                        class="w-8 h-8 bg-account-btn-m text-account-btn-m-text shadow-account-btn-m"
+                        @click="toManageAccounts"
+                    >
+                        <i class="bx bx-pencil bx-sm" />
+                    </Button>
+                </template>
+            </BarCard>
+
+            <!-- <Card
                 title="Accounts"
                 color-title="text-account-title"
                 color-tips="text-account-title"
@@ -35,8 +65,34 @@
                         :chain="account.platform"
                     />
                 </template>
-            </Card>
-            <Card
+            </Card> -->
+
+            <BarCard color="nft" class="mb-4 w-full">
+                <template #header>
+                    <NFTIcon />
+                </template>
+                <template #content>
+                    <NFTItem
+                        class="inline-flex mx-0.5"
+                        v-for="asset in nfts"
+                        :key="asset.platform + asset.identity + asset.id"
+                        :size="40"
+                        :image-url="asset.info.animation_url || asset.info.image_preview_url"
+                        :poster-url="asset.info.image_preview_url"
+                    />
+                </template>
+                <template #footer>
+                    <Button
+                        size="sm"
+                        class="w-8 h-8 bg-nft-btn-m text-nft-btn-m-text shadow-nft-btn-m"
+                        @click="toManageNFTs"
+                    >
+                        <i class="bx bx-pencil bx-sm" />
+                    </Button>
+                </template>
+            </BarCard>
+
+            <!-- <Card
                 title="NFTs"
                 color-title="text-nft-title"
                 color-tips="text-nft-title"
@@ -72,8 +128,33 @@
                         :poster-url="asset.info.image_preview_url"
                     />
                 </template>
-            </Card>
-            <Card
+            </Card> -->
+
+            <BarCard color="gitcoin" class="mb-4 w-full">
+                <template #header>
+                    <GitcoinIcon :iconColor="currentTheme === 'loot' ? 'white' : 'black'" />
+                </template>
+                <template #content>
+                    <GitcoinItem
+                        class="inline-flex mx-0.5"
+                        v-for="item in gitcoins"
+                        :key="item.platform + item.identity + item.id"
+                        :size="40"
+                        :imageUrl="item.info.image_preview_url"
+                    />
+                </template>
+                <template #footer>
+                    <Button
+                        size="sm"
+                        class="w-8 h-8 bg-gitcoin-btn-m text-gitcoin-btn-m-text shadow-gitcoin-btn-m"
+                        @click="toManageGitcoins"
+                    >
+                        <i class="bx bx-pencil bx-sm" />
+                    </Button>
+                </template>
+            </BarCard>
+
+            <!-- <Card
                 title="Donations"
                 color-title="text-gitcoin-title"
                 color-tips="text-gitcoin-title"
@@ -110,8 +191,27 @@
                         :imageUrl="item.info.image_preview_url"
                     />
                 </template>
-            </Card>
-            <Card
+            </Card> -->
+
+            <BarCard color="footprint" class="mb-4 w-full">
+                <template #header>
+                    <FootprintIcon />
+                </template>
+                <template #content>
+                    <span class="text-footprint-title">coming soon!</span>
+                </template>
+            </BarCard>
+
+            <BarCard color="content" class="mb-4 w-full">
+                <template #header>
+                    <ContentIcon />
+                </template>
+                <template #content>
+                    <span class="text-content-title">Check out in homepage!</span>
+                </template>
+            </BarCard>
+
+            <!-- <Card
                 title="Contents"
                 color-title="text-content-title"
                 color-tips="text-content-title"
@@ -121,7 +221,8 @@
                 tips="Check out in homepage!"
             >
                 <template #title-icon><ContentIcon /></template>
-            </Card>
+            </Card> -->
+
             <div
                 class="
                     px-4
@@ -184,6 +285,7 @@ import { Options, Vue } from 'vue-class-component';
 import Button from '@/components/Button.vue';
 import AvatarEditor from '@/components/AvatarEditor.vue';
 import Card from '@/components/Card.vue';
+import BarCard from '@/components/BarCard.vue';
 import AccountItem from '@/components/AccountItem.vue';
 import NFTItem from '@/components/NFT/NFTItem.vue';
 import Input from '@/components/Input.vue';
@@ -198,6 +300,7 @@ import NFTIcon from '@/components/Icons/NFTIcon.vue';
 import GitcoinIcon from '@/components/Icons/GitcoinIcon.vue';
 import ContentIcon from '@/components/Icons/ContentIcon.vue';
 import AccountIcon from '@/components/Icons/AccountIcon.vue';
+import FootprintIcon from '@/components/Icons/FootprintIcon.vue';
 
 import { GeneralAsset, GeneralAssetWithTags } from '@/common/types';
 import GitcoinItem from '@/components/GitcoinItem.vue';
@@ -206,11 +309,12 @@ import RNSUtils from '@/common/rns';
 @Options({
     name: 'Setup',
     components: {
-        GitcoinItem,
         Modal,
         Button,
         AvatarEditor,
         Card,
+        BarCard,
+        GitcoinItem,
         AccountItem,
         NFTItem,
         Input,
@@ -220,6 +324,7 @@ import RNSUtils from '@/common/rns';
         NFTIcon,
         GitcoinIcon,
         ContentIcon,
+        FootprintIcon,
     },
 })
 export default class Setup extends Vue {
@@ -227,10 +332,12 @@ export default class Setup extends Vue {
         avatar: string;
         name: string;
         bio: string;
+        link: string;
     } = {
         avatar: config.defaultAvatar,
         name: '',
         bio: '',
+        link: '',
     };
     accounts: RSS3Account[] = [];
     nfts: GeneralAssetWithTags[] = [];
@@ -273,8 +380,27 @@ export default class Setup extends Vue {
             const favicon = <HTMLLinkElement>document.getElementById('favicon');
             favicon.href = profile.avatar[0];
         }
+
         if (profile?.name) {
             document.title = profile.name;
+        }
+
+        if (profile?.bio) {
+            const fieldPattern = /<([A-Z]+?)#(.+?)?>/gi;
+            const fields = profile.bio.match(fieldPattern) || [];
+            this.profile.bio = profile.bio.replace(fieldPattern, '');
+
+            for (const field of fields) {
+                const splits = fieldPattern.exec(field) || [];
+                switch (splits[1]) {
+                    case 'SITE':
+                        this.profile.link = splits[2];
+                        break;
+                    default:
+                        // Do nothing
+                        break;
+                }
+            }
         }
 
         // Setup theme
@@ -444,21 +570,6 @@ export default class Setup extends Vue {
         }
     }
 
-    // loadEdited() {
-    //     if (sessionStorage.getItem('profile')) {
-    //         this.profile = JSON.parse(sessionStorage.getItem('profile') || '');
-    //         return true;
-    //     } else {
-    //         return false;
-    //     }
-    // }
-    // saveEdited() {
-    //     sessionStorage.setItem('profile', JSON.stringify(this.profile));
-    // }
-    // clearEdited() {
-    //     sessionStorage.removeItem('profile');
-    // }
-
     toManageAccounts() {
         // this.saveEdited();
         this.$router.push('/setup/accounts');
@@ -496,7 +607,7 @@ export default class Setup extends Vue {
             this.isShowingNotice = true;
             return;
         }
-        if (this.profile.bio.length > this.maxValueLength) {
+        if (this.profile.bio?.length + this.profile.link?.length + 8 > this.maxValueLength) {
             this.notice = `Bio cannot be longer than ${this.maxValueLength} chars`;
             this.isLoading = false;
             this.isShowingNotice = true;
@@ -504,7 +615,7 @@ export default class Setup extends Vue {
         }
         const newProfile: RSS3Profile = {
             name: this.profile.name,
-            bio: this.profile.bio,
+            bio: this.profile.bio + (this.profile.link ? `<SITE#${this.profile.link}>` : ''),
         };
         const avatarUrl = await (<any>this.$refs.avatar).upload();
         if (avatarUrl) {
