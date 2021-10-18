@@ -76,7 +76,7 @@
         --color-content-title: white;
         --color-content-bg: black;
         --color-content-border: white;
-        --color-content-divider: white;
+        --color-content-divider: rgba(255, 255, 255, 0.1);
 
         --color-footprint-btn-m: transparent;
         --color-footprint-btn-m-text: white;
@@ -87,7 +87,7 @@
         --color-footprint-title: white;
         --color-footprint-bg: black;
         --color-footprint-border: white;
-        --color-footprint-divider: white;
+        --color-footprint-divider: rgba(255, 255, 255, 0.1);
 
         --color-btn-disabled: transparent;
 
