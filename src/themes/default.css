@@ -4,8 +4,8 @@
         --color-account: #40d22f;
         --color-nft: #7553ff;
         --color-gitcoin: #02e2ac;
-        --color-content: #178bff;
-        --color-footprint: #fdca68;
+        --color-content: 23, 139, 255;
+        --color-footprint: 253, 202, 104;
         --color-body-bg: white;
         --color-body-text: black;
 
@@ -60,27 +60,27 @@
         --color-gitcoin-bg: #f4fffb;
         --color-gitcoin-border: transparent;
 
-        --color-content-btn-m: var(--color-content);
+        --color-content-btn-m: rgb(var(--color-content));
         --color-content-btn-m-text: white;
         --color-content-btn-m-border: transparent;
         --color-content-btn-s: white;
-        --color-content-btn-s-text: var(--color-content);
+        --color-content-btn-s-text: rgb(var(--color-content));
         --color-content-btn-s-border: transparent;
         --color-content-title: #0070e0;
         --color-content-bg: #f5faff;
         --color-content-border: transparent;
-        --color-content-divider: var(--color-content);
+        --color-content-divider: rgba(var(--color-content), 0.1);
 
-        --color-footprint-btn-m: var(--color-footprint);
+        --color-footprint-btn-m: rgb(var(--color-footprint));
         --color-footprint-btn-m-text: white;
         --color-footprint-btn-m-border: transparent;
         --color-footprint-btn-s: white;
-        --color-footprint-btn-s-text: var(--color-footprint);
+        --color-footprint-btn-s-text: rgb(var(--color-footprint));
         --color-footprint-btn-s-border: transparent;
         --color-footprint-title: #f8b229;
         --color-footprint-bg: #fffbf4;
         --color-footprint-border: transparent;
-        --color-footprint-divider: var(--color-footprint);
+        --color-footprint-divider: rgba(var(--color-footprint), 0.1);
 
         --color-btn-disabled: #f7fafc;
         --color-btn-border: transparent;

@@ -179,30 +179,31 @@
                             overflow-y-auto
                             md:max-h-112
                             scrollbar-hide
-                            divider-y-xs divider-content-divider divider-opacity-10
+                            divide-y-xs divide-content-divider
                         "
                         v-if="contents.length !== 0"
                     >
-                        <ContentCard
-                            v-for="item in contents"
-                            :key="item.id"
-                            :timestamp="parseInt(item.info.timestamp)"
-                            :content="item.info.pre_content"
-                            :title="item.info.title"
-                            :provider="item.type"
-                            @click="toContentLink(item.info.link)"
-                        />
-
-                        <Button
-                            size="sm"
-                            class="w-full h-6 bg-content-btn-s text-content-btn-s-text shadow-content-btn-s"
-                            v-show="isContentsHaveMore"
-                            @click="loadMoreContents"
-                            id="contents-load-more-button"
-                        >
-                            <i v-if="isLoadingContents" class="bx bx-loader-circle bx-spin"></i>
-                            <i v-else class="bx bx-dots-horizontal-rounded" />
-                        </Button>
+                        <div v-for="item in contents" :key="item.id">
+                            <ContentCard
+                                :timestamp="parseInt(item.info.timestamp)"
+                                :content="item.info.pre_content"
+                                :title="item.info.title"
+                                :provider="item.type"
+                                @click="toContentLink(item.info.link)"
+                            />
+                        </div>
+                        <div>
+                            <Button
+                                size="sm"
+                                class="w-full h-6 bg-content-btn-s text-content-btn-s-text shadow-content-btn-s"
+                                v-show="isContentsHaveMore"
+                                @click="loadMoreContents"
+                                id="contents-load-more-button"
+                            >
+                                <i v-if="isLoadingContents" class="bx bx-loader-circle bx-spin"></i>
+                                <i v-else class="bx bx-dots-horizontal-rounded" />
+                            </Button>
+                        </div>
                     </div>
                     <div v-else-if="isLoadingContents" class="text-content-title m-auto text-center mt-4">
                         Loading...
