@@ -16,7 +16,7 @@
             <Input class="mb-4 w-full" :is-single-line="false" placeholder="Bio" v-model="profile.bio" />
 
             <BarCard color="account" class="mb-4 w-full">
-                <template #title-icon><AccountIcon /></template>
+                <template #header><AccountIcon /></template>
                 <template #content>
                     <AccountItem
                         v-for="account in accounts"
@@ -37,49 +37,27 @@
                 </template>
             </BarCard>
 
-            <!-- <Card
-                title="Accounts"
-                color-title="text-account-title"
-                color-tips="text-account-title"
-                color-background="bg-account-bg"
-                class="mb-4 w-full"
-                :is-having-content="true"
-                :is-single-line="true"
-            >
-                <template #title-icon><AccountIcon /></template>
-                <template #header-button>
-                    <Button
-                        size="sm"
-                        class="w-10 h-10 bg-account-btn-m text-account-btn-m-text shadow-account-btn-m"
-                        @click="toManageAccounts"
-                    >
-                        <i class="bx bx-pencil bx-sm" />
-                    </Button>
-                </template>
-                <template #content>
-                    <AccountItem
-                        v-for="account in accounts"
-                        :key="account.platform + account.identity"
-                        class="shadow-account-sm inline-flex m-0.5 rounded-full"
-                        :size="64"
-                        :chain="account.platform"
-                    />
-                </template>
-            </Card> -->
-
             <BarCard color="nft" class="mb-4 w-full">
                 <template #header>
                     <NFTIcon />
                 </template>
                 <template #content>
-                    <NFTItem
-                        class="inline-flex mx-0.5"
-                        v-for="asset in nfts"
-                        :key="asset.platform + asset.identity + asset.id"
-                        :size="40"
-                        :image-url="asset.info.animation_url || asset.info.image_preview_url"
-                        :poster-url="asset.info.image_preview_url"
-                    />
+                    <template v-if="isLoadingAssets.NFT">
+                        <span class="text-nft-title">Loading... Hold on a little bit 🙌</span>
+                    </template>
+                    <template v-else-if="nfts.length === 0">
+                        <span class="text-nft-title">Haven't found anything yet...</span>
+                    </template>
+                    <template v-else>
+                        <NFTItem
+                            class="inline-flex mx-0.5"
+                            v-for="asset in nfts"
+                            :key="asset.platform + asset.identity + asset.id"
+                            :size="40"
+                            :image-url="asset.info.animation_url || asset.info.image_preview_url"
+                            :poster-url="asset.info.image_preview_url"
+                        />
+                    </template>
                 </template>
                 <template #footer>
                     <Button
@@ -92,56 +70,26 @@
                 </template>
             </BarCard>
 
-            <!-- <Card
-                title="NFTs"
-                color-title="text-nft-title"
-                color-tips="text-nft-title"
-                color-background="bg-nft-bg"
-                class="mb-4 w-full"
-                :is-having-content="nfts.length !== 0"
-                :is-single-line="nfts.length !== 0"
-                :tips="
-                    isLoadingAssets.NFT
-                        ? 'Loading... Hold on a little bit or manage them later 🙌'
-                        : nfts.length === 0
-                        ? 'Haven\'t found anything yet...'
-                        : ''
-                "
-            >
-                <template #title-icon><NFTIcon /></template>
-                <template #header-button>
-                    <Button
-                        size="sm"
-                        class="w-10 h-10 bg-nft-btn-m text-nft-btn-m-text shadow-nft-btn-m"
-                        @click="toManageNFTs"
-                    >
-                        <i class="bx bx-pencil bx-sm" />
-                    </Button>
-                </template>
-                <template #content>
-                    <NFTItem
-                        class="inline-flex mx-0.5"
-                        v-for="asset in nfts"
-                        :key="asset.platform + asset.identity + asset.id"
-                        :size="70"
-                        :image-url="asset.info.animation_url || asset.info.image_preview_url"
-                        :poster-url="asset.info.image_preview_url"
-                    />
-                </template>
-            </Card> -->
-
             <BarCard color="gitcoin" class="mb-4 w-full">
                 <template #header>
                     <GitcoinIcon :iconColor="currentTheme === 'loot' ? 'white' : 'black'" />
                 </template>
                 <template #content>
-                    <GitcoinItem
-                        class="inline-flex mx-0.5"
-                        v-for="item in gitcoins"
-                        :key="item.platform + item.identity + item.id"
-                        :size="40"
-                        :imageUrl="item.info.image_preview_url"
-                    />
+                    <template v-if="isLoadingAssets.Gitcoin">
+                        <span class="text-gitcoin-title">Loading... Hold on a little bit 🙌</span>
+                    </template>
+                    <template v-else-if="nfts.length === 0">
+                        <span class="text-gitcoin-title">Haven't found anything yet...</span>
+                    </template>
+                    <template v-else>
+                        <GitcoinItem
+                            class="inline-flex mx-0.5"
+                            v-for="item in gitcoins"
+                            :key="item.platform + item.identity + item.id"
+                            :size="40"
+                            :imageUrl="item.info.image_preview_url"
+                        />
+                    </template>
                 </template>
                 <template #footer>
                     <Button
@@ -154,51 +102,12 @@
                 </template>
             </BarCard>
 
-            <!-- <Card
-                title="Donations"
-                color-title="text-gitcoin-title"
-                color-tips="text-gitcoin-title"
-                color-background="bg-gitcoin-bg"
-                class="mb-4 w-full"
-                :is-having-content="gitcoins.length !== 0"
-                :is-single-line="gitcoins.length !== 0"
-                :tips="
-                    isLoadingAssets.Gitcoin
-                        ? 'Loading... Hold on a little bit or manage them later 🙌'
-                        : gitcoins.length === 0
-                        ? 'Haven\'t found anything yet...'
-                        : ''
-                "
-            >
-                <template #title-icon
-                    ><GitcoinIcon :iconColor="currentTheme === 'loot' ? 'white' : 'black'"
-                /></template>
-                <template #header-button>
-                    <Button
-                        size="sm"
-                        class="w-10 h-10 bg-gitcoin-btn-m text-gitcoin-btn-m-text shadow-gitcoin-btn-m"
-                        @click="toManageGitcoins"
-                    >
-                        <i class="bx bx-pencil bx-sm" />
-                    </Button>
-                </template>
-                <template #content>
-                    <GitcoinItem
-                        class="inline-flex mx-0.5"
-                        v-for="item in gitcoins"
-                        :key="item.platform + item.identity + item.id"
-                        :size="70"
-                        :imageUrl="item.info.image_preview_url"
-                    />
-                </template>
-            </Card> -->
-
             <BarCard color="footprint" class="mb-4 w-full">
                 <template #header>
                     <FootprintIcon />
                 </template>
                 <template #content>
-                    <span class="text-footprint-title">coming soon!</span>
+                    <span class="text-footprint-title">Coming soon!</span>
                 </template>
             </BarCard>
 
@@ -210,18 +119,6 @@
                     <span class="text-content-title">Check out in homepage!</span>
                 </template>
             </BarCard>
-
-            <!-- <Card
-                title="Contents"
-                color-title="text-content-title"
-                color-tips="text-content-title"
-                color-background="bg-content-bg"
-                class="mb-4 w-full"
-                :is-having-content="false"
-                tips="Check out in homepage!"
-            >
-                <template #title-icon><ContentIcon /></template>
-            </Card> -->
 
             <div
                 class="
