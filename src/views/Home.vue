@@ -159,15 +159,47 @@
                     </section>
                 </template>
                 <template #content>
-                    <div class="h-64">
+                    <div
+                        v-if="isPCLayout"
+                        class="
+                            flex flex-col
+                            px-0.5
+                            overflow-y-auto
+                            md:max-h-96
+                            scrollbar-hide
+                            divide-y-xs divide-footprint-divider
+                        "
+                    >
                         <!-- FootprintCard example -->
-                        <FootprintCard
-                            imageUrl="https://i.imgur.com/GdWEt4z.jpg"
-                            date="May 03, 2021"
-                            location="NYC"
-                            username="Joshsua"
-                            activity="RSS3 presents the Taurus ♉️️ Conference"
-                        />
+                        <div v-for="i of 32" :key="i">
+                            <FootprintCard
+                                imageUrl="https://i.imgur.com/GdWEt4z.jpg"
+                                date="May 03, 2021"
+                                location="NYC"
+                                username="Joshsua"
+                                activity="RSS3 presents the Taurus ♉️️ Conference"
+                            />
+                        </div>
+                    </div>
+                    <div v-else class="flex flex-col px-0.5 divide-y-xs divide-footprint-divider">
+                        <div>
+                            <FootprintCard
+                                imageUrl="https://i.imgur.com/GdWEt4z.jpg"
+                                date="May 03, 2021"
+                                location="NYC"
+                                username="Joshsua"
+                                activity="RSS3 presents the Taurus ♉️️ Conference"
+                            />
+                        </div>
+                        <div class="p-4 inline-flex overflow-x-auto scrollbar-hide">
+                            <FootprintItem
+                                v-for="i of 8"
+                                :key="i"
+                                imageUrl="https://i.imgur.com/GdWEt4z.jpg"
+                                :size="78"
+                                class="flex-shrink-0"
+                            />
+                        </div>
                     </div>
                 </template>
             </Card>
@@ -375,6 +407,7 @@ import ContentCard from '@/components/ContentCard.vue';
 import { debounce } from 'lodash';
 import ContentProviders, { Content } from '@/common/content-providers';
 import Toolbar from '@/components/Toolbar.vue';
+import FootprintItem from '@/components/FootprintItem.vue';
 
 interface ProfileInfo {
     avatar: string;
@@ -392,6 +425,7 @@ interface Relations {
 @Options({
     name: 'Home',
     components: {
+        FootprintItem,
         Button,
         BarCard,
         Card,
