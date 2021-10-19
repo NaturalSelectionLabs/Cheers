@@ -29,11 +29,11 @@
                             <i class="bx bx-link-external bx-xs" />
                         </Button>
                     </div>
-                    <section class="text-sm leading-normal text-footprint-title flex flex-col gap-2">
-                        <div class="truncate cursor-pointer">
-                            <i class="bx bx-link align-middle mr-2" />
-                            <span>https://i.imgur.com/GdWEt4z.jpg</span>
-                        </div>
+                    <div class="text-footprint-title truncate cursor-pointer my-2">
+                        <i class="bx bx-link align-middle mr-2" />
+                        <span>https://i.imgur.com/GdWEt4z.jpg</span>
+                    </div>
+                    <section class="text-sm text-footprint-title flex flex-col gap-2">
                         <div class="flex flex-row gap-2 items-center">
                             <CalendarIcon />
                             <span class="text-body-text">May 03, 2021</span>
@@ -43,8 +43,8 @@
                             <span class="text-body-text">NYC</span>
                         </div>
                     </section>
-                    <h3 class="text-footprint-title text-lg font-medium capitalize mt-2">Description</h3>
-                    <p class="text-sm leading-loose text-body-text">
+                    <h3 class="text-footprint-title text-lg font-medium capitalize my-2">Description</h3>
+                    <p class="text-body-text leading-loose font-medium">
                         RSS3 presents the Taurus ♉️️ Conference<br />
                         A quarterly team meetup curated by NSL
                     </p>

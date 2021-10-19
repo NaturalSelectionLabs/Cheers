@@ -158,7 +158,18 @@
                         </Button>
                     </section>
                 </template>
-                <template #content> <div class="h-64"></div> </template>
+                <template #content>
+                    <div class="h-64">
+                        <!-- FootprintCard example -->
+                        <FootprintCard
+                            imageUrl="https://i.imgur.com/GdWEt4z.jpg"
+                            date="May 03, 2021"
+                            location="NYC"
+                            username="Joshsua"
+                            activity="RSS3 presents the Taurus ♉️️ Conference"
+                        />
+                    </div>
+                </template>
             </Card>
 
             <Card
@@ -359,6 +370,7 @@ import ContentIcon from '@/components/Icons/ContentIcon.vue';
 import FootprintIcon from '@/components/Icons/FootprintIcon.vue';
 import Logo from '@/components/Logo.vue';
 
+import FootprintCard from '@/components/FootprintCard.vue';
 import ContentCard from '@/components/ContentCard.vue';
 import { debounce } from 'lodash';
 import ContentProviders, { Content } from '@/common/content-providers';
@@ -391,6 +403,7 @@ interface Relations {
         NFTIcon,
         ContentIcon,
         GitcoinIcon,
+        FootprintCard,
         ContentCard,
         Logo,
         Toolbar,

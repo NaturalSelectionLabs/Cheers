@@ -42,6 +42,14 @@
             </template>
         </BarCard>
 
+        <FootprintCard
+            imageUrl="https://i.imgur.com/GdWEt4z.jpg"
+            date="May 03, 2021"
+            location="NYC"
+            username="Joshsua"
+            activity="RSS3 presents the Taurus ♉️️ Conference"
+        />
+
         <Button size="sm" class="w-10 h-10 bg-white text-primary shadow-secondary">
             <i class="bx bx-chevron-left bx-sm"></i>
         </Button>
@@ -523,6 +531,7 @@ import NFTBadges from '@/components/NFT/NFTBadges.vue';
 import ScanTag from '@/components/NFT/ScanTag.vue';
 import Modal from '@/components/Modal.vue';
 import RSS3 from '@/common/rss3';
+import FootprintCard from '@/components/FootprintCard.vue';
 
 import draggable from 'vuedraggable';
 
@@ -547,6 +556,7 @@ import config from '@/config';
         NFTBadges,
         draggable,
         Loading,
+        FootprintCard,
     },
 })
 export default class Test extends Vue {
