@@ -147,12 +147,14 @@
                             v-if="isOwner"
                             size="sm"
                             class="w-8 h-8 bg-footprint-btn-s text-footprint-btn-s-text shadow-footprint-btn-s"
+                            @click="toManageFootprints"
                         >
                             <i class="bx bxs-pencil bx-xs" />
                         </Button>
                         <Button
                             size="sm"
                             class="w-8 h-8 bg-footprint-btn-s text-footprint-btn-s-text shadow-footprint-btn-s"
+                            @click="toFoorpintsPage"
                         >
                             <i class="bx bx-expand-alt bx-xs" />
                         </Button>
@@ -465,9 +467,11 @@ export default class Home extends Vue {
     isLoadingAssets: {
         NFT: boolean;
         Gitcoin: boolean;
+        Footprint: boolean;
     } = {
         NFT: true,
         Gitcoin: true,
+        Footprint: true,
     };
     loadingAssetsIntervalID: ReturnType<typeof setInterval> | null = null;
     isLoadingContents: boolean = true;
@@ -488,6 +492,7 @@ export default class Home extends Vue {
     accounts: RSS3Account[] = [];
     nfts: GeneralAssetWithTags[] = [];
     gitcoins: GeneralAssetWithTags[] = [];
+    footprints: GeneralAssetWithTags[] = [];
     contents: Content[] = [];
     $gtag: any;
     scrollTop: number = 0;
@@ -734,6 +739,20 @@ export default class Home extends Vue {
         return false;
     }
 
+    async ivLoadFootprint(refresh: boolean): Promise<boolean> {
+        const data = await RSS3.getAssetProfile(this.ethAddress, 'Footprint', refresh);
+        if (data && data.status !== false) {
+            await this.mergeAssets(
+                await (<IRSS3>this.rss3).assets.get(this.ethAddress),
+                <GeneralAsset[]>data.assets,
+                'Footprint',
+            );
+            this.isLoadingAssets.Footprint = false;
+            return true;
+        }
+        return false;
+    }
+
     async ivLoadAsset(refresh: boolean): Promise<boolean> {
         let isFinish = true;
         if (this.isLoadingAssets.NFT) {
@@ -741,6 +760,9 @@ export default class Home extends Vue {
         }
         if (this.isLoadingAssets.Gitcoin) {
             isFinish = (await this.ivLoadGitcoin(refresh)) && isFinish;
+        }
+        if (this.isLoadingAssets.Footprint) {
+            isFinish = (await this.ivLoadFootprint(refresh)) && isFinish;
         }
         if (isFinish) {
             if (this.loadingAssetsIntervalID) {
@@ -755,9 +777,11 @@ export default class Home extends Vue {
         if (refresh) {
             this.nfts = [];
             this.gitcoins = [];
+            this.footprints = [];
             this.isLoadingAssets = {
                 NFT: true,
                 Gitcoin: true,
+                Footprint: true,
             };
         }
         if (!(await this.ivLoadAsset(refresh))) {
@@ -830,23 +854,24 @@ export default class Home extends Vue {
             }),
         );
 
-        const NFTList: GeneralAssetWithTags[] = [];
-        const GitcoinList: GeneralAssetWithTags[] = [];
+        const List: GeneralAssetWithTags[] = [];
 
         for (const am of assetsMerge) {
-            if (am.type === 'NFT') {
-                NFTList.push(am);
-            } else if (am.type === 'Gitcoin-Donation') {
-                GitcoinList.push(am);
+            if (am.type === type) {
+                List.push(am);
             } // else Invalid
         }
 
         if (type === 'NFT') {
-            this.nfts = NFTList.filter((asset) => !asset.tags || asset.tags.indexOf('pass:hidden') === -1).sort(
+            this.nfts = List.filter((asset) => !asset.tags || asset.tags.indexOf('pass:hidden') === -1).sort(
                 (a, b) => this.getAssetOrder(a) - this.getAssetOrder(b),
             );
         } else if (type === 'Gitcoin-Donation') {
-            this.gitcoins = GitcoinList.filter((asset) => !asset.tags || asset.tags.indexOf('pass:hidden') === -1).sort(
+            this.gitcoins = List.filter((asset) => !asset.tags || asset.tags.indexOf('pass:hidden') === -1).sort(
+                (a, b) => this.getAssetOrder(a) - this.getAssetOrder(b),
+            );
+        } else if (type === 'Footprint') {
+            this.footprints = List.filter((asset) => !asset.tags || asset.tags.indexOf('pass:hidden') === -1).sort(
                 (a, b) => this.getAssetOrder(a) - this.getAssetOrder(b),
             );
         }
@@ -1044,6 +1069,14 @@ export default class Home extends Vue {
             this.$router.push('/setup/gitcoins');
         }
     }
+    toManageFootprints() {
+        if (this.isLoadingAssets.Footprint) {
+            this.notice = 'Footprints still loading... Maybe check back later?';
+            this.isShowingNotice = true;
+        } else {
+            this.$router.push('/setup/footprints');
+        }
+    }
 
     toAccountsPage() {
         this.$gtag.event('visitAccountsPage', { userid: this.rns || this.ethAddress });
@@ -1058,6 +1091,10 @@ export default class Home extends Vue {
     toGitcoinsPage() {
         this.$gtag.event('visitGitcoinPage', { userid: this.rns || this.ethAddress });
         this.$router.push((config.subDomain.isSubDomainMode ? '' : `/${this.rns || this.ethAddress}`) + `/gitcoins`);
+    }
+    toFoorpintsPage() {
+        this.$gtag.event('visitFootprintPage', { userid: this.rns || this.ethAddress });
+        this.$router.push((config.subDomain.isSubDomainMode ? '' : `/${this.rns || this.ethAddress}`) + `/footprints`);
     }
 
     toSingleNFTPage(platform: string, identity: string, id: string) {

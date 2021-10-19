@@ -21,6 +21,7 @@ import SetupGitcoins from '@/views/Setup/SetupGitcoins.vue';
 import SingleGitcoin from '@/views/SingleGitcoin.vue';
 import SingleFootprint from '@/views/SingleFootprint.vue';
 import config from '@/config';
+import Footprints from '@/views/Footprints.vue';
 
 export const routes = [
     /* IFTRUE_isDevelop */
@@ -70,6 +71,11 @@ export const routes = [
         path: (config.subDomain.isSubDomainMode ? '' : '/:address') + '/gitcoins',
         name: 'Gitcoins',
         component: Gitcoins,
+    },
+    {
+        path: (config.subDomain.isSubDomainMode ? '' : '/:address') + '/footprints',
+        name: 'Footprints',
+        component: Footprints,
     },
     {
         path: (config.subDomain.isSubDomainMode ? '' : '/:address') + '/singlegitcoin/:platform/:identity/:id',
