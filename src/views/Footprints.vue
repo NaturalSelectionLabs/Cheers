@@ -205,7 +205,7 @@ export default class Footprints extends Vue {
         const FootprintList: GeneralAssetWithTags[] = [];
 
         for (const am of assetsMerge) {
-            if (am.type === 'Footprint') {
+            if (am.type === 'POAP') {
                 FootprintList.push(am);
             }
         }
