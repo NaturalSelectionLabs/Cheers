@@ -115,7 +115,7 @@ export default class Profile extends Vue {
 <style lang="postcss" scoped>
 @layer components {
     .stats-container {
-        @apply cursor-pointer mb-2 text-primary-text;
+        @apply cursor-pointer mb-2 text-primary-text w-16;
         .stats-number {
             @apply text-xl font-semibold;
         }

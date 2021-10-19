@@ -35,7 +35,7 @@
             </Button>
             <Button
                 size="sm"
-                class="w-13 text-lg bg-primary-btn text-primary-btn-text shadow-primary-btn"
+                class="w-13 text-lg bg-secondary-btn text-secondary-btn-text shadow-secondary-btn"
                 @click="emitLogout"
             >
                 <i class="bx bx-log-out bx-sm"></i>
