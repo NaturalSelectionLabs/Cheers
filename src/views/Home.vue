@@ -151,6 +151,7 @@
                             <i class="bx bxs-pencil bx-xs" />
                         </Button>
                         <Button
+                            v-if="!isPCLayout"
                             size="sm"
                             class="w-8 h-8 bg-footprint-btn-s text-footprint-btn-s-text shadow-footprint-btn-s"
                         >
@@ -191,7 +192,7 @@
                                 activity="RSS3 presents the Taurus ♉️️ Conference"
                             />
                         </div>
-                        <div class="p-4 inline-flex overflow-x-auto scrollbar-hide">
+                        <div class="p-4 inline-flex overflow-x-auto" style="scrollbar-width: thin">
                             <FootprintItem
                                 v-for="i of 8"
                                 :key="i"
