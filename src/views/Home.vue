@@ -863,18 +863,16 @@ export default class Home extends Vue {
             } // else Invalid
         }
 
+        const res = List.filter((asset) => !asset.tags || asset.tags.indexOf('pass:hidden') === -1).sort(
+            (a, b) => this.getAssetOrder(a) - this.getAssetOrder(b),
+        );
+
         if (type === 'NFT') {
-            this.nfts = List.filter((asset) => !asset.tags || asset.tags.indexOf('pass:hidden') === -1).sort(
-                (a, b) => this.getAssetOrder(a) - this.getAssetOrder(b),
-            );
+            this.nfts = res;
         } else if (type === 'Gitcoin-Donation') {
-            this.gitcoins = List.filter((asset) => !asset.tags || asset.tags.indexOf('pass:hidden') === -1).sort(
-                (a, b) => this.getAssetOrder(a) - this.getAssetOrder(b),
-            );
+            this.gitcoins = res;
         } else if (type === 'Poap') {
-            this.footprints = List.filter((asset) => !asset.tags || asset.tags.indexOf('pass:hidden') === -1).sort(
-                (a, b) => this.getAssetOrder(a) - this.getAssetOrder(b),
-            );
+            this.footprints = res;
         }
     }
 
