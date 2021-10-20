@@ -65,11 +65,6 @@ export const routes = [
         component: NFTs,
     },
     {
-        path: (config.subDomain.isSubDomainMode ? '' : '/:address') + '/singlenft/:platform/:identity/:id',
-        name: 'SingleNFT',
-        component: SingleNFT,
-    },
-    {
         path: (config.subDomain.isSubDomainMode ? '' : '/:address') + '/gitcoins',
         name: 'Gitcoins',
         component: Gitcoins,
@@ -80,13 +75,18 @@ export const routes = [
         component: Footprints,
     },
     {
-        path: (config.subDomain.isSubDomainMode ? '' : '/:address') + '/singlegitcoin/:platform/:identity/:id',
+        path: (config.subDomain.isSubDomainMode ? '' : '/:address') + '/singlenft/:platform/:identity/:id/:type',
+        name: 'SingleNFT',
+        component: SingleNFT,
+    },
+    {
+        path: (config.subDomain.isSubDomainMode ? '' : '/:address') + '/singlegitcoin/:platform/:identity/:id/:type',
         name: 'SingleGitcoin',
         component: SingleGitcoin,
     },
 
     {
-        path: (config.subDomain.isSubDomainMode ? '' : '/:address') + '/singlefootprint/:platform/:identity/:id',
+        path: (config.subDomain.isSubDomainMode ? '' : '/:address') + '/singlefootprint/:platform/:identity/:id/:type',
         name: 'SingleFootprint',
         component: SingleFootprint,
     },

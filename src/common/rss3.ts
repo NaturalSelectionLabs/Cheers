@@ -268,16 +268,17 @@ export default {
             return data;
         }
     },
-    getNFTDetails: async (address: string, platform: string, identity: string, id: string) => {
+    getNFTDetails: async (address: string, platform: string, identity: string, id: string, type: string) => {
         let data: NFTResponse | null = null;
         try {
             const res = await axios({
                 method: 'get',
                 url: `${config.hubEndpoint}/asset-profile/${address}/nft/`,
                 params: {
-                    platform: platform,
-                    id: id,
-                    identity: identity,
+                    platform,
+                    id,
+                    identity,
+                    type,
                 },
             });
             if (res && res.data) {

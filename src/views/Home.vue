@@ -71,7 +71,7 @@
                         :image-url="item.info.animation_url || item.info.image_preview_url"
                         :poster-url="item.info.image_preview_url"
                         :size="40"
-                        @click="toSingleItemPage('NFT', item.platform, item.identity, item.id)"
+                        @click="toSingleItemPage('NFT', item.platform, item.identity, item.id, item.type)"
                     />
                 </template>
                 <template #footer>
@@ -106,7 +106,7 @@
                         :key="item.platform + item.identity + item.id"
                         :size="40"
                         :imageUrl="item.info.image_preview_url || defaultAvatar"
-                        @click="toSingleItemPage('Gitcoin', item.platform, item.identity, item.id)"
+                        @click="toSingleItemPage('Gitcoin', item.platform, item.identity, item.id, item.type)"
                     />
                 </template>
                 <template #footer>
@@ -182,7 +182,7 @@
                             :username="rss3Profile.username"
                             :activity="item.info.title"
                             class="cursor-pointer"
-                            @click="toSingleItemPage('Footprint', item.platform, item.identity, item.id)"
+                            @click="toSingleItemPage('Footprint', item.platform, item.identity, item.id, item.type)"
                         />
                     </div>
                     <div
@@ -201,6 +201,7 @@
                                         footprints[0].platform,
                                         footprints[0].identity,
                                         footprints[0].id,
+                                        footprints[0].type,
                                     )
                                 "
                             />
@@ -212,7 +213,7 @@
                                 :imageUrl="item.info.image_preview_url"
                                 :size="78"
                                 class="flex-shrink-0"
-                                @click="toSingleItemPage('Footprint', item.platform, item.identity, item.id)"
+                                @click="toSingleItemPage('Footprint', item.platform, item.identity, item.id, item.type)"
                             />
                         </div>
                     </div>
@@ -880,7 +881,7 @@ export default class Home extends Vue {
         const List: GeneralAssetWithTags[] = [];
 
         for (const am of assetsMerge) {
-            if (am.type === type) {
+            if (am.type.includes(type)) {
                 List.push(am);
             } // else Invalid
         }
@@ -889,7 +890,7 @@ export default class Home extends Vue {
             (a, b) => this.getAssetOrder(a) - this.getAssetOrder(b),
         );
 
-        if (type === 'NFT') {
+        if (type.includes('NFT')) {
             this.nfts = res;
         } else if (type === 'Gitcoin-Donation') {
             this.gitcoins = res;
@@ -1111,16 +1112,17 @@ export default class Home extends Vue {
         );
     }
 
-    toSingleItemPage(type: string, platform: string, identity: string, id: string) {
+    toSingleItemPage(type: string, platform: string, identity: string, id: string, fullType: string) {
         this.$gtag.event(`visitSingle${type}`, {
             userid: this.rns || this.ethAddress,
-            platform: platform,
-            nftidentity: identity,
-            nftid: id,
+            platform,
+            identity,
+            id,
+            type,
         });
         this.$router.push(
             (config.subDomain.isSubDomainMode ? '' : `/${this.rns || this.ethAddress}`) +
-                `/single${type.toLowerCase()}/${platform}/${identity}/${id}`,
+                `/single${type.toLowerCase()}/${platform}/${identity}/${id}/${fullType}`,
         );
     }
 

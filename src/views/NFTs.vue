@@ -26,7 +26,7 @@
                         :size="NFTWidth"
                         :imageUrl="item.info.animation_url || item.info.image_preview_url"
                         :poster-url="item.info.image_preview_url"
-                        @click="toSingleNFTPage(item.platform, item.identity, item.id)"
+                        @click="toSingleNFTPage(item.platform, item.identity, item.id, item.type)"
                     />
                     <NFTBadges
                         class="absolute top-2.5 right-2.5"
@@ -218,7 +218,7 @@ export default class NFTs extends Vue {
         const NFTList: GeneralAssetWithTags[] = [];
 
         for (const am of assetsMerge) {
-            if (am.type === 'NFT') {
+            if (am.type.includes('NFT')) {
                 NFTList.push(am);
             }
         }
@@ -228,16 +228,17 @@ export default class NFTs extends Vue {
         );
     }
 
-    toSingleNFTPage(platform: string, identity: string, id: string) {
+    toSingleNFTPage(platform: string, identity: string, id: string, type: string) {
         this.$gtag.event('visitSingleNft', {
             userid: this.rns || this.ethAddress,
             platform: platform,
             nftidentity: identity,
             nftid: id,
+            nfttype: type,
         });
         this.$router.push(
             (config.subDomain.isSubDomainMode ? '' : `/${this.rns || this.ethAddress}`) +
-                `/singlenft/${platform}/${identity}/${id}`,
+                `/singlenft/${platform}/${identity}/${id}/${type}`,
         );
     }
 

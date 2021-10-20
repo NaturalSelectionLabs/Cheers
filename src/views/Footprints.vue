@@ -37,7 +37,7 @@
                     :username="rss3Profile.username"
                     :activity="item.info.title"
                     class="cursor-pointer"
-                    @click="toSingleFootprint(item.platform, item.identity, item.id)"
+                    @click="toSingleFootprint(item.platform, item.identity, item.id, item.type)"
                 />
             </div>
             <div
@@ -231,10 +231,10 @@ export default class Footprints extends Vue {
         this.$router.push(`/setup/footprints`);
     }
 
-    toSingleFootprint(platform: string, identity: string, id: string) {
+    toSingleFootprint(platform: string, identity: string, id: string, type: string) {
         this.$router.push(
             (config.subDomain.isSubDomainMode ? '' : `/${this.rns || this.ethAddress}`) +
-                `/singlefootprint/${platform}/${identity}/${id}`,
+                `/singlefootprint/${platform}/${identity}/${id}/${type}`,
         );
     }
 

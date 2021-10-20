@@ -496,7 +496,7 @@ export default class Setup extends Vue {
         const List: GeneralAssetWithTags[] = [];
 
         for (const am of assetsMerge) {
-            if (am.type === type) {
+            if (am.type.includes(type)) {
                 List.push(am);
             } // else Invalid
         }
@@ -505,7 +505,7 @@ export default class Setup extends Vue {
             (a, b) => this.getAssetOrder(a) - this.getAssetOrder(b),
         );
 
-        if (type === 'NFT') {
+        if (type.includes('NFT')) {
             this.nfts = res;
         } else if (type === 'Gitcoin-Donation') {
             this.gitcoins = res;

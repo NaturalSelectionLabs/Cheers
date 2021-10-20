@@ -39,7 +39,7 @@
                     :name="item.info.title || 'Inactive Project'"
                     :contrib="item.info.total_contribs"
                     :amount="item.info.token_contribs"
-                    @click="toSingleGitcoin(item.platform, item.identity, item.id)"
+                    @click="toSingleGitcoin(item.platform, item.identity, item.id, item.type)"
                 ></GitcoinCard>
             </div>
             <div
@@ -242,10 +242,10 @@ export default class Gitcoins extends Vue {
         window.open(`https://gitcoin.co/`);
     }
 
-    toSingleGitcoin(platform: string, identity: string, id: string) {
+    toSingleGitcoin(platform: string, identity: string, id: string, type: string) {
         this.$router.push(
             (config.subDomain.isSubDomainMode ? '' : `/${this.rns || this.ethAddress}`) +
-                `/singlegitcoin/${platform}/${identity}/${id}`,
+                `/singlegitcoin/${platform}/${identity}/${id}/${type}`,
         );
     }
 
