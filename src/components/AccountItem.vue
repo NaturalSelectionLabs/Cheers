@@ -28,7 +28,6 @@
 import { Vue, Options } from 'vue-class-component';
 import Button from '@/components/Button.vue';
 import Tooltip from '@/components/Tooltip.vue';
-import { hashicon } from '@emeraldpay/hashicon';
 
 @Options({
     components: { Tooltip, Button },

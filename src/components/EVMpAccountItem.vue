@@ -42,13 +42,18 @@ export default class EVMpAccountItem extends Vue {
     deleteMode!: Boolean;
 
     isHover: boolean = false;
-    isWithIcon: boolean = false;
 
     genIcon() {
-        if (this.address && !this.isWithIcon) {
+        if (this.address) {
             const icon = hashicon(this.address.toString(), <number>this.size - 12);
-            (<HTMLDivElement>this.$refs.account).appendChild(icon);
-            this.isWithIcon = true;
+            if ((<HTMLDivElement>this.$refs.account).hasChildNodes()) {
+                (<HTMLDivElement>this.$refs.account).replaceChild(
+                    icon,
+                    (<HTMLDivElement>this.$refs.account).childNodes[0],
+                );
+            } else {
+                (<HTMLDivElement>this.$refs.account).appendChild(icon);
+            }
         }
     }
 
