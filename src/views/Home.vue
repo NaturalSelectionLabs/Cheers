@@ -169,7 +169,7 @@
                             flex flex-col
                             px-0.5
                             overflow-y-auto
-                            md:max-h-96
+                            md:h-72
                             scrollbar-hide
                             divide-y-xs divide-footprint-divider
                         "
@@ -236,7 +236,7 @@
                             flex flex-col
                             px-0.5
                             overflow-y-auto
-                            md:max-h-112
+                            md:h-112
                             scrollbar-hide
                             divide-y-xs divide-content-divider
                         "
