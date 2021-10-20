@@ -121,7 +121,7 @@ export default class Footprints extends Vue {
             document.body.classList.remove(...document.body.classList);
         }
 
-        const footprintsData = await RSS3.getAssetProfile(this.ethAddress, 'Poap');
+        const footprintsData = await RSS3.getAssetProfile(this.ethAddress, 'POAP');
         if (footprintsData) {
             await this.loadFootprint(await rss3.assets.get(this.ethAddress), footprintsData.assets);
         }
@@ -205,7 +205,7 @@ export default class Footprints extends Vue {
         const FootprintList: GeneralAssetWithTags[] = [];
 
         for (const am of assetsMerge) {
-            if (am.type === 'Poap') {
+            if (am.type === 'POAP') {
                 FootprintList.push(am);
             }
         }

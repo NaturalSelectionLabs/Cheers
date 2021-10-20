@@ -386,12 +386,12 @@ export default class Setup extends Vue {
     }
 
     async ivLoadFootprint(refresh: boolean): Promise<boolean> {
-        const data = await RSS3.getAssetProfile((<IRSS3>this.rss3).account.address, 'Poap', refresh);
+        const data = await RSS3.getAssetProfile((<IRSS3>this.rss3).account.address, 'POAP', refresh);
         if (data && data.status !== false) {
             await this.mergeAssets(
                 await (<IRSS3>this.rss3).assets.get((<IRSS3>this.rss3).account.address),
                 <GeneralAsset[]>data.assets,
-                'Poap',
+                'POAP',
             );
             this.isLoadingAssets.Footprint = false;
             return true;
@@ -506,7 +506,7 @@ export default class Setup extends Vue {
             this.nfts = res;
         } else if (type === 'Gitcoin-Donation') {
             this.gitcoins = res;
-        } else if (type === 'Poap') {
+        } else if (type === 'POAP') {
             this.footprints = res;
         }
     }

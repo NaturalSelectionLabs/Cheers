@@ -3,7 +3,7 @@ import Web3 from 'web3';
 import RSS3 from 'rss3-next';
 import { RSS3Account, RSS3Asset } from 'rss3-next/types/rss3';
 import axios from 'axios';
-import { GitcoinResponse, GeneralAsset, NFTResponse } from './types';
+import { GitcoinResponse, GeneralAsset, NFTResponse, POAPResponse } from './types';
 import config from '@/config';
 import Cookies from 'js-cookie';
 
@@ -259,8 +259,8 @@ export default {
             try {
                 const res = await axios.get(`${config.hubEndpoint}/asset-profile/${address}/${type.toLowerCase()}/`);
                 if (res && res.data) {
-                    data = res.data;
-                    assets.set(address + type, <IAssetProfile>data);
+                    data = <IAssetProfile>res.data;
+                    assets.set(address + type, data);
                 }
             } catch (error) {
                 data = null;
@@ -281,7 +281,7 @@ export default {
                 },
             });
             if (res && res.data) {
-                data = res.data;
+                data = <NFTResponse>res.data;
             }
         } catch (error) {
             data = null;
@@ -301,7 +301,27 @@ export default {
                 },
             });
             if (res && res.data) {
-                data = res.data;
+                data = <GitcoinResponse>res.data;
+            }
+        } catch (error) {
+            data = null;
+        }
+        return data;
+    },
+    getFootprintDetail: async (address: string, platform: string, identity: string, id: string) => {
+        let data: POAPResponse | null = null;
+        try {
+            const res = await axios({
+                method: 'get',
+                url: `${config.hubEndpoint}/asset-profile/${address}/poap/`,
+                params: {
+                    platform: platform,
+                    id: id,
+                    identity: identity,
+                },
+            });
+            if (res && res.data) {
+                data = <POAPResponse>res.data;
             }
         } catch (error) {
             data = null;
