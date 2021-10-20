@@ -32,7 +32,9 @@ export default class ContentCard extends Vue {
     renderedContent: string = '';
 
     mounted() {
-        this.renderedContent = marked(this.content.replaceAll('\n', '<br>') || '');
+        this.renderedContent = marked(this.content.replaceAll('\n', '<br>') || '')
+            .replaceAll('img class="emoji"', 'img style="display: inline; max-width: 1.8rem; max-height: 1.8rem;"')
+            .replaceAll('img class="media"', 'img class="m-2 rounded-md w-3/4 mx-auto"');
     }
 
     getDate(timestamp: number): string {
@@ -41,13 +43,4 @@ export default class ContentCard extends Vue {
 }
 </script>
 
-<style lang="postcss" scoped>
-.content-body .emoji {
-    max-width: 1.8rem;
-    max-height: 1.8rem;
-    display: inline;
-}
-.content-body .media {
-    @apply m-2 rounded-md w-3/4 mx-auto;
-}
-</style>
+<style></style>
