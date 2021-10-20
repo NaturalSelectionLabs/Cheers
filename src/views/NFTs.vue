@@ -115,7 +115,7 @@ export default class NFTs extends Vue {
         const profile = await rss3.profile.get(this.ethAddress);
 
         this.rss3Profile.avatar = profile.avatar?.[0] || config.defaultAvatar;
-        this.rss3Profile.username = profile.name?.[0] || '';
+        this.rss3Profile.username = profile.name || '';
 
         // Setup theme
         const themes = RSS3.getAvailableThemes(await rss3.assets.get(this.ethAddress));
