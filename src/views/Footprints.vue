@@ -121,7 +121,7 @@ export default class Footprints extends Vue {
             document.body.classList.remove(...document.body.classList);
         }
 
-        const footprintsData = await RSS3.getAssetProfile(this.ethAddress, 'Footprints');
+        const footprintsData = await RSS3.getAssetProfile(this.ethAddress, 'POAP');
         if (footprintsData) {
             await this.loadFootprint(await rss3.assets.get(this.ethAddress), footprintsData.assets);
         }
