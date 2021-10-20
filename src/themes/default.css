@@ -69,7 +69,7 @@
         --color-content-title: #0070e0;
         --color-content-bg: #f5faff;
         --color-content-border: transparent;
-        --color-content-divider: rgba(var(--color-content), 0.1);
+        --color-content-divider: rgba(var(--color-content), 0.2);
 
         --color-footprint-btn-m: rgb(var(--color-footprint));
         --color-footprint-btn-m-text: white;
@@ -80,7 +80,7 @@
         --color-footprint-title: #f8b229;
         --color-footprint-bg: #fffbf4;
         --color-footprint-border: transparent;
-        --color-footprint-divider: rgba(var(--color-footprint), 0.1);
+        --color-footprint-divider: rgba(var(--color-footprint), 0.3);
 
         --color-btn-disabled: #f7fafc;
         --color-btn-border: transparent;
