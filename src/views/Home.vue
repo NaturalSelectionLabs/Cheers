@@ -184,23 +184,34 @@
                             @click="toSingleItemPage('Footprint', item.platform, item.identity, item.id)"
                         />
                     </div>
-                    <div v-else class="flex flex-col px-0.5 divide-y-xs divide-footprint-divider">
+                    <div
+                        v-else-if="footprints.length > 0"
+                        class="flex flex-col px-0.5 divide-y-xs divide-footprint-divider"
+                    >
                         <div>
                             <FootprintCard
-                                imageUrl="https://i.imgur.com/GdWEt4z.jpg"
-                                date="May 03, 2021"
-                                location="NYC"
-                                username="Joshsua"
-                                activity="RSS3 presents the Taurus ♉️️ Conference"
+                                :imageUrl="footprints[0].info.image_preview_url"
+                                :username="rss3Profile.username"
+                                :activity="footprints[0].info.title"
+                                class="cursor-pointer"
+                                @click="
+                                    toSingleItemPage(
+                                        'Footprint',
+                                        footprints[0].platform,
+                                        footprints[0].identity,
+                                        footprints[0].id,
+                                    )
+                                "
                             />
                         </div>
                         <div class="p-4 inline-flex overflow-x-auto" style="scrollbar-width: thin">
                             <FootprintItem
-                                v-for="i of 8"
-                                :key="i"
-                                imageUrl="https://i.imgur.com/GdWEt4z.jpg"
+                                v-for="item of footprints"
+                                :key="item.platform + item.identity + item.id"
+                                :imageUrl="item.info.image_preview_url"
                                 :size="78"
                                 class="flex-shrink-0"
+                                @click="toSingleItemPage('Footprint', item.platform, item.identity, item.id)"
                             />
                         </div>
                     </div>
