@@ -36,13 +36,14 @@
 
                 <BarCard color="account" class="mb-4 w-full">
                     <template #content>
-                        <AccountItem
+                        <div
                             class="inline-block mr-1 cursor-pointer"
-                            :size="40"
-                            :chain="item.platform"
                             v-for="item in accounts"
                             :key="item.platform + item.identity"
-                        />
+                        >
+                            <EVMpAccountItem v-if="item.platform === 'EVM+'" :size="40" :address="item.identity" />
+                            <AccountItem v-else :size="40" :chain="item.platform" :address="item.identity" />
+                        </div>
                     </template>
                     <template #footer>
                         <section class="flex flex-row gap-2">
@@ -112,6 +113,7 @@ import { Options, Vue } from 'vue-class-component';
 import Button from '@/components/Button.vue';
 import AvatarEditor from '@/components/AvatarEditor.vue';
 import Card from '@/components/Card.vue';
+import EVMpAccountItem from '@/components/EVMpAccountItem.vue';
 import AccountItem from '@/components/AccountItem.vue';
 import NFTItem from '@/components/NFT/NFTItem.vue';
 import Input from '@/components/Input.vue';
@@ -128,6 +130,7 @@ import BarCard from '@/components/BarCard.vue';
 @Options({
     name: 'EditProfile',
     components: {
+        EVMpAccountItem,
         LinkButton,
         Modal,
         Button,

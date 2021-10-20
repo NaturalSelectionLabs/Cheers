@@ -2,17 +2,14 @@
     <div class="relative">
         <div
             class="account-item"
-            :class="{
-                'bg-Misskey': chain === 'Misskey',
-                'bg-Twitter': chain === 'Twitter',
-            }"
             :style="{ width: size + 'px', height: size + 'px' }"
             @mouseenter="isHover = true"
             @mouseout="isHover = false"
             @touchstart="isHover = true"
             @touchend="isHover = false"
+            ref="account"
         />
-        <Tooltip v-if="$props.address" v-show="isHover" :text="$props.address" view-option="account" />
+        <Tooltip v-if="enableTooltip" v-show="isHover" :text="addressFilter($props.address)" view-option="account" />
         <Button
             v-show="deleteMode"
             size="sm"
@@ -34,20 +31,40 @@ import { hashicon } from '@emeraldpay/hashicon';
     components: { Tooltip, Button },
     props: {
         size: Number,
-        chain: String,
         deleteMode: Boolean,
         address: String,
+        enableTooltip: Boolean,
     },
 })
-export default class AccountItem extends Vue {
+export default class EVMpAccountItem extends Vue {
     size!: Number;
-    chain!: String;
+    address!: String;
     deleteMode!: Boolean;
 
     isHover: boolean = false;
+    isWithIcon: boolean = false;
+
+    genIcon() {
+        if (this.address && !this.isWithIcon) {
+            const icon = hashicon(this.address.toString(), <number>this.size - 12);
+            (<HTMLDivElement>this.$refs.account).appendChild(icon);
+            this.isWithIcon = true;
+        }
+    }
+
+    mounted() {
+        this.genIcon();
+    }
+    updated() {
+        this.genIcon();
+    }
 
     deleteAccount() {
         this.$emit('deleteAccount');
+    }
+
+    addressFilter(address: string) {
+        return address.length > 14 ? `${address.slice(0, 6)}....${address.slice(-4)}` : address;
     }
 }
 </script>
@@ -55,7 +72,7 @@ export default class AccountItem extends Vue {
 <style scoped lang="postcss">
 @layer components {
     .account-item {
-        @apply rounded-full border border-item-border filter shadow-account bg-item-bg bg-85 bg-center bg-no-repeat;
+        @apply rounded-full border border-item-border filter shadow-account bg-item-bg bg-85 bg-center bg-no-repeat overflow-hidden flex justify-center items-center;
     }
 }
 </style>

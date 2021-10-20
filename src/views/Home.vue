@@ -18,14 +18,15 @@
                     @click-address="clickAddress"
                 >
                     <template #Accounts>
-                        <AccountItem
+                        <div
                             class="inline-block mr-1 cursor-pointer"
-                            :size="30"
-                            :chain="item.platform"
                             v-for="item in accounts"
                             :key="item.platform + item.identity"
                             @click="displayDialog(item.identity, item.platform)"
-                        />
+                        >
+                            <EVMpAccountItem v-if="item.platform === 'EVM+'" :size="30" :address="item.identity" />
+                            <AccountItem v-else :size="30" :chain="item.platform" :address="item.identity" />
+                        </div>
                         <Button
                             v-if="isOwner"
                             size="sm"
@@ -318,11 +319,19 @@
                 </template>
                 <template #body>
                     <div class="flex flex-col gap-y-4 items-center">
+                        <EVMpAccountItem
+                            class="m-auto mt-4"
+                            v-if="showingAccountDetails.platform === 'EVM+'"
+                            :size="90"
+                            :address="showingAccountDetails.address"
+                        />
                         <AccountItem
                             class="m-auto mt-4"
+                            v-else
                             :size="90"
                             :chain="showingAccountDetails.platform"
-                        ></AccountItem>
+                            :address="showingAccountDetails.address"
+                        />
                         <span class="address text-xl font-semibold break-all text-center mt-4">
                             {{ showingAccountDetails.address }}
                         </span>
@@ -422,6 +431,7 @@ import { debounce } from 'lodash';
 import ContentProviders, { Content } from '@/common/content-providers';
 import Toolbar from '@/components/Toolbar.vue';
 import FootprintItem from '@/components/FootprintItem.vue';
+import EVMpAccountItem from '@/components/EVMpAccountItem.vue';
 
 interface ProfileInfo {
     avatar: string;
@@ -439,6 +449,7 @@ interface Relations {
 @Options({
     name: 'Home',
     components: {
+        EVMpAccountItem,
         FootprintItem,
         Button,
         BarCard,

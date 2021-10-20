@@ -328,7 +328,7 @@ export default {
         }
         return data;
     },
-    addNewMetamaskAccount: async (platform: string): Promise<RSS3Account> => {
+    addNewMetamaskAccount: async (): Promise<RSS3Account> => {
         // js don't support multiple return values,
         // so here I'm using signature as a message provider
         if (!rss3) {
@@ -346,14 +346,14 @@ export default {
         const address = metaMaskWeb3.utils.toChecksumAddress(accounts[0]);
 
         const newTmpAddress: RSS3Account = {
-            platform: platform,
+            platform: 'EVM+',
             identity: address,
         };
 
         const signature = await metaMaskWeb3.eth.personal.sign(rss3.accounts.getSigMessage(newTmpAddress), address, '');
 
         return {
-            platform: platform,
+            platform: 'EVM+',
             identity: address,
             signature: signature,
         };

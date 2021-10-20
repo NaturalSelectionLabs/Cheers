@@ -18,13 +18,14 @@
             <BarCard color="account" class="mb-4 w-full">
                 <template #header><AccountIcon /></template>
                 <template #content>
-                    <AccountItem
-                        v-for="account in accounts"
-                        :key="account.platform + account.identity"
+                    <div
                         class="shadow-account-sm inline-flex m-0.5 rounded-full"
-                        :size="40"
-                        :chain="account.platform"
-                    />
+                        v-for="item in accounts"
+                        :key="item.platform + item.identity"
+                    >
+                        <EVMpAccountItem v-if="item.platform === 'EVM+'" :size="40" :address="item.identity" />
+                        <AccountItem v-else :size="40" :chain="item.platform" :address="item.identity" />
+                    </div>
                 </template>
                 <template #footer>
                     <Button
@@ -226,10 +227,12 @@ import { GeneralAsset, GeneralAssetWithTags } from '@/common/types';
 import GitcoinItem from '@/components/GitcoinItem.vue';
 import RNSUtils from '@/common/rns';
 import FootprintItem from '@/components/FootprintItem.vue';
+import EVMpAccountItem from '@/components/EVMpAccountItem.vue';
 
 @Options({
     name: 'Setup',
     components: {
+        EVMpAccountItem,
         FootprintItem,
         Modal,
         Button,

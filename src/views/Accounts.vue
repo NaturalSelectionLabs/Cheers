@@ -26,7 +26,8 @@
                         v-for="item in accounts"
                         :key="item.platform + item.identity"
                     >
-                        <AccountItem :size="70" :chain="item.platform"></AccountItem>
+                        <EVMpAccountItem v-if="item.platform === 'EVM+'" :size="70" :address="item.identity" />
+                        <AccountItem v-else :size="70" :chain="item.platform" :address="item.identity" />
                         <span class="address text-2xl text-account-title font-semibold col-span-3">{{
                             getDisplayAddress(item)
                         }}</span>
@@ -67,6 +68,7 @@
 import { Options, Vue } from 'vue-class-component';
 import Button from '@/components/Button.vue';
 import ImgHolder from '@/components/ImgHolder.vue';
+import EVMpAccountItem from '@/components/EVMpAccountItem.vue';
 import AccountItem from '@/components/AccountItem.vue';
 import RSS3, { IRSS3 } from '@/common/rss3';
 import { RSS3Account, RSS3Index } from 'rss3-next/types/rss3';
@@ -83,7 +85,7 @@ interface Profile {
 
 @Options({
     name: 'Accounts',
-    components: { ImgHolder, Button, AccountItem },
+    components: { EVMpAccountItem, ImgHolder, Button, AccountItem },
 })
 export default class Accounts extends Vue {
     rns: string = '';
