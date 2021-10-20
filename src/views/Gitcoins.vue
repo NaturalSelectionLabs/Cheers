@@ -211,7 +211,7 @@ export default class Gitcoins extends Vue {
         const GitcoinList: GeneralAssetWithTags[] = [];
 
         for (const am of assetsMerge) {
-            if (am.type === 'Gitcoin-Donation' && !am.tags?.includes('pass:hidden')) {
+            if (am.type.includes('Gitcoin-Donation') && !am.tags?.includes('pass:hidden')) {
                 this.contribs += <number>am.info.total_contribs;
                 GitcoinList.push(am);
             }

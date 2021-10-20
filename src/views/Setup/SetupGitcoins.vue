@@ -253,7 +253,7 @@ export default class SetupGitcoins extends Vue {
         const GitcoinList: GeneralAssetWithTags[] = [];
 
         for (const am of assetsMerge) {
-            if (am.type === 'Gitcoin-Donation') {
+            if (am.type.includes('Gitcoin-Donation')) {
                 GitcoinList.push(am);
             } // else Invalid
         }

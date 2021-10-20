@@ -263,7 +263,7 @@ export default class SetupNFTs extends Vue {
                 }),
             );
             for (const am of assetsMatch) {
-                if (am.type === 'NFT') {
+                if (am.type.includes('NFT')) {
                     this.nfts.push(am);
                 }
             }
