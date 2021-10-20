@@ -70,7 +70,7 @@
                         :image-url="item.info.animation_url || item.info.image_preview_url"
                         :poster-url="item.info.image_preview_url"
                         :size="40"
-                        @click="toSingleNFTPage(item.platform, item.identity, item.id)"
+                        @click="toSingleItemPage('NFT', item.platform, item.identity, item.id)"
                     />
                 </template>
                 <template #footer>
@@ -86,7 +86,7 @@
                         <Button
                             size="sm"
                             class="w-8 h-8 bg-nft-btn-s text-nft-btn-s-text shadow-nft-btn-s"
-                            @click="toNFTsPage"
+                            @click="toListPage('NFT')"
                         >
                             <i class="bx bx-expand-alt bx-xs" />
                         </Button>
@@ -105,7 +105,7 @@
                         :key="item.platform + item.identity + item.id"
                         :size="40"
                         :imageUrl="item.info.image_preview_url || defaultAvatar"
-                        @click="toSingleGitcoin(item.platform, item.identity, item.id)"
+                        @click="toSingleItemPage('Gitcoin', item.platform, item.identity, item.id)"
                     />
                 </template>
                 <template #footer>
@@ -121,7 +121,7 @@
                         <Button
                             size="sm"
                             class="w-8 h-8 bg-gitcoin-btn-s text-gitcoin-btn-s-text shadow-gitcoin-btn-s"
-                            @click="toGitcoinsPage"
+                            @click="toListPage('Gitcoin')"
                         >
                             <i class="bx bx-expand-alt bx-xs" />
                         </Button>
@@ -155,7 +155,7 @@
                             v-if="!isPCLayout"
                             size="sm"
                             class="w-8 h-8 bg-footprint-btn-s text-footprint-btn-s-text shadow-footprint-btn-s"
-                            @click="toFoorpintsPage"
+                            @click="toListPage('Footprint')"
                         >
                             <i class="bx bx-expand-alt bx-xs" />
                         </Button>
@@ -174,15 +174,15 @@
                         "
                     >
                         <!-- FootprintCard example -->
-                        <div v-for="i of 32" :key="i">
-                            <FootprintCard
-                                imageUrl="https://i.imgur.com/GdWEt4z.jpg"
-                                date="May 03, 2021"
-                                location="NYC"
-                                username="Joshsua"
-                                activity="RSS3 presents the Taurus ♉️️ Conference"
-                            />
-                        </div>
+                        <FootprintCard
+                            v-for="item of footprints"
+                            :key="item.platform + item.identity + item.id"
+                            :imageUrl="item.info.image_preview_url"
+                            :username="rss3Profile.username"
+                            :activity="item.info.title"
+                            class="cursor-pointer"
+                            @click="toSingleItemPage('Footprint', item.platform, item.identity, item.id)"
+                        />
                     </div>
                     <div v-else class="flex flex-col px-0.5 divide-y-xs divide-footprint-divider">
                         <div>
@@ -741,12 +741,12 @@ export default class Home extends Vue {
     }
 
     async ivLoadFootprint(refresh: boolean): Promise<boolean> {
-        const data = await RSS3.getAssetProfile(this.ethAddress, 'POAP', refresh);
+        const data = await RSS3.getAssetProfile(this.ethAddress, 'Poap', refresh);
         if (data && data.status !== false) {
             await this.mergeAssets(
                 await (<IRSS3>this.rss3).assets.get(this.ethAddress),
                 <GeneralAsset[]>data.assets,
-                'POAP',
+                'Poap',
             );
             this.isLoadingAssets.Footprint = false;
             return true;
@@ -871,7 +871,7 @@ export default class Home extends Vue {
             this.gitcoins = List.filter((asset) => !asset.tags || asset.tags.indexOf('pass:hidden') === -1).sort(
                 (a, b) => this.getAssetOrder(a) - this.getAssetOrder(b),
             );
-        } else if (type === 'POAP') {
+        } else if (type === 'Poap') {
             this.footprints = List.filter((asset) => !asset.tags || asset.tags.indexOf('pass:hidden') === -1).sort(
                 (a, b) => this.getAssetOrder(a) - this.getAssetOrder(b),
             );
@@ -1084,22 +1084,15 @@ export default class Home extends Vue {
         this.$router.push((config.subDomain.isSubDomainMode ? '' : `/${this.rns || this.ethAddress}`) + `/accounts`);
     }
 
-    toNFTsPage() {
-        this.$gtag.event('visitNftPage', { userid: this.rns || this.ethAddress });
-        this.$router.push((config.subDomain.isSubDomainMode ? '' : `/${this.rns || this.ethAddress}`) + `/nfts`);
+    toListPage(type: string) {
+        this.$gtag.event(`visit${type}Page`, { userid: this.rns || this.ethAddress });
+        this.$router.push(
+            (config.subDomain.isSubDomainMode ? '' : `/${this.rns || this.ethAddress}`) + `/${type.toLowerCase()}s`,
+        );
     }
 
-    toGitcoinsPage() {
-        this.$gtag.event('visitGitcoinPage', { userid: this.rns || this.ethAddress });
-        this.$router.push((config.subDomain.isSubDomainMode ? '' : `/${this.rns || this.ethAddress}`) + `/gitcoins`);
-    }
-    toFoorpintsPage() {
-        this.$gtag.event('visitFootprintPage', { userid: this.rns || this.ethAddress });
-        this.$router.push((config.subDomain.isSubDomainMode ? '' : `/${this.rns || this.ethAddress}`) + `/footprints`);
-    }
-
-    toSingleNFTPage(platform: string, identity: string, id: string) {
-        this.$gtag.event('visitSingleNft', {
+    toSingleItemPage(type: string, platform: string, identity: string, id: string) {
+        this.$gtag.event(`visitSingle${type}`, {
             userid: this.rns || this.ethAddress,
             platform: platform,
             nftidentity: identity,
@@ -1107,20 +1100,7 @@ export default class Home extends Vue {
         });
         this.$router.push(
             (config.subDomain.isSubDomainMode ? '' : `/${this.rns || this.ethAddress}`) +
-                `/singlenft/${platform}/${identity}/${id}`,
-        );
-    }
-
-    toSingleGitcoin(platform: string, identity: string, id: string) {
-        this.$gtag.event('visitSingleGitcoin', {
-            userid: this.rns || this.ethAddress,
-            platform: platform,
-            identity: identity,
-            id: id,
-        });
-        this.$router.push(
-            (config.subDomain.isSubDomainMode ? '' : `/${this.rns || this.ethAddress}`) +
-                `/singlegitcoin/${platform}/${identity}/${id}`,
+                `/single${type.toLowerCase()}/${platform}/${identity}/${id}`,
         );
     }
 

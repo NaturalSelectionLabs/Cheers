@@ -207,7 +207,7 @@ export default class SetupFootprints extends Vue {
             document.body.classList.remove(...document.body.classList);
         }
 
-        const data = await RSS3.getAssetProfile((<IRSS3>this.rss3).account.address, 'POAP');
+        const data = await RSS3.getAssetProfile((<IRSS3>this.rss3).account.address, 'Poap');
         if (data) {
             await this.loadAssets(
                 await (<IRSS3>this.rss3).assets.get((<IRSS3>this.rss3).account.address),
@@ -253,7 +253,7 @@ export default class SetupFootprints extends Vue {
         const FootprintList: GeneralAssetWithTags[] = [];
 
         for (const am of assetsMerge) {
-            if (am.type === 'POAP') {
+            if (am.type === 'Poap') {
                 FootprintList.push(am);
             } // else Invalid
         }

@@ -107,7 +107,30 @@
                     <FootprintIcon />
                 </template>
                 <template #content>
-                    <span class="text-footprint-title">Coming soon!</span>
+                    <template v-if="isLoadingAssets.Footprint">
+                        <span class="text-footprint-title">Loading... Hold on a little bit 🙌</span>
+                    </template>
+                    <template v-else-if="nfts.length === 0">
+                        <span class="text-footprint-title">Haven't found anything yet...</span>
+                    </template>
+                    <template v-else>
+                        <FootprintItem
+                            class="inline-flex mx-0.5"
+                            v-for="asset in footprints"
+                            :key="asset.platform + asset.identity + asset.id"
+                            :size="40"
+                            :image-url="asset.info.image_preview_url"
+                        />
+                    </template>
+                </template>
+                <template #footer>
+                    <Button
+                        size="sm"
+                        class="w-8 h-8 bg-footprint-btn-m text-footprint-btn-m-text shadow-footprint-btn-m"
+                        @click="toManageFootprints"
+                    >
+                        <i class="bx bx-pencil bx-sm" />
+                    </Button>
                 </template>
             </BarCard>
 
@@ -202,10 +225,12 @@ import FootprintIcon from '@/components/Icons/FootprintIcon.vue';
 import { GeneralAsset, GeneralAssetWithTags } from '@/common/types';
 import GitcoinItem from '@/components/GitcoinItem.vue';
 import RNSUtils from '@/common/rns';
+import FootprintItem from '@/components/FootprintItem.vue';
 
 @Options({
     name: 'Setup',
     components: {
+        FootprintItem,
         Modal,
         Button,
         AvatarEditor,
@@ -239,14 +264,17 @@ export default class Setup extends Vue {
     accounts: RSS3Account[] = [];
     nfts: GeneralAssetWithTags[] = [];
     gitcoins: GeneralAssetWithTags[] = [];
+    footprints: GeneralAssetWithTags[] = [];
     rss3: IRSS3 | null = null;
     isLoading: Boolean = true;
     isLoadingAssets: {
         NFT: boolean;
         Gitcoin: boolean;
+        Footprint: boolean;
     } = {
         NFT: true,
         Gitcoin: true,
+        Footprint: true,
     };
     loadingAssetsIntervalID: ReturnType<typeof setInterval> | null = null;
     maxValueLength: Number = 280;
@@ -357,6 +385,20 @@ export default class Setup extends Vue {
         return false;
     }
 
+    async ivLoadFootprint(refresh: boolean): Promise<boolean> {
+        const data = await RSS3.getAssetProfile((<IRSS3>this.rss3).account.address, 'Poap', refresh);
+        if (data && data.status !== false) {
+            await this.mergeAssets(
+                await (<IRSS3>this.rss3).assets.get((<IRSS3>this.rss3).account.address),
+                <GeneralAsset[]>data.assets,
+                'Poap',
+            );
+            this.isLoadingAssets.Footprint = false;
+            return true;
+        }
+        return false;
+    }
+
     async ivLoadAssets(refresh: boolean = true): Promise<boolean> {
         let isFinish = true;
         if (this.isLoadingAssets.NFT) {
@@ -364,6 +406,9 @@ export default class Setup extends Vue {
         }
         if (this.isLoadingAssets.Gitcoin) {
             isFinish = (await this.ivLoadGitcoin(refresh)) && isFinish;
+        }
+        if (this.isLoadingAssets.Footprint) {
+            isFinish = (await this.ivLoadFootprint(refresh)) && isFinish;
         }
         if (isFinish) {
             if (this.loadingAssetsIntervalID) {
@@ -445,25 +490,24 @@ export default class Setup extends Vue {
             }),
         );
 
-        const NFTList: GeneralAssetWithTags[] = [];
-        const GitcoinList: GeneralAssetWithTags[] = [];
+        const List: GeneralAssetWithTags[] = [];
 
         for (const am of assetsMerge) {
-            if (am.type === 'NFT') {
-                NFTList.push(am);
-            } else if (am.type === 'Gitcoin-Donation') {
-                GitcoinList.push(am);
+            if (am.type === type) {
+                List.push(am);
             } // else Invalid
         }
 
+        const res = List.filter((asset) => !asset.tags || asset.tags.indexOf('pass:hidden') === -1).sort(
+            (a, b) => this.getAssetOrder(a) - this.getAssetOrder(b),
+        );
+
         if (type === 'NFT') {
-            this.nfts = NFTList.filter((asset) => !asset.tags || asset.tags.indexOf('pass:hidden') === -1).sort(
-                (a, b) => this.getAssetOrder(a) - this.getAssetOrder(b),
-            );
+            this.nfts = res;
         } else if (type === 'Gitcoin-Donation') {
-            this.gitcoins = GitcoinList.filter((asset) => !asset.tags || asset.tags.indexOf('pass:hidden') === -1).sort(
-                (a, b) => this.getAssetOrder(a) - this.getAssetOrder(b),
-            );
+            this.gitcoins = res;
+        } else if (type === 'Poap') {
+            this.footprints = res;
         }
     }
 
@@ -486,6 +530,14 @@ export default class Setup extends Vue {
             this.isShowingNotice = true;
         } else {
             this.$router.push('/setup/gitcoins');
+        }
+    }
+    toManageFootprints() {
+        if (this.isLoadingAssets.Footprint) {
+            this.notice = 'Footprints still loading... Maybe check back later?';
+            this.isShowingNotice = true;
+        } else {
+            this.$router.push('/setup/footprints');
         }
     }
     async back() {

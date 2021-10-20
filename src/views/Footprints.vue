@@ -31,13 +31,13 @@
                 :class="{ 'pb-16': isOwner }"
             >
                 <FootprintCard
-                    v-for="i of 32"
-                    :key="i"
-                    imageUrl="https://i.imgur.com/GdWEt4z.jpg"
-                    date="May 03, 2021"
-                    location="NYC"
-                    username="Joshsua"
-                    activity="RSS3 presents the Taurus ♉️️ Conference"
+                    v-for="item of footprints"
+                    :key="item.platform + item.identity + item.id"
+                    :imageUrl="item.info.image_preview_url"
+                    :username="rss3Profile.username"
+                    :activity="item.info.title"
+                    class="cursor-pointer"
+                    @click="toSingleFootprint(item.platform, item.identity, item.id)"
                 />
             </div>
             <div
@@ -121,7 +121,7 @@ export default class Footprints extends Vue {
             document.body.classList.remove(...document.body.classList);
         }
 
-        const footprintsData = await RSS3.getAssetProfile(this.ethAddress, 'POAP');
+        const footprintsData = await RSS3.getAssetProfile(this.ethAddress, 'Poap');
         if (footprintsData) {
             await this.loadFootprint(await rss3.assets.get(this.ethAddress), footprintsData.assets);
         }
@@ -205,7 +205,7 @@ export default class Footprints extends Vue {
         const FootprintList: GeneralAssetWithTags[] = [];
 
         for (const am of assetsMerge) {
-            if (am.type === 'POAP') {
+            if (am.type === 'Poap') {
                 FootprintList.push(am);
             }
         }

@@ -86,7 +86,7 @@ export const routes = [
     },
 
     {
-        path: '/singlefootprint',
+        path: (config.subDomain.isSubDomainMode ? '' : '/:address') + '/singlefootprint/:platform/:identity/:id',
         name: 'SingleFootprint',
         component: SingleFootprint,
     },
