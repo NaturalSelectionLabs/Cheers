@@ -25,7 +25,6 @@
 import { Vue, Options } from 'vue-class-component';
 import Button from '@/components/Button.vue';
 import Tooltip from '@/components/Tooltip.vue';
-import { hashicon } from '@emeraldpay/hashicon';
 import { hex2rgb, hslToRgb, rgb2hex, rgbToHsl } from '@/common/utils';
 
 @Options({
@@ -43,20 +42,6 @@ export default class EVMpAccountItem extends Vue {
     deleteMode!: Boolean;
 
     isHover: boolean = false;
-
-    genIcon() {
-        if (this.address) {
-            const icon = hashicon(this.address.toString(), <number>this.size - 12);
-            if ((<HTMLDivElement>this.$refs.account).hasChildNodes()) {
-                (<HTMLDivElement>this.$refs.account).replaceChild(
-                    icon,
-                    (<HTMLDivElement>this.$refs.account).childNodes[0],
-                );
-            } else {
-                (<HTMLDivElement>this.$refs.account).appendChild(icon);
-            }
-        }
-    }
 
     genGradient() {
         if (this.address) {

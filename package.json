@@ -31,7 +31,6 @@
     "homepage": "https://github.com/NaturalSelectionLabs/RSS3-Page#readme",
     "dependencies": {
         "@babel/runtime": "7.15.4",
-        "@emeraldpay/hashicon": "0.5.1",
         "@google/model-viewer": "1.8.0",
         "@sentry/tracing": "6.13.3",
         "@sentry/vue": "6.13.3",
