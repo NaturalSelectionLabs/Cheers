@@ -136,6 +136,7 @@
                                         :size="64"
                                         :chain="item.platform"
                                         :address="item.identity"
+                                        :enable-tooltip="true"
                                         :delete-mode="true"
                                         @delete-account="deleteAccount(index)"
                                     />
@@ -165,6 +166,7 @@
                                             :size="64"
                                             :chain="element.platform"
                                             :address="element.identity"
+                                            :enable-tooltip="true"
                                         />
                                     </div>
                                 </template>
