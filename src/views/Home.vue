@@ -174,16 +174,23 @@
                             divide-y-xs divide-footprint-divider
                         "
                     >
-                        <!-- FootprintCard example -->
-                        <FootprintCard
-                            v-for="item of footprints"
-                            :key="item.platform + item.identity + item.id"
-                            :imageUrl="item.info.image_preview_url"
-                            :username="rss3Profile.username"
-                            :activity="item.info.title"
-                            class="cursor-pointer"
-                            @click="toSingleItemPage('Footprint', item.platform, item.identity, item.id, item.type)"
-                        />
+                        <div v-if="footprints.length > 0">
+                            <!-- FootprintCard example -->
+                            <FootprintCard
+                                v-for="item of footprints"
+                                :key="item.platform + item.identity + item.id"
+                                :imageUrl="item.info.image_preview_url"
+                                :username="rss3Profile.username"
+                                :activity="item.info.title"
+                                class="cursor-pointer"
+                                @click="toSingleItemPage('Footprint', item.platform, item.identity, item.id, item.type)"
+                            />
+                        </div>
+                        <div v-else>
+                            <div class="text-footprint-title m-auto text-center mt-4">
+                                {{ isLoadingAssets.Footprint ? 'Loading...' : "Haven't found anything yet..." }}
+                            </div>
+                        </div>
                     </div>
                     <div
                         v-else-if="footprints.length > 0"
@@ -215,6 +222,11 @@
                                 class="flex-shrink-0"
                                 @click="toSingleItemPage('Footprint', item.platform, item.identity, item.id, item.type)"
                             />
+                        </div>
+                    </div>
+                    <div v-else>
+                        <div class="text-footprint-title m-auto text-center mt-4">
+                            {{ isLoadingAssets.Footprint ? 'Loading...' : "Haven't found anything yet..." }}
                         </div>
                     </div>
                 </template>
