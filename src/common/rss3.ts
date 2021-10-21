@@ -257,7 +257,12 @@ export default {
         } else {
             let data: IAssetProfile | null = null;
             try {
-                const res = await axios.get(`${config.hubEndpoint}/asset-profile/${address}/${type.toLowerCase()}/`);
+                const res = await axios.get(`${config.hubEndpoint}/assets/list`, {
+                    params: {
+                        personaID: address,
+                        type: type,
+                    },
+                });
                 if (res && res.data) {
                     data = <IAssetProfile>res.data;
                     assets.set(address + type, data);
@@ -273,9 +278,10 @@ export default {
         try {
             const res = await axios({
                 method: 'get',
-                url: `${config.hubEndpoint}/asset-profile/${address}/nft/`,
+                url: `${config.hubEndpoint}/assets/details`,
                 params: {
-                    platform,
+                    personaID: address,
+                    platform: 'EVM+',
                     id,
                     identity,
                     type,
@@ -294,11 +300,13 @@ export default {
         try {
             const res = await axios({
                 method: 'get',
-                url: `${config.hubEndpoint}/asset-profile/${address}/gitcoin-donation/`,
+                url: `${config.hubEndpoint}/assets/details`,
                 params: {
-                    platform: platform,
+                    personaID: address,
+                    platform: 'EVM+',
                     id: id,
                     identity: identity,
+                    type: 'GitCoin-Donation',
                 },
             });
             if (res && res.data) {
@@ -314,11 +322,13 @@ export default {
         try {
             const res = await axios({
                 method: 'get',
-                url: `${config.hubEndpoint}/asset-profile/${address}/poap/`,
+                url: `${config.hubEndpoint}/assets/details`,
                 params: {
-                    platform: platform,
+                    personaID: address,
+                    platform: 'EVM+',
                     id: id,
                     identity: identity,
+                    type: 'xDai-POAP',
                 },
             });
             if (res && res.data) {
