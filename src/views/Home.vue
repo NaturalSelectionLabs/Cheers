@@ -165,14 +165,11 @@
                 <template #content>
                     <div
                         v-if="isPCLayout"
-                        class="
-                            flex flex-col
-                            px-0.5
-                            overflow-y-auto
-                            md:h-72
-                            scrollbar-hide
-                            divide-y-xs divide-footprint-divider
-                        "
+                        class="flex flex-col px-0.5 overflow-y-auto scrollbar-hide divide-y-xs divide-footprint-divider"
+                        :class="{
+                            'h-72': isPCLayout,
+                            'justify-center': footprints.length === 0,
+                        }"
                     >
                         <div v-if="footprints.length > 0">
                             <!-- FootprintCard example -->
@@ -252,34 +249,38 @@
                             scrollbar-hide
                             divide-y-xs divide-content-divider
                         "
-                        v-if="contents.length !== 0"
+                        :class="{
+                            'h-112': isPCLayout,
+                            'justify-center': contents.length === 0,
+                        }"
                     >
-                        <div v-for="item in contents" :key="item.id">
-                            <ContentCard
-                                :timestamp="parseInt(item.info.timestamp)"
-                                :content="item.info.pre_content"
-                                :title="item.info.title"
-                                :provider="item.type"
-                                @click="toContentLink(item.info.link)"
-                            />
+                        <div v-if="contents.length > 0">
+                            <div v-for="item in contents" :key="item.id">
+                                <ContentCard
+                                    :timestamp="parseInt(item.info.timestamp)"
+                                    :content="item.info.pre_content"
+                                    :title="item.info.title"
+                                    :provider="item.type"
+                                    @click="toContentLink(item.info.link)"
+                                />
+                            </div>
+                            <div>
+                                <Button
+                                    size="sm"
+                                    class="w-full h-6 bg-content-btn-s text-content-btn-s-text shadow-content-btn-s"
+                                    v-show="isContentsHaveMore"
+                                    @click="loadMoreContents"
+                                    id="contents-load-more-button"
+                                >
+                                    <i v-if="isLoadingContents" class="bx bx-loader-circle bx-spin"></i>
+                                    <i v-else class="bx bx-dots-horizontal-rounded" />
+                                </Button>
+                            </div>
                         </div>
-                        <div>
-                            <Button
-                                size="sm"
-                                class="w-full h-6 bg-content-btn-s text-content-btn-s-text shadow-content-btn-s"
-                                v-show="isContentsHaveMore"
-                                @click="loadMoreContents"
-                                id="contents-load-more-button"
-                            >
-                                <i v-if="isLoadingContents" class="bx bx-loader-circle bx-spin"></i>
-                                <i v-else class="bx bx-dots-horizontal-rounded" />
-                            </Button>
+                        <div v-else class="text-content-title text-center mt-4">
+                            {{ isLoadingContents ? 'Loading...' : "Haven't found anything yet..." }}
                         </div>
                     </div>
-                    <div v-else-if="isLoadingContents" class="text-content-title m-auto text-center mt-4">
-                        Loading...
-                    </div>
-                    <div v-else class="text-content-title m-auto text-center mt-4">Haven't found anything yet...</div>
                 </template>
             </Card>
 
