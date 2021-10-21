@@ -927,7 +927,6 @@ export default class Home extends Vue {
                 if (provider.more) {
                     const contents: Content[] = await ContentProviders[provider.provider.identity].get(
                         this.ethAddress,
-                        0,
                         provider.lastTS,
                     );
                     if (contents.length < config.contentRequestLimit) {
