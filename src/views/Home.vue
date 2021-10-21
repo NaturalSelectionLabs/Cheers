@@ -165,13 +165,13 @@
                 <template #content>
                     <div
                         v-if="isPCLayout"
-                        class="flex flex-col px-0.5 overflow-y-auto scrollbar-hide divide-y-xs divide-footprint-divider"
+                        class="flex flex-col px-0.5 overflow-y-auto scrollbar-hide"
                         :class="{
                             'h-72': isPCLayout,
                             'justify-center': footprints.length === 0,
                         }"
                     >
-                        <div v-if="footprints.length > 0">
+                        <div v-if="footprints.length > 0" class="divide-y-xs divide-footprint-divider">
                             <!-- FootprintCard example -->
                             <FootprintCard
                                 v-for="item of footprints"
@@ -241,20 +241,13 @@
                 <template #title-icon><ContentIcon /></template>
                 <template #content>
                     <div
-                        class="
-                            flex flex-col
-                            px-0.5
-                            overflow-y-auto
-                            md:h-112
-                            scrollbar-hide
-                            divide-y-xs divide-content-divider
-                        "
+                        class="flex flex-col px-0.5 overflow-y-auto md:h-112 scrollbar-hide"
                         :class="{
                             'h-112': isPCLayout,
                             'justify-center': contents.length === 0,
                         }"
                     >
-                        <div v-if="contents.length > 0">
+                        <div v-if="contents.length > 0" class="divide-y-xs divide-content-divider">
                             <div v-for="item in contents" :key="item.id">
                                 <ContentCard
                                     :timestamp="parseInt(item.info.timestamp)"
