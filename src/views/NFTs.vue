@@ -30,7 +30,7 @@
                     />
                     <NFTBadges
                         class="absolute top-2.5 right-2.5"
-                        :chain="item.platform"
+                        :chain="item.type.split('-')[0]"
                         location="overlay"
                         :collectionImg="item.info.collection_icon"
                     />
