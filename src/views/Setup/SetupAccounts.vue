@@ -101,7 +101,7 @@
                                 <EVMpAccountItem
                                     class="inline-flex m-0.5 rounded-full shadow-account cursor-pointer"
                                     :size="64"
-                                    address="EVM+"
+                                    :address="ethAddress"
                                     @click="addMetamaskAccount"
                                 />
                             </div>
