@@ -219,6 +219,7 @@ module.exports = {
                 'screen-60': '60vh',
             },
             backgroundImage: (theme) => ({
+                EVM: 'url(@/assets/images/chains/evm.png)',
                 BSC: 'url(@/assets/images/chains/BSC.png)',
                 Ethereum: 'url(@/assets/images/chains/Ethereum.png)',
                 Ronin: 'url(@/assets/images/chains/Ronin.png)',

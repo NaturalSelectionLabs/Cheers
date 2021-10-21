@@ -1,14 +1,15 @@
 <template>
     <div class="relative">
         <div
-            class="account-item"
-            :style="{ width: size + 'px', height: size + 'px' }"
+            class="account-item bg-item-bg"
             @mouseenter="isHover = true"
             @mouseout="isHover = false"
             @touchstart="isHover = true"
             @touchend="isHover = false"
             ref="account"
-        />
+        >
+            <div class="icon" :style="{ width: size + 'px', height: size + 'px' }" />
+        </div>
         <Tooltip v-if="enableTooltip" v-show="isHover" :text="addressFilter($props.address)" view-option="account" />
         <Button
             v-show="deleteMode"
@@ -55,10 +56,7 @@ export default class EVMpAccountItem extends Vue {
                     )} ${i * 20}%`;
                 }
                 styleString += ');';
-                (<HTMLDivElement>this.$refs.account).setAttribute(
-                    'style',
-                    styleString + `width: ${this.size}px; height: ${this.size}px;`,
-                );
+                (<HTMLDivElement>this.$refs.account).setAttribute('style', styleString);
             }
         }
     }
@@ -83,7 +81,11 @@ export default class EVMpAccountItem extends Vue {
 <style scoped lang="postcss">
 @layer components {
     .account-item {
-        @apply rounded-full border border-item-border filter shadow-account bg-item-bg bg-85 bg-center bg-no-repeat overflow-hidden flex justify-center items-center;
+        @apply rounded-full border border-item-border filter shadow-account overflow-hidden flex justify-center items-center;
+
+        .icon {
+            @apply bg-EVM bg-85 bg-center bg-no-repeat;
+        }
     }
 }
 </style>
