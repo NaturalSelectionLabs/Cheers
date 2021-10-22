@@ -23,6 +23,7 @@
                     <div class="flex flex-row justify-between items-center">
                         <h2 class="text-xl font-semibold truncate">{{ details.event.name }}</h2>
                         <Button
+                            v-if="details.event.event_url"
                             size="sm"
                             class="w-9 h-9 ml-1 bg-footprint-btn-m text-footprint-btn-m-text shadow-footprint-btn-m"
                             @click="toExternalLink"
@@ -30,26 +31,31 @@
                             <i class="bx bx-link-external bx-xs" />
                         </Button>
                     </div>
-                    <div class="text-footprint-title truncate cursor-pointer my-2">
+                    <div v-if="details.event.event_url" class="text-footprint-title truncate cursor-pointer my-2">
                         <i class="bx bx-link align-middle mr-2" />
                         <span>{{ details.event.event_url }}</span>
                     </div>
                     <section class="text-sm text-footprint-title flex flex-col gap-2">
                         <div class="flex flex-row gap-2 items-center">
                             <CalendarIcon />
-                            <span class="text-body-text"
-                                >{{ details.event.start_date }} - {{ details.event.end_date }}</span
-                            >
+                            <span class="text-body-text">{{
+                                details.event.start_date +
+                                (details.event.end_date ? ` ~ ${details.event.end_date}` : '')
+                            }}</span>
                         </div>
                         <div class="flex flex-row gap-2 items-center">
                             <LocationIcon />
-                            <span class="text-body-text">{{ details.event.city }} - {{ details.event.country }}</span>
+                            <span class="text-body-text">{{
+                                details.event.city || details.event.country || 'Metaverse'
+                            }}</span>
                         </div>
                     </section>
-                    <h3 class="text-footprint-title text-lg font-medium capitalize my-2">Description</h3>
-                    <p class="text-body-text leading-loose font-medium">
-                        {{ details.event.description }}
-                    </p>
+                    <section v-if="details.event.description">
+                        <h3 class="text-footprint-title text-lg font-medium capitalize my-2">Description</h3>
+                        <p class="text-body-text leading-loose font-medium">
+                            {{ details.event.description }}
+                        </p>
+                    </section>
                 </div>
             </section>
         </div>
