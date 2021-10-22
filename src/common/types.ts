@@ -109,6 +109,10 @@ export interface GeneralAsset {
             token: string;
             amount: string;
         }[];
+        start_date?: string;
+        end_date?: string;
+        country?: string;
+        city?: string;
     };
 }
 
