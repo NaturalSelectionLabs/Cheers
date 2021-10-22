@@ -140,7 +140,7 @@ export default class SingleNFT extends Vue {
             } else {
                 // RNS
                 this.rns = address;
-                this.ethAddress = (await RNSUtils.name2Addr(address + config.rns.suffix)).toString();
+                this.ethAddress = (await RNSUtils.name2Addr(address)).toString();
                 if (parseInt(this.ethAddress) === 0) {
                     return false;
                 }

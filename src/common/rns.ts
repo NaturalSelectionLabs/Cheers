@@ -112,7 +112,7 @@ export default {
         }
     },
     async name2Addr(name: string, speed: SPEED = 'average') {
-        name = name.toLowerCase();
+        name = (name + config.rns.suffix).toLowerCase();
         if (nameCache[name]) {
             return nameCache[name];
         } else {

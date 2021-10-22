@@ -676,7 +676,7 @@ export default class Home extends Vue {
             } else {
                 // RNS
                 this.rns = address;
-                this.ethAddress = (await RNSUtils.name2Addr(address + config.rns.suffix)).toString();
+                this.ethAddress = (await RNSUtils.name2Addr(address)).toString();
                 if (parseInt(this.ethAddress) === 0) {
                     this.isAccountExist = false;
                     return false;
@@ -1035,7 +1035,7 @@ export default class Home extends Vue {
 
     async checkIsFollowing() {
         if (!this.ethAddress) {
-            this.ethAddress = (await RNSUtils.name2Addr(this.rns + config.rns.suffix)).toString();
+            this.ethAddress = (await RNSUtils.name2Addr(this.rns)).toString();
         }
         const followList = await this.rss3?.links.get(this.rss3.account.address, 'following');
         if (typeof followList === 'undefined') {
