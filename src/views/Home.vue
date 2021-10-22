@@ -560,25 +560,12 @@ export default class Home extends Vue {
 
     async initLoad() {
         this.lastRoute = this.$route.fullPath;
-        this.contents = [];
-        this.isFollowing = false;
-        this.isOwner = false;
         this.isShowingAccount = false;
         this.showingAccountDetails = {
             address: '',
             platform: 'Ethereum',
             isLink: false,
         };
-        this.isLoadingContents = true;
-        this.rss3Profile = {
-            avatar: config.defaultAvatar,
-            username: '...',
-            address: '',
-            bio: '...',
-            link: '',
-        };
-        this.isContentsHaveMore = true;
-        this.isContentsHaveMoreEachProvider = [];
         this.isLoadingPersona = true;
         (<HTMLLinkElement>document.getElementById('favicon')).href = '/favicon.ico';
         document.title = 'Web3 Pass';
@@ -597,6 +584,7 @@ export default class Home extends Vue {
                         window.location.href = '//' + this.rns + '.' + config.subDomain.rootDomain;
                     }
                 } else {
+                    this.isOwner = false;
                     sessionStorage.setItem('redirectFrom', this.$route.fullPath);
                     this.ethAddress = '';
                     if (config.subDomain.isSubDomainMode) {
@@ -811,9 +799,6 @@ export default class Home extends Vue {
 
     async startLoadingAssets(refresh: boolean) {
         if (refresh) {
-            this.nfts = [];
-            this.gitcoins = [];
-            this.footprints = [];
             this.isLoadingAssets = {
                 NFT: true,
                 Gitcoin: true,
@@ -913,15 +898,17 @@ export default class Home extends Vue {
 
     async initLoadContents(accounts: RSS3Account[]) {
         // Default by hub
-        this.isContentsHaveMoreEachProvider.push({
-            provider: {
-                platform: 'RSS3',
-                identity: 'Hub',
-                signature: '',
+        this.isContentsHaveMoreEachProvider = [
+            {
+                provider: {
+                    platform: 'RSS3',
+                    identity: 'Hub',
+                    signature: '',
+                },
+                more: true,
+                lastTS: 0xffffffff,
             },
-            more: true,
-            lastTS: 0xffffffff,
-        });
+        ];
 
         await this.loadMoreContents(true);
     }
@@ -982,7 +969,7 @@ export default class Home extends Vue {
             return b.info.timestamp - a.info.timestamp;
         });
 
-        this.contents.push(...contentsMerge);
+        this.contents = contentsMerge;
 
         this.isLoadingContents = false;
     }
@@ -1153,7 +1140,7 @@ export default class Home extends Vue {
             if (ownerRNS) {
                 window.location.href = '//' + ownerRNS + '.' + config.subDomain.rootDomain;
             } else {
-                window.location.href = '//' + config.subDomain.rootDomain + `/${this.ownerETHAddress}`;
+                await this.$router.push(`/${this.ownerETHAddress}`);
             }
         } else {
             window.location.href = '//' + config.subDomain.rootDomain;
@@ -1283,6 +1270,23 @@ export default class Home extends Vue {
             // }
             await this.initLoad(); // TODO temporary measure
         } else {
+            this.contents = [];
+            this.isFollowing = false;
+            this.isOwner = false;
+            this.isLoadingContents = true;
+            this.rss3Profile = {
+                avatar: config.defaultAvatar,
+                username: '...',
+                address: '',
+                bio: '...',
+                link: '',
+            };
+            this.isContentsHaveMore = true;
+            this.isContentsHaveMoreEachProvider = [];
+            this.nfts = [];
+            this.gitcoins = [];
+            this.footprints = [];
+
             await this.initLoad();
         }
         await this.setPageTitleFavicon();
