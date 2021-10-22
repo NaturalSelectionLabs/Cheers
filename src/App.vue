@@ -1,6 +1,8 @@
 <template>
     <router-view v-slot="{ Component }">
-        <keep-alive exclude="Index,SingleNFT,SingleGitcoin,RNSPending,SetupAccounts,SetupNFTs,SetupGitcoins">
+        <keep-alive
+            exclude="Index,SingleNFT,SingleGitcoin,SingleFootprint,RNSPending,SetupAccounts,SetupNFTs,SetupGitcoins"
+        >
             <component :is="Component" />
         </keep-alive>
     </router-view>

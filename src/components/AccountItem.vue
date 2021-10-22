@@ -15,7 +15,7 @@
             @touchstart="isHover = true"
             @touchend="isHover = false"
         />
-        <Tooltip v-if="$props.address" v-show="isHover" :text="$props.address" view-option="account" />
+        <Tooltip v-if="$props.enableTooltip" v-show="isHover" :text="$props.address" view-option="account" />
         <Button
             v-show="deleteMode"
             size="sm"
@@ -39,6 +39,7 @@ import Tooltip from '@/components/Tooltip.vue';
         chain: String,
         deleteMode: Boolean,
         address: String,
+        enableTooltip: Boolean,
     },
 })
 export default class AccountItem extends Vue {

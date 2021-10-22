@@ -9,16 +9,20 @@ import Followings from '@/views/Followings.vue';
 import Followers from '@/views/Followers.vue';
 import Accounts from '@/views/Accounts.vue';
 import NFTs from '@/views/NFTs.vue';
+import Gitcoins from '@/views/Gitcoins.vue';
+import Footprints from '@/views/Footprints.vue';
 import SingleNFT from '@/views/SingleNFT.vue';
+import SingleGitcoin from '@/views/SingleGitcoin.vue';
+import SingleFootprint from '@/views/SingleFootprint.vue';
 import Setup from '@/views/Setup/Setup.vue';
 import SetupAccounts from '@/views/Setup/SetupAccounts.vue';
 import SetupNFTs from '@/views/Setup/SetupNFTs.vue';
+import SetupGitcoins from '@/views/Setup/SetupGitcoins.vue';
+import SetupFootprints from '@/views/Setup/SetupFootprints.vue';
 import RNS from '@/views/Setup/RNS.vue';
 import EditProfile from '@/views/EditProfile.vue';
 import RNSPending from '@/views/Setup/RNSPending.vue';
-import Gitcoins from '@/views/Gitcoins.vue';
-import SetupGitcoins from '@/views/Setup/SetupGitcoins.vue';
-import SingleGitcoin from '@/views/SingleGitcoin.vue';
+
 import config from '@/config';
 
 export const routes = [
@@ -61,19 +65,30 @@ export const routes = [
         component: NFTs,
     },
     {
-        path: (config.subDomain.isSubDomainMode ? '' : '/:address') + '/singlenft/:platform/:identity/:id',
-        name: 'SingleNFT',
-        component: SingleNFT,
-    },
-    {
         path: (config.subDomain.isSubDomainMode ? '' : '/:address') + '/gitcoins',
         name: 'Gitcoins',
         component: Gitcoins,
     },
     {
-        path: (config.subDomain.isSubDomainMode ? '' : '/:address') + '/singlegitcoin/:platform/:identity/:id',
+        path: (config.subDomain.isSubDomainMode ? '' : '/:address') + '/footprints',
+        name: 'Footprints',
+        component: Footprints,
+    },
+    {
+        path: (config.subDomain.isSubDomainMode ? '' : '/:address') + '/singlenft/:platform/:identity/:id/:type',
+        name: 'SingleNFT',
+        component: SingleNFT,
+    },
+    {
+        path: (config.subDomain.isSubDomainMode ? '' : '/:address') + '/singlegitcoin/:platform/:identity/:id/:type',
         name: 'SingleGitcoin',
         component: SingleGitcoin,
+    },
+
+    {
+        path: (config.subDomain.isSubDomainMode ? '' : '/:address') + '/singlefootprint/:platform/:identity/:id/:type',
+        name: 'SingleFootprint',
+        component: SingleFootprint,
     },
     {
         path: '/setup',
@@ -90,11 +105,15 @@ export const routes = [
         name: 'SetupNFTs',
         component: SetupNFTs,
     },
-
     {
         path: '/setup/gitcoins',
         name: 'SetupGitcoins',
         component: SetupGitcoins,
+    },
+    {
+        path: '/setup/Footprints',
+        name: 'SetupFootprints',
+        component: SetupFootprints,
     },
     {
         path: '/rns',

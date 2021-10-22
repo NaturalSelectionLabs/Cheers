@@ -9,7 +9,7 @@
  * @param g
  * @param b
  */
-export function rgbToHsl(r: number, g: number, b: number) {
+export function rgbToHsl(r: number, g: number, b: number): [number, number, number] {
     r /= 255;
     g /= 255;
     b /= 255;
@@ -58,7 +58,7 @@ export function rgbToHsl(r: number, g: number, b: number) {
  * @param s
  * @param l
  */
-export function hslToRgb(h: number, s: number, l: number) {
+export function hslToRgb(h: number, s: number, l: number): [number, number, number] {
     let r, g, b;
 
     if (s == 0) {
@@ -82,4 +82,18 @@ export function hslToRgb(h: number, s: number, l: number) {
     }
 
     return [r * 255, g * 255, b * 255];
+}
+
+export function hex2rgb(hex: string): [number, number, number] {
+    const res = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return res ? [parseInt(res[1], 16), parseInt(res[2], 16), parseInt(res[3], 16)] : [0, 0, 0];
+}
+
+export function rgb2hex(r: number, g: number, b: number) {
+    return (
+        '#' +
+        Math.round((1 << 24) + (r << 16) + (g << 8) + b)
+            .toString(16)
+            .slice(1)
+    );
 }

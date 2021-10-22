@@ -1,6 +1,55 @@
 <template>
     <h1>Test page</h1>
     <div class="flex flex-col gap-8 items-center">
+        <BarCard color="account" class="w-96">
+            <template #header>
+                <span class="text-account-title w-16 inline-flex"> Accounts </span>
+            </template>
+            <template #content>
+                <AccountItem
+                    class="inline-block mr-1 cursor-pointer"
+                    :size="40"
+                    v-for="id in 8"
+                    :key="id"
+                    chain="Ethereum"
+                />
+            </template>
+            <template #footer>
+                <Button size="sm" class="w-8 h-8 bg-account-btn-s text-account-btn-s-text shadow-account-btn-s">
+                    <i class="bx bxs-pencil bx-xs" />
+                </Button>
+            </template>
+        </BarCard>
+
+        <BarCard color="nft" class="w-96">
+            <template #header>
+                <span class="text-nft-title w-16 inline-flex"> NFTs </span>
+            </template>
+            <template #content>
+                <NFTItem
+                    class="flex mr-1 cursor-pointer"
+                    image-url="https://i.imgur.com/GdWEt4z.jpg"
+                    poster-url="https://i.imgur.com/GdWEt4z.jpg"
+                    :size="40"
+                    v-for="id in 32"
+                    :key="id"
+                />
+            </template>
+            <template #footer>
+                <Button size="sm" class="w-8 h-8 bg-nft-btn-s text-nft-btn-s-text shadow-nft-btn-s">
+                    <i class="bx bxs-pencil bx-xs" />
+                </Button>
+            </template>
+        </BarCard>
+
+        <FootprintCard
+            imageUrl="https://i.imgur.com/GdWEt4z.jpg"
+            date="May 03, 2021"
+            location="NYC"
+            username="Joshsua"
+            activity="RSS3 presents the Taurus ♉️️ Conference"
+        />
+
         <Button size="sm" class="w-10 h-10 bg-white text-primary shadow-secondary">
             <i class="bx bx-chevron-left bx-sm"></i>
         </Button>
@@ -466,57 +515,6 @@
                 style="background: linear-gradient(107.57deg, #34816e 18.23%, #eae195 99.85%, #9ab85a 99.9%)"
             ></div>
         </div>
-
-        <ShareCard
-            class="max-w-md"
-            name="yzhe819"
-            avatar="https://rss3.mypinata.cloud/ipfs/QmSkwv6Vg5wWgbFSzuChp11jcpMng7or9Gg7JUG9SYuYmY"
-            address="yzhe819.pass3.me"
-            id="myCanvas"
-        ></ShareCard>
-
-        <ShareCard
-            class="max-w-md"
-            name="test"
-            avatar="https://i.imgur.com/GdWEt4z.jpg"
-            address="test.pass3.me"
-        ></ShareCard>
-
-        <ShareCard
-            class="max-w-md"
-            name="test"
-            avatar="https://rss3.mypinata.cloud/ipfs/QmZq1Z6QJoUmkptcVmrqSe3WRamGxuLPuCSrLxHt7qJUwi"
-            address="test.pass3.me"
-        ></ShareCard>
-
-        <ShareCard
-            class="max-w-md"
-            name="test"
-            avatar="https://rss3.mypinata.cloud/ipfs/QmW7hQg4MLH74MsgQnpAQKD26sXwkquMGv1F39QMXYTp5E"
-            address="test.pass3.me"
-        ></ShareCard>
-
-        <div
-            v-show="isLoading"
-            class="fixed w-screen h-screen m-0 p-0 top-0 left-0 bg-black bg-opacity-50 flex justify-center items-center"
-        >
-            <Loading :size="200" />
-        </div>
-        <Loading :size="200" />
-
-        <div
-            v-show="isShareing"
-            class="fixed w-screen h-screen m-0 p-0 top-0 left-0 bg-black bg-opacity-50 flex justify-center items-center"
-        >
-            <ShareCard
-                class="max-w-md"
-                name="yzhe819"
-                avatar="https://rss3.mypinata.cloud/ipfs/QmSkwv6Vg5wWgbFSzuChp11jcpMng7or9Gg7JUG9SYuYmY"
-                address="yzhe819.pass3.me"
-            ></ShareCard>
-        </div>
-
-        <Button size="lg" class="w-80 bg-danger text-white" @click="downloadVisualReport"> screenshot </Button>
     </div>
 </template>
 
@@ -533,16 +531,19 @@ import NFTBadges from '@/components/NFT/NFTBadges.vue';
 import ScanTag from '@/components/NFT/ScanTag.vue';
 import Modal from '@/components/Modal.vue';
 import RSS3 from '@/common/rss3';
-import ShareCard from '@/components/ShareCard.vue';
-import html2canvas from 'html2canvas';
+import FootprintCard from '@/components/FootprintCard.vue';
 
 import draggable from 'vuedraggable';
 
 import Loading from '@/components/Loading.vue';
+import BarCard from '@/components/BarCard.vue';
+
+import config from '@/config';
 
 @Options({
     name: 'Test',
     components: {
+        BarCard,
         ScanTag,
         Modal,
         FollowerCard,
@@ -555,10 +556,11 @@ import Loading from '@/components/Loading.vue';
         NFTBadges,
         draggable,
         Loading,
-        ShareCard,
+        FootprintCard,
     },
 })
 export default class Test extends Vue {
+    config: typeof config = config;
     value: String = 'value';
     accounts: Object = {
         array1: [
@@ -606,18 +608,6 @@ export default class Test extends Vue {
         setTimeout(() => {
             this.isShareing = false;
         }, 8000);
-    }
-
-    downloadVisualReport() {
-        html2canvas(<HTMLElement>document.getElementById('myCanvas'), {
-            useCORS: true,
-            logging: false,
-        }).then((canvas) => {
-            var link = document.createElement('a');
-            link.download = 'filename.png';
-            link.href = canvas.toDataURL();
-            link.click();
-        });
     }
 }
 </script>

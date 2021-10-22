@@ -2,126 +2,148 @@
     <div class="h-screen bg-body-bg text-body-text overflow-y-auto">
         <div class="px-4 pt-8 pb-32 max-w-md m-auto">
             <div class="text-center mb-4">
-                <h1 class="text-5xl text-primary-text font-bold">Setup</h1>
+                <h1 class="text-xl text-primary-text font-bold">Setup</h1>
             </div>
             <AvatarEditor class="m-auto mb-4" size="lg" :url="profile.avatar" ref="avatar" />
             <Input class="mb-4 w-full" :is-single-line="true" placeholder="Username" v-model="profile.name" />
-            <Input class="mb-4 w-full" :is-single-line="false" placeholder="Bio" v-model="profile.bio" />
-            <Card
-                title="Accounts"
-                color-title="text-account-title"
-                color-tips="text-account-title"
-                color-background="bg-account-bg"
+            <Input
                 class="mb-4 w-full"
-                :is-having-content="true"
                 :is-single-line="true"
-            >
-                <template #title-icon><AccountIcon /></template>
-                <template #header-button>
+                placeholder="Personal link"
+                prefix="https://"
+                v-model="profile.link"
+            />
+            <Input class="mb-4 w-full" :is-single-line="false" placeholder="Bio" v-model="profile.bio" />
+
+            <BarCard color="account" class="mb-4 w-full">
+                <template #header><AccountIcon /></template>
+                <template #content>
+                    <div
+                        class="shadow-account-sm inline-flex m-0.5 rounded-full"
+                        v-for="item in accounts"
+                        :key="item.platform + item.identity"
+                    >
+                        <EVMpAccountItem v-if="item.platform === 'EVM+'" :size="40" :address="item.identity" />
+                        <AccountItem v-else :size="40" :chain="item.platform" :address="item.identity" />
+                    </div>
+                </template>
+                <template #footer>
                     <Button
                         size="sm"
-                        class="w-10 h-10 bg-account-btn-m text-account-btn-m-text shadow-account-btn-m"
+                        class="w-8 h-8 bg-account-btn-m text-account-btn-m-text shadow-account-btn-m"
                         @click="toManageAccounts"
                     >
                         <i class="bx bx-pencil bx-sm" />
                     </Button>
                 </template>
-                <template #content>
-                    <AccountItem
-                        v-for="account in accounts"
-                        :key="account.platform + account.identity"
-                        class="shadow-account-sm inline-flex m-0.5 rounded-full"
-                        :size="64"
-                        :chain="account.platform"
-                    />
+            </BarCard>
+
+            <BarCard color="nft" class="mb-4 w-full">
+                <template #header>
+                    <NFTIcon />
                 </template>
-            </Card>
-            <Card
-                title="NFTs"
-                color-title="text-nft-title"
-                color-tips="text-nft-title"
-                color-background="bg-nft-bg"
-                class="mb-4 w-full"
-                :is-having-content="nfts.length !== 0"
-                :is-single-line="nfts.length !== 0"
-                :tips="
-                    isLoadingAssets.NFT
-                        ? 'Loading... Hold on a little bit or manage them later 🙌'
-                        : nfts.length === 0
-                        ? 'Haven\'t found anything yet...'
-                        : ''
-                "
-            >
-                <template #title-icon><NFTIcon /></template>
-                <template #header-button>
+                <template #content>
+                    <template v-if="isLoadingAssets.NFT">
+                        <span class="text-nft-title">Loading... Hold on a little bit 🙌</span>
+                    </template>
+                    <template v-else-if="nfts.length === 0">
+                        <span class="text-nft-title">Haven't found anything yet...</span>
+                    </template>
+                    <template v-else>
+                        <NFTItem
+                            class="inline-flex mx-0.5"
+                            v-for="asset in nfts"
+                            :key="asset.platform + asset.identity + asset.id"
+                            :size="40"
+                            :image-url="asset.info.animation_url || asset.info.image_preview_url"
+                            :poster-url="asset.info.image_preview_url"
+                        />
+                    </template>
+                </template>
+                <template #footer>
                     <Button
                         size="sm"
-                        class="w-10 h-10 bg-nft-btn-m text-nft-btn-m-text shadow-nft-btn-m"
+                        class="w-8 h-8 bg-nft-btn-m text-nft-btn-m-text shadow-nft-btn-m"
                         @click="toManageNFTs"
                     >
                         <i class="bx bx-pencil bx-sm" />
                     </Button>
                 </template>
-                <template #content>
-                    <NFTItem
-                        class="inline-flex mx-0.5"
-                        v-for="asset in nfts"
-                        :key="asset.platform + asset.identity + asset.id"
-                        :size="70"
-                        :image-url="asset.info.animation_url || asset.info.image_preview_url"
-                        :poster-url="asset.info.image_preview_url"
-                    />
+            </BarCard>
+
+            <BarCard color="gitcoin" class="mb-4 w-full">
+                <template #header>
+                    <GitcoinIcon :iconColor="currentTheme === 'loot' ? 'white' : 'black'" />
                 </template>
-            </Card>
-            <Card
-                title="Donations"
-                color-title="text-gitcoin-title"
-                color-tips="text-gitcoin-title"
-                color-background="bg-gitcoin-bg"
-                class="mb-4 w-full"
-                :is-having-content="gitcoins.length !== 0"
-                :is-single-line="gitcoins.length !== 0"
-                :tips="
-                    isLoadingAssets.Gitcoin
-                        ? 'Loading... Hold on a little bit or manage them later 🙌'
-                        : gitcoins.length === 0
-                        ? 'Haven\'t found anything yet...'
-                        : ''
-                "
-            >
-                <template #title-icon
-                    ><GitcoinIcon :iconColor="currentTheme === 'loot' ? 'white' : 'black'"
-                /></template>
-                <template #header-button>
+                <template #content>
+                    <template v-if="isLoadingAssets.Gitcoin">
+                        <span class="text-gitcoin-title">Loading... Hold on a little bit 🙌</span>
+                    </template>
+                    <template v-else-if="nfts.length === 0">
+                        <span class="text-gitcoin-title">Haven't found anything yet...</span>
+                    </template>
+                    <template v-else>
+                        <GitcoinItem
+                            class="inline-flex mx-0.5"
+                            v-for="item in gitcoins"
+                            :key="item.platform + item.identity + item.id"
+                            :size="40"
+                            :imageUrl="item.info.image_preview_url"
+                        />
+                    </template>
+                </template>
+                <template #footer>
                     <Button
                         size="sm"
-                        class="w-10 h-10 bg-gitcoin-btn-m text-gitcoin-btn-m-text shadow-gitcoin-btn-m"
+                        class="w-8 h-8 bg-gitcoin-btn-m text-gitcoin-btn-m-text shadow-gitcoin-btn-m"
                         @click="toManageGitcoins"
                     >
                         <i class="bx bx-pencil bx-sm" />
                     </Button>
                 </template>
-                <template #content>
-                    <GitcoinItem
-                        class="inline-flex mx-0.5"
-                        v-for="item in gitcoins"
-                        :key="item.platform + item.identity + item.id"
-                        :size="70"
-                        :imageUrl="item.info.image_preview_url"
-                    />
+            </BarCard>
+
+            <BarCard color="footprint" class="mb-4 w-full">
+                <template #header>
+                    <FootprintIcon />
                 </template>
-            </Card>
-            <Card
-                title="Contents"
-                color-title="text-content-title"
-                color-tips="text-content-title"
-                color-background="bg-content-bg"
-                class="mb-4 w-full"
-                :is-having-content="false"
-                tips="Check out in homepage!"
-            >
-                <template #title-icon><ContentIcon /></template>
-            </Card>
+                <template #content>
+                    <template v-if="isLoadingAssets.Footprint">
+                        <span class="text-footprint-title">Loading... Hold on a little bit 🙌</span>
+                    </template>
+                    <template v-else-if="nfts.length === 0">
+                        <span class="text-footprint-title">Haven't found anything yet...</span>
+                    </template>
+                    <template v-else>
+                        <FootprintItem
+                            class="inline-flex mx-0.5"
+                            v-for="asset in footprints"
+                            :key="asset.platform + asset.identity + asset.id"
+                            :size="40"
+                            :image-url="asset.info.image_preview_url"
+                        />
+                    </template>
+                </template>
+                <template #footer>
+                    <Button
+                        size="sm"
+                        class="w-8 h-8 bg-footprint-btn-m text-footprint-btn-m-text shadow-footprint-btn-m"
+                        @click="toManageFootprints"
+                    >
+                        <i class="bx bx-pencil bx-sm" />
+                    </Button>
+                </template>
+            </BarCard>
+
+            <BarCard color="content" class="mb-4 w-full">
+                <template #header>
+                    <ContentIcon />
+                </template>
+                <template #content>
+                    <span class="text-content-title">Check out in homepage!</span>
+                </template>
+            </BarCard>
+
             <div
                 class="
                     px-4
@@ -184,6 +206,7 @@ import { Options, Vue } from 'vue-class-component';
 import Button from '@/components/Button.vue';
 import AvatarEditor from '@/components/AvatarEditor.vue';
 import Card from '@/components/Card.vue';
+import BarCard from '@/components/BarCard.vue';
 import AccountItem from '@/components/AccountItem.vue';
 import NFTItem from '@/components/NFT/NFTItem.vue';
 import Input from '@/components/Input.vue';
@@ -198,19 +221,25 @@ import NFTIcon from '@/components/Icons/NFTIcon.vue';
 import GitcoinIcon from '@/components/Icons/GitcoinIcon.vue';
 import ContentIcon from '@/components/Icons/ContentIcon.vue';
 import AccountIcon from '@/components/Icons/AccountIcon.vue';
+import FootprintIcon from '@/components/Icons/FootprintIcon.vue';
 
 import { GeneralAsset, GeneralAssetWithTags } from '@/common/types';
 import GitcoinItem from '@/components/GitcoinItem.vue';
 import RNSUtils from '@/common/rns';
+import FootprintItem from '@/components/FootprintItem.vue';
+import EVMpAccountItem from '@/components/EVMpAccountItem.vue';
 
 @Options({
     name: 'Setup',
     components: {
-        GitcoinItem,
+        EVMpAccountItem,
+        FootprintItem,
         Modal,
         Button,
         AvatarEditor,
         Card,
+        BarCard,
+        GitcoinItem,
         AccountItem,
         NFTItem,
         Input,
@@ -220,6 +249,7 @@ import RNSUtils from '@/common/rns';
         NFTIcon,
         GitcoinIcon,
         ContentIcon,
+        FootprintIcon,
     },
 })
 export default class Setup extends Vue {
@@ -227,22 +257,27 @@ export default class Setup extends Vue {
         avatar: string;
         name: string;
         bio: string;
+        link: string;
     } = {
         avatar: config.defaultAvatar,
         name: '',
         bio: '',
+        link: '',
     };
     accounts: RSS3Account[] = [];
     nfts: GeneralAssetWithTags[] = [];
     gitcoins: GeneralAssetWithTags[] = [];
+    footprints: GeneralAssetWithTags[] = [];
     rss3: IRSS3 | null = null;
     isLoading: Boolean = true;
     isLoadingAssets: {
         NFT: boolean;
         Gitcoin: boolean;
+        Footprint: boolean;
     } = {
         NFT: true,
         Gitcoin: true,
+        Footprint: true,
     };
     loadingAssetsIntervalID: ReturnType<typeof setInterval> | null = null;
     maxValueLength: Number = 280;
@@ -273,8 +308,27 @@ export default class Setup extends Vue {
             const favicon = <HTMLLinkElement>document.getElementById('favicon');
             favicon.href = profile.avatar[0];
         }
+
         if (profile?.name) {
             document.title = profile.name;
+        }
+
+        if (profile?.bio) {
+            const fieldPattern = /<([A-Z]+?)#(.+?)?>/gi;
+            const fields = profile.bio.match(fieldPattern) || [];
+            this.profile.bio = profile.bio.replace(fieldPattern, '');
+
+            for (const field of fields) {
+                const splits = fieldPattern.exec(field) || [];
+                switch (splits[1]) {
+                    case 'SITE':
+                        this.profile.link = splits[2];
+                        break;
+                    default:
+                        // Do nothing
+                        break;
+                }
+            }
         }
 
         // Setup theme
@@ -334,6 +388,20 @@ export default class Setup extends Vue {
         return false;
     }
 
+    async ivLoadFootprint(refresh: boolean): Promise<boolean> {
+        const data = await RSS3.getAssetProfile((<IRSS3>this.rss3).account.address, 'POAP', refresh);
+        if (data && data.status !== false) {
+            await this.mergeAssets(
+                await (<IRSS3>this.rss3).assets.get((<IRSS3>this.rss3).account.address),
+                <GeneralAsset[]>data.assets,
+                'POAP',
+            );
+            this.isLoadingAssets.Footprint = false;
+            return true;
+        }
+        return false;
+    }
+
     async ivLoadAssets(refresh: boolean = true): Promise<boolean> {
         let isFinish = true;
         if (this.isLoadingAssets.NFT) {
@@ -341,6 +409,9 @@ export default class Setup extends Vue {
         }
         if (this.isLoadingAssets.Gitcoin) {
             isFinish = (await this.ivLoadGitcoin(refresh)) && isFinish;
+        }
+        if (this.isLoadingAssets.Footprint) {
+            isFinish = (await this.ivLoadFootprint(refresh)) && isFinish;
         }
         if (isFinish) {
             if (this.loadingAssetsIntervalID) {
@@ -422,42 +493,26 @@ export default class Setup extends Vue {
             }),
         );
 
-        const NFTList: GeneralAssetWithTags[] = [];
-        const GitcoinList: GeneralAssetWithTags[] = [];
+        const List: GeneralAssetWithTags[] = [];
 
         for (const am of assetsMerge) {
-            if (am.type === 'NFT') {
-                NFTList.push(am);
-            } else if (am.type === 'Gitcoin-Donation') {
-                GitcoinList.push(am);
+            if (am.type.includes(type)) {
+                List.push(am);
             } // else Invalid
         }
 
-        if (type === 'NFT') {
-            this.nfts = NFTList.filter((asset) => !asset.tags || asset.tags.indexOf('pass:hidden') === -1).sort(
-                (a, b) => this.getAssetOrder(a) - this.getAssetOrder(b),
-            );
+        const res = List.filter((asset) => !asset.tags || asset.tags.indexOf('pass:hidden') === -1).sort(
+            (a, b) => this.getAssetOrder(a) - this.getAssetOrder(b),
+        );
+
+        if (type.includes('NFT')) {
+            this.nfts = res;
         } else if (type === 'Gitcoin-Donation') {
-            this.gitcoins = GitcoinList.filter((asset) => !asset.tags || asset.tags.indexOf('pass:hidden') === -1).sort(
-                (a, b) => this.getAssetOrder(a) - this.getAssetOrder(b),
-            );
+            this.gitcoins = res;
+        } else if (type === 'POAP') {
+            this.footprints = res;
         }
     }
-
-    // loadEdited() {
-    //     if (sessionStorage.getItem('profile')) {
-    //         this.profile = JSON.parse(sessionStorage.getItem('profile') || '');
-    //         return true;
-    //     } else {
-    //         return false;
-    //     }
-    // }
-    // saveEdited() {
-    //     sessionStorage.setItem('profile', JSON.stringify(this.profile));
-    // }
-    // clearEdited() {
-    //     sessionStorage.removeItem('profile');
-    // }
 
     toManageAccounts() {
         // this.saveEdited();
@@ -480,6 +535,14 @@ export default class Setup extends Vue {
             this.$router.push('/setup/gitcoins');
         }
     }
+    toManageFootprints() {
+        if (this.isLoadingAssets.Footprint) {
+            this.notice = 'Footprints still loading... Maybe check back later?';
+            this.isShowingNotice = true;
+        } else {
+            this.$router.push('/setup/footprints');
+        }
+    }
     async back() {
         // this.clearEdited();
         this.$gtag.event('cancelEditProfile', { userid: (<IRSS3>this.rss3).account.address });
@@ -496,7 +559,7 @@ export default class Setup extends Vue {
             this.isShowingNotice = true;
             return;
         }
-        if (this.profile.bio.length > this.maxValueLength) {
+        if (this.profile.bio?.length + this.profile.link?.length + 8 > this.maxValueLength) {
             this.notice = `Bio cannot be longer than ${this.maxValueLength} chars`;
             this.isLoading = false;
             this.isShowingNotice = true;
@@ -504,7 +567,7 @@ export default class Setup extends Vue {
         }
         const newProfile: RSS3Profile = {
             name: this.profile.name,
-            bio: this.profile.bio,
+            bio: this.profile.bio + (this.profile.link ? `<SITE#${this.profile.link}>` : ''),
         };
         const avatarUrl = await (<any>this.$refs.avatar).upload();
         if (avatarUrl) {

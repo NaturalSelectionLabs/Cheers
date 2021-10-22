@@ -1,15 +1,22 @@
 <template>
-    <div id="main" class="h-screen bg-nft-bg overflow-y-auto">
+    <div id="main" class="h-screen bg-footprint-bg overflow-y-auto">
         <div class="px-4 pt-8 pb-32 max-w-screen-lg m-auto">
             <div class="header flex justify-between items-center pb-4">
                 <Button
                     size="sm"
-                    class="w-10 h-10 bg-secondary-btn text-secondary-btn-text shadow-secondary-btn"
+                    class="
+                        w-10
+                        h-10
+                        bg-secondary-btn
+                        text-secondary-btn-text
+                        border-secondary-button-border
+                        shadow-secondary-btn
+                    "
                     @click="back"
                 >
                     <i class="bx bx-chevron-left bx-sm"></i>
                 </Button>
-                <div class="section-title text-2xl text-nft-title font-bold text-center">NFTs</div>
+                <div class="section-title text-2xl text-footprint-title font-bold text-center">Footprints</div>
                 <ImgHolder
                     class="w-10 h-10 inline-flex my-auto cursor-pointer"
                     :is-rounded="true"
@@ -19,33 +26,30 @@
                     @click="toPublicPage(rns, ethAddress)"
                 />
             </div>
-            <div class="nft-list grid grid-cols-2 sm:grid-cols-3 gap-6 justify-items-center">
-                <div class="relative" v-for="item in nfts" :key="item.platform + item.identity + item.id">
-                    <NFTItem
-                        class="cursor-pointer"
-                        :size="NFTWidth"
-                        :imageUrl="item.info.animation_url || item.info.image_preview_url"
-                        :poster-url="item.info.image_preview_url"
-                        @click="toSingleNFTPage(item.platform, item.identity, item.id, item.type)"
-                    />
-                    <NFTBadges
-                        class="absolute top-2.5 right-2.5"
-                        :chain="item.type.split('-')[0]"
-                        location="overlay"
-                        :collectionImg="item.info.collection_icon"
-                    />
-                </div>
+            <div
+                class="footprint-footprints grid grid-cols-1 sm:grid-cols-2 divide-y-xs divide-footprint-divider"
+                :class="{ 'pb-16': isOwner }"
+            >
+                <FootprintCard
+                    v-for="item of footprints"
+                    :key="item.platform + item.identity + item.id"
+                    :imageUrl="item.info.image_preview_url"
+                    :username="rss3Profile.username"
+                    :activity="item.info.title"
+                    class="cursor-pointer"
+                    @click="toSingleFootprint(item.platform, item.identity, item.id, item.type)"
+                />
             </div>
             <div
-                class="px-4 py-4 flex gap-5 fixed bottom-2 left-0 right-0 max-w-md m-auto w-full z-50 bg-btn-container"
+                class="px-4 py-4 flex gap-5 fixed bottom-2 left-0 right-0 max-w-md m-auto w-full bg-btn-container"
                 v-if="isOwner"
             >
                 <Button
                     size="lg"
-                    class="m-auto text-lg bg-nft-btn-m text-nft-btn-m-text shadow-nft-btn-m"
-                    @click="toSetupNfts"
+                    class="m-auto text-lg bg-footprint-btn-m text-footprint-btn-m-text shadow-footprint-btn-m"
+                    @click="toSetupFootprints"
                 >
-                    <span>Manage NFTs</span>
+                    <span>Manage Footprints</span>
                 </Button>
             </div>
         </div>
@@ -56,13 +60,12 @@
 import { Options, Vue } from 'vue-class-component';
 import Button from '@/components/Button.vue';
 import ImgHolder from '@/components/ImgHolder.vue';
-import NFTItem from '@/components/NFT/NFTItem.vue';
-import NFTBadges from '@/components/NFT/NFTBadges.vue';
-import RSS3, { IRSS3 } from '@/common/rss3';
-import RNSUtils from '@/common/rns';
+import FootprintCard from '@/components/FootprintCard.vue';
 import config from '@/config';
-import { RSS3Asset } from 'rss3-next/types/rss3';
+import RNSUtils from '@/common/rns';
+import RSS3 from '@/common/rss3';
 import { GeneralAsset, GeneralAssetWithTags } from '@/common/types';
+import { RSS3Asset } from 'rss3-next/types/rss3';
 import { debounce } from 'lodash';
 
 interface Profile {
@@ -73,38 +76,31 @@ interface Profile {
 }
 
 @Options({
-    name: 'NFTs',
-    components: { ImgHolder, Button, NFTItem, NFTBadges },
+    name: 'Footprints',
+    components: { FootprintCard, ImgHolder, Button },
 })
-export default class NFTs extends Vue {
+export default class Footprints extends Vue {
     rns: string = '';
     ethAddress: string = '';
-    NFTWidth: number = 0;
+    footprints: GeneralAssetWithTags[] = [];
     isOwner: boolean = false;
-    nfts: GeneralAssetWithTags[] = [];
     rss3Profile: Profile = {
         avatar: config.defaultAvatar,
         username: '',
         address: '',
         bio: '',
     };
-    $gtag: any;
+    private defaultAvatar = config.defaultAvatar;
     scrollTop: number = 0;
     lastRoute: string = '';
 
     async mounted() {
-        this.setNFTItemSize();
-        window.onresize = () => {
-            return (() => {
-                this.setNFTItemSize();
-            })();
-        };
         this.mountScrollEvent();
     }
 
     async initLoad() {
         this.lastRoute = this.$route.fullPath;
-        this.nfts = [];
+        this.footprints = [];
         this.rss3Profile.avatar = config.defaultAvatar;
 
         await RSS3.reconnect();
@@ -113,9 +109,9 @@ export default class NFTs extends Vue {
         await this.getAddress(owner);
 
         const profile = await rss3.profile.get(this.ethAddress);
-
-        this.rss3Profile.avatar = profile.avatar?.[0] || config.defaultAvatar;
-        this.rss3Profile.username = profile.name || '';
+        this.rss3Profile.avatar = profile?.avatar?.[0] || config.defaultAvatar;
+        this.rss3Profile.username = profile?.name || '';
+        this.rss3Profile.address = this.ethAddress;
 
         // Setup theme
         const themes = RSS3.getAvailableThemes(await rss3.assets.get(this.ethAddress));
@@ -125,10 +121,9 @@ export default class NFTs extends Vue {
             document.body.classList.remove(...document.body.classList);
         }
 
-        const nftData = await RSS3.getAssetProfile(this.ethAddress, 'NFT');
-
-        if (nftData) {
-            await this.loadNFTs(await rss3.assets.get(this.ethAddress), <GeneralAsset[]>nftData.assets);
+        const footprintsData = await RSS3.getAssetProfile(this.ethAddress, 'POAP');
+        if (footprintsData) {
+            await this.loadFootprint(await rss3.assets.get(this.ethAddress), footprintsData.assets);
         }
     }
 
@@ -171,17 +166,9 @@ export default class NFTs extends Vue {
         return true;
     }
 
-    private setNFTItemSize() {
-        if (window.innerWidth <= 640) {
-            this.NFTWidth = Math.min((window.innerWidth - 52) / 2, 250);
-        } else {
-            this.NFTWidth = Math.min((window.innerWidth - 78) / 3, 300);
-        }
-    }
-
-    private getAssetOrder(nft: RSS3Asset) {
+    private getAssetOrder(asset: RSS3Asset) {
         let order = -1;
-        nft.tags?.forEach((tag: string) => {
+        asset.tags?.forEach((tag: string) => {
             if (tag.startsWith('pass:order:')) {
                 order = parseInt(tag.substr(11));
             }
@@ -189,7 +176,7 @@ export default class NFTs extends Vue {
         return order;
     }
 
-    async loadNFTs(assetsInRSS3File: RSS3Asset[], assetsGrabbed: GeneralAsset[]) {
+    async loadFootprint(assetsInRSS3File: RSS3Asset[], assetsGrabbed: GeneralAsset[]) {
         const assetsMerge: GeneralAssetWithTags[] = await Promise.all(
             (assetsGrabbed || []).map(async (ag: GeneralAssetWithTags) => {
                 const origType = ag.type;
@@ -215,30 +202,16 @@ export default class NFTs extends Vue {
             }),
         );
 
-        const NFTList: GeneralAssetWithTags[] = [];
+        const FootprintList: GeneralAssetWithTags[] = [];
 
         for (const am of assetsMerge) {
-            if (am.type.includes('NFT')) {
-                NFTList.push(am);
+            if (am.type.includes('POAP')) {
+                FootprintList.push(am);
             }
         }
 
-        this.nfts = NFTList.filter((asset) => !asset.tags || asset.tags.indexOf('pass:hidden') === -1).sort(
+        this.footprints = FootprintList.filter((asset) => !asset.tags || asset.tags.indexOf('pass:hidden') === -1).sort(
             (a, b) => this.getAssetOrder(a) - this.getAssetOrder(b),
-        );
-    }
-
-    toSingleNFTPage(platform: string, identity: string, id: string, type: string) {
-        this.$gtag.event('visitSingleNft', {
-            userid: this.rns || this.ethAddress,
-            platform: platform,
-            nftidentity: identity,
-            nftid: id,
-            nfttype: type,
-        });
-        this.$router.push(
-            (config.subDomain.isSubDomainMode ? '' : `/${this.rns || this.ethAddress}`) +
-                `/singlenft/${platform}/${identity}/${id}/${type}`,
         );
     }
 
@@ -250,12 +223,19 @@ export default class NFTs extends Vue {
         }
     }
 
-    toSetupNfts() {
-        this.$router.push(`/setup/nfts`);
-    }
-
     back() {
         this.$router.push(config.subDomain.isSubDomainMode ? '/' : `/${this.rns || this.ethAddress}`);
+    }
+
+    toSetupFootprints() {
+        this.$router.push(`/setup/footprints`);
+    }
+
+    toSingleFootprint(platform: string, identity: string, id: string, type: string) {
+        this.$router.push(
+            (config.subDomain.isSubDomainMode ? '' : `/${this.rns || this.ethAddress}`) +
+                `/singlefootprint/${platform}/${identity}/${id}/${type}`,
+        );
     }
 
     mountScrollEvent() {

@@ -4,6 +4,7 @@
         :class="{
             'btn-lg': size === 'lg',
             'btn-sm': size === 'sm',
+            circle: shape === 'circle',
         }"
     >
         <slot></slot>
@@ -16,10 +17,12 @@ import { Vue, Options } from 'vue-class-component';
 @Options({
     props: {
         size: String,
+        shape: String,
     },
 })
 export default class Button extends Vue {
     size!: String;
+    shape!: String;
 }
 </script>
 
@@ -33,6 +36,9 @@ export default class Button extends Vue {
     }
     .btn-sm {
         @apply rounded-sm px-2 py-2;
+    }
+    .circle {
+        @apply rounded-full;
     }
 }
 </style>

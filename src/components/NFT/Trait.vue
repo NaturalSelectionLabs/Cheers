@@ -23,7 +23,7 @@ export default class Trait extends Vue {
 <style scoped lang="postcss">
 @layer components {
     .trait-container {
-        @apply rounded-sm px-5 py-3 bg-nft-trait-bg flex flex-col justify-center items-start gap-1 leading-none border-card border-nft-trait-border;
+        @apply rounded-sm px-5 py-3 bg-body-bg flex flex-col justify-center items-start gap-1 leading-none border-card border-nft-trait-border;
     }
     .trait-type {
         @apply uppercase text-nft-trait-type font-normal text-xs;

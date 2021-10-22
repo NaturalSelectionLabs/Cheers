@@ -88,6 +88,7 @@ export default class SingleNFT extends Vue {
         const platform: string = String(this.$route.params.platform);
         const identity: string = String(this.$route.params.identity);
         const id: string = String(this.$route.params.id);
+        const type: string = String(this.$route.params.type);
 
         // Setup theme
         const themes = RSS3.getAvailableThemes(await rss3.assets.get(this.ethAddress));
@@ -101,10 +102,10 @@ export default class SingleNFT extends Vue {
 
         if (nftData) {
             const asset = nftData.assets.find(
-                (ag) => ag.platform === platform && ag.identity === identity && ag.id === id,
+                (ag) => ag.platform === platform && ag.identity === identity && ag.id === id && ag.type === type,
             );
             if (asset) {
-                const detail = (await RSS3.getNFTDetails(this.ethAddress, platform, identity, id))?.data;
+                const detail = (await RSS3.getNFTDetails(this.ethAddress, platform, identity, id, type))?.data;
                 if (detail) {
                     this.details = detail;
                 }

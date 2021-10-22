@@ -5,7 +5,7 @@
         --color-nft: #7553ff;
         --color-gitcoin: #02e2ac;
         --color-content: #178bff;
-
+        --color-footprint: #fdca68;
         --color-body-bg: black;
         --color-body-text: white;
 
@@ -76,6 +76,18 @@
         --color-content-title: white;
         --color-content-bg: black;
         --color-content-border: white;
+        --color-content-divider: rgba(255, 255, 255, 0.2);
+
+        --color-footprint-btn-m: transparent;
+        --color-footprint-btn-m-text: white;
+        --color-footprint-btn-m-border: transparent;
+        --color-footprint-btn-s: black;
+        --color-footprint-btn-s-text: white;
+        --color-footprint-btn-s-border: transparent;
+        --color-footprint-title: white;
+        --color-footprint-bg: black;
+        --color-footprint-border: white;
+        --color-footprint-divider: rgba(255, 255, 255, 0.2);
 
         --color-btn-disabled: transparent;
 
@@ -122,6 +134,10 @@
         --shadow-content-btn-m: none;
         --shadow-content-btn-s: none;
         --shadow-content-item: none;
+
+        --shadow-footprint-btn-m: none;
+        --shadow-footprint-btn-s: none;
+        --shadow-footprint-item: none;
 
         * {
             @apply font-serif;

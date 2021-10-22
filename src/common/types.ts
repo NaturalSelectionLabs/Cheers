@@ -67,6 +67,30 @@ export interface DonationDetailByGrant {
     txs: DonationInfo[];
 }
 
+export interface POAP {
+    event: {
+        id: number;
+        fancy_id: string;
+        country: string;
+        city: string;
+        description: string;
+        year: number;
+        start_date: string;
+        end_date: string;
+        expiry_date: string;
+        name: string;
+        image_url: string;
+        event_url: string;
+        supply: number;
+    };
+    owner: string;
+    tokenId: string;
+}
+
+export interface POAPResponse {
+    data: POAP;
+}
+
 // used in api response
 export interface GeneralAsset {
     platform: string;
@@ -85,6 +109,10 @@ export interface GeneralAsset {
             token: string;
             amount: string;
         }[];
+        start_date?: string;
+        end_date?: string;
+        country?: string;
+        city?: string;
     };
 }
 

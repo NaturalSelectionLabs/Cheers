@@ -39,7 +39,7 @@
                     :name="item.info.title || 'Inactive Project'"
                     :contrib="item.info.total_contribs"
                     :amount="item.info.token_contribs"
-                    @click="toSingleGitcoin(item.platform, item.identity, item.id)"
+                    @click="toSingleGitcoin(item.platform, item.identity, item.id, item.type)"
                 ></GitcoinCard>
             </div>
             <div
@@ -116,7 +116,7 @@ export default class Gitcoins extends Vue {
 
         const profile = await rss3.profile.get(this.ethAddress);
         this.rss3Profile.avatar = profile?.avatar?.[0] || config.defaultAvatar;
-        this.rss3Profile.username = profile?.name?.[0] || '';
+        this.rss3Profile.username = profile?.name || '';
         this.rss3Profile.address = this.ethAddress;
 
         // Setup theme
@@ -211,7 +211,7 @@ export default class Gitcoins extends Vue {
         const GitcoinList: GeneralAssetWithTags[] = [];
 
         for (const am of assetsMerge) {
-            if (am.type === 'Gitcoin-Donation' && !am.tags?.includes('pass:hidden')) {
+            if (am.type.includes('Gitcoin-Donation') && !am.tags?.includes('pass:hidden')) {
                 this.contribs += <number>am.info.total_contribs;
                 GitcoinList.push(am);
             }
@@ -242,10 +242,10 @@ export default class Gitcoins extends Vue {
         window.open(`https://gitcoin.co/`);
     }
 
-    toSingleGitcoin(platform: string, identity: string, id: string) {
+    toSingleGitcoin(platform: string, identity: string, id: string, type: string) {
         this.$router.push(
             (config.subDomain.isSubDomainMode ? '' : `/${this.rns || this.ethAddress}`) +
-                `/singlegitcoin/${platform}/${identity}/${id}`,
+                `/singlegitcoin/${platform}/${identity}/${id}/${type}`,
         );
     }
 

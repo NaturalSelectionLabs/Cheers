@@ -40,11 +40,12 @@
                 >
                     <template #content>
                         <div class="relative">
-                            <AccountItem
+                            <EVMpAccountItem
                                 class="shadow-account-sm inline-flex m-0.5 rounded-full"
                                 :size="64"
                                 chain="Ethereum"
-                                :address="addressFilter(ethAddress)"
+                                :address="ethAddress"
+                                :enable-tooltip="true"
                             />
                         </div>
                     </template>
@@ -97,13 +98,10 @@
                     <template #content>
                         <div v-if="mode === 'add'" class="text-center md:h-screen-30">
                             <div>
-                                <AccountItem
-                                    v-for="chain in additionalMetamaskAccounts"
-                                    :key="chain"
+                                <EVMpAccountItem
                                     class="inline-flex m-0.5 rounded-full shadow-account cursor-pointer"
                                     :size="64"
-                                    :chain="chain"
-                                    @click="addMetamaskAccount(chain)"
+                                    @click="addMetamaskAccount"
                                 />
                             </div>
                             <div>
@@ -119,16 +117,29 @@
                         </div>
                         <div v-else-if="mode === 'delete'" class="md:h-screen-30">
                             <div>
-                                <AccountItem
-                                    v-for="(account, index) in show"
-                                    :key="account.platform + account.identity"
+                                <div
                                     class="inline-flex m-0.5 rounded-full shadow-account cursor-pointer"
-                                    :size="64"
-                                    :chain="account.platform"
-                                    :address="addressFilter(account.identity)"
-                                    :delete-mode="true"
-                                    @delete-account="deleteAccount(index)"
-                                />
+                                    v-for="(item, index) in show"
+                                    :key="item.platform + item.identity"
+                                >
+                                    <EVMpAccountItem
+                                        v-if="item.platform === 'EVM+'"
+                                        :size="64"
+                                        :address="item.identity"
+                                        :enable-tooltip="true"
+                                        :delete-mode="true"
+                                        @delete-account="deleteAccount(index)"
+                                    />
+                                    <AccountItem
+                                        v-else
+                                        :size="64"
+                                        :chain="item.platform"
+                                        :address="item.identity"
+                                        :enable-tooltip="true"
+                                        :delete-mode="true"
+                                        @delete-account="deleteAccount(index)"
+                                    />
+                                </div>
                             </div>
                         </div>
                         <div v-else>
@@ -139,13 +150,24 @@
                                 itemKey="chain"
                             >
                                 <template #item="{ element, index }">
-                                    <AccountItem
+                                    <div
                                         class="shadow-account-item inline-flex m-0.5 rounded-full"
                                         style="cursor: grab"
-                                        :size="64"
-                                        :chain="element.platform"
-                                        :address="addressFilter(element.identity)"
-                                    />
+                                    >
+                                        <EVMpAccountItem
+                                            v-if="element.platform === 'EVM+'"
+                                            :size="64"
+                                            :address="element.identity"
+                                            :enable-tooltip="true"
+                                        />
+                                        <AccountItem
+                                            v-else
+                                            :size="64"
+                                            :chain="element.platform"
+                                            :address="element.identity"
+                                            :enable-tooltip="true"
+                                        />
+                                    </div>
                                 </template>
                             </draggable>
                         </div>
@@ -195,13 +217,21 @@
                             itemKey="chain"
                         >
                             <template #item="{ element }">
-                                <AccountItem
-                                    class="inline-flex m-0.5 rounded-full"
-                                    style="cursor: grab"
-                                    :size="64"
-                                    :chain="element.platform"
-                                    :address="addressFilter(element.identity)"
-                                />
+                                <div class="inline-flex m-0.5 rounded-full" style="cursor: grab">
+                                    <EVMpAccountItem
+                                        v-if="element.platform === 'EVM+'"
+                                        :size="64"
+                                        :address="element.identity"
+                                        :enable-tooltip="true"
+                                    />
+                                    <AccountItem
+                                        v-else
+                                        :size="64"
+                                        :chain="element.platform"
+                                        :address="element.identity"
+                                        :enable-tooltip="true"
+                                    />
+                                </div>
                             </template>
                         </draggable>
                     </template>
@@ -333,10 +363,12 @@ import ContentProviders from '@/common/content-providers';
 import draggable from 'vuedraggable';
 import Input from '@/components/Input.vue';
 import ImgHolder from '@/components/ImgHolder.vue';
+import EVMpAccountItem from '@/components/EVMpAccountItem.vue';
 
 @Options({
     name: 'SetupAccounts',
     components: {
+        EVMpAccountItem,
         Input,
         Modal,
         Button,
@@ -623,10 +655,6 @@ export default class SetupAccounts extends Vue {
         }
         this.isLoading = false;
         window.history.back(); // Back
-    }
-
-    addressFilter(address: string) {
-        return address.length > 14 ? `${address.slice(0, 6)}....${address.slice(-4)}` : address;
     }
 }
 </script>

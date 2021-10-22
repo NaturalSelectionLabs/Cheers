@@ -18,8 +18,6 @@ module.exports = {
                 link: 'var(--border-width-linkbutton)',
             },
             colors: {
-                // primary: '#0072FF',
-                // secondary: '#ffffff',
                 primary: {
                     text: '#0072FF',
                     btn: 'var(--color-primary-btn)',
@@ -42,7 +40,6 @@ module.exports = {
 
                 account: {
                     border: 'var(--color-account-border)',
-                    // button: '#40D22F',
                     title: 'var(--color-account-title)',
                     bg: 'var(--color-account-bg)',
                     'btn-m': 'var(--color-account-btn-m)',
@@ -54,7 +51,6 @@ module.exports = {
                 },
                 nft: {
                     border: 'var(--color-nft-border)',
-                    // button: '#7553FF',
                     title: 'var(--color-nft-title)',
                     bg: 'var(--color-nft-bg)',
                     'btn-m': 'var(--color-nft-btn-m)',
@@ -85,7 +81,6 @@ module.exports = {
                 },
                 content: {
                     border: 'var(--color-content-border)',
-                    // button: '#178BFF',
                     title: 'var(--color-content-title)',
                     bg: 'var(--color-content-bg)',
                     'btn-m': 'var(--color-content-btn-m)',
@@ -94,6 +89,19 @@ module.exports = {
                     'btn-s': 'var(--color-content-btn-s)',
                     'btn-s-text': 'var(--color-content-btn-s-text)',
                     'btn-s-border': 'var(--color-content-btn-s-border)',
+                    divider: 'var(--color-content-divider)',
+                },
+                footprint: {
+                    border: 'var(--color-footprint-border)',
+                    title: 'var(--color-footprint-title)',
+                    bg: 'var(--color-footprint-bg)',
+                    'btn-m': 'var(--color-footprint-btn-m)',
+                    'btn-m-text': 'var(--color-footprint-btn-m-text)',
+                    'btn-m-border': 'var(--color-footprint-btn-m-border)',
+                    'btn-s': 'var(--color-footprint-btn-s)',
+                    'btn-s-text': 'var(--color-footprint-btn-s-text)',
+                    'btn-s-border': 'var(--color-footprint-btn-s-border)',
+                    divider: 'var(--color-footprint-divider)',
                 },
                 gray: {
                     bg: '#F4F7F8',
@@ -161,6 +169,10 @@ module.exports = {
                 'content-item': 'var(--shadow-content-item)',
                 'content-btn-s': 'var(--shadow-content-btn-s)',
                 'content-btn-m': 'var(--shadow-content-btn-m)',
+                footprint: 'var(--shadow-footprint-item)',
+                'footprint-item': 'var(--shadow-footprint-item)',
+                'footprint-btn-s': 'var(--shadow-footprint-btn-s)',
+                'footprint-btn-m': 'var(--shadow-footprint-btn-m)',
             },
             opacity: {
                 20: '0.2', //input label
@@ -201,10 +213,13 @@ module.exports = {
             },
             height: {
                 50: '12.5rem', //200px
+                72: '18rem',
+                112: '28rem',
                 'screen-30': '30vh',
                 'screen-60': '60vh',
             },
             backgroundImage: (theme) => ({
+                EVM: 'url(@/assets/images/chains/evm.png)',
                 BSC: 'url(@/assets/images/chains/BSC.png)',
                 Ethereum: 'url(@/assets/images/chains/Ethereum.png)',
                 Ronin: 'url(@/assets/images/chains/Ronin.png)',
@@ -232,7 +247,9 @@ module.exports = {
         },
         maxHeight: {
             36: '9rem',
-            128: '33rem',
+            96: '24rem',
+            112: '28rem',
+            128: '32rem',
         },
     },
     variants: {
@@ -247,5 +264,10 @@ module.exports = {
             translate: ['active'],
         },
     },
-    plugins: [require('@tailwindcss/aspect-ratio'), require('@tailwindcss/line-clamp'), require('postcss-100vh-fix')],
+    plugins: [
+        require('@tailwindcss/aspect-ratio'),
+        require('@tailwindcss/line-clamp'),
+        require('postcss-100vh-fix'),
+        require('tailwind-scrollbar-hide'),
+    ],
 };

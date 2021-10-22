@@ -10,77 +10,74 @@
                     :username="rss3Profile.username"
                     :address="ethAddress"
                     :rns="rns"
-                    :followers="rss3Relations.followers"
-                    :followings="rss3Relations.followings"
+                    :followers="rss3Relations.followers.length"
+                    :followings="rss3Relations.followings.length"
                     :bio="rss3Profile.bio"
                     :website="rss3Profile.link"
-                    click-address-notice="Copied!"
-                    :isOwner="isOwner"
-                    :isFollowing="isFollowing"
                     :is-loading-persona="isLoadingPersona"
                     @click-address="clickAddress"
-                    @to-setup-page="toSetupPage"
-                    @logout="logout"
-                    @action="action"
-                />
-            </section>
-
-            <AccountCard>
-                <template #header-button>
-                    <div v-if="isOwner" class="flex flex-row gap-2">
+                >
+                    <template #Accounts>
+                        <div
+                            class="inline-block mr-1 cursor-pointer"
+                            v-for="item in accounts"
+                            :key="item.platform + item.identity"
+                            @click="displayDialog(item.identity, item.platform)"
+                        >
+                            <EVMpAccountItem v-if="item.platform === 'EVM+'" :size="30" :address="item.identity" />
+                            <AccountItem v-else :size="30" :chain="item.platform" :address="item.identity" />
+                        </div>
                         <Button
+                            v-if="isOwner"
                             size="sm"
-                            class="w-8 h-8 bg-account-btn-s text-account-btn-s-text shadow-account-btn-s"
+                            shape="circle"
+                            class="w-8 h-8 mr-1 inline-block bg-account-btn-s text-account-btn-s-text shadow-account"
                             @click="toManageAccounts"
                         >
                             <i class="bx bxs-pencil bx-xs" />
                         </Button>
                         <Button
                             size="sm"
-                            class="w-8 h-8 bg-account-btn-s text-account-btn-s-text shadow-account-btn-s"
+                            shape="circle"
+                            class="w-8 h-8 mr-1 inline-block bg-account-btn-s text-account-btn-s-text shadow-account"
                             @click="toAccountsPage"
                         >
                             <i class="bx bx-expand-alt bx-xs" />
                         </Button>
-                    </div>
-                    <Button
-                        v-else
-                        size="sm"
-                        class="w-10 h-10 bg-account-btn-s text-account-btn-s-text shadow-account-btn-s"
-                        @click="toAccountsPage"
-                    >
-                        <i class="bx bx-expand-alt bx-xs"></i>
-                    </Button>
+                    </template>
+
+                    <template #Toolbar>
+                        <Toolbar
+                            :isOwner="isOwner"
+                            :isFollowing="isFollowing"
+                            :is-loading-persona="isLoadingPersona"
+                            @to-setup-page="toSetupPage"
+                            @logout="logout"
+                            @action="action"
+                        />
+                    </template>
+                </Profile>
+            </section>
+
+            <BarCard color="nft">
+                <template #header>
+                    <NFTIcon />
                 </template>
                 <template #content>
-                    <AccountItem
-                        class="inline-block mr-1 cursor-pointer"
+                    <NFTItem
+                        class="mr-1 cursor-pointer"
+                        v-for="item in nfts"
+                        :key="item.platform + item.identity + item.id"
+                        :image-url="item.info.animation_url || item.info.image_preview_url"
+                        :poster-url="item.info.image_preview_url"
                         :size="40"
-                        :chain="item.platform"
-                        v-for="item in accounts"
-                        :key="item.platform + item.identity"
-                        @click="displayDialog(item.identity, item.platform)"
+                        @click="toSingleItemPage('NFT', item.platform, item.identity, item.id, item.type)"
                     />
                 </template>
-            </AccountCard>
-
-            <Card
-                title="NFTs"
-                color-title="text-nft-title"
-                color-tips="text-nft-title"
-                color-background="bg-nft-bg"
-                class="w-full border-nft-border"
-                :is-having-content="nfts.length !== 0"
-                :isPClayout="isPCLayout"
-                :is-single-line="!isPCLayout && nfts.length !== 0"
-                :tips="isLoadingAssets.NFT ? 'Loading...' : nfts.length === 0 ? 'Haven\'t found anything yet...' : ''"
-                id="nfts-card"
-            >
-                <template #title-icon><NFTIcon /></template>
-
-                <template #header-button>
-                    <div v-if="isOwner" class="flex flex-row gap-2">
+                <template #footer>
+                    <section class="flex flex-row gap-2">
                         <Button
+                            v-if="isOwner"
                             size="sm"
                             class="w-8 h-8 bg-nft-btn-s text-nft-btn-s-text shadow-nft-btn-s"
                             @click="toManageNFTs"
@@ -90,51 +87,32 @@
                         <Button
                             size="sm"
                             class="w-8 h-8 bg-nft-btn-s text-nft-btn-s-text shadow-nft-btn-s"
-                            @click="toNFTsPage"
+                            @click="toListPage('NFT')"
                         >
                             <i class="bx bx-expand-alt bx-xs" />
                         </Button>
-                    </div>
-                    <Button
-                        v-else
-                        size="sm"
-                        class="w-10 h-10 bg-nft-btn-s text-nft-btn-s-text shadow-nft-btn-s"
-                        @click="toNFTsPage"
-                    >
-                        <i class="bx bx-expand-alt bx-xs" />
-                    </Button>
+                    </section>
                 </template>
-                <template #content>
-                    <NFTItem
-                        class="inline-flex mx-1 my-2 cursor-pointer"
-                        v-for="item in nfts"
-                        :key="item.platform + item.identity + item.id"
-                        :image-url="item.info.animation_url || item.info.image_preview_url"
-                        :poster-url="item.info.image_preview_url"
-                        :size="isPCLayout ? 130 : 70"
-                        @click="toSingleNFTPage(item.platform, item.identity, item.id)"
-                    />
-                </template>
-            </Card>
+            </BarCard>
 
-            <Card
-                title="Donations"
-                color-title="text-gitcoin-title"
-                color-tips="text-gitcoin-title"
-                color-background="bg-gitcoin-bg"
-                class="w-full border-gitcoin-border"
-                :is-having-content="true"
-                :isPClayout="isPCLayout"
-                :is-single-line="!isPCLayout && gitcoins.length !== 0"
-                id="gitcoins-card"
-            >
-                <template #title-icon>
+            <BarCard color="gitcoin">
+                <template #header>
                     <GitcoinIcon :iconColor="currentTheme === 'loot' ? 'white' : 'black'" />
                 </template>
-
-                <template #header-button>
-                    <div v-if="isOwner" class="flex flex-row gap-2">
+                <template #content>
+                    <GitcoinItem
+                        class="mr-1 cursor-pointer"
+                        v-for="item in gitcoins"
+                        :key="item.platform + item.identity + item.id"
+                        :size="40"
+                        :imageUrl="item.info.image_preview_url || defaultAvatar"
+                        @click="toSingleItemPage('Gitcoin', item.platform, item.identity, item.id, item.type)"
+                    />
+                </template>
+                <template #footer>
+                    <section class="flex flex-row gap-2">
                         <Button
+                            v-if="isOwner"
                             size="sm"
                             class="w-8 h-8 bg-gitcoin-btn-s text-gitcoin-btn-s-text shadow-gitcoin-btn-s"
                             @click="toManageGitcoins"
@@ -144,54 +122,124 @@
                         <Button
                             size="sm"
                             class="w-8 h-8 bg-gitcoin-btn-s text-gitcoin-btn-s-text shadow-gitcoin-btn-s"
-                            @click="toGitcoinsPage"
+                            @click="toListPage('Gitcoin')"
                         >
                             <i class="bx bx-expand-alt bx-xs" />
                         </Button>
-                    </div>
-                    <Button
-                        v-else
-                        size="sm"
-                        class="w-10 h-10 bg-gitcoin-btn-s text-gitcoin-btn-s-text shadow-gitcoin-btn-s"
-                        @click="toGitcoinsPage"
-                    >
-                        <i class="bx bx-expand-alt bx-xs"></i>
-                    </Button>
+                    </section>
+                </template>
+            </BarCard>
+
+            <Card
+                title="Footprints"
+                color-title="text-footprint-title"
+                color-tips="text-footprint-title"
+                color-background="bg-footprint-bg"
+                class="w-full border-footprint-border"
+                :is-having-content="true"
+                :is-single-line="false"
+                id="footprint-card"
+            >
+                <template #title-icon><FootprintIcon /> </template>
+
+                <template #header-button>
+                    <section class="flex flex-row gap-2">
+                        <Button
+                            v-if="isOwner"
+                            size="sm"
+                            class="w-8 h-8 bg-footprint-btn-s text-footprint-btn-s-text shadow-footprint-btn-s"
+                            @click="toManageFootprints"
+                        >
+                            <i class="bx bxs-pencil bx-xs" />
+                        </Button>
+                        <Button
+                            v-if="!isPCLayout"
+                            size="sm"
+                            class="w-8 h-8 bg-footprint-btn-s text-footprint-btn-s-text shadow-footprint-btn-s"
+                            @click="toListPage('Footprint')"
+                        >
+                            <i class="bx bx-expand-alt bx-xs" />
+                        </Button>
+                    </section>
                 </template>
                 <template #content>
-                    <template v-if="gitcoins.length !== 0">
-                        <GitcoinItem
-                            class="inline-flex mx-1 my-2 cursor-pointer"
-                            v-for="item in gitcoins"
-                            :key="item.platform + item.identity + item.id"
-                            :size="isPCLayout ? 130 : 70"
-                            :imageUrl="item.info.image_preview_url || defaultAvatar"
-                            @click="toSingleGitcoin(item.platform, item.identity, item.id)"
-                        />
-                    </template>
-                    <div v-else-if="isLoadingAssets.Gitcoin" class="text-gitcoin-title m-auto text-center mt-4">
-                        Loading...
+                    <div
+                        v-if="isPCLayout"
+                        class="flex flex-col px-0.5 overflow-y-auto scrollbar-hide"
+                        :class="{
+                            'h-72': isPCLayout,
+                            'justify-center': footprints.length === 0,
+                        }"
+                    >
+                        <div v-if="footprints.length > 0" class="divide-y-xs divide-footprint-divider">
+                            <!-- FootprintCard example -->
+                            <FootprintCard
+                                v-for="item of footprints"
+                                :key="item.platform + item.identity + item.id"
+                                :imageUrl="item.info.image_preview_url"
+                                :username="rss3Profile.username"
+                                :activity="item.info.title"
+                                :date="
+                                    item.info.start_date +
+                                    (item.info.end_date && item.info.end_date !== item.info.start_date
+                                        ? ` ~ ${item.info.end_date}`
+                                        : '')
+                                "
+                                :location="item.info.city || item.info.country || 'Metaverse'"
+                                class="cursor-pointer"
+                                @click="toSingleItemPage('Footprint', item.platform, item.identity, item.id, item.type)"
+                            />
+                        </div>
+                        <div v-else>
+                            <div class="text-footprint-title m-auto text-center mt-4">
+                                {{ isLoadingAssets.Footprint ? 'Loading...' : "Haven't found anything yet..." }}
+                            </div>
+                        </div>
                     </div>
-                    <div v-else-if="!isOwner" class="text-gitcoin-title m-auto text-center mt-4 overflow-hidden">
-                        Haven't found anything yet...
+                    <div
+                        v-else-if="footprints.length > 0"
+                        class="flex flex-col px-0.5 divide-y-xs divide-footprint-divider"
+                    >
+                        <div>
+                            <FootprintCard
+                                :imageUrl="footprints[0].info.image_preview_url"
+                                :username="rss3Profile.username"
+                                :activity="footprints[0].info.title"
+                                :date="
+                                    footprints[0].info.start_date +
+                                    (footprints[0].info.end_date &&
+                                    footprints[0].info.end_date !== footprints[0].info.start_date
+                                        ? ` ~ ${footprints[0].info.end_date}`
+                                        : '')
+                                "
+                                :location="footprints[0].info.city || footprints[0].info.country || 'Metaverse'"
+                                class="cursor-pointer"
+                                @click="
+                                    toSingleItemPage(
+                                        'Footprint',
+                                        footprints[0].platform,
+                                        footprints[0].identity,
+                                        footprints[0].id,
+                                        footprints[0].type,
+                                    )
+                                "
+                            />
+                        </div>
+                        <div class="p-4 inline-flex overflow-x-auto" style="scrollbar-width: thin">
+                            <FootprintItem
+                                v-for="item of footprints"
+                                :key="item.platform + item.identity + item.id"
+                                :imageUrl="item.info.image_preview_url"
+                                :size="78"
+                                class="flex-shrink-0"
+                                @click="toSingleItemPage('Footprint', item.platform, item.identity, item.id, item.type)"
+                            />
+                        </div>
                     </div>
-                    <div v-else class="flex justify-center">
-                        <Button
-                            size="lg"
-                            class="
-                                text-lg
-                                bg-gitcoin-btn-m
-                                text-gitcoin-btn-m-text
-                                shadow-gitcoin-btn-m
-                                cursor-pointer
-                                m-auto
-                                mt-4
-                                md:mt-0
-                            "
-                            @click="toMakeDonation"
-                        >
-                            <span>Make your first donation!</span>
-                        </Button>
+                    <div v-else>
+                        <div class="text-footprint-title m-auto text-center mt-4">
+                            {{ isLoadingAssets.Footprint ? 'Loading...' : "Haven't found anything yet..." }}
+                        </div>
                     </div>
                 </template>
             </Card>
@@ -202,37 +250,45 @@
                 color-tips="text-content-title"
                 color-background="bg-content-bg"
                 class="w-auto border-content-border md:col-start-2 md:row-start-2 md:row-span-3"
+                :isSingleLine="false"
                 :is-having-content="true"
             >
                 <template #title-icon><ContentIcon /></template>
                 <template #content>
-                    <div class="flex flex-col px-0.5 overflow-y-auto md:max-h-128" v-if="contents.length !== 0">
-                        <ContentCard
-                            class="mb-4"
-                            v-for="item in contents"
-                            :key="item.id"
-                            :timestamp="parseInt(item.info.timestamp)"
-                            :content="item.info.pre_content"
-                            :title="item.info.title"
-                            :provider="item.type"
-                            @click="toContentLink(item.info.link)"
-                        />
-
-                        <Button
-                            size="sm"
-                            class="w-full h-6 bg-content-btn-s text-content-btn-s-text shadow-content-btn-s"
-                            v-show="isContentsHaveMore"
-                            @click="loadMoreContents"
-                            id="contents-load-more-button"
-                        >
-                            <i v-if="isLoadingContents" class="bx bx-loader-circle bx-spin"></i>
-                            <i v-else class="bx bx-dots-horizontal-rounded" />
-                        </Button>
+                    <div
+                        class="flex flex-col px-0.5 overflow-y-auto md:h-112 scrollbar-hide"
+                        :class="{
+                            'h-112': isPCLayout,
+                            'justify-center': contents.length === 0,
+                        }"
+                    >
+                        <div v-if="contents.length > 0" class="divide-y-xs divide-content-divider">
+                            <div v-for="item in contents" :key="item.id">
+                                <ContentCard
+                                    :timestamp="parseInt(item.info.timestamp)"
+                                    :content="item.info.pre_content"
+                                    :title="item.info.title"
+                                    :provider="item.type"
+                                    @click="toContentLink(item.info.link)"
+                                />
+                            </div>
+                            <div>
+                                <Button
+                                    size="sm"
+                                    class="w-full h-6 bg-content-btn-s text-content-btn-s-text shadow-content-btn-s"
+                                    v-show="isContentsHaveMore"
+                                    @click="loadMoreContents"
+                                    id="contents-load-more-button"
+                                >
+                                    <i v-if="isLoadingContents" class="bx bx-loader-circle bx-spin"></i>
+                                    <i v-else class="bx bx-dots-horizontal-rounded" />
+                                </Button>
+                            </div>
+                        </div>
+                        <div v-else class="text-content-title text-center mt-4">
+                            {{ isLoadingContents ? 'Loading...' : "Haven't found anything yet..." }}
+                        </div>
                     </div>
-                    <div v-else-if="isLoadingContents" class="text-content-title m-auto text-center mt-4">
-                        Loading...
-                    </div>
-                    <div v-else class="text-content-title m-auto text-center mt-4">Haven't found anything yet...</div>
                 </template>
             </Card>
 
@@ -285,11 +341,19 @@
                 </template>
                 <template #body>
                     <div class="flex flex-col gap-y-4 items-center">
+                        <EVMpAccountItem
+                            class="m-auto mt-4"
+                            v-if="showingAccountDetails.platform === 'EVM+'"
+                            :size="90"
+                            :address="showingAccountDetails.address"
+                        />
                         <AccountItem
                             class="m-auto mt-4"
+                            v-else
                             :size="90"
                             :chain="showingAccountDetails.platform"
-                        ></AccountItem>
+                            :address="showingAccountDetails.address"
+                        />
                         <span class="address text-xl font-semibold break-all text-center mt-4">
                             {{ showingAccountDetails.address }}
                         </span>
@@ -315,40 +379,6 @@
                     </div>
                 </template>
             </Modal>
-
-            <!-- Share Card -->
-            <div
-                v-show="isShowingShareCard"
-                class="fixed w-screen h-screen m-0 p-0 top-0 left-0 flex justify-center items-center flex-col"
-            >
-                <div class="fixed w-screen h-screen bg-share-bg bg-opacity-70" @click="isShowingShareCard = false" />
-
-                <ShareCard
-                    class="max-w-md"
-                    :name="rss3Profile.username"
-                    :avatar="rss3Profile.avatar"
-                    :address="`${rns}`"
-                    ref="shareCard"
-                    :id="`share-card-${rns}`"
-                />
-
-                <div class="flex flex-row gap-7">
-                    <Button
-                        size="sm"
-                        class="w-12 h-12 bg-primary text-white shadow-primary mt-8"
-                        @click="saveShareCard"
-                    >
-                        <i class="bx bx-download bx-sm" />
-                    </Button>
-                    <Button
-                        size="sm"
-                        class="w-12 h-12 bg-primary text-white shadow-primary mt-8"
-                        @click="shareShareCard"
-                    >
-                        <i class="bx bx-share-alt bx-sm" />
-                    </Button>
-                </div>
-            </div>
 
             <Modal v-if="isShowingNotice">
                 <template #header>
@@ -399,6 +429,7 @@
 import { Options, Vue } from 'vue-class-component';
 import Button from '@/components/Button.vue';
 import Card from '@/components/Card.vue';
+import BarCard from '@/components/BarCard.vue';
 import Profile from '@/components/Profile.vue';
 import AccountItem from '@/components/AccountItem.vue';
 import NFTItem from '@/components/NFT/NFTItem.vue';
@@ -407,18 +438,22 @@ import { RSS3Account, RSS3Asset, RSS3ID, RSS3Index } from 'rss3-next/types/rss3'
 import Modal from '@/components/Modal.vue';
 import RNSUtils from '@/common/rns';
 import config from '@/config';
-import AccountCard from '@/components/AccountCard.vue';
 import GitcoinItem from '@/components/GitcoinItem.vue';
 import { GeneralAsset, GeneralAssetWithTags } from '@/common/types';
-import ShareCard from '@/components/ShareCard.vue';
+
 import NFTIcon from '@/components/Icons/NFTIcon.vue';
 import GitcoinIcon from '@/components/Icons/GitcoinIcon.vue';
 import ContentIcon from '@/components/Icons/ContentIcon.vue';
+import FootprintIcon from '@/components/Icons/FootprintIcon.vue';
 import Logo from '@/components/Logo.vue';
+
+import FootprintCard from '@/components/FootprintCard.vue';
 import ContentCard from '@/components/ContentCard.vue';
 import { debounce } from 'lodash';
 import ContentProviders, { Content } from '@/common/content-providers';
-import LinkButton from '@/components/LinkButton.vue';
+import Toolbar from '@/components/Toolbar.vue';
+import FootprintItem from '@/components/FootprintItem.vue';
+import EVMpAccountItem from '@/components/EVMpAccountItem.vue';
 
 interface ProfileInfo {
     avatar: string;
@@ -436,21 +471,24 @@ interface Relations {
 @Options({
     name: 'Home',
     components: {
-        LinkButton,
+        EVMpAccountItem,
+        FootprintItem,
         Button,
+        BarCard,
         Card,
         Profile,
         AccountItem,
         NFTItem,
         Modal,
-        AccountCard,
         GitcoinItem,
-        ShareCard,
         NFTIcon,
         ContentIcon,
         GitcoinIcon,
+        FootprintCard,
         ContentCard,
         Logo,
+        Toolbar,
+        FootprintIcon,
     },
 })
 export default class Home extends Vue {
@@ -471,13 +509,14 @@ export default class Home extends Vue {
         isLink: false,
     };
     isAccountExist: boolean = true;
-    isShowingShareCard: boolean = false;
     isLoadingAssets: {
         NFT: boolean;
         Gitcoin: boolean;
+        Footprint: boolean;
     } = {
         NFT: true,
         Gitcoin: true,
+        Footprint: true,
     };
     loadingAssetsIntervalID: ReturnType<typeof setInterval> | null = null;
     isLoadingContents: boolean = true;
@@ -498,6 +537,7 @@ export default class Home extends Vue {
     accounts: RSS3Account[] = [];
     nfts: GeneralAssetWithTags[] = [];
     gitcoins: GeneralAssetWithTags[] = [];
+    footprints: GeneralAssetWithTags[] = [];
     contents: Content[] = [];
     $gtag: any;
     scrollTop: number = 0;
@@ -538,7 +578,6 @@ export default class Home extends Vue {
             platform: 'Ethereum',
             isLink: false,
         };
-        this.isShowingShareCard = false;
         this.isLoadingContents = true;
         this.rss3Profile = {
             avatar: config.defaultAvatar,
@@ -745,6 +784,20 @@ export default class Home extends Vue {
         return false;
     }
 
+    async ivLoadFootprint(refresh: boolean): Promise<boolean> {
+        const data = await RSS3.getAssetProfile(this.ethAddress, 'POAP', refresh);
+        if (data && data.status !== false) {
+            await this.mergeAssets(
+                await (<IRSS3>this.rss3).assets.get(this.ethAddress),
+                <GeneralAsset[]>data.assets,
+                'POAP',
+            );
+            this.isLoadingAssets.Footprint = false;
+            return true;
+        }
+        return false;
+    }
+
     async ivLoadAsset(refresh: boolean): Promise<boolean> {
         let isFinish = true;
         if (this.isLoadingAssets.NFT) {
@@ -752,6 +805,9 @@ export default class Home extends Vue {
         }
         if (this.isLoadingAssets.Gitcoin) {
             isFinish = (await this.ivLoadGitcoin(refresh)) && isFinish;
+        }
+        if (this.isLoadingAssets.Footprint) {
+            isFinish = (await this.ivLoadFootprint(refresh)) && isFinish;
         }
         if (isFinish) {
             if (this.loadingAssetsIntervalID) {
@@ -766,9 +822,11 @@ export default class Home extends Vue {
         if (refresh) {
             this.nfts = [];
             this.gitcoins = [];
+            this.footprints = [];
             this.isLoadingAssets = {
                 NFT: true,
                 Gitcoin: true,
+                Footprint: true,
             };
         }
         if (!(await this.ivLoadAsset(refresh))) {
@@ -841,25 +899,24 @@ export default class Home extends Vue {
             }),
         );
 
-        const NFTList: GeneralAssetWithTags[] = [];
-        const GitcoinList: GeneralAssetWithTags[] = [];
+        const List: GeneralAssetWithTags[] = [];
 
         for (const am of assetsMerge) {
-            if (am.type === 'NFT') {
-                NFTList.push(am);
-            } else if (am.type === 'Gitcoin-Donation') {
-                GitcoinList.push(am);
+            if (am.type.includes(type)) {
+                List.push(am);
             } // else Invalid
         }
 
-        if (type === 'NFT') {
-            this.nfts = NFTList.filter((asset) => !asset.tags || asset.tags.indexOf('pass:hidden') === -1).sort(
-                (a, b) => this.getAssetOrder(a) - this.getAssetOrder(b),
-            );
+        const res = List.filter((asset) => !asset.tags || asset.tags.indexOf('pass:hidden') === -1).sort(
+            (a, b) => this.getAssetOrder(a) - this.getAssetOrder(b),
+        );
+
+        if (type.includes('NFT')) {
+            this.nfts = res;
         } else if (type === 'Gitcoin-Donation') {
-            this.gitcoins = GitcoinList.filter((asset) => !asset.tags || asset.tags.indexOf('pass:hidden') === -1).sort(
-                (a, b) => this.getAssetOrder(a) - this.getAssetOrder(b),
-            );
+            this.gitcoins = res;
+        } else if (type === 'POAP') {
+            this.footprints = res;
         }
     }
 
@@ -874,16 +931,6 @@ export default class Home extends Vue {
             more: true,
             lastTS: 0xffffffff,
         });
-        // Accounts
-        // for (const account of accounts) {
-        //     if (account.platform === 'Misskey') {
-        //         this.isContentsHaveMoreEachProvider.push({
-        //             provider: account,
-        //             more: true,
-        //             lastTS: 0xffffffff,
-        //         });
-        //     }
-        // }
 
         await this.loadMoreContents(true);
     }
@@ -901,7 +948,6 @@ export default class Home extends Vue {
                 if (provider.more) {
                     const contents: Content[] = await ContentProviders[provider.provider.identity].get(
                         this.ethAddress,
-                        0,
                         provider.lastTS,
                     );
                     if (contents.length < config.contentRequestLimit) {
@@ -978,7 +1024,7 @@ export default class Home extends Vue {
         }
     }
 
-    public async action() {
+    async action() {
         if (RSS3.isValidRSS3()) {
             if (this.isFollowing) {
                 await this.unfollow();
@@ -1009,7 +1055,7 @@ export default class Home extends Vue {
         }
     }
 
-    public async checkIsFollowing() {
+    async checkIsFollowing() {
         if (!this.ethAddress) {
             this.ethAddress = (await RNSUtils.name2Addr(this.rns + config.rns.suffix)).toString();
         }
@@ -1065,45 +1111,38 @@ export default class Home extends Vue {
             this.$router.push('/setup/gitcoins');
         }
     }
+    toManageFootprints() {
+        if (this.isLoadingAssets.Footprint) {
+            this.notice = 'Footprints still loading... Maybe check back later?';
+            this.isShowingNotice = true;
+        } else {
+            this.$router.push('/setup/footprints');
+        }
+    }
 
     toAccountsPage() {
         this.$gtag.event('visitAccountsPage', { userid: this.rns || this.ethAddress });
         this.$router.push((config.subDomain.isSubDomainMode ? '' : `/${this.rns || this.ethAddress}`) + `/accounts`);
     }
 
-    toNFTsPage() {
-        this.$gtag.event('visitNftPage', { userid: this.rns || this.ethAddress });
-        this.$router.push((config.subDomain.isSubDomainMode ? '' : `/${this.rns || this.ethAddress}`) + `/nfts`);
-    }
-
-    toGitcoinsPage() {
-        this.$gtag.event('visitGitcoinPage', { userid: this.rns || this.ethAddress });
-        this.$router.push((config.subDomain.isSubDomainMode ? '' : `/${this.rns || this.ethAddress}`) + `/gitcoins`);
-    }
-
-    toSingleNFTPage(platform: string, identity: string, id: string) {
-        this.$gtag.event('visitSingleNft', {
-            userid: this.rns || this.ethAddress,
-            platform: platform,
-            nftidentity: identity,
-            nftid: id,
-        });
+    toListPage(type: string) {
+        this.$gtag.event(`visit${type}Page`, { userid: this.rns || this.ethAddress });
         this.$router.push(
-            (config.subDomain.isSubDomainMode ? '' : `/${this.rns || this.ethAddress}`) +
-                `/singlenft/${platform}/${identity}/${id}`,
+            (config.subDomain.isSubDomainMode ? '' : `/${this.rns || this.ethAddress}`) + `/${type.toLowerCase()}s`,
         );
     }
 
-    toSingleGitcoin(platform: string, identity: string, id: string) {
-        this.$gtag.event('visitSingleGitcoin', {
+    toSingleItemPage(type: string, platform: string, identity: string, id: string, fullType: string) {
+        this.$gtag.event(`visitSingle${type}`, {
             userid: this.rns || this.ethAddress,
-            platform: platform,
-            identity: identity,
-            id: id,
+            platform,
+            identity,
+            id,
+            type,
         });
         this.$router.push(
             (config.subDomain.isSubDomainMode ? '' : `/${this.rns || this.ethAddress}`) +
-                `/singlegitcoin/${platform}/${identity}/${id}`,
+                `/single${type.toLowerCase()}/${platform}/${identity}/${id}/${fullType}`,
         );
     }
 
@@ -1134,7 +1173,7 @@ export default class Home extends Vue {
         window.open(link);
     }
 
-    public displayDialog(address: string, platform: string) {
+    displayDialog(address: string, platform: string) {
         if (ContentProviders[platform]) {
             this.showingAccountDetails = {
                 address:
@@ -1154,11 +1193,11 @@ export default class Home extends Vue {
         this.isShowingAccount = true;
     }
 
-    public closeDialog() {
+    closeDialog() {
         this.isShowingAccount = false;
     }
 
-    public copyToClipboard(address: string) {
+    copyToClipboard(address: string) {
         navigator.clipboard.writeText(address).then(
             function () {
                 console.log('Async: Copying to clipboard was successful!');
@@ -1179,37 +1218,6 @@ export default class Home extends Vue {
                 ? `https://${this.rns}.${config.subDomain.rootDomain}`
                 : `https://${config.subDomain.rootDomain}/${this.ethAddress}`,
         );
-    }
-
-    showShareCard() {
-        this.isShowingShareCard = true;
-    }
-
-    async saveShareCard() {
-        const shareCard = document.getElementById(`share-card-${this.rns}`);
-        if (shareCard) {
-            const html2canvas: any = (await import(/* webpackChunkName: "html2canvas" */ '@/common/html2canvas.js'))
-                .default;
-            const canvas = await html2canvas(shareCard, {
-                useCORS: true,
-                logging: false,
-                scale: 3,
-            });
-            const link = document.createElement('a');
-            link.download = `${this.rns}.png`;
-            link.href = canvas.toDataURL();
-            link.click();
-        }
-    }
-
-    async shareShareCard() {
-        if (navigator.share) {
-            await navigator.share({
-                title: this.rss3Profile.username,
-                text: this.rss3Profile.bio,
-                url: `https://pass3.me/${this.rns}`, // Todo: Change to one's own RNS after SSR done
-            });
-        }
     }
 
     toMakeDonation() {

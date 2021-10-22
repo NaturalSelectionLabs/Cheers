@@ -17,7 +17,7 @@
                     <i class="bx bx-chevron-left bx-sm" />
                 </Button>
                 <span class="text-center">
-                    <h1 class="text-xl text-gitcoin-title font-bold inline">Manage Donations</h1>
+                    <h1 class="text-xl text-footprint-title font-bold inline">Manage Footprints</h1>
                 </span>
                 <span class="avatar">
                     <ImgHolder
@@ -32,9 +32,9 @@
             <section class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <Card
                     title="Listed"
-                    color-title="text-gitcoin-title"
-                    color-tips="text-gitcoin-title"
-                    color-background="bg-gitcoin-bg"
+                    color-title="text-footprint-title"
+                    color-tips="text-footprint-title"
+                    color-background="bg-footprint-bg"
                     class="w-full"
                     :is-having-content="true"
                     tips="Drag to reorder"
@@ -43,12 +43,12 @@
                         <draggable
                             class="min-h-20 md:h-screen-60 md:overflow-y-auto"
                             :list="show"
-                            group="gitcoins"
+                            group="footprints"
                             data-type="displayed"
                             item-key="displayed"
                         >
                             <template #item="{ element }">
-                                <GitcoinItem
+                                <FootprintItem
                                     class="inline-flex mx-0.5"
                                     style="cursor: grab"
                                     :size="70"
@@ -60,7 +60,7 @@
                     <template #footer-button>
                         <Button
                             size="sm"
-                            class="text-xs bg-gitcoin-btn-s text-gitcoin-btn-s-text shadow-gitcoin-btn-s"
+                            class="text-xs bg-footprint-btn-s text-footprint-btn-s-text shadow-footprint-btn-s"
                             :class="{
                                 'bg-gray-100 cursor-not-allowed': show.length === 0,
                             }"
@@ -73,8 +73,8 @@
                 </Card>
                 <Card
                     title="Unlisted"
-                    color-title="text-gitcoin-title"
-                    color-tips="text-gitcoin-title"
+                    color-title="text-footprint-title"
+                    color-tips="text-footprint-title"
                     color-background="bg-card-hide"
                     class="w-full"
                     :is-having-content="true"
@@ -83,7 +83,7 @@
                     <template #header-button>
                         <Button
                             size="sm"
-                            class="text-xs bg-gitcoin-btn-s text-gitcoin-btn-s-text shadow-gitcoin-btn-s"
+                            class="text-xs bg-footprint-btn-s text-footprint-btn-s-text shadow-footprint-btn-s"
                             :class="{
                                 'bg-gray-100 cursor-not-allowed': hide.length === 0,
                             }"
@@ -98,12 +98,12 @@
                         <draggable
                             class="min-h-20 md:h-screen-60 md:overflow-y-auto"
                             :list="hide"
-                            group="gitcoins"
+                            group="footprints"
                             data-type="displayed"
                             item-key="displayed"
                         >
                             <template #item="{ element }">
-                                <GitcoinItem
+                                <FootprintItem
                                     class="inline-flex mx-0.5"
                                     style="cursor: grab"
                                     :size="70"
@@ -115,7 +115,7 @@
                     <template #footer-button>
                         <Button
                             size="sm"
-                            class="text-xs bg-gitcoin-btn-s text-gitcoin-btn-s-text shadow-gitcoin-btn-s"
+                            class="text-xs bg-footprint-btn-s text-footprint-btn-s-text shadow-footprint-btn-s"
                             :class="{
                                 'bg-gray-100 cursor-not-allowed': hide.length === 0,
                             }"
@@ -160,12 +160,12 @@ import { GeneralAsset, GeneralAssetWithTags } from '@/common/types';
 import LoadingContainer from '@/components/LoadingContainer.vue';
 import { RSS3Account, RSS3Asset } from 'rss3-next/types/rss3';
 import NFTItem from '@/components/NFT/NFTItem.vue';
-import GitcoinItem from '@/components/GitcoinItem.vue';
+import FootprintItem from '@/components/FootprintItem.vue';
 
 @Options({
-    name: 'SetupGitcoins',
+    name: 'SetupFootprints',
     components: {
-        GitcoinItem,
+        FootprintItem,
         NFTItem,
         LoadingContainer,
         Button,
@@ -174,7 +174,7 @@ import GitcoinItem from '@/components/GitcoinItem.vue';
         ImgHolder,
     },
 })
-export default class SetupGitcoins extends Vue {
+export default class SetupFootprints extends Vue {
     avatar: string = config.defaultAvatar;
     rss3: IRSS3 | null = null;
     isLoading: Boolean = false;
@@ -207,7 +207,7 @@ export default class SetupGitcoins extends Vue {
             document.body.classList.remove(...document.body.classList);
         }
 
-        const data = await RSS3.getAssetProfile((<IRSS3>this.rss3).account.address, 'Gitcoin-Donation');
+        const data = await RSS3.getAssetProfile((<IRSS3>this.rss3).account.address, 'POAP');
         if (data) {
             await this.loadAssets(
                 await (<IRSS3>this.rss3).assets.get((<IRSS3>this.rss3).account.address),
@@ -250,17 +250,17 @@ export default class SetupGitcoins extends Vue {
             }),
         );
 
-        const GitcoinList: GeneralAssetWithTags[] = [];
+        const FootprintList: GeneralAssetWithTags[] = [];
 
         for (const am of assetsMerge) {
-            if (am.type.includes('Gitcoin-Donation')) {
-                GitcoinList.push(am);
+            if (am.type.includes('POAP')) {
+                FootprintList.push(am);
             } // else Invalid
         }
-        this.show = GitcoinList.filter((nft) => !nft.tags || nft.tags.indexOf('pass:hidden') === -1).sort(
+        this.show = FootprintList.filter((nft) => !nft.tags || nft.tags.indexOf('pass:hidden') === -1).sort(
             (a, b) => this.getAssetOrder(a) - this.getAssetOrder(b),
         );
-        this.hide = GitcoinList.filter((nft) => nft.tags && nft.tags.indexOf('pass:hidden') !== -1).sort(
+        this.hide = FootprintList.filter((nft) => nft.tags && nft.tags.indexOf('pass:hidden') !== -1).sort(
             (a, b) => this.getAssetOrder(a) - this.getAssetOrder(b),
         );
     }
@@ -279,26 +279,26 @@ export default class SetupGitcoins extends Vue {
     async save() {
         this.isLoading = true;
         await Promise.all(
-            this.show.map((gitcoin, index) => {
+            this.show.map((footprint, index) => {
                 return this.rss3?.assets.patchTags(
                     {
-                        type: gitcoin.type,
-                        platform: gitcoin.platform,
-                        identity: gitcoin.identity,
-                        id: gitcoin.id,
+                        type: footprint.type,
+                        platform: footprint.platform,
+                        identity: footprint.identity,
+                        id: footprint.id,
                     },
                     [`pass:order:${index}`],
                 );
             }),
         );
         await Promise.all(
-            this.hide.map((gitcoin) => {
+            this.hide.map((footprint) => {
                 return this.rss3?.assets.patchTags(
                     {
-                        type: gitcoin.type,
-                        platform: gitcoin.platform,
-                        identity: gitcoin.identity,
-                        id: gitcoin.id,
+                        type: footprint.type,
+                        platform: footprint.platform,
+                        identity: footprint.identity,
+                        id: footprint.id,
                     },
                     ['pass:hidden'],
                 );

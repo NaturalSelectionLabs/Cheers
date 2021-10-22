@@ -3,7 +3,7 @@ import Web3 from 'web3';
 import RSS3 from 'rss3-next';
 import { RSS3Account, RSS3Asset } from 'rss3-next/types/rss3';
 import axios from 'axios';
-import { GitcoinResponse, GeneralAsset, NFTResponse } from './types';
+import { GitcoinResponse, GeneralAsset, NFTResponse, POAPResponse } from './types';
 import config from '@/config';
 import Cookies from 'js-cookie';
 
@@ -257,10 +257,15 @@ export default {
         } else {
             let data: IAssetProfile | null = null;
             try {
-                const res = await axios.get(`${config.hubEndpoint}/asset-profile/${address}/${type.toLowerCase()}/`);
+                const res = await axios.get(`${config.hubEndpoint}/assets/list`, {
+                    params: {
+                        personaID: address,
+                        type: type,
+                    },
+                });
                 if (res && res.data) {
-                    data = res.data;
-                    assets.set(address + type, <IAssetProfile>data);
+                    data = <IAssetProfile>res.data;
+                    assets.set(address + type, data);
                 }
             } catch (error) {
                 data = null;
@@ -268,20 +273,22 @@ export default {
             return data;
         }
     },
-    getNFTDetails: async (address: string, platform: string, identity: string, id: string) => {
+    getNFTDetails: async (address: string, platform: string, identity: string, id: string, type: string) => {
         let data: NFTResponse | null = null;
         try {
             const res = await axios({
                 method: 'get',
-                url: `${config.hubEndpoint}/asset-profile/${address}/nft/`,
+                url: `${config.hubEndpoint}/assets/details`,
                 params: {
-                    platform: platform,
-                    id: id,
-                    identity: identity,
+                    personaID: address,
+                    platform: 'EVM+',
+                    id,
+                    identity,
+                    type,
                 },
             });
             if (res && res.data) {
-                data = res.data;
+                data = <NFTResponse>res.data;
             }
         } catch (error) {
             data = null;
@@ -293,22 +300,46 @@ export default {
         try {
             const res = await axios({
                 method: 'get',
-                url: `${config.hubEndpoint}/asset-profile/${address}/gitcoin-donation/`,
+                url: `${config.hubEndpoint}/assets/details`,
                 params: {
-                    platform: platform,
+                    personaID: address,
+                    platform: 'EVM+',
                     id: id,
                     identity: identity,
+                    type: 'GitCoin-Donation',
                 },
             });
             if (res && res.data) {
-                data = res.data;
+                data = <GitcoinResponse>res.data;
             }
         } catch (error) {
             data = null;
         }
         return data;
     },
-    addNewMetamaskAccount: async (platform: string): Promise<RSS3Account> => {
+    getFootprintDetail: async (address: string, platform: string, identity: string, id: string) => {
+        let data: POAPResponse | null = null;
+        try {
+            const res = await axios({
+                method: 'get',
+                url: `${config.hubEndpoint}/assets/details`,
+                params: {
+                    personaID: address,
+                    platform: 'EVM+',
+                    id: id,
+                    identity: identity,
+                    type: 'xDai-POAP',
+                },
+            });
+            if (res && res.data) {
+                data = <POAPResponse>res.data;
+            }
+        } catch (error) {
+            data = null;
+        }
+        return data;
+    },
+    addNewMetamaskAccount: async (): Promise<RSS3Account> => {
         // js don't support multiple return values,
         // so here I'm using signature as a message provider
         if (!rss3) {
@@ -326,14 +357,14 @@ export default {
         const address = metaMaskWeb3.utils.toChecksumAddress(accounts[0]);
 
         const newTmpAddress: RSS3Account = {
-            platform: platform,
+            platform: 'EVM+',
             identity: address,
         };
 
         const signature = await metaMaskWeb3.eth.personal.sign(rss3.accounts.getSigMessage(newTmpAddress), address, '');
 
         return {
-            platform: platform,
+            platform: 'EVM+',
             identity: address,
             signature: signature,
         };

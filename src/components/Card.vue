@@ -74,7 +74,7 @@ export default class Card extends Vue {}
         }
 
         .card-content {
-            @apply break-all mx-auto w-full h-full;
+            @apply break-all mx-auto w-full h-full scrollbar-hide;
             > .content-wrapper {
                 @apply min-h-20;
 

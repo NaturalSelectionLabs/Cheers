@@ -19,16 +19,13 @@
                 />
             </div>
             <section class="max-w-screen-sm m-auto">
-                <GitcoinItem :imageUrl="grant.logo || defaultAvatar" :size="Width"></GitcoinItem>
+                <GitcoinItem class="mb-4" :imageUrl="grant.logo || defaultAvatar" :size="Width"></GitcoinItem>
                 <div
                     class="
                         w-full
                         px-5
-                        py-4
-                        bg-body-bg
                         rounded
                         filter
-                        shadow-gitcoin
                         border-card
                         text-body-text
                         flex flex-col
@@ -47,6 +44,7 @@
                             class="text-sm leading-normal text-gitcoin-title truncate cursor-pointer"
                             @click="toExternalLink(grant.reference_url)"
                         >
+                            <i class="bx bx-link align-middle" />
                             {{ grant.reference_url }}
                         </div>
                     </div>
@@ -78,7 +76,7 @@
                             <div
                                 class="
                                     flex-1
-                                    bg-gitcoin-bg
+                                    bg-body-bg
                                     text-black
                                     rounded-xl
                                     flex flex-row
@@ -126,9 +124,8 @@ import ImgHolder from '@/components/ImgHolder.vue';
 import GitcoinItem from '@/components/GitcoinItem.vue';
 import config from '@/config';
 import RNSUtils from '@/common/rns';
-import RSS3, { IRSS3 } from '@/common/rss3';
+import RSS3 from '@/common/rss3';
 import Vue3Autocounter from 'vue3-autocounter';
-import { RSS3Index } from 'rss3-next/types/rss3';
 
 interface Profile {
     avatar: string;
@@ -196,7 +193,7 @@ export default class SingleGitcoin extends Vue {
 
         const profile = await rss3.profile.get(this.ethAddress);
         this.rss3Profile.avatar = profile?.avatar?.[0] || config.defaultAvatar;
-        this.rss3Profile.username = profile?.name?.[0] || '';
+        this.rss3Profile.username = profile?.name || '';
         this.rss3Profile.address = this.ethAddress;
 
         // Setup theme
