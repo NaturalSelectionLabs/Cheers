@@ -7,10 +7,16 @@
             "Cache-Control": "public, max-age=86400"
         },
         "/*.otf": {
-            "Cache-Control": "public, max-age=604800"
+            "Cache-Control": "public, max-age=604800",
+            "Access-Control-Allow-Origin": "*"
         },
         "/*.woff2": {
-            "Cache-Control": "public, max-age=604800"
+            "Cache-Control": "public, max-age=604800",
+            "Access-Control-Allow-Origin": "*"
+        },
+        "/*.ttf": {
+            "Cache-Control": "public, max-age=604800",
+            "Access-Control-Allow-Origin": "*"
         }
     }
 }

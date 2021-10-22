@@ -14,7 +14,7 @@ module.exports = (env, argv) => ({
     output: {
         path: path.resolve(__dirname, 'dist'),
         filename: '[name].js',
-        publicPath: '/',
+        publicPath: argv.mode === 'production' ? 'https://rss3.bio/' : '/',
         clean: true,
     },
 
