@@ -173,7 +173,7 @@ export default class EditProfile extends Vue {
         } else {
             this.rss3 = await RSS3.get();
             this.ethAddress = await (<IRSS3>this.rss3).account.address;
-            this.rns = (await RNSUtils.addr2Name(this.ethAddress)).replace(config.rns.suffix, '');
+            this.rns = await RNSUtils.addr2Name(this.ethAddress);
         }
 
         const profile = await (<IRSS3>this.rss3).profile.get();

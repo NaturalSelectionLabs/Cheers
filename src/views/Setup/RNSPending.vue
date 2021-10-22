@@ -35,7 +35,7 @@ export default class RNSPending extends Vue {
             this.rss3 = await RSS3.get();
             this.loadingIntervalID = setInterval(async () => {
                 const address = (<IRSS3>this.rss3).account.address;
-                const rns = (await RNSUtils.addr2Name(address)).replace(config.rns.suffix, '');
+                const rns = await RNSUtils.addr2Name(address);
                 if (rns !== '') {
                     // Already setup RNS
                     if (this.loadingIntervalID) {

@@ -588,7 +588,7 @@ export default class Setup extends Vue {
         sessionStorage.removeItem('redirectFrom');
 
         const ethAddress = (<IRSS3>this.rss3).account.address;
-        const rns = (await RNSUtils.addr2Name(ethAddress)).replace(config.rns.suffix, '');
+        const rns = await RNSUtils.addr2Name(ethAddress);
         if (rns && config.subDomain.isSubDomainMode) {
             window.location.href = '//' + rns + '.' + config.subDomain.rootDomain;
         } else {

@@ -166,7 +166,7 @@ export default class SingleFootprint extends Vue {
                 // Might be address type
                 // Get RNS and redirect
                 this.ethAddress = address;
-                this.rns = (await RNSUtils.addr2Name(address)).replace(config.rns.suffix, '');
+                this.rns = await RNSUtils.addr2Name(address);
                 if (this.rns !== '') {
                     if (config.subDomain.isSubDomainMode) {
                         window.location.host = this.rns + '.' + config.subDomain.rootDomain;

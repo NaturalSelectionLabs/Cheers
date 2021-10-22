@@ -356,7 +356,7 @@ import Loading from '@/components/Loading.vue';
 import LoadingContainer from '@/components/LoadingContainer.vue';
 import { RSS3Account, RSS3Index } from 'rss3-next/types/rss3';
 import RSS3, { IRSS3 } from '@/common/rss3';
-import RNS from '@/common/rns';
+import RNSUtils from '@/common/rns';
 import config from '@/config';
 import ContentProviders from '@/common/content-providers';
 
@@ -431,7 +431,7 @@ export default class SetupAccounts extends Vue {
         }
 
         this.ethAddress = (<IRSS3>this.rss3).account.address;
-        this.rns = (await RNS.addr2Name(this.ethAddress)).replace(config.rns.suffix, '');
+        this.rns = await RNSUtils.addr2Name(this.ethAddress);
 
         // Setup theme
         const themes = RSS3.getAvailableThemes(await (<IRSS3>this.rss3).assets.get());

@@ -102,7 +102,9 @@ export default {
             const reverseNode = '0x91d1777781884d03a6757a803996e38de2a42967fb37eeaca72729271025a9e2';
             const addrHex = sha3HexAddress(addr.toLowerCase());
             const node = utils.keccak256(utils.defaultAbiCoder.encode(['bytes32', 'bytes32'], [reverseNode, addrHex]));
-            const name = (await callRNSContract<string>('resolver', 'infura', speed, 'name', node)).toLowerCase();
+            const name = (await callRNSContract<string>('resolver', 'infura', speed, 'name', node))
+                .toLowerCase()
+                .replace(config.rns.suffix, '');
             if (name) {
                 addrCache[addr] = name;
             }

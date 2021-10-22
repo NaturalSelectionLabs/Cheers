@@ -89,7 +89,7 @@ export default class Followings extends Vue {
                 // Might be address type
                 // Get RNS and redirect
                 this.ethAddress = address;
-                this.rns = (await RNSUtils.addr2Name(address)).replace(config.rns.suffix, '');
+                this.rns = await RNSUtils.addr2Name(address);
                 if (this.rns !== '') {
                     if (config.subDomain.isSubDomainMode) {
                         window.location.host = this.rns + '.' + config.subDomain.rootDomain;
@@ -147,7 +147,7 @@ export default class Followings extends Vue {
                     item.avatar = profile.avatar?.[0] || config.defaultAvatar;
                     item.username = profile.name || '';
                     item.bio = profile.bio || '';
-                    item.rns = (await RNSUtils.addr2Name(item.address)).replace(config.rns.suffix, '');
+                    item.rns = await RNSUtils.addr2Name(item.address);
                 } catch (e) {
                     console.log(item, e);
                 }

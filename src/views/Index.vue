@@ -83,7 +83,7 @@ export default class Index extends Vue {
         }
         this.$gtag.config(address);
 
-        const rns = (await RNSUtils.addr2Name(address)).replace(config.rns.suffix, '');
+        const rns = await RNSUtils.addr2Name(address);
         // Check if setup RNS
         if (rns === '' && (await this.isPassEnough())) {
             // Setup RNS

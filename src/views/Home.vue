@@ -577,7 +577,7 @@ export default class Home extends Vue {
         if (!(await this.getAddress(owner))) {
             if (this.isAccountExist) {
                 if (this.isOwnerValidRSS3) {
-                    this.rns = (await RNSUtils.addr2Name(owner)).replace(config.rns.suffix, '');
+                    this.rns = await RNSUtils.addr2Name(owner);
                     this.ethAddress = owner;
                     this.isOwner = true;
                     if (this.rns && config.subDomain.rootDomain) {
@@ -669,7 +669,7 @@ export default class Home extends Vue {
                 // Might be address type
                 // Get RNS and redirect
                 this.ethAddress = address;
-                this.rns = (await RNSUtils.addr2Name(address)).replace(config.rns.suffix, '');
+                this.rns = await RNSUtils.addr2Name(address);
                 if (this.rns !== '') {
                     window.location.href = '//' + this.rns + '.' + config.subDomain.rootDomain;
                 }
@@ -1136,7 +1136,7 @@ export default class Home extends Vue {
 
     async toHomePage() {
         if (!this.isOwner && this.isOwnerValidRSS3) {
-            const ownerRNS = (await RNSUtils.addr2Name(this.ownerETHAddress)).replace(config.rns.suffix, '');
+            const ownerRNS = await RNSUtils.addr2Name(this.ownerETHAddress);
             if (ownerRNS) {
                 window.location.href = '//' + ownerRNS + '.' + config.subDomain.rootDomain;
             } else {
