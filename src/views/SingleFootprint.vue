@@ -40,7 +40,9 @@
                             <CalendarIcon />
                             <span class="text-body-text">{{
                                 details.event.start_date +
-                                (details.event.end_date ? ` ~ ${details.event.end_date}` : '')
+                                (details.event.end_date && details.event.end_date !== details.event.start_date
+                                    ? ` ~ ${details.event.end_date}`
+                                    : '')
                             }}</span>
                         </div>
                         <div class="flex flex-row gap-2 items-center">
