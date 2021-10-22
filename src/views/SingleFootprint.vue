@@ -202,12 +202,12 @@ export default class SingleFootprint extends Vue {
     }
 
     getDate(): string {
-        return (
-            this.formatDate(this.details.event.start_date) +
-            (this.details.event.end_date && this.details.event.end_date !== this.details.event.start_date
-                ? ` ~ ${this.formatDate(this.details.event.end_date)}`
-                : '')
-        );
+        return this.details.event.start_date
+            ? this.formatDate(this.details.event.start_date) +
+                  (this.details.event.end_date && this.details.event.end_date !== this.details.event.start_date
+                      ? ` ~ ${this.formatDate(this.details.event.end_date)}`
+                      : '')
+            : 'Loading...';
     }
     formatDate(ts: string): string {
         return new Date(parseInt(ts) * 1000).toLocaleDateString('en-US');
