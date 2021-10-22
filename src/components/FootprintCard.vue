@@ -4,7 +4,7 @@
         <section class="flex-1 flex flex-col justify-around text-sm leading-normal text-body-text">
             <div class="flex flex-row gap-2 items-center">
                 <CalendarIcon />
-                <span class="flex-1 w-0 text-body-text truncate">{{ date }}</span>
+                <span class="flex-1 w-0 text-body-text truncate">{{ getDate() }}</span>
             </div>
             <div class="flex flex-row gap-2 items-center">
                 <LocationIcon />
@@ -19,14 +19,16 @@
 </template>
 
 <script lang="ts">
-import { Vue, Options } from 'vue-class-component';
+import { Options, Vue } from 'vue-class-component';
 import FootprintItem from '@/components/FootprintItem.vue';
 import CalendarIcon from '@/components/Icons/CalendarIcon.vue';
 import LocationIcon from '@/components/Icons/LocationIcon.vue';
+
 @Options({
     props: {
         imageUrl: String,
-        date: String,
+        startDate: String,
+        endDate: String,
         location: String,
         username: String,
         activity: String,
@@ -35,10 +37,21 @@ import LocationIcon from '@/components/Icons/LocationIcon.vue';
 })
 export default class FootprintCard extends Vue {
     imageUrl!: String;
-    date!: String;
+    startDate!: String;
+    endDate!: String;
     location!: String;
     username!: String;
     activity!: String;
+
+    getDate(): string {
+        return (
+            this.formatDate(<string>this.startDate) +
+            (this.endDate && this.endDate !== this.startDate ? ` ~ ${this.formatDate(<string>this.endDate)}` : '')
+        );
+    }
+    formatDate(ts: string): string {
+        return new Date(parseInt(ts) * 1000).toLocaleDateString('en-US');
+    }
 }
 </script>
 

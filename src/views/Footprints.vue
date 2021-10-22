@@ -36,12 +36,8 @@
                     :imageUrl="item.info.image_preview_url"
                     :username="rss3Profile.username"
                     :activity="item.info.title"
-                    :date="
-                        item.info.start_date +
-                        (item.info.end_date && item.info.end_date !== item.info.start_date
-                            ? ` ~ ${item.info.end_date}`
-                            : '')
-                    "
+                    :start-date="item.info.start_date"
+                    :end-date="item.info.end_date"
                     :location="item.info.city || item.info.country || 'Metaverse'"
                     class="cursor-pointer"
                     @click="toSingleFootprint(item.platform, item.identity, item.id, item.type)"

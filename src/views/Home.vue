@@ -179,12 +179,8 @@
                                 :imageUrl="item.info.image_preview_url"
                                 :username="rss3Profile.username"
                                 :activity="item.info.title"
-                                :date="
-                                    item.info.start_date +
-                                    (item.info.end_date && item.info.end_date !== item.info.start_date
-                                        ? ` ~ ${item.info.end_date}`
-                                        : '')
-                                "
+                                :start-date="item.info.start_date"
+                                :end-date="item.info.end_date"
                                 :location="item.info.city || item.info.country || 'Metaverse'"
                                 class="cursor-pointer"
                                 @click="toSingleItemPage('Footprint', item.platform, item.identity, item.id, item.type)"
@@ -205,13 +201,8 @@
                                 :imageUrl="footprints[0].info.image_preview_url"
                                 :username="rss3Profile.username"
                                 :activity="footprints[0].info.title"
-                                :date="
-                                    footprints[0].info.start_date +
-                                    (footprints[0].info.end_date &&
-                                    footprints[0].info.end_date !== footprints[0].info.start_date
-                                        ? ` ~ ${footprints[0].info.end_date}`
-                                        : '')
-                                "
+                                :start-date="footprints[0].info.start_date"
+                                :end-date="footprints[0].info.end_date"
                                 :location="footprints[0].info.city || footprints[0].info.country || 'Metaverse'"
                                 class="cursor-pointer"
                                 @click="

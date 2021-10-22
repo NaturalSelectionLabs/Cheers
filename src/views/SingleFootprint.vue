@@ -38,12 +38,7 @@
                     <section class="text-sm text-footprint-title flex flex-col gap-2">
                         <div class="flex flex-row gap-2 items-center">
                             <CalendarIcon />
-                            <span class="text-body-text">{{
-                                details.event.start_date +
-                                (details.event.end_date && details.event.end_date !== details.event.start_date
-                                    ? ` ~ ${details.event.end_date}`
-                                    : '')
-                            }}</span>
+                            <span class="text-body-text">{{ getDate() }}</span>
                         </div>
                         <div class="flex flex-row gap-2 items-center">
                             <LocationIcon />
@@ -204,6 +199,18 @@ export default class SingleFootprint extends Vue {
                 (config.subDomain.isSubDomainMode ? '' : `/${this.rns || this.ethAddress}`) + `/footprints`,
             );
         }
+    }
+
+    getDate(): string {
+        return (
+            this.formatDate(this.details.event.start_date) +
+            (this.details.event.end_date && this.details.event.end_date !== this.details.event.start_date
+                ? ` ~ ${this.formatDate(this.details.event.end_date)}`
+                : '')
+        );
+    }
+    formatDate(ts: string): string {
+        return new Date(parseInt(ts) * 1000).toLocaleDateString('en-US');
     }
 }
 </script>
