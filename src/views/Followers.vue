@@ -187,11 +187,11 @@ export default class Followers extends Vue {
         return `${address.slice(0, 6)}...${address.slice(-4)}`;
     }
 
-    toPublicPage(rns: string, ethAddress: string) {
+    async toPublicPage(rns: string, ethAddress: string) {
         if (rns && config.subDomain.isSubDomainMode) {
             window.location.href = '//' + rns + '.' + config.subDomain.rootDomain;
         } else {
-            window.location.href = '//' + config.subDomain.rootDomain + `/${rns || ethAddress}`;
+            await this.$router.push(`/${rns || ethAddress}`);
         }
     }
 
