@@ -8,7 +8,11 @@
             @touchend="isHover = false"
             ref="account"
         >
-            <div class="icon" :style="{ width: size + 'px', height: size + 'px' }" />
+            <div
+                class="icon"
+                :class="[address ? 'mix-blend-overlay' : 'opacity-50']"
+                :style="{ width: size + 'px', height: size + 'px' }"
+            />
         </div>
         <Tooltip v-if="enableTooltip" v-show="isHover" :text="addressFilter($props.address)" view-option="account" />
         <Button
