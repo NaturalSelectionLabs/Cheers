@@ -227,7 +227,7 @@
                         </div>
                         <div class="p-4 inline-flex overflow-x-auto" style="scrollbar-width: thin">
                             <FootprintItem
-                                v-for="item of footprints"
+                                v-for="item of footprints.slice(1)"
                                 :key="item.platform + item.identity + item.id"
                                 :imageUrl="item.info.image_preview_url"
                                 :size="78"
