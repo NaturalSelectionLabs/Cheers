@@ -231,7 +231,7 @@
                                 :key="item.platform + item.identity + item.id"
                                 :imageUrl="item.info.image_preview_url"
                                 :size="78"
-                                class="flex-shrink-0"
+                                class="flex-shrink-0 mr-2"
                                 @click="toSingleItemPage('Footprint', item.platform, item.identity, item.id, item.type)"
                             />
                         </div>
