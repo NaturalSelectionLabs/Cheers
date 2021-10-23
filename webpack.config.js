@@ -162,10 +162,6 @@ module.exports = (env, argv) => ({
             ],
         }),
         new VueLoaderPlugin(),
-        new webpack.ProvidePlugin({
-            process: 'process/browser',
-            Buffer: ['buffer', 'Buffer'],
-        }),
         new webpack.DefinePlugin({
             PAGE_ENV:
                 process.env.PAGE_ENV === 'development' ? JSON.stringify('development') : JSON.stringify(argv.mode),
