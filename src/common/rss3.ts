@@ -322,7 +322,7 @@ export default {
                     platform: 'EVM+',
                     id: id,
                     identity: identity,
-                    type: 'GitCoin-Donation',
+                    type: 'Gitcoin-Donation',
                 },
             });
             if (res && res.data) {
