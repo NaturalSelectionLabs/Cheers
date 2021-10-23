@@ -31,7 +31,7 @@
                             <i class="bx bx-link-external bx-xs" />
                         </Button>
                     </div>
-                    <div v-if="details.event.event_url" class="text-footprint-title truncate cursor-pointer my-2">
+                    <div v-if="details.event.event_url" class="text-footprint-title truncate my-2">
                         <i class="bx bx-link align-middle mr-2" />
                         <span>{{ details.event.event_url }}</span>
                     </div>
