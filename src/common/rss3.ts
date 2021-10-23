@@ -1,5 +1,5 @@
 import WalletConnectProvider from '@walletconnect/web3-provider';
-import Web3 from 'web3';
+import { ethers } from 'ethers';
 import RSS3 from 'rss3-next';
 import { RSS3Account, RSS3Asset } from 'rss3-next/types/rss3';
 import axios from 'axios';
@@ -8,9 +8,9 @@ import config from '@/config';
 import Cookies from 'js-cookie';
 
 let rss3: RSS3 | null;
-let web3: Web3 | null;
 let assets: Map<string, IAssetProfile> = new Map();
-let provider: WalletConnectProvider;
+let walletConnectProvider: WalletConnectProvider;
+let ethersProvider: ethers.providers.Web3Provider | null;
 
 export type IRSS3 = RSS3;
 
@@ -36,7 +36,7 @@ const methodKey = 'RSS3BioConnectMethod';
 const addressKey = 'RSS3BioConnectAddress';
 
 async function walletConnect(skipSign?: boolean) {
-    provider = new WalletConnectProvider({
+    walletConnectProvider = new WalletConnectProvider({
         // We are not using WalletConnect for transactions now,
         // so here's just something crashing our API limits.
         // For infura, 403 requests are also seen as
@@ -49,27 +49,27 @@ async function walletConnect(skipSign?: boolean) {
     //  Enable session (triggers QR Code modal)
     let session;
     try {
-        session = await provider.enable();
+        session = await walletConnectProvider.enable();
     } catch (e) {}
     if (!session) {
         return null;
     }
 
-    //  Create Web3 instance
-    web3 = new Web3(provider as any);
+    ethersProvider = new ethers.providers.Web3Provider(walletConnectProvider);
 
-    if (!web3) {
+    if (!ethersProvider) {
         return null;
     }
 
     // Subscribe to session disconnection
-    provider.on('disconnect', (code: number, reason: string) => {
+    walletConnectProvider.on('disconnect', (code: number, reason: string) => {
         console.log(code, reason);
         rss3 = null;
-        web3 = null;
+        ethersProvider = null;
     });
 
-    const address = (await web3.eth.getAccounts())[0];
+    const address = await ethersProvider.getSigner().getAddress();
+    console.log('address', address);
 
     rss3 = new RSS3({
         endpoint: config.hubEndpoint,
@@ -77,7 +77,12 @@ async function walletConnect(skipSign?: boolean) {
         agentSign: true,
         sign: async (data: string) => {
             alert('Ready to sign... You may need to prepare your wallet.');
-            return await (<Web3>web3).eth.personal.sign(data, address, '');
+            return (
+                (await ethersProvider?.send('personal_sign', [
+                    ethers.utils.hexlify(ethers.utils.toUtf8Bytes(data)),
+                    address.toLowerCase(),
+                ])) || ''
+            );
         },
     });
     if (!skipSign) {
@@ -100,7 +105,7 @@ async function visitor(): Promise<RSS3> {
 
 async function metamaskConnect(skipSign?: boolean) {
     const metamaskEthereum = (window as any).ethereum;
-    web3 = new Web3(metamaskEthereum);
+    ethersProvider = new ethers.providers.Web3Provider(metamaskEthereum);
 
     let address: string;
     if (Cookies.get(methodKey) === 'metamask' && Cookies.get(addressKey)) {
@@ -109,14 +114,14 @@ async function metamaskConnect(skipSign?: boolean) {
         const accounts = await metamaskEthereum.request({
             method: 'eth_requestAccounts',
         });
-        address = web3.utils.toChecksumAddress(accounts[0]);
+        address = ethers.utils.getAddress(accounts[0]);
     }
 
     rss3 = new RSS3({
         endpoint: config.hubEndpoint,
         address: address,
         agentSign: true,
-        sign: async (data: string) => await (<Web3>web3).eth.personal.sign(data, address, ''),
+        sign: async (data: string) => (await ethersProvider?.getSigner().signMessage(data)) || '',
     });
     if (!skipSign) {
         rss3.files.set(await rss3.files.get(address));
@@ -132,9 +137,9 @@ function isValidRSS3() {
 
 async function disconnect() {
     rss3 = null;
-    web3 = null;
-    if (provider) {
-        await provider.disconnect();
+    ethersProvider = null;
+    if (walletConnectProvider) {
+        await walletConnectProvider.disconnect();
     }
     Cookies.remove(methodKey, cookieOptions);
     Cookies.remove(addressKey, cookieOptions);
@@ -176,55 +181,60 @@ export default {
         if (address) {
             switch (lastConnect) {
                 case 'walletConnect':
-                    web3 = null;
+                    ethersProvider = null;
                     rss3 = new RSS3({
                         endpoint: config.hubEndpoint,
                         address: address,
                         agentSign: true,
                         sign: async (data: string) => {
-                            if (!web3) {
-                                provider = new WalletConnectProvider({
+                            if (!ethersProvider) {
+                                walletConnectProvider = new WalletConnectProvider({
                                     rpc: {
                                         1: 'https://cloudflare-eth.com',
                                     },
                                 });
                                 let session;
                                 try {
-                                    session = await provider.enable();
+                                    session = await walletConnectProvider.enable();
                                 } catch (e) {}
                                 if (!session) {
                                     return '';
                                 }
-                                web3 = new Web3(provider as any);
-                                if (!web3) {
+                                ethersProvider = new ethers.providers.Web3Provider(walletConnectProvider);
+                                if (!ethersProvider) {
                                     return '';
                                 }
-                                provider.on('disconnect', (code: number, reason: string) => {
+                                walletConnectProvider.on('disconnect', (code: number, reason: string) => {
                                     console.log(code, reason);
                                     rss3 = null;
-                                    web3 = null;
+                                    ethersProvider = null;
                                 });
                             }
                             alert('Ready to sign... You may need to prepare your wallet.');
-                            return await (<Web3>web3).eth.personal.sign(data, address, '');
+                            return (
+                                (await ethersProvider?.send('personal_sign', [
+                                    ethers.utils.hexlify(ethers.utils.toUtf8Bytes(data)),
+                                    address.toLowerCase(),
+                                ])) || ''
+                            );
                         },
                     });
                     break;
                 case 'metamask':
-                    web3 = null;
+                    ethersProvider = null;
                     rss3 = new RSS3({
                         endpoint: config.hubEndpoint,
                         address: address,
                         agentSign: true,
                         sign: async (data: string) => {
-                            if (!web3) {
+                            if (!ethersProvider) {
                                 const metamaskEthereum = (window as any).ethereum;
-                                web3 = new Web3(metamaskEthereum);
+                                ethersProvider = new ethers.providers.Web3Provider(metamaskEthereum);
                                 await metamaskEthereum.request({
                                     method: 'eth_requestAccounts',
                                 });
                             }
-                            return await (<Web3>web3).eth.personal.sign(data, address, '');
+                            return (await ethersProvider?.getSigner().signMessage(data)) || '';
                         },
                     });
                     break;
