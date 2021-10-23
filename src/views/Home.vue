@@ -546,7 +546,17 @@ export default class Home extends Vue {
         provider: RSS3Account;
         more: boolean;
         lastTS: number;
-    }[] = [];
+    }[] = [
+        {
+            provider: {
+                platform: 'RSS3',
+                identity: 'Hub',
+                signature: '',
+            },
+            more: true,
+            lastTS: 0xffffffff,
+        },
+    ];
 
     async mounted() {
         this.isPCLayout = window.innerWidth >= 768;
@@ -897,19 +907,6 @@ export default class Home extends Vue {
     }
 
     async initLoadContents(accounts: RSS3Account[]) {
-        // Default by hub
-        this.isContentsHaveMoreEachProvider = [
-            {
-                provider: {
-                    platform: 'RSS3',
-                    identity: 'Hub',
-                    signature: '',
-                },
-                more: true,
-                lastTS: 0xffffffff,
-            },
-        ];
-
         await this.loadMoreContents(true);
     }
 
@@ -969,7 +966,7 @@ export default class Home extends Vue {
             return b.info.timestamp - a.info.timestamp;
         });
 
-        this.contents = contentsMerge;
+        this.contents.push(...contentsMerge);
 
         this.isLoadingContents = false;
     }
@@ -1282,7 +1279,17 @@ export default class Home extends Vue {
                 link: '',
             };
             this.isContentsHaveMore = true;
-            this.isContentsHaveMoreEachProvider = [];
+            this.isContentsHaveMoreEachProvider = [
+                {
+                    provider: {
+                        platform: 'RSS3',
+                        identity: 'Hub',
+                        signature: '',
+                    },
+                    more: true,
+                    lastTS: 0xffffffff,
+                },
+            ];
             this.nfts = [];
             this.gitcoins = [];
             this.footprints = [];
