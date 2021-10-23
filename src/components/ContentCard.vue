@@ -1,6 +1,6 @@
 <template>
     <div class="w-full p-2 bg-transparent border-card text-body-text rounded cursor-pointer">
-        <h2 class="content-header font-medium text-lg truncate">
+        <h2 class="content-header font-semibold text-lg truncate">
             {{ title }}
         </h2>
         <div class="content-body" v-html="renderedContent" />
