@@ -384,7 +384,7 @@ export default {
         for (const theme of config.theme) {
             for (const asset of assets) {
                 if (
-                    asset.type === 'NFT' &&
+                    asset.type?.includes('NFT') &&
                     !asset.tags?.includes('pass:hidden') &&
                     asset.id.startsWith(theme.nftIdPrefix)
                 ) {
