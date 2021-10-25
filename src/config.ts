@@ -29,6 +29,12 @@ export default {
             nftIdPrefix: '0xff9c1b15b16263c61d017ee9f65c50e4ae0113d7-',
         },
     ],
+    walletConnectOptions: {
+        rpc: {
+            1: 'https://cloudflare-eth.com',
+        },
+        bridge: 'https://walletconnect-relay.rss3.dev',
+    },
     contentRequestLimit: 5,
     rns: {
         test: true,
