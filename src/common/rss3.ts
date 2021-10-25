@@ -1,4 +1,4 @@
-import type WalletConnectProvider from '@walletconnect/web3-provider';
+import WalletConnectProvider from '@walletconnect/web3-provider';
 import { ethers } from 'ethers';
 import RSS3 from 'rss3-next';
 import { RSS3Account, RSS3Asset } from 'rss3-next/types/rss3';
@@ -35,12 +35,7 @@ const cookieOptions: Cookies.CookieAttributes = {
 const methodKey = 'RSS3BioConnectMethod';
 const addressKey = 'RSS3BioConnectAddress';
 
-async function loadWalletconnect() {
-    return await import(/* webpackChunkName: "walletconnect" */ '@walletconnect/web3-provider');
-}
-
 async function walletConnect(skipSign?: boolean) {
-    const WalletConnectProvider: any = await loadWalletconnect();
     walletConnectProvider = new WalletConnectProvider({
         // We are not using WalletConnect for transactions now,
         // so here's just something crashing our API limits.
@@ -194,7 +189,6 @@ export default {
                         agentSign: true,
                         sign: async (data: string) => {
                             if (!ethersProvider) {
-                                const WalletConnectProvider: any = await loadWalletconnect();
                                 walletConnectProvider = new WalletConnectProvider({
                                     rpc: {
                                         1: 'https://cloudflare-eth.com',
@@ -392,7 +386,7 @@ export default {
         for (const theme of config.theme) {
             for (const asset of assets) {
                 if (
-                    asset.type === 'NFT' &&
+                    asset.type?.includes('NFT') &&
                     !asset.tags?.includes('pass:hidden') &&
                     asset.id.startsWith(theme.nftIdPrefix)
                 ) {
