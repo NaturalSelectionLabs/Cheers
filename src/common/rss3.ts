@@ -49,6 +49,7 @@ async function walletConnect(skipSign?: boolean) {
         rpc: {
             1: 'https://cloudflare-eth.com',
         },
+        bridge: 'https://walletconnect-relay.rss3.dev',
     });
 
     //  Enable session (triggers QR Code modal)
@@ -198,6 +199,7 @@ export default {
                                     rpc: {
                                         1: 'https://cloudflare-eth.com',
                                     },
+                                    bridge: 'https://walletconnect-relay.rss3.dev',
                                 });
                                 let session;
                                 try {
