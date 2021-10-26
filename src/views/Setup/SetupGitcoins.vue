@@ -1,27 +1,27 @@
 <template>
-    <div class="h-screen bg-body-bg text-body-text overflow-y-auto">
-        <div class="px-4 pt-8 pb-32 max-w-screen-lg m-auto">
-            <div class="flex justify-between items-center mb-4">
+    <div class="h-screen text-body-text bg-body-bg overflow-y-auto">
+        <div class="m-auto pb-32 pt-8 px-4 max-w-screen-lg">
+            <div class="flex items-center justify-between mb-4">
                 <Button
                     size="sm"
                     class="
                         w-10
                         h-10
-                        bg-secondary-btn
                         text-secondary-btn-text
-                        shadow-secondary-btn
+                        bg-secondary-btn
                         border-secondary-btn-border
+                        shadow-secondary-btn
                     "
                     @click="back"
                 >
                     <i class="bx bx-chevron-left bx-sm" />
                 </Button>
                 <span class="text-center">
-                    <h1 class="text-xl text-gitcoin-title font-bold inline">Manage Donations</h1>
+                    <h1 class="inline text-gitcoin-title text-xl font-bold">Manage Donations</h1>
                 </span>
                 <span class="avatar">
                     <ImgHolder
-                        class="w-10 h-10 inline-flex my-auto cursor-pointer"
+                        class="inline-flex my-auto w-10 h-10 cursor-pointer"
                         :is-rounded="true"
                         :is-border="false"
                         :src="avatar"
@@ -29,7 +29,7 @@
                     />
                 </span>
             </div>
-            <section class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <section class="grid gap-4 grid-cols-1 md:grid-cols-2">
                 <Card
                     title="Listed"
                     color-title="text-gitcoin-title"
@@ -60,7 +60,7 @@
                     <template #footer-button>
                         <Button
                             size="sm"
-                            class="text-xs bg-gitcoin-btn-s text-gitcoin-btn-s-text shadow-gitcoin-btn-s"
+                            class="text-gitcoin-btn-s-text text-xs bg-gitcoin-btn-s shadow-gitcoin-btn-s"
                             :class="{
                                 'bg-gray-100 cursor-not-allowed': show.length === 0,
                             }"
@@ -83,7 +83,7 @@
                     <template #header-button>
                         <Button
                             size="sm"
-                            class="text-xs bg-gitcoin-btn-s text-gitcoin-btn-s-text shadow-gitcoin-btn-s"
+                            class="text-gitcoin-btn-s-text text-xs bg-gitcoin-btn-s shadow-gitcoin-btn-s"
                             :class="{
                                 'bg-gray-100 cursor-not-allowed': hide.length === 0,
                             }"
@@ -115,7 +115,7 @@
                     <template #footer-button>
                         <Button
                             size="sm"
-                            class="text-xs bg-gitcoin-btn-s text-gitcoin-btn-s-text shadow-gitcoin-btn-s"
+                            class="text-gitcoin-btn-s-text text-xs bg-gitcoin-btn-s shadow-gitcoin-btn-s"
                             :class="{
                                 'bg-gray-100 cursor-not-allowed': hide.length === 0,
                             }"
@@ -128,16 +128,16 @@
                     </template>
                 </Card>
             </section>
-            <div class="px-4 py-4 flex gap-5 fixed bottom-0 left-0 right-0 max-w-md m-auto w-full bg-btn-container">
+            <div class="fixed bottom-0 left-0 right-0 flex gap-5 m-auto px-4 py-4 w-full max-w-md bg-btn-container">
                 <Button
                     size="lg"
-                    class="flex-1 text-lg bg-secondary-btn text-secondary-btn-text shadow-secondary-btn"
+                    class="flex-1 text-secondary-btn-text text-lg bg-secondary-btn shadow-secondary-btn"
                     @click="back"
                     ><span>Discard</span></Button
                 >
                 <Button
                     size="lg"
-                    class="flex-1 text-lg bg-primary-btn text-primary-btn-text shadow-primary-btn"
+                    class="flex-1 text-primary-btn-text text-lg bg-primary-btn shadow-primary-btn"
                     @click="save"
                     ><span>Save</span></Button
                 >

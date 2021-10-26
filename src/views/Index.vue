@@ -1,11 +1,11 @@
 <template>
-    <div class="onboarding h-screen text-center bg-cover bg-fixed flex items-center justify-center bg-pass3gradient">
-        <div class="body px-4 h-2/3 flex flex-col justify-start items-center justify-between">
+    <div class="onboarding flex items-center justify-center h-screen text-center bg-pass3gradient bg-cover bg-fixed">
+        <div class="body flex flex-col items-center justify-between justify-start px-4 h-2/3">
             <Logo :size="200" />
-            <div class="leading-17.5 text-white w-83.5 text-2xl mx-auto">
+            <div class="mx-auto w-83.5 text-white text-2xl leading-17.5">
                 <Button
                     size="lg"
-                    class="bg-primary-btn shadow-primary-btn text-primary-btn-text rounded-3xl w-full h-17.5 mb-9"
+                    class="mb-9 w-full h-17.5 text-primary-btn-text bg-primary-btn rounded-3xl shadow-primary-btn"
                     @click="walletConnect"
                 >
                     <WalletConnect :size="40" />
@@ -13,7 +13,7 @@
                 </Button>
                 <Button
                     size="lg"
-                    class="text-metamask-text bg-metamask-bg shadow-metamask rounded-3xl w-full h-17.5"
+                    class="w-full h-17.5 text-metamask-text bg-metamask-bg rounded-3xl shadow-metamask"
                     v-show="isHavingMetamaskPlugin"
                     @click="metaMask"
                 >

@@ -2,7 +2,7 @@
     <section>
         <Button
             size="sm"
-            class="w-full text-lg bg-secondary-btn text-secondary-btn-text shadow-secondary-btn cursor-wait"
+            class="w-full text-secondary-btn-text text-lg bg-secondary-btn shadow-secondary-btn cursor-wait"
             v-if="isLoadingPersona"
         >
             <span>Loading...</span>
@@ -11,7 +11,7 @@
 
         <Button
             size="sm"
-            class="w-full text-lg mb-4 md:m-0 duration-200"
+            class="mb-4 w-full text-lg duration-200 md:m-0"
             v-else-if="!isOwner"
             v-bind:class="[
                 isFollowing
@@ -24,10 +24,10 @@
             <i class="bx bx-sm no-underline" v-bind:class="[isFollowing ? 'bx-check' : 'bx-plus']"></i>
         </Button>
 
-        <div class="flex mb-4 gap-2 mt-2 md:m-0" v-else>
+        <div class="flex gap-2 mb-4 mt-2 md:m-0" v-else>
             <Button
                 size="sm"
-                class="text-lg bg-secondary-btn text-secondary-btn-text shadow-secondary-btn flex-1 truncate"
+                class="flex-1 text-secondary-btn-text text-lg bg-secondary-btn shadow-secondary-btn truncate"
                 @click="emitSetUp"
             >
                 <span>Edit Profile</span>
@@ -35,7 +35,7 @@
             </Button>
             <Button
                 size="sm"
-                class="w-13 text-lg bg-secondary-btn text-secondary-btn-text shadow-secondary-btn"
+                class="w-13 text-secondary-btn-text text-lg bg-secondary-btn shadow-secondary-btn"
                 @click="emitLogout"
             >
                 <i class="bx bx-log-out bx-sm"></i>

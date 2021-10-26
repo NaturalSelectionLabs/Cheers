@@ -1,41 +1,41 @@
 <template>
     <div class="h-screen bg-footprint-bg overflow-y-auto">
-        <div class="px-4 pt-8 pb-20 max-w-screen-lg m-auto">
-            <div class="header flex justify-between items-center pb-4">
+        <div class="m-auto pb-20 pt-8 px-4 max-w-screen-lg">
+            <div class="header flex items-center justify-between pb-4">
                 <Button
                     size="sm"
-                    class="w-10 h-10 bg-secondary-btn text-secondary-btn-text shadow-secondary-btn"
+                    class="w-10 h-10 text-secondary-btn-text bg-secondary-btn shadow-secondary-btn"
                     @click="back"
                 >
                     <i class="bx bx-chevron-left bx-sm"></i>
                 </Button>
-                <div class="text-xl text-footprint-title font-bold text-center">Footprints</div>
+                <div class="text-center text-footprint-title text-xl font-bold">Footprints</div>
                 <ImgHolder
-                    class="w-10 h-10 inline-flex my-auto cursor-pointer"
+                    class="inline-flex my-auto w-10 h-10 cursor-pointer"
                     :is-rounded="true"
                     :is-border="false"
                     :src="rss3Profile.avatar"
                 />
             </div>
-            <section class="max-w-screen-sm m-auto">
+            <section class="m-auto max-w-screen-sm">
                 <FootprintItem class="mb-4" :imageUrl="details.event.image_url" :size="FootprintWidth" />
-                <div class="w-full px-5 py-4 mt-4 filter text-body-text flex flex-col">
-                    <div class="flex flex-row justify-between items-center">
+                <div class="flex flex-col mt-4 px-5 py-4 w-full text-body-text filter">
+                    <div class="flex flex-row items-center justify-between">
                         <h2 class="text-xl font-semibold truncate">{{ details.event.name }}</h2>
                         <Button
                             v-if="details.event.event_url"
                             size="sm"
-                            class="w-9 h-9 ml-1 bg-footprint-btn-m text-footprint-btn-m-text shadow-footprint-btn-m"
+                            class="ml-1 w-9 h-9 text-footprint-btn-m-text bg-footprint-btn-m shadow-footprint-btn-m"
                             @click="toExternalLink"
                         >
                             <i class="bx bx-link-external bx-xs" />
                         </Button>
                     </div>
-                    <div v-if="details.event.event_url" class="text-footprint-title truncate my-2">
+                    <div v-if="details.event.event_url" class="my-2 text-footprint-title truncate">
                         <i class="bx bx-link align-middle mr-2" />
                         <span>{{ details.event.event_url }}</span>
                     </div>
-                    <section class="text-sm text-footprint-title flex flex-col gap-2">
+                    <section class="flex flex-col gap-2 text-footprint-title text-sm">
                         <div class="flex flex-row gap-2 items-center">
                             <CalendarIcon />
                             <span class="text-body-text">{{ getDate() }}</span>
@@ -48,8 +48,8 @@
                         </div>
                     </section>
                     <section v-if="details.event.description">
-                        <h3 class="text-footprint-title text-lg font-medium capitalize my-2">Description</h3>
-                        <p class="text-body-text leading-loose font-medium">
+                        <h3 class="my-2 text-footprint-title text-lg font-medium capitalize">Description</h3>
+                        <p class="text-body-text font-medium leading-loose">
                             {{ details.event.description }}
                         </p>
                     </section>

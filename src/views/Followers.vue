@@ -1,17 +1,17 @@
 <template>
     <div class="h-screen bg-body-bg overflow-y-auto">
-        <div class="px-4 pt-8 pb-20 max-w-screen-lg m-auto">
-            <div class="flex justify-between items-center pb-4">
+        <div class="m-auto pb-20 pt-8 px-4 max-w-screen-lg">
+            <div class="flex items-center justify-between pb-4">
                 <Button
                     size="sm"
-                    class="w-10 h-10 bg-secondary-btn text-secondary-btn-text shadow-secondary-btn"
+                    class="w-10 h-10 text-secondary-btn-text bg-secondary-btn shadow-secondary-btn"
                     @click="back"
                 >
                     <i class="bx bx-chevron-left bx-sm"></i>
                 </Button>
-                <div class="section-title text-2xl text-primary-text font-bold text-center">Followers</div>
+                <div class="section-title text-center text-primary-text text-2xl font-bold">Followers</div>
                 <ImgHolder
-                    class="w-10 h-10 inline-flex my-auto cursor-pointer"
+                    class="inline-flex my-auto w-10 h-10 cursor-pointer"
                     :is-rounded="true"
                     :is-border="false"
                     :src="rss3Profile.avatar"
@@ -19,7 +19,7 @@
                     @click="toPublicPage(rns, ethAddress)"
                 />
             </div>
-            <div class="flex flex-col gap-y-4 max-w-md m-auto">
+            <div class="flex flex-col gap-y-4 m-auto max-w-md">
                 <FollowerCard
                     class="w-auto cursor-pointer"
                     v-for="item in followerList"

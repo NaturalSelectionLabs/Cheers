@@ -1,9 +1,9 @@
 <template>
-    <div class="w-full flex flex-col gap-y-2 text-gitcoin-title">
-        <div class="font-bold text-2xl">Total</div>
-        <div class="w-full flex flex-row justify-start gap-x-12 text-lg font-normal">
+    <div class="flex flex-col gap-y-2 w-full text-gitcoin-title">
+        <div class="text-2xl font-bold">Total</div>
+        <div class="flex flex-row gap-x-12 justify-start w-full text-lg font-normal">
             <div>
-                <div class="font-medium text-xl">
+                <div class="text-xl font-medium">
                     <vue3-autocounter
                         ref="counter"
                         :startAmount="0"
@@ -16,7 +16,7 @@
                 <div>Grants</div>
             </div>
             <div>
-                <div class="font-medium text-xl">
+                <div class="text-xl font-medium">
                     <vue3-autocounter
                         ref="counter"
                         :startAmount="0"

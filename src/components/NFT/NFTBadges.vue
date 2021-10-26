@@ -42,11 +42,11 @@ export default class NFTBadges extends Vue {
 <style scoped lang="postcss">
 @layer components {
     .badges-container {
-        @apply flex flex-row gap-1 justify-end items-center;
+        @apply flex flex-row gap-1 items-center justify-end;
     }
 
     .badge {
-        @apply rounded-full border-sm border-item-border shadow-nft bg-cover bg-center bg-no-repeat bg-item-bg;
+        @apply bg-item-bg bg-cover bg-center bg-no-repeat border-sm border-item-border rounded-full shadow-nft;
     }
     .badge-overlay {
         @apply w-6 h-6;

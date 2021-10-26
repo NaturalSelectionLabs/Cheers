@@ -1,24 +1,24 @@
 <template>
     <div id="main" class="h-screen bg-footprint-bg overflow-y-auto">
-        <div class="px-4 pt-8 pb-32 max-w-screen-lg m-auto">
-            <div class="header flex justify-between items-center pb-4">
+        <div class="m-auto pb-32 pt-8 px-4 max-w-screen-lg">
+            <div class="header flex items-center justify-between pb-4">
                 <Button
                     size="sm"
                     class="
+                        border-secondary-button-border
                         w-10
                         h-10
-                        bg-secondary-btn
                         text-secondary-btn-text
-                        border-secondary-button-border
+                        bg-secondary-btn
                         shadow-secondary-btn
                     "
                     @click="back"
                 >
                     <i class="bx bx-chevron-left bx-sm"></i>
                 </Button>
-                <div class="section-title text-2xl text-footprint-title font-bold text-center">Footprints</div>
+                <div class="section-title text-center text-footprint-title text-2xl font-bold">Footprints</div>
                 <ImgHolder
-                    class="w-10 h-10 inline-flex my-auto cursor-pointer"
+                    class="inline-flex my-auto w-10 h-10 cursor-pointer"
                     :is-rounded="true"
                     :is-border="false"
                     :src="rss3Profile.avatar"
@@ -27,7 +27,7 @@
                 />
             </div>
             <div
-                class="footprint-footprints grid grid-cols-1 sm:grid-cols-2 divide-y-xs divide-footprint-divider"
+                class="footprint-footprints grid grid-cols-1 divide-footprint-divider divide-y-xs sm:grid-cols-2"
                 :class="{ 'pb-16': isOwner }"
             >
                 <FootprintCard
@@ -44,12 +44,12 @@
                 />
             </div>
             <div
-                class="px-4 py-4 flex gap-5 fixed bottom-2 left-0 right-0 max-w-md m-auto w-full bg-btn-container"
+                class="fixed bottom-2 left-0 right-0 flex gap-5 m-auto px-4 py-4 w-full max-w-md bg-btn-container"
                 v-if="isOwner"
             >
                 <Button
                     size="lg"
-                    class="m-auto text-lg bg-footprint-btn-m text-footprint-btn-m-text shadow-footprint-btn-m"
+                    class="m-auto text-footprint-btn-m-text text-lg bg-footprint-btn-m shadow-footprint-btn-m"
                     @click="toSetupFootprints"
                 >
                     <span>Manage Footprints</span>

@@ -1,16 +1,16 @@
 <template>
     <div class="h-screen bg-gitcoin-bg overflow-y-auto">
-        <div class="px-4 pt-8 pb-20 max-w-screen-lg m-auto">
-            <div class="header flex justify-between items-center pb-4">
+        <div class="m-auto pb-20 pt-8 px-4 max-w-screen-lg">
+            <div class="header flex items-center justify-between pb-4">
                 <Button
                     size="sm"
-                    class="w-10 h-10 bg-secondary-btn text-secondary-btn-text shadow-secondary-btn"
+                    class="w-10 h-10 text-secondary-btn-text bg-secondary-btn shadow-secondary-btn"
                     @click="back"
                 >
                     <i class="bx bx-chevron-left bx-sm"></i>
                 </Button>
                 <ImgHolder
-                    class="w-10 h-10 inline-flex my-auto cursor-pointer"
+                    class="inline-flex my-auto w-10 h-10 cursor-pointer"
                     :is-rounded="true"
                     :is-border="false"
                     :src="rss3Profile.avatar"
@@ -18,30 +18,29 @@
                     @click="toPublicPage(rns, ethAddress)"
                 />
             </div>
-            <section class="max-w-screen-sm m-auto">
+            <section class="m-auto max-w-screen-sm">
                 <GitcoinItem class="mb-4" :imageUrl="grant.logo || defaultAvatar" :size="Width"></GitcoinItem>
                 <div
                     class="
-                        w-full
+                        flex flex-col
+                        gap-4
+                        items-start
+                        justify-start
+                        mt-4
                         px-5
+                        w-full
+                        text-black text-body-text
+                        border-card
                         rounded
                         filter
-                        border-card
-                        text-body-text
-                        flex flex-col
-                        justify-start
-                        items-start
-                        gap-4
-                        text-black
-                        mt-4
                     "
                 >
                     <div class="w-full">
-                        <h2 class="text-xl font-semibold break-words">
+                        <h2 class="break-words text-xl font-semibold">
                             {{ grant.title || 'Inactive Project' }}
                         </h2>
                         <div
-                            class="text-sm leading-normal text-gitcoin-title truncate cursor-pointer"
+                            class="text-gitcoin-title text-sm leading-normal cursor-pointer truncate"
                             @click="toExternalLink(grant.reference_url)"
                         >
                             <i class="bx bx-link align-middle" />
@@ -49,14 +48,14 @@
                         </div>
                     </div>
                     <div class="w-full">
-                        <h2 class="text-xl font-semibold break-words">Description</h2>
-                        <div class="text-sm leading-normal break-words line-clamp-3">
+                        <h2 class="break-words text-xl font-semibold">Description</h2>
+                        <div class="line-clamp-3 break-words text-sm leading-normal">
                             {{ grant.description || 'No information provided by Gitcoin.' }}
                         </div>
                     </div>
                     <div>
                         <h2 class="text-xl font-semibold">Contributions</h2>
-                        <h1 class="text-2xl font-semibold text-gitcoin-title">
+                        <h1 class="text-gitcoin-title text-2xl font-semibold">
                             <vue3-autocounter
                                 ref="counter"
                                 :startAmount="0"
@@ -67,26 +66,25 @@
                             />
                         </h1>
                     </div>
-                    <div class="w-full flex flex-col gap-y-2">
+                    <div class="flex flex-col gap-y-2 w-full">
                         <div
-                            class="flex flex-row justify-start gap-x-2"
+                            class="flex flex-row gap-x-2 justify-start"
                             v-for="item in donationInfo"
                             :key="item.txHash"
                         >
                             <div
                                 class="
-                                    flex-1
-                                    bg-body-bg
-                                    text-black
-                                    rounded-xl
-                                    flex flex-row
-                                    justify-between
+                                    flex flex-1 flex-row
                                     items-center
+                                    justify-between
                                     px-4
                                     py-2
+                                    text-black
+                                    bg-body-bg
+                                    rounded-xl
                                 "
                             >
-                                <div class="text-gitcoin-title flex-shrink pr-2">
+                                <div class="flex-shrink pr-2 text-gitcoin-title">
                                     <vue3-autocounter
                                         ref="counter"
                                         :startAmount="0"
@@ -98,13 +96,13 @@
                                         :autoinit="true"
                                     />
                                 </div>
-                                <div class="flex-1 truncate w-0 text-right text-gitcoin-title">
+                                <div class="flex-1 w-0 text-right text-gitcoin-title truncate">
                                     {{ timeDifferent(item.timeStamp) }}
                                 </div>
                             </div>
                             <Button
                                 size="sm"
-                                class="w-9 h-9 ml-1 bg-gitcoin-btn-m text-gitcoin-btn-m-text shadow-gitcoin-btn-m"
+                                class="ml-1 w-9 h-9 text-gitcoin-btn-m-text bg-gitcoin-btn-m shadow-gitcoin-btn-m"
                                 @click="toScanTx(item)"
                             >
                                 <i class="bx bx-link-external bx-xs" />
