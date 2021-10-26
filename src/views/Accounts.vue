@@ -1,17 +1,17 @@
 <template>
     <div class="h-screen bg-account-bg overflow-y-auto">
-        <div class="px-4 pt-8 pb-32 max-w-screen-lg m-auto">
-            <div class="header flex justify-between items-center pb-4">
+        <div class="m-auto pb-32 pt-8 px-4 max-w-screen-lg">
+            <div class="header flex items-center justify-between pb-4">
                 <Button
                     size="sm"
-                    class="w-10 h-10 bg-secondary-btn text-secondary-btn-text shadow-secondary-btn"
+                    class="w-10 h-10 text-secondary-btn-text bg-secondary-btn shadow-secondary-btn"
                     @click="back"
                 >
                     <i class="bx bx-chevron-left bx-sm"></i>
                 </Button>
-                <div class="section-title text-2xl text-account-title font-bold text-center">Accounts</div>
+                <div class="section-title text-center text-account-title text-2xl font-bold">Accounts</div>
                 <ImgHolder
-                    class="w-10 h-10 inline-flex my-auto cursor-pointer"
+                    class="inline-flex my-auto w-10 h-10 cursor-pointer"
                     :is-rounded="true"
                     :is-border="false"
                     :src="rss3Profile.avatar"
@@ -19,7 +19,7 @@
                     @click="toPublicPage(rns, ethAddress)"
                 />
             </div>
-            <div class="max-w-md m-auto">
+            <div class="m-auto max-w-md">
                 <div class="flex flex-col gap-y-4">
                     <div
                         class="account-wrapper grid grid-cols-6 items-center justify-items-center"
@@ -28,19 +28,19 @@
                     >
                         <EVMpAccountItem v-if="item.platform === 'EVM+'" :size="70" :address="item.identity" />
                         <AccountItem v-else :size="70" :chain="item.platform" :address="item.identity" />
-                        <span class="address text-2xl text-account-title font-semibold col-span-3">{{
+                        <span class="address col-span-3 text-account-title text-2xl font-semibold">{{
                             getDisplayAddress(item)
                         }}</span>
                         <Button
                             size="sm"
-                            class="w-10 h-10 bg-account-btn-m text-account-btn-m-text shadow-account-btn-m"
+                            class="w-10 h-10 text-account-btn-m-text bg-account-btn-m shadow-account-btn-m"
                             @click="copyToClipboard(item.identity)"
                         >
                             <i class="bx bxs-copy bx-sm"></i>
                         </Button>
                         <Button
                             size="sm"
-                            class="w-10 h-10 bg-account-btn-m text-account-btn-m-text shadow-account-btn-m"
+                            class="w-10 h-10 text-account-btn-m-text bg-account-btn-m shadow-account-btn-m"
                             @click="toExternalLink(item.identity, item.platform)"
                         >
                             <i class="bx bx-link-external bx-sm"></i>
@@ -49,12 +49,12 @@
                 </div>
             </div>
             <div
-                class="px-4 py-4 flex gap-5 fixed bottom-2 left-0 right-0 max-w-md m-auto w-full bg-btn-container"
+                class="fixed bottom-2 left-0 right-0 flex gap-5 m-auto px-4 py-4 w-full max-w-md bg-btn-container"
                 v-if="isOwner"
             >
                 <Button
                     size="lg"
-                    class="m-auto text-lg bg-account-btn-m text-account-btn-m-text shadow-account-btn-m"
+                    class="m-auto text-account-btn-m-text text-lg bg-account-btn-m shadow-account-btn-m"
                     @click="toSetupAccounts"
                 >
                     <span>Manage Accounts</span>

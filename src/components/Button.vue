@@ -29,13 +29,13 @@ export default class Button extends Vue {
 <style scoped lang="postcss">
 @layer components {
     .btn {
-        @apply focus:outline-none transform active:-translate-y-px flex flex-row gap-2 justify-center items-center text-center leading-none border-btn-border border-button;
+        @apply flex flex-row gap-2 items-center justify-center text-center leading-none border-button border-btn-border focus:outline-none transform active:-translate-y-px;
     }
     .btn-lg {
-        @apply rounded px-5 py-4;
+        @apply px-5 py-4 rounded;
     }
     .btn-sm {
-        @apply rounded-sm px-2 py-2;
+        @apply px-2 py-2 rounded-sm;
     }
     .circle {
         @apply rounded-full;

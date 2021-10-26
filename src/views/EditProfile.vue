@@ -1,19 +1,19 @@
 <template>
-    <div class="h-screen bg-body-bg text-body-text overflow-y-auto">
-        <div class="px-4 py-9 max-w-screen-lg m-auto pb-20">
-            <div class="text-center mb-4 relative">
+    <div class="h-screen text-body-text bg-body-bg overflow-y-auto">
+        <div class="m-auto pb-20 px-4 py-9 max-w-screen-lg">
+            <div class="relative mb-4 text-center">
                 <Button
                     size="sm"
-                    class="w-10 h-10 bg-secondary-btn text-secondary-btn-text shadow-secondary-btn"
+                    class="w-10 h-10 text-secondary-btn-text bg-secondary-btn shadow-secondary-btn"
                     @click="back"
                 >
                     <i class="bx bx-chevron-left bx-sm"></i>
                 </Button>
-                <h1 class="text-xl text-primary-text font-bold absolute top-0 leading-10 w-full text-center -z-10">
+                <h1 class="absolute -z-10 top-0 w-full text-center text-primary-text text-xl font-bold leading-10">
                     Edit Profile
                 </h1>
             </div>
-            <section class="max-w-md m-auto">
+            <section class="m-auto max-w-md">
                 <AvatarEditor class="m-auto mb-4" size="lg" :url="profile.avatar" ref="avatar" />
                 <LinkButton
                     class="m-auto mb-4"
@@ -49,14 +49,14 @@
                         <section class="flex flex-row gap-2">
                             <Button
                                 size="sm"
-                                class="w-8 h-8 bg-account-btn-s text-account-btn-s-text shadow-account-btn-s"
+                                class="w-8 h-8 text-account-btn-s-text bg-account-btn-s shadow-account-btn-s"
                                 @click="toManageAccounts"
                             >
                                 <i class="bx bxs-pencil bx-xs" />
                             </Button>
                             <Button
                                 size="sm"
-                                class="w-8 h-8 bg-account-btn-s text-account-btn-s-text shadow-account-btn-s"
+                                class="w-8 h-8 text-account-btn-s-text bg-account-btn-s shadow-account-btn-s"
                                 @click="toAccountsPage"
                             >
                                 <i class="bx bx-expand-alt bx-xs" />
@@ -65,16 +65,16 @@
                     </template>
                 </BarCard>
 
-                <div class="px-4 py-4 flex gap-5 fixed left-0 right-0 max-w-md m-auto w-full">
+                <div class="fixed left-0 right-0 flex gap-5 m-auto px-4 py-4 w-full max-w-md">
                     <Button
                         size="lg"
-                        class="flex-1 text-lg bg-secondary-btn text-secondary-btn-text shadow-secondary-btn"
+                        class="flex-1 text-secondary-btn-text text-lg bg-secondary-btn shadow-secondary-btn"
                         @click="back"
                         ><span>Discard</span></Button
                     >
                     <Button
                         size="lg"
-                        class="flex-1 text-lg bg-primary-btn text-primary-btn-text shadow-primary-btn"
+                        class="flex-1 text-primary-btn-text text-lg bg-primary-btn shadow-primary-btn"
                         @click="save"
                         ><span>Save</span></Button
                     >
@@ -96,7 +96,7 @@
                     <div class="flex flex-row gap-5">
                         <Button
                             size="sm"
-                            class="w-72 bg-primary-btn text-primary-btn-text shadow-primary-btn"
+                            class="w-72 text-primary-btn-text bg-primary-btn shadow-primary-btn"
                             @click="isShowingNotice = false"
                         >
                             <span>OK</span>

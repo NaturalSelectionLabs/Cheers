@@ -3,7 +3,7 @@
     <div class="flex flex-col gap-8 items-center">
         <BarCard color="account" class="w-96">
             <template #header>
-                <span class="text-account-title w-16 inline-flex"> Accounts </span>
+                <span class="inline-flex w-16 text-account-title"> Accounts </span>
             </template>
             <template #content>
                 <AccountItem
@@ -15,7 +15,7 @@
                 />
             </template>
             <template #footer>
-                <Button size="sm" class="w-8 h-8 bg-account-btn-s text-account-btn-s-text shadow-account-btn-s">
+                <Button size="sm" class="w-8 h-8 text-account-btn-s-text bg-account-btn-s shadow-account-btn-s">
                     <i class="bx bxs-pencil bx-xs" />
                 </Button>
             </template>
@@ -23,7 +23,7 @@
 
         <BarCard color="nft" class="w-96">
             <template #header>
-                <span class="text-nft-title w-16 inline-flex"> NFTs </span>
+                <span class="inline-flex w-16 text-nft-title"> NFTs </span>
             </template>
             <template #content>
                 <NFTItem
@@ -36,7 +36,7 @@
                 />
             </template>
             <template #footer>
-                <Button size="sm" class="w-8 h-8 bg-nft-btn-s text-nft-btn-s-text shadow-nft-btn-s">
+                <Button size="sm" class="w-8 h-8 text-nft-btn-s-text bg-nft-btn-s shadow-nft-btn-s">
                     <i class="bx bxs-pencil bx-xs" />
                 </Button>
             </template>
@@ -50,91 +50,91 @@
             activity="RSS3 presents the Taurus ♉️️ Conference"
         />
 
-        <Button size="sm" class="w-10 h-10 bg-white text-primary shadow-secondary">
+        <Button size="sm" class="text-primary shadow-secondary w-10 h-10 bg-white">
             <i class="bx bx-chevron-left bx-sm"></i>
         </Button>
-        <Button size="sm" class="w-10 h-10 bg-white text-primary shadow-secondary">
+        <Button size="sm" class="text-primary shadow-secondary w-10 h-10 bg-white">
             <i class="bx bx-x bx-sm"></i>
         </Button>
-        <Button size="sm" class="w-10 h-10 bg-account-button text-white shadow-account">
+        <Button size="sm" class="bg-account-button w-10 h-10 text-white shadow-account">
             <i class="bx bx-plus bx-sm"></i>
         </Button>
 
         <div class="flex flex-row gap-7">
-            <Button size="sm" class="w-10 h-10 bg-account-button text-white shadow-account">
+            <Button size="sm" class="bg-account-button w-10 h-10 text-white shadow-account">
                 <i class="bx bxs-copy bx-sm"></i>
             </Button>
-            <Button size="sm" class="w-10 h-10 bg-account-button text-white shadow-account">
+            <Button size="sm" class="bg-account-button w-10 h-10 text-white shadow-account">
                 <i class="bx bx-link-external bx-sm"></i>
             </Button>
         </div>
 
         <div class="flex flex-row gap-2">
-            <Button size="sm" class="w-8 h-8 bg-white text-account-button shadow-account-sm">
+            <Button size="sm" class="text-account-button shadow-account-sm w-8 h-8 bg-white">
                 <i class="bx bxs-pencil bx-xs"></i>
             </Button>
-            <Button size="sm" class="w-8 h-8 bg-white text-account-button shadow-account-sm">
+            <Button size="sm" class="text-account-button shadow-account-sm w-8 h-8 bg-white">
                 <i class="bx bx-expand-alt bx-xs"></i>
             </Button>
         </div>
 
         <div class="flex flex-row gap-2">
-            <Button size="sm" class="w-8 h-8 bg-white text-nft-button shadow-nft-sm">
+            <Button size="sm" class="text-nft-button shadow-nft-sm w-8 h-8 bg-white">
                 <i class="bx bxs-pencil bx-xs"></i>
             </Button>
-            <Button size="sm" class="w-8 h-8 bg-white text-nft-button shadow-nft-sm">
+            <Button size="sm" class="text-nft-button shadow-nft-sm w-8 h-8 bg-white">
                 <i class="bx bx-expand-alt bx-xs"></i>
             </Button>
         </div>
 
         <div class="flex flex-row gap-2">
-            <Button size="sm" class="w-8 h-8 bg-white text-content-button shadow-content-md">
+            <Button size="sm" class="text-content-button shadow-content-md w-8 h-8 bg-white">
                 <i class="bx bxs-pencil bx-xs"></i>
             </Button>
-            <Button size="sm" class="w-8 h-8 bg-white text-content-button shadow-content-md">
+            <Button size="sm" class="text-content-button shadow-content-md w-8 h-8 bg-white">
                 <i class="bx bx-expand-alt bx-xs"></i>
             </Button>
         </div>
 
         <div class="flex flex-row gap-5">
-            <Button size="lg" class="w-45 text-lg bg-white text-primary shadow-secondary"> Discard </Button>
-            <Button size="lg" class="w-45 text-lg bg-primary text-white shadow-primary"> Save </Button>
+            <Button size="lg" class="text-primary shadow-secondary w-45 text-lg bg-white"> Discard </Button>
+            <Button size="lg" class="bg-primary shadow-primary w-45 text-white text-lg"> Save </Button>
         </div>
 
-        <Button size="lg" class="w-80 text-2xl bg-primary text-white shadow-primary"> Connect A Wallet </Button>
+        <Button size="lg" class="bg-primary shadow-primary w-80 text-white text-2xl"> Connect A Wallet </Button>
 
-        <Button size="lg" class="w-80 text-lg bg-white text-primary shadow-secondary">
+        <Button size="lg" class="text-primary shadow-secondary w-80 text-lg bg-white">
             <span>Edit Profile</span>
             <i class="bx bx-pencil bx-sm"></i>
         </Button>
 
-        <Button size="lg" class="w-80 text-lg bg-white text-primary shadow-secondary">
+        <Button size="lg" class="text-primary shadow-secondary w-80 text-lg bg-white">
             <span>Follow</span>
             <i class="bx bx-plus bx-sm"></i>
         </Button>
 
-        <Button size="lg" class="w-80 text-lg bg-white text-primary shadow-secondary">
+        <Button size="lg" class="text-primary shadow-secondary w-80 text-lg bg-white">
             <span>Following</span>
             <i class="bx bx-check bx-sm"></i>
         </Button>
 
-        <Button size="sm" class="text-xs bg-white text-account-button shadow-account-sm"> Show All </Button>
+        <Button size="sm" class="text-account-button shadow-account-sm text-xs bg-white"> Show All </Button>
 
-        <Button size="sm" class="text-xs bg-white text-nft-button shadow-nft-sm"> Hide All </Button>
+        <Button size="sm" class="text-nft-button shadow-nft-sm text-xs bg-white"> Hide All </Button>
 
-        <Button size="sm" class="text-xs bg-nft-button text-white shadow-nft"> Select NFTs to display </Button>
+        <Button size="sm" class="bg-nft-button text-white text-xs shadow-nft"> Select NFTs to display </Button>
 
         <Button
             size="sm"
-            class="text-xs bg-content-button opacity-35 text-white shadow-content cursor-not-allowed"
+            class="bg-content-button text-white text-xs shadow-content opacity-35 cursor-not-allowed"
             disabled
         >
             Coming Soon
         </Button>
 
-        <Button size="lg" class="text-lg bg-account-button text-white shadow-account"> Manage Accounts</Button>
+        <Button size="lg" class="bg-account-button text-white text-lg shadow-account"> Manage Accounts</Button>
 
-        <Button size="lg" class="text-lg bg-nft-button text-white shadow-nft"> Manage NFTs</Button>
+        <Button size="lg" class="bg-nft-button text-white text-lg shadow-nft"> Manage NFTs</Button>
 
         <hr />
 
@@ -157,12 +157,12 @@
                 <i class="bx bx-info-circle" style="color: rgba(0, 0, 0, 0.2)" />
             </template>
             <template #header-button>
-                <Button size="sm" class="w-10 h-10 bg-account-button text-white shadow-account">
+                <Button size="sm" class="bg-account-button w-10 h-10 text-white shadow-account">
                     <i class="bx bx-plus bx-sm" />
                 </Button>
             </template>
             <template #footer-button>
-                <Button size="sm" class="text-xs bg-white text-account-button shadow-account-sm ml-auto">
+                <Button size="sm" class="text-account-button shadow-account-sm ml-auto text-xs bg-white">
                     Show All
                 </Button>
             </template>
@@ -180,7 +180,7 @@
                 <i class="bx bx-info-circle" style="color: rgba(0, 0, 0, 0.2)" />
             </template>
             <template #footer-button>
-                <Button size="sm" class="text-xs bg-white text-nft-button shadow-nft-sm"> Hide All </Button>
+                <Button size="sm" class="text-nft-button shadow-nft-sm text-xs bg-white"> Hide All </Button>
             </template>
         </Card>
         <Card
@@ -196,10 +196,10 @@
             </template>
             <template #header-button>
                 <div class="flex flex-row gap-2">
-                    <Button size="sm" class="w-8 h-8 bg-white text-content-button shadow-content-md">
+                    <Button size="sm" class="text-content-button shadow-content-md w-8 h-8 bg-white">
                         <i class="bx bxs-pencil bx-xs"></i>
                     </Button>
-                    <Button size="sm" class="w-8 h-8 bg-white text-content-button shadow-content-md">
+                    <Button size="sm" class="text-content-button shadow-content-md w-8 h-8 bg-white">
                         <i class="bx bx-expand-alt bx-xs"></i>
                     </Button>
                 </div>
@@ -209,14 +209,13 @@
                     <Button
                         size="lg"
                         class="
-                            text-lg
-                            font-extralight
                             bg-content-button
-                            opacity-35
-                            text-white
-                            shadow-content
-                            cursor-not-allowed
                             m-auto
+                            text-white text-lg
+                            font-extralight
+                            shadow-content
+                            opacity-35
+                            cursor-not-allowed
                         "
                         disabled
                     >
@@ -237,7 +236,7 @@
                 <i class="bx bx-info-circle" style="color: rgba(0, 0, 0, 0.2)" />
             </template>
             <template #header-button>
-                <Button size="sm" class="w-10 h-10 bg-account-button text-white shadow-account">
+                <Button size="sm" class="bg-account-button w-10 h-10 text-white shadow-account">
                     <i class="bx bx-plus bx-sm"></i>
                 </Button>
             </template>
@@ -287,7 +286,7 @@
                 <i class="bx bx-info-circle" style="color: rgba(0, 0, 0, 0.2)" />
             </template>
             <template #header-button>
-                <Button size="sm" class="w-10 h-10 bg-account-button text-white shadow-account">
+                <Button size="sm" class="bg-account-button w-10 h-10 text-white shadow-account">
                     <i class="bx bx-plus bx-sm"></i>
                 </Button>
             </template>
@@ -376,10 +375,10 @@
         <AccountItem chain="Ethereum" size="70" :deleteMode="true" />
         <AccountItem chain="Ethereum" size="70" :deleteMode="false" />
 
-        <div class="relative w-45 h-45">
+        <div class="h-45 relative w-45">
             <NFTItem :size="180" imageUrl="https://i.imgur.com/GdWEt4z.jpg" />
             <NFTBadges
-                class="absolute z-50 top-2.5 right-2.5"
+                class="absolute z-50 right-2.5 top-2.5"
                 chain="Ethereum"
                 location="overlay"
                 collectionImg="https://i.imgur.com/GdWEt4z.jpg"
@@ -387,7 +386,7 @@
         </div>
 
         <NFTBadges
-            class="absolute z-50 top-2.5 right-2.5"
+            class="absolute z-50 right-2.5 top-2.5"
             chain="Ethereum"
             location="header"
             collectionImg="https://i.imgur.com/GdWEt4z.jpg"
@@ -408,7 +407,7 @@
                 <i class="bx bx-info-circle" style="color: rgba(0, 0, 0, 0.2)" />
             </template>
             <template #header-button>
-                <Button size="sm" class="w-10 h-10 bg-account-button text-white shadow-account">
+                <Button size="sm" class="bg-account-button w-10 h-10 text-white shadow-account">
                     <i class="bx bx-plus bx-sm"></i>
                 </Button>
             </template>
@@ -436,7 +435,7 @@
                 <i class="bx bx-info-circle" style="color: rgba(0, 0, 0, 0.2)" />
             </template>
             <template #header-button>
-                <Button size="sm" class="w-10 h-10 bg-account-button text-white shadow-account">
+                <Button size="sm" class="bg-account-button w-10 h-10 text-white shadow-account">
                     <i class="bx bx-plus bx-sm"></i>
                 </Button>
             </template>
@@ -453,7 +452,7 @@
             </template>
         </Card>
 
-        <Button size="lg" class="w-45 bg-content-button text-white shadow-content" @click="isShowingModal = true">
+        <Button size="lg" class="bg-content-button w-45 text-white shadow-content" @click="isShowingModal = true">
             Open Modal
         </Button>
         <Modal v-if="isShowingModal">
@@ -467,12 +466,12 @@
                 <div class="flex flex-row gap-5">
                     <Button
                         size="sm"
-                        class="w-32 bg-white text-primary shadow-secondary"
+                        class="text-primary shadow-secondary w-32 bg-white"
                         @click="isShowingModal = false"
                     >
                         Discard
                     </Button>
-                    <Button size="sm" class="w-32 bg-primary text-white shadow-primary" @click="isShowingModal = false">
+                    <Button size="sm" class="bg-primary shadow-primary w-32 text-white" @click="isShowingModal = false">
                         Save
                     </Button>
                 </div>
@@ -480,16 +479,16 @@
         </Modal>
 
         <div class="flex flex-row gap-5">
-            <Button size="lg" class="w-40 bg-primary text-white shadow-primary" @click="walletConnect">
+            <Button size="lg" class="bg-primary shadow-primary w-40 text-white" @click="walletConnect">
                 Wallet Connect
             </Button>
-            <Button size="lg" class="w-40 bg-yellow-600 text-white" @click="metamaskConnect"> Metamask Connect </Button>
+            <Button size="lg" class="w-40 text-white bg-yellow-600" @click="metamaskConnect"> Metamask Connect </Button>
         </div>
-        <Button size="lg" class="w-80 bg-danger text-white" @click="disconnect"> Disconnect </Button>
+        <Button size="lg" class="w-80 text-white bg-danger" @click="disconnect"> Disconnect </Button>
 
-        <Button size="lg" class="w-80 bg-primary text-white shadow-primary" @click="loadingModal"> Loading </Button>
+        <Button size="lg" class="bg-primary shadow-primary w-80 text-white" @click="loadingModal"> Loading </Button>
 
-        <Button size="lg" class="w-80 bg-primary text-white shadow-primary" @click="shareModal"> Share </Button>
+        <Button size="lg" class="bg-primary shadow-primary w-80 text-white" @click="shareModal"> Share </Button>
         <!-- <Modal v-show="isLoading">
             <template #body>
                 <span
@@ -511,7 +510,7 @@
 
         <div class="w-80">
             <div
-                class="box-border rounded-2xl aspect-w-16 aspect-h-9"
+                class="aspect-w-16 aspect-h-9 rounded-2xl box-border"
                 style="background: linear-gradient(107.57deg, #34816e 18.23%, #eae195 99.85%, #9ab85a 99.9%)"
             ></div>
         </div>

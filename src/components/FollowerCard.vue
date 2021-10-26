@@ -58,10 +58,10 @@ export default class FollowerCard extends Vue {
 <style scoped lang="postcss">
 @layer components {
     .follower-container {
-        @apply px-8 md:px-10 py-4 flex flex-row items-center justify-start gap-6 md:gap-10 rounded bg-body-bg shadow-follow-card;
+        @apply flex flex-row gap-6 items-center justify-start px-8 py-4 bg-body-bg rounded shadow-follow-card md:gap-10 md:px-10;
 
         .avatar > img {
-            @apply flex-shrink h-16 w-16 flex-grow-0 rounded-full object-cover;
+            @apply flex-grow-0 flex-shrink w-16 h-16 rounded-full object-cover;
         }
 
         .info {
@@ -69,11 +69,11 @@ export default class FollowerCard extends Vue {
         }
 
         .username {
-            @apply font-bold text-2xl truncate;
+            @apply text-2xl font-bold truncate;
         }
 
         .address {
-            @apply font-medium text-lg truncate;
+            @apply text-lg font-medium truncate;
         }
     }
 }

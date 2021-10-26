@@ -57,16 +57,16 @@ export default class Card extends Vue {}
 <style scoped lang="postcss">
 @layer components {
     .card {
-        @apply box-border rounded-xl pt-4 pb-4 pl-5 pr-5 flex flex-col items-start border-card;
+        @apply flex flex-col items-start pb-4 pl-5 pr-5 pt-4 border-card rounded-xl box-border;
 
         > * + * {
             @apply my-5;
         }
 
         .card-header {
-            @apply w-full flex justify-between items-center;
+            @apply flex items-center justify-between w-full;
             .card-title-wrapper {
-                @apply flex justify-start items-center gap-2;
+                @apply flex gap-2 items-center justify-start;
                 .card-title {
                     @apply mr-1 text-xl font-semibold;
                 }
@@ -74,7 +74,7 @@ export default class Card extends Vue {}
         }
 
         .card-content {
-            @apply break-all mx-auto w-full h-full scrollbar-hide;
+            @apply scrollbar-hide mx-auto w-full h-full break-all;
             > .content-wrapper {
                 @apply min-h-20;
 
@@ -85,26 +85,26 @@ export default class Card extends Vue {}
             &.single-line {
                 @apply overflow-y-auto;
                 > .content-wrapper {
-                    @apply w-max px-4 pb-4;
+                    @apply pb-4 px-4 w-max;
                 }
             }
             &.PC-layout {
-                @apply overflow-y-auto max-h-36;
+                @apply max-h-36 overflow-y-auto;
             }
             .body-tips {
-                @apply flex w-full justify-center items-center;
+                @apply flex items-center justify-center w-full;
             }
         }
 
         .card-footer {
-            @apply w-full flex flex-row justify-between font-normal mt-auto mb-0;
+            @apply flex flex-row justify-between mb-0 mt-auto w-full font-normal;
 
             > * {
                 @apply flex m-auto mr-0;
             }
 
             .footer-tips {
-                @apply text-left font-extralight ml-0 flex justify-start text-sm;
+                @apply flex justify-start ml-0 text-left text-sm font-extralight;
             }
         }
     }

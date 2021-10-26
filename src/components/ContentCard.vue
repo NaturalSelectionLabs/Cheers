@@ -1,10 +1,10 @@
 <template>
-    <div class="w-full p-2 bg-transparent border-card text-body-text rounded cursor-pointer">
-        <h2 class="content-header font-semibold text-lg truncate">
+    <div class="p-2 w-full text-body-text bg-transparent border-card rounded cursor-pointer">
+        <h2 class="content-header text-lg font-semibold truncate">
             {{ title }}
         </h2>
         <div class="content-body" v-html="renderedContent" />
-        <section class="flex flex-row justify-start items-center gap-2">
+        <section class="flex flex-row gap-2 items-center justify-start">
             <span class="timestamp font-light opacity-50">
                 {{ getDate(timestamp) + ', on' }}
             </span>
