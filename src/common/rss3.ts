@@ -360,18 +360,19 @@ export default {
             };
         }
         const metamaskEthereum = (window as any).ethereum;
-        const metaMaskWeb3 = new Web3(metamaskEthereum);
+        ethersProvider = new ethers.providers.Web3Provider(metamaskEthereum);
         const accounts = await metamaskEthereum.request({
             method: 'eth_requestAccounts',
         });
-        const address = metaMaskWeb3.utils.toChecksumAddress(accounts[0]);
+        const address = ethers.utils.getAddress(accounts[0]);
 
         const newTmpAddress: RSS3Account = {
             platform: 'EVM+',
             identity: address,
         };
 
-        const signature = await metaMaskWeb3.eth.personal.sign(rss3.accounts.getSigMessage(newTmpAddress), address, '');
+        const signature =
+            (await ethersProvider?.getSigner().signMessage(rss3.accounts.getSigMessage(newTmpAddress))) || '';
 
         return {
             platform: 'EVM+',
