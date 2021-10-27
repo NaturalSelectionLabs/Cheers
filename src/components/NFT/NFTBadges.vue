@@ -1,7 +1,7 @@
 <template>
     <div class="badges-container">
         <div
-            v-if="collectionImg !== null"
+            v-if="collectionImg"
             class="badge"
             :class="{
                 'badge-overlay': location === 'overlay',
@@ -9,16 +9,7 @@
             }"
             :style="{ backgroundImage: `url(${collectionImg})` }"
         ></div>
-        <div
-            class="badge bg-white"
-            :class="{
-                'bg-BSC': chain === 'BSC',
-                'bg-Ethereum': chain === 'Ethereum',
-                'bg-Ronin': chain === 'Ronin',
-                'badge-overlay': location === 'overlay',
-                'badge-header': location === 'header',
-            }"
-        ></div>
+        <div class="badge bg-white" :class="[`bg-${chain}`, `badge-${location}`]"></div>
     </div>
 </template>
 

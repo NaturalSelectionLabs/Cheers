@@ -58,7 +58,14 @@ export default class NFTDetail extends Vue {
     public toMarket(address: string, tokenId: string) {
         switch (this.market) {
             case 'opensea':
-                window.open(`https://opensea.io/assets/${address}/${tokenId}`);
+                switch (this.chain) {
+                    case 'Polygon':
+                        window.open(`https://opensea.io/assets/matic/${address}/${tokenId}`);
+                        break;
+                    default:
+                        window.open(`https://opensea.io/assets/${address}/${tokenId}`);
+                        break;
+                }
                 break;
             case 'rarible':
                 window.open(`https://rarible.com/token/${address}:${tokenId}`);
@@ -73,6 +80,9 @@ export default class NFTDetail extends Vue {
                 break;
             case 'Ethereum':
                 window.open(`https://etherscan.io/token/${address}?a=${tokenId}`);
+                break;
+            case 'Polygon':
+                window.open(`https://polygonscan.com/token/${address}?a=${tokenId}`);
                 break;
         }
     }

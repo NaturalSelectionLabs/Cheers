@@ -45,7 +45,7 @@
                         :is-showing-details="true"
                     />
                 </div>
-                <NFTDetail :chain="details.chain" :details="details" market="opensea" />
+                <NFTDetail :chain="details.chain" :details="details" :market="market" />
             </section>
         </div>
     </div>
@@ -78,6 +78,7 @@ export default class SingleNFT extends Vue {
             address: '',
         },
     };
+    private market: string = 'opensea';
 
     async mounted() {
         await RSS3.reconnect();
