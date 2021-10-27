@@ -13,7 +13,7 @@ module.exports = (env, argv) => ({
 
     output: {
         path: path.resolve(__dirname, 'dist'),
-        filename: '[name].js',
+        filename: '[name].[contenthash:8].js',
         publicPath:
             argv.mode === 'production'
                 ? process.env.PAGE_ENV === 'development'
