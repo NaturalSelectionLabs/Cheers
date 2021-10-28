@@ -9,7 +9,17 @@
             }"
             :style="{ backgroundImage: `url(${collectionImg})` }"
         ></div>
-        <div class="badge bg-white" :class="[`bg-${chain}`, `badge-${location}`]"></div>
+        <div
+            class="badge bg-white"
+            :class="{
+                'bg-BSC': chain === 'BSC',
+                'bg-Ethereum': chain === 'Ethereum',
+                'bg-Polygon': chain === 'Polygon',
+                'bg-Ronin': chain === 'Ronin',
+                'badge-overlay': location === 'overlay',
+                'badge-header': location === 'header',
+            }"
+        ></div>
     </div>
 </template>
 
