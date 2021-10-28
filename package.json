@@ -38,7 +38,7 @@
         "@tailwindcss/line-clamp": "0.2.2",
         "@walletconnect/web3-provider": "1.6.6",
         "assert": "2.0.0",
-        "axios": "0.23.0",
+        "axios": "0.24.0",
         "boxicons": "2.0.9",
         "buffer": "6.0.3",
         "colorthief": "2.3.2",
