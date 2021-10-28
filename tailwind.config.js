@@ -222,7 +222,7 @@ module.exports = {
                 EVM: 'url(@/assets/images/chains/evm.png)',
                 BSC: 'url(@/assets/images/chains/BSC.png)',
                 Ethereum: 'url(@/assets/images/chains/Ethereum.png)',
-                Polygon: 'url(@/assets/images/chains/Polygon.png)',
+                'Polygon': 'url(@/assets/images/chains/Polygon.png)',
                 Ronin: 'url(@/assets/images/chains/Ronin.png)',
                 Misskey: 'url(@/assets/images/chains/Misskey.png)',
                 Twitter: 'url(@/assets/images/chains/Twitter.png)',
