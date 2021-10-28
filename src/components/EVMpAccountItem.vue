@@ -2,17 +2,14 @@
     <div class="relative">
         <div
             class="account-item bg-item-bg"
+            :style="{ width: size + 'px', height: size + 'px' }"
             @mouseenter="isHover = true"
             @mouseout="isHover = false"
             @touchstart="isHover = true"
             @touchend="isHover = false"
             ref="account"
         >
-            <div
-                class="icon"
-                :class="[address ? 'mix-blend-overlay' : 'opacity-50']"
-                :style="{ width: size + 'px', height: size + 'px' }"
-            />
+            <div class="icon" :class="[address ? 'mix-blend-overlay' : 'opacity-50']" />
         </div>
         <Tooltip v-if="enableTooltip" v-show="isHover" :text="addressFilter($props.address)" view-option="account" />
         <Button
@@ -60,7 +57,10 @@ export default class EVMpAccountItem extends Vue {
                     )} ${i * 20}%`;
                 }
                 styleString += ');';
-                (<HTMLDivElement>this.$refs.account).setAttribute('style', styleString);
+                (<HTMLDivElement>this.$refs.account).setAttribute(
+                    'style',
+                    styleString + `width: ${this.size}px; height: ${this.size}px`,
+                );
             }
         }
     }
@@ -88,7 +88,7 @@ export default class EVMpAccountItem extends Vue {
         @apply flex items-center justify-center border border-item-border rounded-full shadow-account overflow-hidden filter;
 
         .icon {
-            @apply bg-EVM bg-85 bg-center bg-no-repeat;
+            @apply w-full h-full bg-EVM bg-85 bg-center bg-no-repeat;
         }
     }
 }
