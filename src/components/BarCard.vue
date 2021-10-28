@@ -28,11 +28,11 @@ export default class BarCard extends Vue {}
 <style lang="postcss" scoped>
 @layer components {
     .card {
-        @apply box-border rounded-xl px-3 py-1 flex flex-row items-center border-card h-16;
+        @apply flex flex-row items-center px-3 py-1 h-16 border-card rounded-xl box-border;
 
         .card-body {
             scrollbar-width: thin;
-            @apply w-full overflow-y-auto p-2;
+            @apply p-2 w-full overflow-y-auto;
 
             .content-wrapper {
                 @apply flex items-center w-max;

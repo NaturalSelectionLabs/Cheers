@@ -58,7 +58,14 @@ export default class NFTDetail extends Vue {
     public toMarket(address: string, tokenId: string) {
         switch (this.market) {
             case 'opensea':
-                window.open(`https://opensea.io/assets/${address}/${tokenId}`);
+                switch (this.chain) {
+                    case 'Polygon':
+                        window.open(`https://opensea.io/assets/matic/${address}/${tokenId}`);
+                        break;
+                    default:
+                        window.open(`https://opensea.io/assets/${address}/${tokenId}`);
+                        break;
+                }
                 break;
             case 'rarible':
                 window.open(`https://rarible.com/token/${address}:${tokenId}`);
@@ -74,6 +81,9 @@ export default class NFTDetail extends Vue {
             case 'Ethereum':
                 window.open(`https://etherscan.io/token/${address}?a=${tokenId}`);
                 break;
+            case 'Polygon':
+                window.open(`https://polygonscan.com/token/${address}?a=${tokenId}`);
+                break;
         }
     }
 
@@ -86,10 +96,10 @@ export default class NFTDetail extends Vue {
 <style scoped lang="postcss">
 @layer components {
     .details-container {
-        @apply w-full px-5 py-4 rounded filter border-card text-body-text flex flex-col justify-start items-start gap-5;
+        @apply flex flex-col gap-5 items-start justify-start px-5 py-4 w-full text-body-text border-card rounded filter;
     }
     h2 {
-        @apply text-xl font-semibold capitalize overflow-ellipsis overflow-hidden break-all;
+        @apply break-all text-xl font-semibold overflow-hidden capitalize overflow-ellipsis;
     }
     h3 {
         @apply text-lg font-medium capitalize;
@@ -105,10 +115,10 @@ export default class NFTDetail extends Vue {
         @apply text-sm leading-normal;
     }
     .tag-container {
-        @apply flex flex-row flex-wrap justify-start items-center gap-2.5;
+        @apply flex flex-row flex-wrap gap-2.5 items-center justify-start;
     }
     .traits-container {
-        @apply flex flex-row flex-wrap justify-start items-center gap-2.5;
+        @apply flex flex-row flex-wrap gap-2.5 items-center justify-start;
     }
 }
 </style>

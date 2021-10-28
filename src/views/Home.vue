@@ -1,8 +1,8 @@
 <template>
-    <div id="main" class="h-screen bg-body-bg overflow-y-auto text-body-text">
+    <div id="main" class="h-screen text-body-text bg-body-bg overflow-y-auto">
         <div
             v-if="isAccountExist"
-            class="px-4 pt-8 pb-12 grid grid-cols-1 md:grid-cols-2 gap-4 max-w-screen-lg m-auto select-none"
+            class="grid gap-4 grid-cols-1 m-auto pb-12 pt-8 px-4 max-w-screen-lg select-none md:grid-cols-2"
         >
             <section class="relative md:col-span-2">
                 <Profile
@@ -31,7 +31,7 @@
                             v-if="isOwner"
                             size="sm"
                             shape="circle"
-                            class="w-8 h-8 mr-1 inline-block bg-account-btn-s text-account-btn-s-text shadow-account"
+                            class="inline-block mr-1 w-8 h-8 text-account-btn-s-text bg-account-btn-s shadow-account"
                             @click="toManageAccounts"
                         >
                             <i class="bx bxs-pencil bx-xs" />
@@ -39,7 +39,7 @@
                         <Button
                             size="sm"
                             shape="circle"
-                            class="w-8 h-8 mr-1 inline-block bg-account-btn-s text-account-btn-s-text shadow-account"
+                            class="inline-block mr-1 w-8 h-8 text-account-btn-s-text bg-account-btn-s shadow-account"
                             @click="toAccountsPage"
                         >
                             <i class="bx bx-expand-alt bx-xs" />
@@ -79,14 +79,14 @@
                         <Button
                             v-if="isOwner"
                             size="sm"
-                            class="w-8 h-8 bg-nft-btn-s text-nft-btn-s-text shadow-nft-btn-s"
+                            class="w-8 h-8 text-nft-btn-s-text bg-nft-btn-s shadow-nft-btn-s"
                             @click="toManageNFTs"
                         >
                             <i class="bx bxs-pencil bx-xs" />
                         </Button>
                         <Button
                             size="sm"
-                            class="w-8 h-8 bg-nft-btn-s text-nft-btn-s-text shadow-nft-btn-s"
+                            class="w-8 h-8 text-nft-btn-s-text bg-nft-btn-s shadow-nft-btn-s"
                             @click="toListPage('NFT')"
                         >
                             <i class="bx bx-expand-alt bx-xs" />
@@ -114,14 +114,14 @@
                         <Button
                             v-if="isOwner"
                             size="sm"
-                            class="w-8 h-8 bg-gitcoin-btn-s text-gitcoin-btn-s-text shadow-gitcoin-btn-s"
+                            class="w-8 h-8 text-gitcoin-btn-s-text bg-gitcoin-btn-s shadow-gitcoin-btn-s"
                             @click="toManageGitcoins"
                         >
                             <i class="bx bxs-pencil bx-xs" />
                         </Button>
                         <Button
                             size="sm"
-                            class="w-8 h-8 bg-gitcoin-btn-s text-gitcoin-btn-s-text shadow-gitcoin-btn-s"
+                            class="w-8 h-8 text-gitcoin-btn-s-text bg-gitcoin-btn-s shadow-gitcoin-btn-s"
                             @click="toListPage('Gitcoin')"
                         >
                             <i class="bx bx-expand-alt bx-xs" />
@@ -147,7 +147,7 @@
                         <Button
                             v-if="isOwner"
                             size="sm"
-                            class="w-8 h-8 bg-footprint-btn-s text-footprint-btn-s-text shadow-footprint-btn-s"
+                            class="w-8 h-8 text-footprint-btn-s-text bg-footprint-btn-s shadow-footprint-btn-s"
                             @click="toManageFootprints"
                         >
                             <i class="bx bxs-pencil bx-xs" />
@@ -155,7 +155,7 @@
                         <Button
                             v-if="!isPCLayout"
                             size="sm"
-                            class="w-8 h-8 bg-footprint-btn-s text-footprint-btn-s-text shadow-footprint-btn-s"
+                            class="w-8 h-8 text-footprint-btn-s-text bg-footprint-btn-s shadow-footprint-btn-s"
                             @click="toListPage('Footprint')"
                         >
                             <i class="bx bx-expand-alt bx-xs" />
@@ -165,13 +165,13 @@
                 <template #content>
                     <div
                         v-if="isPCLayout"
-                        class="flex flex-col px-0.5 overflow-y-auto scrollbar-hide"
+                        class="scrollbar-hide flex flex-col px-0.5 overflow-y-auto"
                         :class="{
                             'h-72': isPCLayout,
                             'justify-center': footprints.length === 0,
                         }"
                     >
-                        <div v-if="footprints.length > 0" class="divide-y-xs divide-footprint-divider">
+                        <div v-if="footprints.length > 0" class="divide-footprint-divider divide-y-xs">
                             <!-- FootprintCard example -->
                             <FootprintCard
                                 v-for="item of footprints"
@@ -187,14 +187,14 @@
                             />
                         </div>
                         <div v-else>
-                            <div class="text-footprint-title m-auto text-center mt-4">
+                            <div class="m-auto mt-4 text-center text-footprint-title">
                                 {{ isLoadingAssets.Footprint ? 'Loading...' : "Haven't found anything yet..." }}
                             </div>
                         </div>
                     </div>
                     <div
                         v-else-if="footprints.length > 0"
-                        class="flex flex-col px-0.5 divide-y-xs divide-footprint-divider"
+                        class="flex flex-col px-0.5 divide-footprint-divider divide-y-xs"
                     >
                         <div>
                             <FootprintCard
@@ -216,7 +216,7 @@
                                 "
                             />
                         </div>
-                        <div class="p-4 inline-flex overflow-x-auto" style="scrollbar-width: thin">
+                        <div class="inline-flex p-4 overflow-x-auto" style="scrollbar-width: thin">
                             <FootprintItem
                                 v-for="item of footprints.slice(1)"
                                 :key="item.platform + item.identity + item.id"
@@ -228,7 +228,7 @@
                         </div>
                     </div>
                     <div v-else>
-                        <div class="text-footprint-title m-auto text-center mt-4">
+                        <div class="m-auto mt-4 text-center text-footprint-title">
                             {{ isLoadingAssets.Footprint ? 'Loading...' : "Haven't found anything yet..." }}
                         </div>
                     </div>
@@ -240,20 +240,20 @@
                 color-title="text-content-title"
                 color-tips="text-content-title"
                 color-background="bg-content-bg"
-                class="w-auto border-content-border md:col-start-2 md:row-start-2 md:row-span-3"
+                class="w-auto border-content-border md:col-start-2 md:row-span-3 md:row-start-2"
                 :isSingleLine="false"
                 :is-having-content="true"
             >
                 <template #title-icon><ContentIcon /></template>
                 <template #content>
                     <div
-                        class="flex flex-col px-0.5 overflow-y-auto md:h-112 scrollbar-hide"
+                        class="scrollbar-hide flex flex-col px-0.5 overflow-y-auto md:h-112"
                         :class="{
                             'h-112': isPCLayout,
                             'justify-center': contents.length === 0,
                         }"
                     >
-                        <div v-if="contents.length > 0" class="divide-y-xs divide-content-divider">
+                        <div v-if="contents.length > 0" class="divide-content-divider divide-y-xs">
                             <div v-for="item in contents" :key="item.id">
                                 <ContentCard
                                     :timestamp="parseInt(item.info.timestamp)"
@@ -266,7 +266,7 @@
                             <div>
                                 <Button
                                     size="sm"
-                                    class="w-full h-6 bg-content-btn-s text-content-btn-s-text shadow-content-btn-s"
+                                    class="w-full h-6 text-content-btn-s-text bg-content-btn-s shadow-content-btn-s"
                                     v-show="isContentsHaveMore"
                                     @click="loadMoreContents"
                                     id="contents-load-more-button"
@@ -276,29 +276,29 @@
                                 </Button>
                             </div>
                         </div>
-                        <div v-else class="text-content-title text-center mt-4">
+                        <div v-else class="mt-4 text-center text-content-title">
                             {{ isLoadingContents ? 'Loading...' : "Haven't found anything yet..." }}
                         </div>
                     </div>
                 </template>
             </Card>
 
-            <div class="mt-2 fixed bottom-0 left-0 w-full center">
+            <div class="center fixed bottom-0 left-0 mt-2 w-full">
                 <div
                     class="
+                        flex flex-row
+                        gap-x-2
+                        items-center
+                        justify-between
+                        m-auto
                         px-4
                         py-2
                         max-w-screen-lg
-                        m-auto
-                        flex flex-row
-                        gap-x-2
-                        justify-between
-                        items-center
                         bg-footer-bg
                     "
                 >
                     <Logo class="cursor-pointer" :size="18" @click="toHomePage" />
-                    <div class="text-body-text font-normal text-xs text-right">
+                    <div class="text-right text-body-text text-xs font-normal">
                         <a href="https://rss3.io/#/privacy"> Privacy </a>
                         |
                         <span>
@@ -307,11 +307,11 @@
                                 href="https://rss3.io"
                                 class="
                                     text-body-text
-                                    font-normal
-                                    text-xs
                                     no-underline
                                     visited:no-underline
                                     active:no-underline
+                                    text-xs
+                                    font-normal
                                 "
                                 >RSS3</a
                             >
@@ -324,7 +324,7 @@
                 <template #header>
                     <Button
                         size="sm"
-                        class="absolute left-4 w-10 h-10 bg-secondary-btn text-secondary-btn-text shadow-secondary-btn"
+                        class="absolute left-4 w-10 h-10 text-secondary-btn-text bg-secondary-btn shadow-secondary-btn"
                         @click="closeDialog"
                     >
                         <i class="bx bx-chevron-left bx-sm"></i>
@@ -345,19 +345,19 @@
                             :chain="showingAccountDetails.platform"
                             :address="showingAccountDetails.address"
                         />
-                        <span class="address text-xl font-semibold break-all text-center mt-4">
+                        <span class="address mt-4 text-center break-all text-xl font-semibold">
                             {{ showingAccountDetails.address }}
                         </span>
                         <Button
                             size="sm"
                             class="
                                 text-md
-                                bg-account-btn-m
-                                text-account-btn-m-text
-                                shadow-account-btn-m
                                 m-auto
                                 mt-4
                                 w-1/4
+                                text-account-btn-m-text
+                                bg-account-btn-m
+                                shadow-account-btn-m
                             "
                             @click="
                                 showingAccountDetails.isLink
@@ -384,7 +384,7 @@
                     <div class="flex flex-row gap-5">
                         <Button
                             size="sm"
-                            class="w-72 bg-primary-btn text-primary-btn-text shadow-primary-btn"
+                            class="w-72 text-primary-btn-text bg-primary-btn shadow-primary-btn"
                             @click="isShowingNotice = false"
                         >
                             OK
@@ -395,17 +395,17 @@
         </div>
         <div
             v-else
-            class="onboarding h-full text-center bg-cover bg-fixed flex items-center justify-center bg-pass3gradient"
+            class="onboarding flex items-center justify-center h-full text-center bg-pass3gradient bg-cover bg-fixed"
         >
-            <div class="body px-4 h-2/3 flex flex-col justify-center items-center justify-between">
+            <div class="body flex flex-col items-center justify-between justify-center px-4 h-2/3">
                 <Logo :size="200" />
-                <div class="text-primary-text text-2xl max-w-md">
+                <div class="max-w-md text-primary-text text-2xl">
                     <p>This account is not on RSS3 yet...</p>
                 </div>
-                <div class="leading-17.5 w-83.5 text-2xl mx-auto">
+                <div class="mx-auto w-83.5 text-2xl leading-17.5">
                     <Button
                         size="lg"
-                        class="bg-primary-btn shadow-primary-btn text-primary-btn-text rounded-3xl w-full h-17.5 mb-9"
+                        class="mb-9 w-full h-17.5 text-primary-btn-text bg-primary-btn rounded-3xl shadow-primary-btn"
                         @click="toHomePage"
                     >
                         <span> Go Home </span>

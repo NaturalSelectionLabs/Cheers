@@ -26,14 +26,14 @@ export default class Tooltip extends Vue {
 <style lang="postcss" scoped>
 @layer components {
     .tooltip {
-        @apply absolute rounded-sm px-2 py-1 font-normal border-link z-10 whitespace-nowrap;
+        @apply absolute z-10 px-2 py-1 whitespace-nowrap font-normal border-link rounded-sm;
         left: calc(100% + 5px);
         top: calc(50% - 14px);
     }
 
     .tooltip::after {
         content: '';
-        @apply absolute bottom-full left-0 -ml-2 top-3 border-solid border-4;
+        @apply absolute bottom-full left-0 top-3 -ml-2 border-4 border-solid;
     }
 
     .color-default {

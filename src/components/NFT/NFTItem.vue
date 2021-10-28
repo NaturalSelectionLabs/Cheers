@@ -112,7 +112,7 @@ export default class NFTItem extends Vue {
 <style scoped lang="postcss">
 @layer components {
     .nft-item {
-        @apply border border-item-border filter bg-item-bg;
+        @apply bg-item-bg border border-item-border filter;
     }
 }
 </style>

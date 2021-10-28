@@ -2,6 +2,7 @@
     <div class="scan-tag">
         <Etherscan v-if="chain === 'Ethereum'" />
         <Bscscan v-if="chain === 'BSC'" />
+        <PolygonScan v-if="chain === 'Polygon'" />
     </div>
 </template>
 
@@ -9,9 +10,10 @@
 import { Vue, Options } from 'vue-class-component';
 import Etherscan from '@/components/Icons/Etherscan.vue';
 import Bscscan from '@/components/Icons/Bscscan.vue';
+import PolygonScan from '@/components/Icons/PolygonScan.vue';
 
 @Options({
-    components: { Etherscan, Bscscan },
+    components: { PolygonScan, Etherscan, Bscscan },
     props: {
         chain: String,
     },
@@ -24,7 +26,7 @@ export default class ScanTag extends Vue {
 <style scoped lang="postcss">
 @layer components {
     .scan-tag {
-        @apply rounded-sm border-sm border-nft-bg px-2 py-1.5 flex justify-center items-center bg-white bg-origin-content bg-contain bg-center bg-no-repeat text-center leading-none shadow-nft;
+        @apply flex items-center justify-center px-2 py-1.5 text-center leading-none bg-white bg-contain bg-center bg-no-repeat border-sm border-nft-bg rounded-sm shadow-nft bg-origin-content;
     }
 }
 </style>

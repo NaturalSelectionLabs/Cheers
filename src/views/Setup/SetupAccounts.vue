@@ -1,27 +1,27 @@
 <template>
-    <div class="h-screen bg-body-bg text-body-text overflow-y-auto">
-        <div class="px-4 pt-8 pb-32 max-w-screen-lg m-auto">
-            <div class="flex justify-between items-center mb-4">
+    <div class="h-screen text-body-text bg-body-bg overflow-y-auto">
+        <div class="m-auto pb-32 pt-8 px-4 max-w-screen-lg">
+            <div class="flex items-center justify-between mb-4">
                 <Button
                     size="sm"
                     class="
                         w-10
                         h-10
-                        bg-secondary-btn
                         text-secondary-btn-text
-                        shadow-secondary-btn
+                        bg-secondary-btn
                         border-secondary-btn-border
+                        shadow-secondary-btn
                     "
                     @click="back"
                 >
                     <i class="bx bx-chevron-left bx-sm"></i>
                 </Button>
                 <span class="text-center">
-                    <h1 class="text-xl text-primary-text font-bold inline">Manage Accounts</h1>
+                    <h1 class="inline text-primary-text text-xl font-bold">Manage Accounts</h1>
                 </span>
                 <span class="avatar">
                     <ImgHolder
-                        class="w-10 h-10 inline-flex my-auto cursor-pointer"
+                        class="inline-flex my-auto w-10 h-10 cursor-pointer"
                         :is-rounded="true"
                         :is-border="false"
                         :src="avatar"
@@ -29,7 +29,7 @@
                     />
                 </span>
             </div>
-            <section class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <section class="grid gap-4 grid-cols-1 md:grid-cols-2">
                 <Card
                     title="Default"
                     color-title="text-account-title"
@@ -55,7 +55,7 @@
                     color-title="text-account-title"
                     color-tips="text-account-title"
                     :color-background="mode === 'normal' ? 'bg-account-bg' : 'bg-card-overlay'"
-                    class="w-full mb-4 border-account-border md:col-start-1"
+                    class="mb-4 w-full border-account-border md:col-start-1"
                     :is-having-content="true"
                     :tips="mode !== 'delete' ? 'Drag here to show and reorder' : 'Delete unwanted accounts'"
                 >
@@ -64,7 +64,7 @@
                             <Button
                                 v-if="mode === 'delete'"
                                 size="sm"
-                                class="w-8 h-8 bg-account-btn-s text-account-btn-s-text shadow-account-btn-s"
+                                class="w-8 h-8 text-account-btn-s-text bg-account-btn-s shadow-account-btn-s"
                                 @click="mode = 'normal'"
                             >
                                 <i class="bx bx-check bx-xs" />
@@ -72,7 +72,7 @@
                             <Button
                                 v-else
                                 size="sm"
-                                class="w-8 h-8 bg-account-btn-s text-account-btn-s-text shadow-account-btn-s"
+                                class="w-8 h-8 text-account-btn-s-text bg-account-btn-s shadow-account-btn-s"
                                 @click="mode = 'delete'"
                             >
                                 <i class="bx bx-minus bx-xs" />
@@ -80,7 +80,7 @@
                             <Button
                                 v-if="mode === 'add'"
                                 size="sm"
-                                class="w-8 h-8 bg-account-btn-s text-account-btn-s-text shadow-account-btn-s"
+                                class="w-8 h-8 text-account-btn-s-text bg-account-btn-s shadow-account-btn-s"
                                 @click="mode = 'normal'"
                             >
                                 <i class="bx bx-x bx-xs" />
@@ -88,7 +88,7 @@
                             <Button
                                 v-else
                                 size="sm"
-                                class="w-8 h-8 bg-account-btn-m text-account-btn-m-text shadow-account-btn-s"
+                                class="w-8 h-8 text-account-btn-m-text bg-account-btn-m shadow-account-btn-s"
                                 @click="mode = 'add'"
                             >
                                 <i class="bx bx-plus bx-xs" />
@@ -151,7 +151,7 @@
                             >
                                 <template #item="{ element, index }">
                                     <div
-                                        class="shadow-account-item inline-flex m-0.5 rounded-full"
+                                        class="inline-flex m-0.5 rounded-full shadow-account-item"
                                         style="cursor: grab"
                                     >
                                         <EVMpAccountItem
@@ -175,7 +175,7 @@
                     <template #footer-button>
                         <Button
                             size="sm"
-                            class="text-xs bg-account-btn-s text-account-btn-s-text shadow-account-btn-s"
+                            class="text-account-btn-s-text text-xs bg-account-btn-s shadow-account-btn-s"
                             :class="{
                                 'bg-btn-disabled cursor-not-allowed text-opacity-20': show.length === 0,
                             }"
@@ -191,14 +191,14 @@
                     color-title="text-account-title"
                     color-tips="text-account-title"
                     color-background="bg-card-hide"
-                    class="w-full mb-4 border-account-border md:row-start-1 md:col-start-2 md:row-span-2"
+                    class="mb-4 w-full border-account-border md:col-start-2 md:row-span-2 md:row-start-1"
                     :is-having-content="true"
                     tips="Drag here to hide"
                 >
                     <template #header-button>
                         <Button
                             size="sm"
-                            class="text-xs bg-account-btn-s text-account-btn-s-text shadow-account-btn-s"
+                            class="text-account-btn-s-text text-xs bg-account-btn-s shadow-account-btn-s"
                             :class="{
                                 'bg-btn-disabled cursor-not-allowed text-opacity-20': hide.length === 0,
                             }"
@@ -238,7 +238,7 @@
                     <template #footer-button>
                         <Button
                             size="sm"
-                            class="text-xs bg-account-btn-s text-account-btn-s-text shadow-account-btn-s"
+                            class="text-account-btn-s-text text-xs bg-account-btn-s shadow-account-btn-s"
                             :class="{
                                 'bg-btn-disabled cursor-not-allowed text-opacity-20': hide.length === 0,
                             }"
@@ -251,16 +251,16 @@
                     </template>
                 </Card>
             </section>
-            <div class="px-4 py-4 flex gap-5 fixed bottom-0 left-0 right-0 max-w-md m-auto w-full bg-btn-container">
+            <div class="fixed bottom-0 left-0 right-0 flex gap-5 m-auto px-4 py-4 w-full max-w-md bg-btn-container">
                 <Button
                     size="lg"
-                    class="flex-1 text-lg bg-secondary-btn text-secondary-btn-text shadow-secondary-btn"
+                    class="flex-1 text-secondary-btn-text text-lg bg-secondary-btn shadow-secondary-btn"
                     @click="back"
                     ><span>Discard</span></Button
                 >
                 <Button
                     size="lg"
-                    class="flex-1 text-lg bg-primary-btn text-primary-btn-text shadow-primary-btn"
+                    class="flex-1 text-primary-btn-text text-lg bg-primary-btn shadow-primary-btn"
                     @click="save"
                     ><span>Save</span></Button
                 >
@@ -279,7 +279,7 @@
                     </p>
                     <div class="flex">
                         <Input
-                            class="text-xl mt-4 text-primary-text"
+                            class="mt-4 text-primary-text text-xl"
                             :is-single-line="true"
                             :placeholder="specifyNoSignAccount.style"
                             v-model="specifyNoSignAccount.account"
@@ -305,14 +305,14 @@
                     <div class="flex flex-row gap-5">
                         <Button
                             size="sm"
-                            class="w-32 bg-secondary-btn text-secondary-btn-text shadow-secondary-btn"
+                            class="w-32 text-secondary-btn-text bg-secondary-btn shadow-secondary-btn"
                             @click="isShowingAddSpecifyAccountInput = false"
                         >
                             Cancel
                         </Button>
                         <Button
                             size="sm"
-                            class="w-32 bg-primary-btn text-primary-btn-text shadow-primary-btn"
+                            class="w-32 text-primary-btn-text bg-primary-btn shadow-primary-btn"
                             @click="addNoSignAccountConfirm"
                         >
                             Confirm
@@ -334,7 +334,7 @@
                     <div class="flex flex-row gap-5">
                         <Button
                             size="sm"
-                            class="w-72 bg-primary-btn text-primary-btn-text shadow-primary-btn"
+                            class="w-72 text-primary-btn-text bg-primary-btn shadow-primary-btn"
                             @click="isShowingAddAccountNotice = false"
                         >
                             <span>OK</span>

@@ -1,37 +1,35 @@
 <template>
-    <div class="profile-container grid grid-cols-3 md:grid-cols-4 gap-2 items-center">
+    <div class="profile-container grid gap-2 grid-cols-3 items-center md:grid-cols-4">
         <ImgHolder
-            class="col-span-1 md:row-span-3 w-24 h-24 md:w-40 md:h-40"
+            class="col-span-1 w-24 h-24 md:row-span-3 md:w-40 md:h-40"
             :is-rounded="true"
             :is-border="false"
             :src="avatar"
         />
-        <div class="stats-container leading-5 md:row-start-3 md:col-start-2" @click="toFollowersPage">
+        <div class="stats-container leading-5 md:col-start-2 md:row-start-3" @click="toFollowersPage">
             <div class="stats-number">
                 {{ followers }}
             </div>
             <div class="stats-type">Followers</div>
         </div>
-        <div class="stats-container leading-5 md:row-start-3 md:col-start-3" @click="toFollowingsPage">
+        <div class="stats-container leading-5 md:col-start-3 md:row-start-3" @click="toFollowingsPage">
             <div class="stats-number">
                 {{ followings }}
             </div>
             <div class="stats-type">Followings</div>
         </div>
-        <span class="col-span-full row-start-2 md:row-start-1 md:col-start-2 md:col-span-2 font-bold text-2xl">{{
+        <span class="col-span-full row-start-2 text-2xl font-bold md:col-span-2 md:col-start-2 md:row-start-1">{{
             username
         }}</span>
         <section
             class="
-                col-span-3
-                md:col-start-2 md:row-start-2
-                row-start-3
                 flex flex-col
-                md:flex-row
-                gap-y-2 gap-x-10
-                justify-start
+                gap-x-10 gap-y-2
+                col-span-3
+                row-start-3
                 items-start
-                md:items-center
+                justify-start
+                md:flex-row md:col-start-2 md:row-start-2 md:items-center
             "
         >
             <LinkButton class="relative" @click="emitClickAddress">
@@ -42,11 +40,11 @@
             <LinkButton @click="toExternalLink" v-if="website && !isLoadingPersona">
                 <span><i class="bx bx-link align-bottom" />{{ website }}</span>
             </LinkButton>
-            <div class="flex-1 flex flex-row scrollbar-hide max-h-5 flex-shrink items-center" v-if="!isLoadingPersona">
+            <div class="scrollbar-hide max-h-5 flex flex-1 flex-row flex-shrink items-center" v-if="!isLoadingPersona">
                 <slot name="Accounts" />
             </div>
         </section>
-        <div class="bio col-span-full md:order-5 font-normal text-lg whitespace-pre-line">
+        <div class="bio col-span-full whitespace-pre-line text-lg font-normal md:order-5">
             {{ bio }}
         </div>
         <div class="col-span-full md:col-span-1 md:col-start-4 md:row-start-1">
@@ -115,7 +113,7 @@ export default class Profile extends Vue {
 <style lang="postcss" scoped>
 @layer components {
     .stats-container {
-        @apply cursor-pointer mb-2 text-primary-text w-16;
+        @apply mb-2 w-16 text-primary-text cursor-pointer;
         .stats-number {
             @apply text-xl font-semibold;
         }

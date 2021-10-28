@@ -1,17 +1,17 @@
 <template>
     <div id="main" class="h-screen bg-nft-bg overflow-y-auto">
-        <div class="px-4 pt-8 pb-32 max-w-screen-lg m-auto">
-            <div class="header flex justify-between items-center pb-4">
+        <div class="m-auto pb-32 pt-8 px-4 max-w-screen-lg">
+            <div class="header flex items-center justify-between pb-4">
                 <Button
                     size="sm"
-                    class="w-10 h-10 bg-secondary-btn text-secondary-btn-text shadow-secondary-btn"
+                    class="w-10 h-10 text-secondary-btn-text bg-secondary-btn shadow-secondary-btn"
                     @click="back"
                 >
                     <i class="bx bx-chevron-left bx-sm"></i>
                 </Button>
-                <div class="section-title text-2xl text-nft-title font-bold text-center">NFTs</div>
+                <div class="section-title text-center text-nft-title text-2xl font-bold">NFTs</div>
                 <ImgHolder
-                    class="w-10 h-10 inline-flex my-auto cursor-pointer"
+                    class="inline-flex my-auto w-10 h-10 cursor-pointer"
                     :is-rounded="true"
                     :is-border="false"
                     :src="rss3Profile.avatar"
@@ -19,7 +19,7 @@
                     @click="toPublicPage(rns, ethAddress)"
                 />
             </div>
-            <div class="nft-list grid grid-cols-2 sm:grid-cols-3 gap-6 justify-items-center">
+            <div class="nft-list grid gap-6 grid-cols-2 justify-items-center sm:grid-cols-3">
                 <div class="relative" v-for="item in nfts" :key="item.platform + item.identity + item.id">
                     <NFTItem
                         class="cursor-pointer"
@@ -29,7 +29,7 @@
                         @click="toSingleNFTPage(item.platform, item.identity, item.id, item.type)"
                     />
                     <NFTBadges
-                        class="absolute top-2.5 right-2.5"
+                        class="absolute right-2.5 top-2.5"
                         :chain="item.type.split('-')[0]"
                         location="overlay"
                         :collectionImg="item.info.collection_icon"
@@ -37,12 +37,12 @@
                 </div>
             </div>
             <div
-                class="px-4 py-4 flex gap-5 fixed bottom-2 left-0 right-0 max-w-md m-auto w-full z-50 bg-btn-container"
+                class="fixed z-50 bottom-2 left-0 right-0 flex gap-5 m-auto px-4 py-4 w-full max-w-md bg-btn-container"
                 v-if="isOwner"
             >
                 <Button
                     size="lg"
-                    class="m-auto text-lg bg-nft-btn-m text-nft-btn-m-text shadow-nft-btn-m"
+                    class="m-auto text-nft-btn-m-text text-lg bg-nft-btn-m shadow-nft-btn-m"
                     @click="toSetupNfts"
                 >
                     <span>Manage NFTs</span>

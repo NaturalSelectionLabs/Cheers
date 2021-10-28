@@ -1,30 +1,29 @@
 <template>
     <div class="h-screen bg-nft-bg overflow-y-auto">
-        <div class="px-4 pt-8 pb-20 max-w-screen-lg m-auto">
-            <div class="header pb-4 relative">
+        <div class="m-auto pb-20 pt-8 px-4 max-w-screen-lg">
+            <div class="header relative pb-4">
                 <div
                     class="
                         section-title
-                        text-xl text-nft-title
-                        font-bold
-                        text-center
-                        w-full
-                        h-10
                         absolute
                         z-0
                         top-0
-                        px-16
                         flex
-                        justify-center
                         items-center
+                        justify-center
+                        px-16
+                        w-full
+                        h-10
+                        text-center text-nft-title text-xl
+                        font-bold
                     "
                 >
                     {{ details.collection?.name }}
                 </div>
-                <div class="flex justify-between items-center">
+                <div class="flex items-center justify-between">
                     <Button
                         size="sm"
-                        class="w-10 h-10 bg-secondary-btn text-secondary-btn-text shadow-secondary-btn"
+                        class="w-10 h-10 text-secondary-btn-text bg-secondary-btn shadow-secondary-btn"
                         @click="back"
                     >
                         <i class="bx bx-chevron-left bx-sm"></i>
@@ -37,7 +36,7 @@
                     />
                 </div>
             </div>
-            <section class="max-w-screen-sm m-auto">
+            <section class="m-auto max-w-screen-sm">
                 <div class="image pb-4">
                     <NFTItem
                         :imageUrl="details.animation_url || details.image_url"
@@ -46,7 +45,7 @@
                         :is-showing-details="true"
                     />
                 </div>
-                <NFTDetail :chain="details.chain" :details="details" market="opensea" />
+                <NFTDetail :chain="details.chain" :details="details" :market="market" />
             </section>
         </div>
     </div>
@@ -79,6 +78,7 @@ export default class SingleNFT extends Vue {
             address: '',
         },
     };
+    private market: string = 'opensea';
 
     async mounted() {
         await RSS3.reconnect();

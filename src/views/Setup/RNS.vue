@@ -29,16 +29,16 @@
                 </span>
             </div>
             <div class="nav">
-                <div class="px-4 py-4 flex gap-5 m-auto w-full">
+                <div class="flex gap-5 m-auto px-4 py-4 w-full">
                     <Button
                         size="lg"
-                        class="flex-1 text-lg bg-secondary-btn text-secondary-btn-text shadow-secondary-btn"
+                        class="flex-1 text-secondary-btn-text text-lg bg-secondary-btn shadow-secondary-btn"
                         @click="skip"
                         >Skip</Button
                     >
                     <Button
                         size="lg"
-                        class="flex-1 text-lg bg-primary-btn text-primary-btn-text shadow-primary-btn"
+                        class="flex-1 text-primary-btn-text text-lg bg-primary-btn shadow-primary-btn"
                         @click="verifyRNS"
                         >Go</Button
                     >
@@ -57,7 +57,7 @@
                     <span class="text-primary-text">RNS</span>
                     will be
                 </p>
-                <h2 class="text-4xl my-6 px-4 py-2 text-primary-text overflow-y-auto select-all">
+                <h2 class="my-6 px-4 py-2 text-primary-text text-4xl select-all overflow-y-auto">
                     {{ rns }}
                 </h2>
                 <p>is that right?</p>
@@ -66,14 +66,14 @@
                 <div class="flex flex-row gap-5">
                     <Button
                         size="sm"
-                        class="w-32 bg-secondary-btn text-secondary-btn-text shadow-secondary-btn"
+                        class="w-32 text-secondary-btn-text bg-secondary-btn shadow-secondary-btn"
                         @click="isShowingConfirm = false"
                     >
                         No
                     </Button>
                     <Button
                         size="sm"
-                        class="w-32 bg-primary-btn text-primary-btn-text shadow-primary-btn"
+                        class="w-32 text-primary-btn-text bg-primary-btn shadow-primary-btn"
                         @click="confirm"
                     >
                         Yes
@@ -233,18 +233,18 @@ export default class RNS extends Vue {
 <style lang="postcss" scoped>
 @layer components {
     .rns {
-        @apply h-full w-full max-w-md mx-auto text-center flex items-center justify-center;
+        @apply flex items-center justify-center mx-auto w-full max-w-md h-full text-center;
 
         .page {
-            @apply h-2/3 flex flex-col justify-between w-full;
+            @apply flex flex-col justify-between w-full h-2/3;
 
             .title {
-                @apply text-6xl text-primary-text font-bold;
+                @apply text-primary-text text-6xl font-bold;
             }
 
             .input-rns {
                 .notice {
-                    @apply flex w-full text-left px-2 text-lg font-normal mb-2 opacity-0;
+                    @apply flex mb-2 px-2 w-full text-left text-lg font-normal opacity-0;
                     > i {
                         @apply mr-2 text-xl;
                     }
@@ -261,9 +261,9 @@ export default class RNS extends Vue {
                 }
 
                 .about {
-                    @apply flex w-full text-left px-2;
+                    @apply flex px-2 w-full text-left;
                     > i {
-                        @apply mr-2 text-lg text-gray-400;
+                        @apply mr-2 text-gray-400 text-lg;
                     }
                     > span {
                         @apply text-primary-text;

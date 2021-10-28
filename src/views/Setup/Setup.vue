@@ -1,8 +1,8 @@
 <template>
-    <div class="h-screen bg-body-bg text-body-text overflow-y-auto">
-        <div class="px-4 pt-8 pb-32 max-w-md m-auto">
-            <div class="text-center mb-4">
-                <h1 class="text-xl text-primary-text font-bold">Setup</h1>
+    <div class="h-screen text-body-text bg-body-bg overflow-y-auto">
+        <div class="m-auto pb-32 pt-8 px-4 max-w-md">
+            <div class="mb-4 text-center">
+                <h1 class="text-primary-text text-xl font-bold">Setup</h1>
             </div>
             <AvatarEditor class="m-auto mb-4" size="lg" :url="profile.avatar" ref="avatar" />
             <Input class="mb-4 w-full" :is-single-line="true" placeholder="Username" v-model="profile.name" />
@@ -30,7 +30,7 @@
                 <template #footer>
                     <Button
                         size="sm"
-                        class="w-8 h-8 bg-account-btn-m text-account-btn-m-text shadow-account-btn-m"
+                        class="w-8 h-8 text-account-btn-m-text bg-account-btn-m shadow-account-btn-m"
                         @click="toManageAccounts"
                     >
                         <i class="bx bx-pencil bx-sm" />
@@ -63,7 +63,7 @@
                 <template #footer>
                     <Button
                         size="sm"
-                        class="w-8 h-8 bg-nft-btn-m text-nft-btn-m-text shadow-nft-btn-m"
+                        class="w-8 h-8 text-nft-btn-m-text bg-nft-btn-m shadow-nft-btn-m"
                         @click="toManageNFTs"
                     >
                         <i class="bx bx-pencil bx-sm" />
@@ -95,7 +95,7 @@
                 <template #footer>
                     <Button
                         size="sm"
-                        class="w-8 h-8 bg-gitcoin-btn-m text-gitcoin-btn-m-text shadow-gitcoin-btn-m"
+                        class="w-8 h-8 text-gitcoin-btn-m-text bg-gitcoin-btn-m shadow-gitcoin-btn-m"
                         @click="toManageGitcoins"
                     >
                         <i class="bx bx-pencil bx-sm" />
@@ -127,7 +127,7 @@
                 <template #footer>
                     <Button
                         size="sm"
-                        class="w-8 h-8 bg-footprint-btn-m text-footprint-btn-m-text shadow-footprint-btn-m"
+                        class="w-8 h-8 text-footprint-btn-m-text bg-footprint-btn-m shadow-footprint-btn-m"
                         @click="toManageFootprints"
                     >
                         <i class="bx bx-pencil bx-sm" />
@@ -146,30 +146,30 @@
 
             <div
                 class="
-                    px-4
-                    py-4
-                    flex
-                    justify-between
-                    gap-5
                     fixed
                     bottom-0
                     left-0
                     right-0
-                    max-w-md
+                    flex
+                    gap-5
+                    justify-between
                     m-auto
+                    px-4
+                    py-4
                     w-full
+                    max-w-md
                     bg-btn-container
                 "
             >
                 <Button
                     size="lg"
-                    class="flex-1 text-lg bg-secondary-btn text-secondary-btn-text shadow-secondary-btn"
+                    class="flex-1 text-secondary-btn-text text-lg bg-secondary-btn shadow-secondary-btn"
                     @click="back"
                     ><span>Back</span></Button
                 >
                 <Button
                     size="lg"
-                    class="flex-1 text-lg bg-primary-btn text-primary-btn-text shadow-primary-btn"
+                    class="flex-1 text-primary-btn-text text-lg bg-primary-btn shadow-primary-btn"
                     @click="save"
                     ><span>Done</span></Button
                 >
@@ -189,7 +189,7 @@
                     <div class="flex flex-row gap-5">
                         <Button
                             size="sm"
-                            class="w-72 bg-primary-btn text-primary-btn-text shadow-primary-btn"
+                            class="w-72 text-primary-btn-text bg-primary-btn shadow-primary-btn"
                             @click="isShowingNotice = false"
                         >
                             OK

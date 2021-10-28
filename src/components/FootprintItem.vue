@@ -27,7 +27,7 @@ export default class FootprintItem extends Vue {
 <style scoped lang="postcss">
 @layer components {
     .footprint-item {
-        @apply rounded-full border border-white filter shadow-footprint bg-white bg-cover bg-center bg-no-repeat;
+        @apply bg-white bg-cover bg-center bg-no-repeat border border-white rounded-full shadow-footprint filter;
     }
 }
 </style>

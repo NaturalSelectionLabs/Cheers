@@ -1,24 +1,24 @@
 <template>
     <div id="main" class="h-screen bg-gitcoin-bg overflow-y-auto">
-        <div class="px-4 pt-8 pb-32 max-w-screen-lg m-auto">
-            <div class="header flex justify-between items-center pb-4">
+        <div class="m-auto pb-32 pt-8 px-4 max-w-screen-lg">
+            <div class="header flex items-center justify-between pb-4">
                 <Button
                     size="sm"
                     class="
+                        border-secondary-button-border
                         w-10
                         h-10
-                        bg-secondary-btn
                         text-secondary-btn-text
-                        border-secondary-button-border
+                        bg-secondary-btn
                         shadow-secondary-btn
                     "
                     @click="back"
                 >
                     <i class="bx bx-chevron-left bx-sm"></i>
                 </Button>
-                <div class="section-title text-2xl text-gitcoin-title font-bold text-center">Donations</div>
+                <div class="section-title text-center text-gitcoin-title text-2xl font-bold">Donations</div>
                 <ImgHolder
-                    class="w-10 h-10 inline-flex my-auto cursor-pointer"
+                    class="inline-flex my-auto w-10 h-10 cursor-pointer"
                     :is-rounded="true"
                     :is-border="false"
                     :src="rss3Profile.avatar"
@@ -28,7 +28,7 @@
             </div>
             <GitcoinTitle class="mb-6" :grants="grants" :contributions="contribs" />
             <div
-                class="gitcoin-gitcoins grid grid-cols-1 sm:grid-cols-2 gap-6"
+                class="gitcoin-gitcoins grid gap-6 grid-cols-1 sm:grid-cols-2"
                 :class="{ 'pb-16': isOwner }"
                 v-show="gitcoins.length !== 0"
             >
@@ -43,12 +43,12 @@
                 ></GitcoinCard>
             </div>
             <div
-                class="px-4 py-4 flex gap-5 fixed bottom-2 left-0 right-0 max-w-md m-auto w-full bg-btn-container"
+                class="fixed bottom-2 left-0 right-0 flex gap-5 m-auto px-4 py-4 w-full max-w-md bg-btn-container"
                 v-if="isOwner"
             >
                 <Button
                     size="lg"
-                    class="m-auto text-lg bg-gitcoin-btn-m text-gitcoin-btn-m-text shadow-gitcoin-btn-m"
+                    class="m-auto text-gitcoin-btn-m-text text-lg bg-gitcoin-btn-m shadow-gitcoin-btn-m"
                     @click="toSetupGitcoins"
                 >
                     <span>Manage Donations</span>
