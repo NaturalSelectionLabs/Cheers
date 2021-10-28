@@ -70,7 +70,7 @@
         />
         <img
             v-else
-            :src="isShowingDetails ? imageUrl || posterUrl || defaultImage : posterUrl || imageUrl || defaultImage"
+            :src="showImageUrl"
             class="nft-item"
             :class="[!isShowingDetails ? 'object-cover' : 'object-contain', size < 60 ? 'rounded-sm' : 'rounded']"
             :style="{
@@ -96,6 +96,7 @@ import config from '@/config';
 export default class NFTItem extends Vue {
     size!: Number;
     imageUrl!: String;
+    posterUrl!: String;
     defaultImage: String = config.defaultAvatar;
     isShowingDetails!: boolean;
 
@@ -105,6 +106,25 @@ export default class NFTItem extends Vue {
             import(/* webpackChunkName: "model-viewer" */ '@google/model-viewer');
         }
         return result;
+    }
+
+    get showImageUrl() {
+        // isShowingDetails ? imageUrl || posterUrl || defaultImage : posterUrl || imageUrl || defaultImage
+        if (this.isShowingDetails) {
+            // Prefer detailed URL
+            return this.handleIPFS(this.imageUrl || this.posterUrl || this.defaultImage);
+        } else {
+            // Prefer preview URL
+            return this.handleIPFS(this.posterUrl || this.imageUrl || this.defaultImage);
+        }
+    }
+
+    handleIPFS(url: String) {
+        if (url.startsWith('ipfs://')) {
+            return url.replace('ipfs://', 'https://cloudflare-ipfs.com/ipfs/');
+        } else {
+            return url;
+        }
     }
 }
 </script>
