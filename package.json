@@ -1,5 +1,5 @@
 {
-    "name": "rss3-page",
+    "name": "web3pass",
     "version": "0.0.1",
     "description": "",
     "main": "server.js",
@@ -18,7 +18,7 @@
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/NaturalSelectionLabs/RSS3-Page.git"
+        "url": "git+https://github.com/NaturalSelectionLabs/Web3Pass.git"
     },
     "keywords": [
         "RSS3"
@@ -26,9 +26,9 @@
     "license": "GPL-3.0",
     "author": "NaturalSelectionLabs",
     "bugs": {
-        "url": "https://github.com/NaturalSelectionLabs/RSS3-Page/issues"
+        "url": "https://github.com/NaturalSelectionLabs/Web3Pass/issues"
     },
-    "homepage": "https://github.com/NaturalSelectionLabs/RSS3-Page#readme",
+    "homepage": "https://github.com/NaturalSelectionLabs/Web3Pass#readme",
     "dependencies": {
         "@babel/runtime": "7.15.4",
         "@google/model-viewer": "1.8.0",
