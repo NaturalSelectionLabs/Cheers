@@ -1,6 +1,6 @@
 {
     "name": "web3pass",
-    "version": "0.0.1",
+    "version": "2.0.1",
     "description": "",
     "main": "server.js",
     "scripts": {
