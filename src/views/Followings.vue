@@ -188,10 +188,10 @@ export default class Followings extends Vue {
     }
 
     async toPublicPage(rns: string, ethAddress: string) {
-        if (rns && config.subDomain.isSubDomainMode) {
-            window.location.href = '//' + rns + '.' + config.subDomain.rootDomain;
+        if (rns) {
+            window.location.href = `//${rns}.${config.subDomain.rootDomain}`;
         } else {
-            await this.$router.push(`/${rns || ethAddress}`);
+            window.location.href = `//${config.subDomain.rootDomain}/${ethAddress}`;
         }
     }
 
