@@ -5,9 +5,9 @@
 
 Front part of [Web3 Pass](https://rss3.bio/)
 
-The `development` branche is automatically deployed to https://rss3.co
+The `develop` branch is automatically deployed to https://rss3.co
 
-The `master` branch is automatically deployed to https://rss3.bio
+The `main` branch is automatically deployed to https://rss3.bio
 
 ## Contribution
 
