@@ -92,7 +92,7 @@
         "html-webpack-plugin": "5.3.2",
         "husky": "7.0.2",
         "js-conditional-compile-loader": "1.0.14",
-        "less-loader": "10.1.0",
+        "less-loader": "10.2.0",
         "lint-staged": "11.2.3",
         "postcss": "8.3.9",
         "postcss-loader": "6.2.0",
