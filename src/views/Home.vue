@@ -182,6 +182,7 @@
                                 :start-date="item.info.start_date"
                                 :end-date="item.info.end_date"
                                 :location="item.info.city || item.info.country || 'Metaverse'"
+                                :special="item.identity === 'Special'"
                                 class="cursor-pointer"
                                 @click="toSingleItemPage('Footprint', item.platform, item.identity, item.id, item.type)"
                             />
@@ -204,6 +205,7 @@
                                 :start-date="footprints[0].info.start_date"
                                 :end-date="footprints[0].info.end_date"
                                 :location="footprints[0].info.city || footprints[0].info.country || 'Metaverse'"
+                                :special="footprints[0].identity === 'Special'"
                                 class="cursor-pointer"
                                 @click="
                                     toSingleItemPage(
@@ -445,6 +447,8 @@ import ContentProviders, { Content } from '@/common/content-providers';
 import Toolbar from '@/components/Toolbar.vue';
 import FootprintItem from '@/components/FootprintItem.vue';
 import EVMpAccountItem from '@/components/EVMpAccountItem.vue';
+
+import activities from '@/common/poap-activity';
 
 interface ProfileInfo {
     avatar: string;
@@ -902,7 +906,24 @@ export default class Home extends Vue {
         } else if (type === 'Gitcoin-Donation') {
             this.gitcoins = res;
         } else if (type === 'POAP') {
+            // Check special footprint
+            await this.checkSpecialPoap(res);
+
             this.footprints = res;
+        }
+    }
+
+    async checkSpecialPoap(res: GeneralAssetWithTags[]) {
+        if (config.poapActivity.info.title && this.isOwner) {
+            if (res.findIndex((asset) => asset.info.title === config.poapActivity.info.title) === -1) {
+                res.unshift({
+                    platform: 'EVM+',
+                    type: 'xDai-POAP',
+                    identity: 'Special', // Impossible value for 'Special' identification
+                    id: 'active', // status (active / pending)
+                    info: config.poapActivity.info,
+                });
+            }
         }
     }
 
@@ -1107,18 +1128,41 @@ export default class Home extends Vue {
         );
     }
 
-    toSingleItemPage(type: string, platform: string, identity: string, id: string, fullType: string) {
-        this.$gtag.event(`visitSingle${type}`, {
-            userid: this.rns || this.ethAddress,
-            platform,
-            identity,
-            id,
-            type,
-        });
-        this.$router.push(
-            (config.subDomain.isSubDomainMode ? '' : `/${this.rns || this.ethAddress}`) +
-                `/single${type.toLowerCase()}/${platform}/${identity}/${id}/${fullType}`,
-        );
+    async toSingleItemPage(type: string, platform: string, identity: string, id: string, fullType: string) {
+        if (identity === 'Special') {
+            // Special POAPs: Check status && give notice
+            switch (id) {
+                case 'active':
+                    this.footprints[0].id = 'pending';
+                    const res = await activities.mint(this.ethAddress);
+                    if (res?.data?.tx_hash) {
+                        this.notice = 'You have already submit the request. Please be patient.';
+                    } else {
+                        this.notice = 'Your special footprint is on the way~ Come back later!';
+                    }
+                    this.isShowingNotice = true;
+                    break;
+                case 'pending':
+                    this.notice = 'You have already submit the request. Please be patient.';
+                    this.isShowingNotice = true;
+                    break;
+                default:
+                    break;
+            }
+        } else {
+            // Default
+            this.$gtag.event(`visitSingle${type}`, {
+                userid: this.rns || this.ethAddress,
+                platform,
+                identity,
+                id,
+                type,
+            });
+            await this.$router.push(
+                (config.subDomain.isSubDomainMode ? '' : `/${this.rns || this.ethAddress}`) +
+                    `/single${type.toLowerCase()}/${platform}/${identity}/${id}/${fullType}`,
+            );
+        }
     }
 
     toSetupPage() {

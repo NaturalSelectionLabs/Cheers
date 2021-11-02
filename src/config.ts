@@ -36,6 +36,18 @@ export default {
         bridge: 'https://walletconnect-relay.rss3.dev',
     },
     contentRequestLimit: 5,
+    poapActivity: {
+        endpoint: 'https://poap.rss3.fun',
+        info: {
+            image_preview_url: 'https://assets.poap.xyz/rss3-fully-support-poap-2021-logo-1635826323177.png',
+            title: 'RSS3 Fully Support POAP',
+            start_date: '0x61807f80',
+            end_date: '0x61807f80',
+            country: '',
+            city: '',
+            token_contribs: [],
+        },
+    },
     rns: {
         test: true,
         suffix: '.pass3.me',

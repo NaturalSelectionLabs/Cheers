@@ -1,6 +1,18 @@
 <template>
-    <div class="flex flex-row gap-2 justify-start p-4">
-        <FootprintItem :imageUrl="imageUrl" :size="78" class="flex-shrink-0" />
+    <div
+        class="flex flex-row gap-2 justify-start p-4"
+        :class="{
+            'opacity-50': special,
+        }"
+    >
+        <FootprintItem
+            :imageUrl="imageUrl"
+            :size="78"
+            class="flex-shrink-0"
+            :class="{
+                'animate-bounce': special,
+            }"
+        />
         <section class="flex flex-1 flex-col justify-around text-body-text text-sm leading-normal">
             <div class="flex flex-row gap-2 items-center">
                 <CalendarIcon />
@@ -32,6 +44,7 @@ import LocationIcon from '@/components/Icons/LocationIcon.vue';
         location: String,
         username: String,
         activity: String,
+        special: Boolean,
     },
     components: { FootprintItem, CalendarIcon, LocationIcon },
 })
