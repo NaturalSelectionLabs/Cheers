@@ -235,6 +235,9 @@ export default {
                 case 'metamask':
                     await metamaskConnect(true);
                     break;
+                default:
+                    localStorage.removeItem('walletconnect'); // logout
+                    break;
             }
             return isValidRSS3();
         }
