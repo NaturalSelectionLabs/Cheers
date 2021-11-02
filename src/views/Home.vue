@@ -236,7 +236,7 @@
             </Card>
 
             <Card
-                title="Contents"
+                title="Content"
                 color-title="text-content-title"
                 color-tips="text-content-title"
                 color-background="bg-content-bg"
