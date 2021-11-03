@@ -14,11 +14,12 @@ interface Response {
 }
 
 export default {
-    mint: async (ethAddress: string) => {
+    mint: async (ethAddress: string, captchaToken: string) => {
         const res = await axios.post(
             `/poap/claim`,
             {
                 address: ethAddress,
+                reCaptcha: captchaToken,
             },
             {
                 baseURL: config.poapActivity.endpoint,

@@ -307,6 +307,13 @@
                 >
                     <Logo class="cursor-pointer" :size="18" @click="toHomePage" />
                     <div class="text-right text-body-text text-xs font-normal">
+                        <small
+                            >Google reCAPTCHA protected
+                            <a href="https://policies.google.com/privacy" target="_blank">Privacy</a>
+                            &
+                            <a href="https://policies.google.com/terms" target="_blank">ToS</a>
+                        </small>
+                        |
                         <a href="https://rss3.io/#/privacy"> Privacy </a>
                         |
                         <span>
@@ -425,7 +432,7 @@
 </template>
 
 <script lang="ts">
-import { Options, Vue } from 'vue-class-component';
+import { Options, Vue, setup } from 'vue-class-component';
 import Button from '@/components/Button.vue';
 import Card from '@/components/Card.vue';
 import BarCard from '@/components/BarCard.vue';
@@ -455,6 +462,8 @@ import FootprintItem from '@/components/FootprintItem.vue';
 import EVMpAccountItem from '@/components/EVMpAccountItem.vue';
 
 import activities from '@/common/poap-activity';
+
+import { useReCaptcha } from 'vue-recaptcha-v3';
 
 interface ProfileInfo {
     avatar: string;
@@ -567,6 +576,17 @@ export default class Home extends Vue {
             lastTS: 0xffffffff,
         },
     ];
+
+    claimWithCaptcha = setup(() => {
+        const { executeRecaptcha, recaptchaLoaded } = useReCaptcha();
+        const exec = async () => {
+            await recaptchaLoaded();
+            return await executeRecaptcha('claim');
+        };
+        return {
+            exec,
+        };
+    });
 
     async mounted() {
         this.isPCLayout = window.innerWidth >= 768;
@@ -1155,8 +1175,7 @@ export default class Home extends Vue {
         // Special POAPs: Check status && give notice
         switch (this.footprints[0].id) {
             case 'active':
-                this.footprints[0].id = 'pending';
-                const res = await activities.mint(this.ethAddress);
+                const res = await activities.mint(this.ethAddress, await this.claimWithCaptcha.exec());
                 if (res?.errno) {
                     switch (res.errno) {
                         case 1403:
@@ -1168,10 +1187,14 @@ export default class Home extends Vue {
                         case 1405:
                             this.notice = 'Sorry, but the limited chances ran out.';
                             break;
+                        case 1409:
+                            this.notice = 'Sorry, please try again.';
+                            break;
                         default:
                             break;
                     }
                 } else {
+                    this.footprints[0].id = 'pending';
                     if (res?.data?.tx_hash) {
                         this.notice = 'You have already submit the request. Please be patient.';
                     } else {

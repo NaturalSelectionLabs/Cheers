@@ -77,10 +77,8 @@ export default class FootprintCard extends Vue {
         return new Date(parseInt(ts) * 1000).toLocaleDateString('en-US');
     }
     triggerClaim() {
-        if (!this.isClaiming) {
-            this.isClaiming = true;
-            this.$emit('claim');
-        }
+        this.isClaiming = true;
+        this.$emit('claim');
     }
 }
 </script>

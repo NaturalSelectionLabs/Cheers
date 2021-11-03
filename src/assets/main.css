@@ -22,3 +22,8 @@ body {
 ::-webkit-scrollbar-thumb:hover {
     background: #3c3c43;
 }
+
+/* Hide google recaptcha */
+.grecaptcha-badge {
+    display: none;
+}

@@ -1,5 +1,6 @@
 import { createApp } from 'vue';
 import 'boxicons/css/boxicons.min.css';
+import { VueReCaptcha } from 'vue-recaptcha-v3';
 
 import '@/assets/main.css';
 import 'boxicons/css/boxicons.min.css'; // boxicons
@@ -31,6 +32,13 @@ app.use(
 
 app.use(Hotjar, {
     id: '2541834', // Hotjar Site ID
+});
+
+app.use(VueReCaptcha, {
+    siteKey: '6LfhqhAdAAAAAJMQDy4P9Ohaim-Cu_WJoH_tOncQ',
+    loaderOptions: {
+        useRecaptchaNet: true,
+    },
 });
 
 /* IFTRUE_isNDevelop */
