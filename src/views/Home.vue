@@ -183,7 +183,10 @@
                                 :end-date="item.info.end_date"
                                 :location="item.info.city || item.info.country || 'Metaverse'"
                                 :special="item.identity === 'Special'"
-                                class="cursor-pointer"
+                                @claim="claimSpecialPOAP"
+                                :class="{
+                                    'cursor-pointer': item.identity !== 'Special',
+                                }"
                                 @click="toSingleItemPage('Footprint', item.platform, item.identity, item.id, item.type)"
                             />
                         </div>
@@ -206,7 +209,10 @@
                                 :end-date="footprints[0].info.end_date"
                                 :location="footprints[0].info.city || footprints[0].info.country || 'Metaverse'"
                                 :special="footprints[0].identity === 'Special'"
-                                class="cursor-pointer"
+                                @claim="claimSpecialPOAP"
+                                :class="{
+                                    'cursor-pointer': footprints[0].identity !== 'Special',
+                                }"
                                 @click="
                                     toSingleItemPage(
                                         'Footprint',
@@ -1128,28 +1134,8 @@ export default class Home extends Vue {
         );
     }
 
-    async toSingleItemPage(type: string, platform: string, identity: string, id: string, fullType: string) {
-        if (identity === 'Special') {
-            // Special POAPs: Check status && give notice
-            switch (id) {
-                case 'active':
-                    this.footprints[0].id = 'pending';
-                    const res = await activities.mint(this.ethAddress);
-                    if (res?.data?.tx_hash) {
-                        this.notice = 'You have already submit the request. Please be patient.';
-                    } else {
-                        this.notice = 'Your special footprint is on the way~ Come back later!';
-                    }
-                    this.isShowingNotice = true;
-                    break;
-                case 'pending':
-                    this.notice = 'You have already submit the request. Please be patient.';
-                    this.isShowingNotice = true;
-                    break;
-                default:
-                    break;
-            }
-        } else {
+    toSingleItemPage(type: string, platform: string, identity: string, id: string, fullType: string) {
+        if (identity !== 'Special') {
             // Default
             this.$gtag.event(`visitSingle${type}`, {
                 userid: this.rns || this.ethAddress,
@@ -1158,10 +1144,32 @@ export default class Home extends Vue {
                 id,
                 type,
             });
-            await this.$router.push(
+            this.$router.push(
                 (config.subDomain.isSubDomainMode ? '' : `/${this.rns || this.ethAddress}`) +
                     `/single${type.toLowerCase()}/${platform}/${identity}/${id}/${fullType}`,
             );
+        }
+    }
+
+    async claimSpecialPOAP() {
+        // Special POAPs: Check status && give notice
+        switch (this.footprints[0].id) {
+            case 'active':
+                this.footprints[0].id = 'pending';
+                const res = await activities.mint(this.ethAddress);
+                if (res?.data?.tx_hash) {
+                    this.notice = 'You have already submit the request. Please be patient.';
+                } else {
+                    this.notice = 'Your special footprint is on the way~ Come back later!';
+                }
+                this.isShowingNotice = true;
+                break;
+            case 'pending':
+                this.notice = 'You have already submit the request. Please be patient.';
+                this.isShowingNotice = true;
+                break;
+            default:
+                break;
         }
     }
 

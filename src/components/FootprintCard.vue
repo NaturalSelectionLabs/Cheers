@@ -1,16 +1,11 @@
 <template>
-    <div
-        class="flex flex-row gap-2 justify-start p-4"
-        :class="{
-            'opacity-50': special,
-        }"
-    >
+    <div class="flex flex-row gap-2 justify-start p-4">
         <FootprintItem
             :imageUrl="imageUrl"
             :size="78"
             class="flex-shrink-0"
             :class="{
-                'animate-bounce': special,
+                'opacity-50 animate-bounce': special,
             }"
         />
         <section class="flex flex-1 flex-col justify-around text-body-text text-sm leading-normal">
@@ -27,6 +22,18 @@
                 <div class="flex-1 w-0 truncate">{{ activity }}</div>
             </div>
         </section>
+        <section v-if="special" class="flex">
+            <Button
+                size="lg"
+                class="m-auto text-footprint-btn-m-text text-lg bg-footprint-btn-m shadow-footprint-btn-m"
+                @click="triggerClaim"
+            >
+                <span v-if="isClaiming">
+                    <i class="bx bx-sm bx-loader-circle bx-spin" />
+                </span>
+                <span v-else>Claim it now</span>
+            </Button>
+        </section>
     </div>
 </template>
 
@@ -35,6 +42,7 @@ import { Options, Vue } from 'vue-class-component';
 import FootprintItem from '@/components/FootprintItem.vue';
 import CalendarIcon from '@/components/Icons/CalendarIcon.vue';
 import LocationIcon from '@/components/Icons/LocationIcon.vue';
+import Button from '@/components/Button.vue';
 
 @Options({
     props: {
@@ -46,7 +54,7 @@ import LocationIcon from '@/components/Icons/LocationIcon.vue';
         activity: String,
         special: Boolean,
     },
-    components: { FootprintItem, CalendarIcon, LocationIcon },
+    components: { Button, FootprintItem, CalendarIcon, LocationIcon },
 })
 export default class FootprintCard extends Vue {
     imageUrl!: String;
@@ -55,6 +63,7 @@ export default class FootprintCard extends Vue {
     location!: String;
     username!: String;
     activity!: String;
+    isClaiming: boolean = false;
 
     getDate(): string {
         return this.startDate
@@ -66,6 +75,12 @@ export default class FootprintCard extends Vue {
     }
     formatDate(ts: string): string {
         return new Date(parseInt(ts) * 1000).toLocaleDateString('en-US');
+    }
+    triggerClaim() {
+        if (!this.isClaiming) {
+            this.isClaiming = true;
+            this.$emit('claim');
+        }
     }
 }
 </script>
