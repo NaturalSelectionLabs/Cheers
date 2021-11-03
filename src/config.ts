@@ -40,7 +40,7 @@ export default {
         endpoint: 'https://poap.rss3.fun',
         info: {
             image_preview_url: 'https://assets.poap.xyz/rss3-fully-support-poap-2021-logo-1635826323177.png',
-            title: 'RSS3 Fully Support POAP',
+            title: 'RSS3 Fully Supports POAP',
             start_date: '0x61807f80',
             end_date: '0x61807f80',
             country: '',
