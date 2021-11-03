@@ -1157,10 +1157,26 @@ export default class Home extends Vue {
             case 'active':
                 this.footprints[0].id = 'pending';
                 const res = await activities.mint(this.ethAddress);
-                if (res?.data?.tx_hash) {
-                    this.notice = 'You have already submit the request. Please be patient.';
+                if (res?.errno) {
+                    switch (res.errno) {
+                        case 1403:
+                            this.notice = 'Invalid address. This should be a Internal Server Error.';
+                            break;
+                        case 1404:
+                            this.notice = 'This address is not on RSS3 currently.';
+                            break;
+                        case 1405:
+                            this.notice = 'Sorry, but the limited chances ran out.';
+                            break;
+                        default:
+                            break;
+                    }
                 } else {
-                    this.notice = 'Your special footprint is on the way~ Come back later!';
+                    if (res?.data?.tx_hash) {
+                        this.notice = 'You have already submit the request. Please be patient.';
+                    } else {
+                        this.notice = 'Your special footprint is on the way~ Come back later!';
+                    }
                 }
                 this.isShowingNotice = true;
                 break;
