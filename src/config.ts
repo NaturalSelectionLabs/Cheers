@@ -37,10 +37,10 @@ export default {
     },
     contentRequestLimit: 5,
     poapActivity: {
-        endpoint: 'https://poap.rss3.fun',
+        endpoint: '',
         info: {
-            image_preview_url: 'https://assets.poap.xyz/rss3-fully-support-poap-2021-logo-1635826323177.png',
-            title: 'RSS3 Fully Supports POAP',
+            image_preview_url: '',
+            title: '',
             start_date: '0x61807f80',
             end_date: '0x61807f80',
             country: '',
