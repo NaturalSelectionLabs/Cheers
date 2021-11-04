@@ -579,9 +579,9 @@ export default class Home extends Vue {
 
     claimWithCaptcha = setup(() => {
         const { executeRecaptcha, recaptchaLoaded } = useReCaptcha();
-        const exec = async () => {
+        const exec = async (address: string) => {
             await recaptchaLoaded();
-            return await executeRecaptcha('claim');
+            return await executeRecaptcha(address);
         };
         return {
             exec,
@@ -1175,7 +1175,7 @@ export default class Home extends Vue {
         // Special POAPs: Check status && give notice
         switch (this.footprints[0].id) {
             case 'active':
-                const res = await activities.mint(this.ethAddress, await this.claimWithCaptcha.exec());
+                const res = await activities.mint(this.ethAddress, await this.claimWithCaptcha.exec(this.ethAddress));
                 if (res?.errno) {
                     switch (res.errno) {
                         case 1403:
