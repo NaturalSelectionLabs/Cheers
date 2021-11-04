@@ -682,7 +682,7 @@ export default class Home extends Vue {
         }, 0);
 
         // Load assets
-        await this.startLoadingAssets(true);
+        this.startLoadingAssets(true);
 
         // Load Contents
         setTimeout(async () => {
@@ -819,15 +819,12 @@ export default class Home extends Vue {
 
     async ivLoadAsset(refresh: boolean): Promise<boolean> {
         let isFinish = true;
-        if (this.isLoadingAssets.NFT) {
-            isFinish = (await this.ivLoadNFT(refresh)) && isFinish;
-        }
-        if (this.isLoadingAssets.Gitcoin) {
-            isFinish = (await this.ivLoadGitcoin(refresh)) && isFinish;
-        }
-        if (this.isLoadingAssets.Footprint) {
-            isFinish = (await this.ivLoadFootprint(refresh)) && isFinish;
-        }
+        const result = await Promise.all([
+            this.ivLoadNFT(refresh),
+            this.ivLoadGitcoin(refresh),
+            this.ivLoadFootprint(refresh),
+        ]);
+        isFinish = result[0] && result[1] && result[2];
         if (isFinish) {
             if (this.loadingAssetsIntervalID) {
                 clearInterval(this.loadingAssetsIntervalID);
