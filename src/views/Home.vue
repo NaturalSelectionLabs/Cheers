@@ -1185,12 +1185,13 @@ export default class Home extends Vue {
                             this.notice = 'This address is not on RSS3 currently.';
                             break;
                         case 1405:
-                            this.notice = 'Sorry, but the limited chances ran out.';
+                            this.notice = 'Sorry, the limited chances ran out.';
                             break;
                         case 1409:
                             this.notice = 'Sorry, please try again.';
                             break;
                         default:
+                            this.notice = 'Sorry, something went wrong.';
                             break;
                     }
                 } else {
