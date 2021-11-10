@@ -103,8 +103,10 @@ export default {
                 const domainInfo = (await axios.get(`https://rss3.domains/address/${addr}`)).data;
                 if (domainInfo.rnsName) {
                     return domainInfo.rnsName.replace('.rss3', '');
-                } else {
+                } else if (domainInfo.ensName) {
                     return domainInfo.ensName;
+                } else {
+                    return '';
                 }
             } catch (e) {
                 const reverseNode = '0x91d1777781884d03a6757a803996e38de2a42967fb37eeaca72729271025a9e2';
