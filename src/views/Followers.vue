@@ -43,6 +43,7 @@ import RSS3, { IRSS3 } from '@/common/rss3';
 import RNSUtils from '@/common/rns';
 import config from '@/config';
 import { reverse } from 'lodash';
+import { getName } from '@/common/utils';
 
 interface Profile {
     avatar: string;
@@ -77,7 +78,7 @@ export default class Followers extends Vue {
         let address: string = '';
         if (config.subDomain.isSubDomainMode) {
             // Is subdomain mode
-            address = window.location.host.split('.')[0];
+            address = getName();
         } else if (this.$route.params.address) {
             address = <string>this.$route.params.address;
         } else {

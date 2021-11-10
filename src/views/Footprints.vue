@@ -70,6 +70,7 @@ import RSS3 from '@/common/rss3';
 import { GeneralAsset, GeneralAssetWithTags } from '@/common/types';
 import { RSS3Asset } from 'rss3-next/types/rss3';
 import { debounce } from 'lodash';
+import { getName } from '@/common/utils';
 
 interface Profile {
     avatar: string;
@@ -134,7 +135,7 @@ export default class Footprints extends Vue {
         let address: string = '';
         if (config.subDomain.isSubDomainMode) {
             // Is subdomain mode
-            address = window.location.host.split('.')[0];
+            address = getName();
         } else if (this.$route.params.address) {
             address = <string>this.$route.params.address;
         } else {

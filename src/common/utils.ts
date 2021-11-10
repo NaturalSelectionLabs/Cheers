@@ -97,3 +97,7 @@ export function rgb2hex(r: number, g: number, b: number) {
             .slice(1)
     );
 }
+
+export function getName() {
+    return window.location.host.split('.').slice(0, -2).join('.');
+}

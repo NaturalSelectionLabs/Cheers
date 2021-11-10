@@ -99,28 +99,45 @@ export default {
         if (addrCache[addr]) {
             return addrCache[addr];
         } else {
-            const reverseNode = '0x91d1777781884d03a6757a803996e38de2a42967fb37eeaca72729271025a9e2';
-            const addrHex = sha3HexAddress(addr.toLowerCase());
-            const node = utils.keccak256(utils.defaultAbiCoder.encode(['bytes32', 'bytes32'], [reverseNode, addrHex]));
-            const name = (await callRNSContract<string>('resolver', 'infura', speed, 'name', node))
-                .toLowerCase()
-                .replace(config.rns.suffix, '');
-            if (name) {
-                addrCache[addr] = name;
+            try {
+                const domainInfo = (await axios.get(`https://rss3.domains/address/${addr}`)).data;
+                if (domainInfo.rnsName) {
+                    return domainInfo.rnsName.replace('.rss3', '');
+                } else {
+                    return domainInfo.ensName;
+                }
+            } catch (e) {
+                const reverseNode = '0x91d1777781884d03a6757a803996e38de2a42967fb37eeaca72729271025a9e2';
+                const addrHex = sha3HexAddress(addr.toLowerCase());
+                const node = utils.keccak256(
+                    utils.defaultAbiCoder.encode(['bytes32', 'bytes32'], [reverseNode, addrHex]),
+                );
+                const name = (await callRNSContract<string>('resolver', 'infura', speed, 'name', node))
+                    .toLowerCase()
+                    .replace(config.rns.suffix, '');
+                if (name) {
+                    addrCache[addr] = name;
+                }
+                return name;
             }
-            return name;
         }
     },
     async name2Addr(name: string, speed: SPEED = 'average') {
-        name = (name + config.rns.suffix).toLowerCase();
-        if (nameCache[name]) {
-            return nameCache[name];
-        } else {
-            const addr = await callRNSContract<string>('resolver', 'infura', speed, 'addr', utils.namehash(name));
-            if (parseInt(addr) !== 0) {
-                nameCache[name] = addr;
-            }
+        let addr;
+        try {
+            addr = (await axios.get(`https://rss3.domains/name/${name}`)).data.address;
             return addr;
+        } catch (e) {
+            name = (name + config.rns.suffix).toLowerCase();
+            if (nameCache[name]) {
+                return nameCache[name];
+            } else {
+                const addr = await callRNSContract<string>('resolver', 'infura', speed, 'addr', utils.namehash(name));
+                if (parseInt(addr) !== 0) {
+                    nameCache[name] = addr;
+                }
+                return addr;
+            }
         }
     },
     async balanceOfPass3(addr: string, speed: SPEED = 'average') {

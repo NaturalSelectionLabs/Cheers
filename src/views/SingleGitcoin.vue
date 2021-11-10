@@ -124,6 +124,7 @@ import config from '@/config';
 import RNSUtils from '@/common/rns';
 import RSS3 from '@/common/rss3';
 import Vue3Autocounter from 'vue3-autocounter';
+import { getName } from '@/common/utils';
 
 interface Profile {
     avatar: string;
@@ -209,7 +210,7 @@ export default class SingleGitcoin extends Vue {
         let address: string = '';
         if (config.subDomain.isSubDomainMode) {
             // Is subdomain mode
-            address = window.location.host.split('.')[0];
+            address = getName();
         } else if (this.$route.params.address) {
             address = <string>this.$route.params.address;
         } else {

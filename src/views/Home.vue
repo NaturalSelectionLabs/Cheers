@@ -443,6 +443,7 @@ import RSS3, { IRSS3 } from '@/common/rss3';
 import { RSS3Account, RSS3Asset, RSS3ID, RSS3Index } from 'rss3-next/types/rss3';
 import Modal from '@/components/Modal.vue';
 import RNSUtils from '@/common/rns';
+import { getName } from '@/common/utils';
 import config from '@/config';
 import GitcoinItem from '@/components/GitcoinItem.vue';
 import { GeneralAsset, GeneralAssetWithTags } from '@/common/types';
@@ -697,7 +698,7 @@ export default class Home extends Vue {
         let address: string = '';
         if (config.subDomain.isSubDomainMode) {
             // Is subdomain mode
-            address = window.location.host.split('.')[0];
+            address = getName();
         } else if (this.$route.params.address) {
             address = <string>this.$route.params.address;
         } else {
