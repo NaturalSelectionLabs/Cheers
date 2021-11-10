@@ -75,6 +75,7 @@ import { RSS3Account, RSS3Index } from 'rss3-next/types/rss3';
 import RNSUtils from '@/common/rns';
 import config from '@/config';
 import ContentProviders from '@/common/content-providers';
+import { getName } from '@/common/utils';
 
 interface Profile {
     avatar: string;
@@ -142,7 +143,7 @@ export default class Accounts extends Vue {
         let address: string = '';
         if (config.subDomain.isSubDomainMode) {
             // Is subdomain mode
-            address = window.location.host.split('.')[0];
+            address = getName();
         } else if (this.$route.params.address) {
             address = <string>this.$route.params.address;
         } else {

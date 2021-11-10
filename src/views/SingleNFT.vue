@@ -62,6 +62,7 @@ import RSS3, { IRSS3 } from '@/common/rss3';
 import RNSUtils from '@/common/rns';
 import { NFT } from '@/common/types';
 import config from '@/config';
+import { getName } from '@/common/utils';
 
 @Options({
     name: 'SingleNFT',
@@ -117,7 +118,7 @@ export default class SingleNFT extends Vue {
         let address: string = '';
         if (config.subDomain.isSubDomainMode) {
             // Is subdomain mode
-            address = window.location.host.split('.')[0];
+            address = getName();
         } else if (this.$route.params.address) {
             address = <string>this.$route.params.address;
         } else {

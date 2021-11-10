@@ -64,6 +64,7 @@ import config from '@/config';
 import { RSS3Asset } from 'rss3-next/types/rss3';
 import { GeneralAsset, GeneralAssetWithTags } from '@/common/types';
 import { debounce } from 'lodash';
+import { getName } from '@/common/utils';
 
 interface Profile {
     avatar: string;
@@ -136,7 +137,7 @@ export default class NFTs extends Vue {
         let address: string = '';
         if (config.subDomain.isSubDomainMode) {
             // Is subdomain mode
-            address = window.location.host.split('.')[0];
+            address = getName();
         } else if (this.$route.params.address) {
             address = <string>this.$route.params.address;
         } else {

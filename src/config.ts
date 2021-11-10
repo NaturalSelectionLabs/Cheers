@@ -18,7 +18,7 @@ export default {
     defaultAvatar: 'https://rss3.mypinata.cloud/ipfs/QmVFq9qimnudPcs6QkQv8ZVEsvwD3aqETHWtS5yXgdbYY5',
     hideUnlistedAsstes: false,
     subDomain: {
-        isSubDomainMode: window.location.host.split('.').length === 3,
+        isSubDomainMode: window.location.host.split('.').length >= 3,
         rootDomain: PAGE_ENV === 'production' ? 'rss3.bio' : currentRootDomain,
         cookieExpires: 14,
     },
