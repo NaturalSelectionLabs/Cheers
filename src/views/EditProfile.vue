@@ -215,7 +215,7 @@ export default class EditProfile extends Vue {
         setTimeout(async () => {
             // Push original account
             this.accounts.push({
-                platform: 'Ethereum',
+                platform: 'EVM+',
                 identity: this.ethAddress,
                 signature: '',
                 tags: ['pass:order:-1'],

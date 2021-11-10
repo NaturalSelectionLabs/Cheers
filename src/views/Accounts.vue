@@ -129,7 +129,7 @@ export default class Accounts extends Vue {
         }
 
         this.accounts.push({
-            platform: 'Ethereum',
+            platform: 'EVM+',
             identity: this.ethAddress,
             signature: '',
             tags: ['pass:order:-1'],

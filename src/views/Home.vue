@@ -516,7 +516,7 @@ export default class Home extends Vue {
         link?: string;
     } = {
         address: '',
-        platform: 'Ethereum',
+        platform: 'EVM+',
         isLink: false,
     };
     isAccountExist: boolean = true;
@@ -604,7 +604,7 @@ export default class Home extends Vue {
         this.isShowingAccount = false;
         this.showingAccountDetails = {
             address: '',
-            platform: 'Ethereum',
+            platform: 'EVM+',
             isLink: false,
         };
         this.isLoadingPersona = true;
@@ -766,7 +766,7 @@ export default class Home extends Vue {
         setTimeout(async () => {
             // Push original account
             this.accounts.push({
-                platform: 'Ethereum',
+                platform: 'EVM+',
                 identity: this.ethAddress,
                 signature: '',
                 tags: ['pass:order:-1'],

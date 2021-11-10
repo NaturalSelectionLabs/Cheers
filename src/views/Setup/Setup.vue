@@ -350,7 +350,7 @@ export default class Setup extends Vue {
         setTimeout(async () => {
             // Push original account
             this.accounts.push({
-                platform: 'Ethereum',
+                platform: 'EVM+',
                 identity: (<IRSS3>this.rss3).account.address,
                 signature: '',
                 tags: ['pass:order:-1'],
