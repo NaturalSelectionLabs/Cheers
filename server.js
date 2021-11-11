@@ -23,12 +23,8 @@ app.use(
 
 const router = new Router();
 
-const indexPage = fs.readFileSync(path.join(__dirname, 'dist/index.ejs'));
-const jsReqParam = indexPage.toString().match(/<script defer src="(.*)"><\/script>/)[1];
-
 const injectMetadata = async (ctx) => {
     await ctx.render('index', {
-        content: `<div id='app'></div><script defer src='${jsReqParam}'></script>`,
         user: '',
         player: ctx.request.hostname,
     });
