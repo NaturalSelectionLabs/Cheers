@@ -149,9 +149,9 @@ module.exports = (env, argv) => ({
     plugins: [
         new HtmlWebpackPlugin({
             chunks: ['index'],
-            filename: 'index.html',
+            filename: process.env.WORK_MODE === 'server' ? 'index.ejs' : 'index.html',
             hash: true,
-            template: 'src/assets/index.ejs',
+            template: process.env.WORK_MODE === 'server' ? '!!raw-loader!src/assets/index.ejs' : 'src/assets/index.ejs',
         }),
         new CopyPlugin({
             patterns: [

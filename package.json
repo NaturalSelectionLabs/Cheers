@@ -7,7 +7,7 @@
         "dev": "webpack serve --mode development",
         "build": "NODE_ENV=production webpack --mode production",
         "build:test": "NODE_ENV=production PAGE_ENV=development webpack --mode production",
-        "build:dev": "webpack --mode development",
+        "build:dev": "WORK_MODE=server webpack --mode development",
         "prepare": "husky install",
         "serv": "node server.js",
         "serv:dev": "npm run build:dev && npm run serv",
@@ -32,6 +32,7 @@
     "dependencies": {
         "@babel/runtime": "7.15.4",
         "@google/model-viewer": "1.8.0",
+        "@koa/router": "10.1.1",
         "@sentry/tracing": "6.13.3",
         "@sentry/vue": "6.13.3",
         "@tailwindcss/aspect-ratio": "0.3.0",
