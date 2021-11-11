@@ -15,7 +15,12 @@
             @touchstart="isHover = true"
             @touchend="isHover = false"
         />
-        <Tooltip v-if="$props.enableTooltip" v-show="isHover" :text="$props.address" view-option="account" />
+        <Tooltip
+            v-if="$props.enableTooltip"
+            v-show="isHover"
+            :text="addressFilter($props.address)"
+            view-option="account"
+        />
         <Button
             v-show="deleteMode"
             size="sm"
@@ -51,6 +56,10 @@ export default class AccountItem extends Vue {
 
     deleteAccount() {
         this.$emit('deleteAccount');
+    }
+
+    addressFilter(address: string) {
+        return address.length > 14 ? `${address.slice(0, 6)}....${address.slice(-4)}` : address;
     }
 }
 </script>
