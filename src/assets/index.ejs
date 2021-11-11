@@ -7,16 +7,28 @@
         <meta name="referrer" content="no-referrer-when-downgrade">
         <title>Web3 Pass</title>
         <link rel='icon' type='image/x-icon' id='favicon' href='/favicon.ico' />
-        <meta name="twitter:image" content="" />
+
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content="<%- title %>" />
+        <meta property="og:url" content="https://<%- hostname %>" />
+        <meta property="og:site_name" content="<%- title %>" />
+        <meta property="og:description" content="<%- bio %>" />
+        <meta property="og:image" content="<%- avatar %>" />z
+
+        <meta name="twitter:image" content="<%- avatar %>" />
         <meta name="twitter:card" content="player" />
-        <meta name="twitter:title" content="RSS3.bio" />
+        <meta name="twitter:title" content="<%- title %>" />
         <meta name="twitter:site" content="@pass3dotme" />
         <meta name="twitter:description" content='Wait... Web3 Bio inside twitter?' />
-        <meta name="twitter:player" content="https://<%- player %>" />
+        <meta name="twitter:player" content="https://<%- hostname %>" />
         <meta name="twitter:player:width" content="360" />
         <meta name="twitter:player:height" content="800" />
     </head>
     <body>
         <div id="app"></div>
+
+        <script>
+            window.__RSS3_USER__ = window.__RSS3_USER__ || JSON.parse('<%- user %>');
+        </script>
     </body>
 </html>

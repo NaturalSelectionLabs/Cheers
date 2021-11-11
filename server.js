@@ -1,15 +1,10 @@
-// import Koa from 'koa';
-// import koaViews from 'koa-views';
-// import koaStatic from 'koa-static';
-//
-// import path from 'path';
+const defaultAvatar = '';
 
 const Koa = require('koa');
 const Router = require('@koa/router');
 const koaViews = require('koa-views');
 const koaStatic = require('koa-static');
 const path = require('path');
-const fs = require('fs');
 
 const app = new Koa();
 
@@ -24,9 +19,20 @@ app.use(
 const router = new Router();
 
 const injectMetadata = async (ctx) => {
+    // todo: finish this
+
+    // extract username / address
+
+    // request for persona
+
+    // embed default data (so page don't need to request again)
+
     await ctx.render('index', {
-        user: '',
-        player: ctx.request.hostname,
+        user: JSON.stringify(persona),
+        title: persona.profile?.name || '', //<% if (username) { %><-% username %>'s <% } %>RSS3.bio
+        avatar: persona.profile?.avatar?.[0] || defaultAvatar,
+        bio: persona.profile?.bio || '',
+        hostname: ctx.request.hostname,
     });
 };
 
