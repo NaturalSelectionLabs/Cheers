@@ -7,7 +7,7 @@
         "dev": "webpack serve --mode development",
         "build": "NODE_ENV=production webpack --mode production",
         "build:test": "NODE_ENV=production PAGE_ENV=development webpack --mode production",
-        "build:server:dev": "WORK_MODE=server webpack --mode development",
+        "build:server:dev": "WORK_MODE=server PAGE_ENV=development webpack --mode development",
         "build:server:prod": "NODE_ENV=production WORK_MODE=server webpack --mode production",
         "prepare": "husky install",
         "serv": "node server.js",

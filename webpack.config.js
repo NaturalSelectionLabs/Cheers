@@ -147,12 +147,21 @@ module.exports = (env, argv) => ({
     },
 
     plugins: [
-        new HtmlWebpackPlugin({
-            chunks: ['index'],
-            filename: process.env.WORK_MODE === 'server' ? 'index.ejs' : 'index.html',
-            hash: true,
-            template: process.env.WORK_MODE === 'server' ? '!!raw-loader!src/assets/index.ejs' : 'src/assets/index.ejs',
-        }),
+        new HtmlWebpackPlugin(
+            process.env.WORK_MODE === 'server'
+                ? {
+                      chunks: ['index'],
+                      filename: 'index.ejs',
+                      hash: true,
+                      template: '!!raw-loader!src/assets/server.ejs',
+                  }
+                : {
+                      chunks: ['index'],
+                      filename: 'index.html',
+                      hash: true,
+                      template: 'src/assets/index.ejs',
+                  },
+        ),
         new CopyPlugin({
             patterns: [
                 {
