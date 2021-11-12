@@ -155,7 +155,7 @@ export default class RNS extends Vue {
             this.ethAddress = (<IRSS3>this.rss3).account.address;
             const chain: string | null = await metamaskEthereum.request({ method: 'eth_chainId' });
             if (validateNetwork(Number(chain))) {
-                const rns = await RNSUtils.addr2Name(this.ethAddress);
+                const rns = await RNSUtils.addr2Name(this.ethAddress, true);
                 if (rns !== '') {
                     this.rns = rns;
                     this.isAlreadyHavingRNS = true;

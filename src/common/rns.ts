@@ -95,18 +95,22 @@ export default {
     async register(name: string, speed: SPEED = 'average') {
         return callRNSContract<ethers.providers.TransactionResponse>('token', 'web3', speed, 'register', name);
     },
-    async addr2Name(addr: string, speed: SPEED = 'average') {
+    async addr2Name(addr: string, isPureRNS: boolean = false, speed: SPEED = 'average') {
         if (addrCache[addr]) {
             return addrCache[addr];
         } else {
             try {
                 const domainInfo = (await axios.get(`https://rss3.domains/address/${addr}`)).data;
-                if (domainInfo.rnsName) {
-                    return domainInfo.rnsName.replace('.rss3', '');
-                } else if (domainInfo.ensName) {
-                    return domainInfo.ensName;
+                if (isPureRNS) {
+                    return domainInfo.rnsName || '';
                 } else {
-                    return '';
+                    if (domainInfo.rnsName) {
+                        return domainInfo.rnsName.replace('.rss3', '');
+                    } else if (domainInfo.ensName) {
+                        return domainInfo.ensName;
+                    } else {
+                        return '';
+                    }
                 }
             } catch (e) {
                 const reverseNode = '0x91d1777781884d03a6757a803996e38de2a42967fb37eeaca72729271025a9e2';
