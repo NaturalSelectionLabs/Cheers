@@ -2,12 +2,14 @@ const defaultAvatar = '';
 
 const Koa = require('koa');
 const Router = require('@koa/router');
+const CORS = require('@koa/cors');
 const koaViews = require('koa-views');
 const koaStatic = require('koa-static');
 const path = require('path');
 const axios = require('axios');
 
 const app = new Koa();
+app.use(CORS());
 
 app.use(koaStatic(path.join(__dirname, 'dist')));
 
