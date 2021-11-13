@@ -34,12 +34,12 @@ app.use(Hotjar, {
     id: '2541834', // Hotjar Site ID
 });
 
-app.use(VueReCaptcha, {
-    siteKey: '6LfhqhAdAAAAAJMQDy4P9Ohaim-Cu_WJoH_tOncQ',
-    loaderOptions: {
-        useRecaptchaNet: true,
-    },
-});
+// app.use(VueReCaptcha, {
+//     siteKey: '6LfhqhAdAAAAAJMQDy4P9Ohaim-Cu_WJoH_tOncQ',
+//     loaderOptions: {
+//         useRecaptchaNet: true,
+//     },
+// });
 
 /* IFTRUE_isNDevelop */
 Sentry.init({

@@ -307,13 +307,6 @@
                 >
                     <Logo class="cursor-pointer" :size="18" @click="toHomePage" />
                     <div class="text-right text-body-text text-xs font-normal">
-                        <small
-                            >Google reCAPTCHA protected
-                            <a href="https://policies.google.com/privacy" target="_blank">Privacy</a>
-                            &
-                            <a href="https://policies.google.com/terms" target="_blank">ToS</a>
-                        </small>
-                        |
                         <a href="https://rss3.io/#/privacy"> Privacy </a>
                         |
                         <span>
@@ -464,7 +457,7 @@ import EVMpAccountItem from '@/components/EVMpAccountItem.vue';
 
 import activities from '@/common/poap-activity';
 
-import { useReCaptcha } from 'vue-recaptcha-v3';
+// import { useReCaptcha } from 'vue-recaptcha-v3';
 
 interface ProfileInfo {
     avatar: string;
@@ -578,16 +571,16 @@ export default class Home extends Vue {
         },
     ];
 
-    claimWithCaptcha = setup(() => {
-        const { executeRecaptcha, recaptchaLoaded } = useReCaptcha();
-        const exec = async (address: string) => {
-            await recaptchaLoaded();
-            return await executeRecaptcha(address);
-        };
-        return {
-            exec,
-        };
-    });
+    // claimWithCaptcha = setup(() => {
+    //     const { executeRecaptcha, recaptchaLoaded } = useReCaptcha();
+    //     const exec = async (address: string) => {
+    //         await recaptchaLoaded();
+    //         return await executeRecaptcha(address);
+    //     };
+    //     return {
+    //         exec,
+    //     };
+    // });
 
     async mounted() {
         this.isPCLayout = window.innerWidth >= 768;
@@ -1169,47 +1162,47 @@ export default class Home extends Vue {
         }
     }
 
-    async claimSpecialPOAP() {
-        // Special POAPs: Check status && give notice
-        switch (this.footprints[0].id) {
-            case 'active':
-                const res = await activities.mint(this.ethAddress, await this.claimWithCaptcha.exec(this.ethAddress));
-                if (res?.errno) {
-                    switch (res.errno) {
-                        case 1403:
-                            this.notice = 'Invalid address. This should be a Internal Server Error.';
-                            break;
-                        case 1404:
-                            this.notice = 'This address is not on RSS3 currently.';
-                            break;
-                        case 1405:
-                            this.notice = 'Sorry, the limited chances ran out.';
-                            break;
-                        case 1409:
-                            this.notice = 'Sorry, please try again.';
-                            break;
-                        default:
-                            this.notice = 'Sorry, something went wrong.';
-                            break;
-                    }
-                } else {
-                    this.footprints[0].id = 'pending';
-                    if (res?.data?.tx_hash) {
-                        this.notice = 'You have already submit the request. Please be patient.';
-                    } else {
-                        this.notice = 'Your special footprint is on the way~ Come back later!';
-                    }
-                }
-                this.isShowingNotice = true;
-                break;
-            case 'pending':
-                this.notice = 'You have already submit the request. Please be patient.';
-                this.isShowingNotice = true;
-                break;
-            default:
-                break;
-        }
-    }
+    // async claimSpecialPOAP() {
+    //     // Special POAPs: Check status && give notice
+    //     switch (this.footprints[0].id) {
+    //         case 'active':
+    //             const res = await activities.mint(this.ethAddress, await this.claimWithCaptcha.exec(this.ethAddress));
+    //             if (res?.errno) {
+    //                 switch (res.errno) {
+    //                     case 1403:
+    //                         this.notice = 'Invalid address. This should be a Internal Server Error.';
+    //                         break;
+    //                     case 1404:
+    //                         this.notice = 'This address is not on RSS3 currently.';
+    //                         break;
+    //                     case 1405:
+    //                         this.notice = 'Sorry, the limited chances ran out.';
+    //                         break;
+    //                     case 1409:
+    //                         this.notice = 'Sorry, please try again.';
+    //                         break;
+    //                     default:
+    //                         this.notice = 'Sorry, something went wrong.';
+    //                         break;
+    //                 }
+    //             } else {
+    //                 this.footprints[0].id = 'pending';
+    //                 if (res?.data?.tx_hash) {
+    //                     this.notice = 'You have already submit the request. Please be patient.';
+    //                 } else {
+    //                     this.notice = 'Your special footprint is on the way~ Come back later!';
+    //                 }
+    //             }
+    //             this.isShowingNotice = true;
+    //             break;
+    //         case 'pending':
+    //             this.notice = 'You have already submit the request. Please be patient.';
+    //             this.isShowingNotice = true;
+    //             break;
+    //         default:
+    //             break;
+    //     }
+    // }
 
     toSetupPage() {
         this.$gtag.event('visitSetupPage', { userid: this.rns || this.ethAddress });
