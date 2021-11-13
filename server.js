@@ -71,7 +71,7 @@ const injectMetadata = async (ctx) => {
         title: (persona?.profile?.name ? persona?.profile?.name + "'s " : '') + 'RSS3.Bio',
         avatar: persona?.profile?.avatar?.[0] || defaultAvatar,
         bio: persona?.profile?.bio?.replace(/\n/g, ' ') || 'RSS3.Bio',
-        url: ctx.request.href,
+        url: ctx.request.href.replace('http://', 'https://'),
     });
 };
 
