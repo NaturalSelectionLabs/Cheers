@@ -596,10 +596,11 @@ export default class Setup extends Vue {
         }
     }
 
+    async mounted() {
+        await this.initLoad();
+    }
+
     async activated() {
-        if (this.lastRoute !== this.$route.fullPath) {
-            await this.initLoad();
-        }
         this.startLoadingAccounts();
         await this.startLoadingAssets();
     }
