@@ -5,14 +5,13 @@
     "main": "server.js",
     "scripts": {
         "dev": "webpack serve --mode development",
-        "build": "NODE_ENV=production webpack --mode production",
-        "build:test": "NODE_ENV=production PAGE_ENV=development webpack --mode production",
-        "build:server:dev": "WORK_MODE=server PAGE_ENV=development webpack --mode development",
-        "build:server:prod": "NODE_ENV=production WORK_MODE=server webpack --mode production",
+        "build:dev": "PAGE_ENV=development webpack --mode production",
+        "build": "webpack --mode production",
         "prepare": "husky install",
         "serv": "node server.js",
-        "serv:dev": "npm run build:server:dev && npm run serv",
-        "serv:prod": "npm run build:server:prod && npm run serv"
+        "serv:dev": "npm run build:dev && npm run serv",
+        "serv:prod": "npm run build && npm run serv",
+        "start": "npm run serv"
     },
     "lint-staged": {
         "**/*": "prettier --write --ignore-unknown"

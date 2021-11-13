@@ -90,8 +90,8 @@ module.exports = (env, argv) => ({
                     {
                         loader: 'js-conditional-compile-loader',
                         options: {
-                            isDevelop: process.env.NODE_ENV !== 'production',
-                            isNDevelop: process.env.NODE_ENV === 'production',
+                            isDevelop: !argv.mode === 'production',
+                            isNDevelop: argv.mode === 'production',
                         },
                     },
                 ],
@@ -148,7 +148,7 @@ module.exports = (env, argv) => ({
 
     plugins: [
         new HtmlWebpackPlugin(
-            process.env.WORK_MODE === 'server'
+            argv.mode === 'production'
                 ? {
                       chunks: ['index'],
                       filename: 'index.ejs',
