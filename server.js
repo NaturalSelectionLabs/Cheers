@@ -81,4 +81,4 @@ app.use(router.routes()).use(router.allowedMethods());
 
 console.log('Server start...');
 
-app.listen(8080);
+app.listen(process.env.PORT || 8080);
