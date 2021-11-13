@@ -7,11 +7,12 @@
         "dev": "webpack serve --mode development",
         "build": "NODE_ENV=production webpack --mode production",
         "build:test": "NODE_ENV=production PAGE_ENV=development webpack --mode production",
-        "build:dev": "webpack --mode development",
+        "build:server:dev": "WORK_MODE=server PAGE_ENV=development webpack --mode development",
+        "build:server:prod": "NODE_ENV=production WORK_MODE=server webpack --mode production",
         "prepare": "husky install",
         "serv": "node server.js",
-        "serv:dev": "npm run build:dev && npm run serv",
-        "serv:prod": "npm run build && npm run serv"
+        "serv:dev": "npm run build:server:dev && npm run serv",
+        "serv:prod": "npm run build:server:prod && npm run serv"
     },
     "lint-staged": {
         "**/*": "prettier --write --ignore-unknown"
@@ -32,6 +33,7 @@
     "dependencies": {
         "@babel/runtime": "7.15.4",
         "@google/model-viewer": "1.8.0",
+        "@koa/router": "10.1.1",
         "@sentry/tracing": "6.13.3",
         "@sentry/vue": "6.13.3",
         "@tailwindcss/aspect-ratio": "0.3.0",
