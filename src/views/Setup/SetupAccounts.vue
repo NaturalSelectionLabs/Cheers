@@ -500,7 +500,7 @@ export default class SetupAccounts extends Vue {
         const newAccount = await RSS3.addNewMetamaskAccount();
         if (newAccount.identity) {
             const equalDefaultAccount =
-                newAccount.platform === 'Ethereum' && newAccount.identity === (<IRSS3>this.rss3).account.address;
+                newAccount.platform === 'EVM+' && newAccount.identity === (<IRSS3>this.rss3).account.address;
             const showIndex = this.show.findIndex(
                 (account) => account.platform === newAccount.platform && account.identity === newAccount.identity,
             );
