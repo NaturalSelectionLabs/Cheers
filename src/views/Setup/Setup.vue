@@ -290,7 +290,7 @@ export default class Setup extends Vue {
     async initLoad() {
         if (!(await RSS3.reconnect())) {
             if (config.subDomain.isSubDomainMode) {
-                // redirect back to homepage
+                // redirect back to root domain
                 window.location.host = config.subDomain.rootDomain;
             } else {
                 sessionStorage.setItem('redirectFrom', this.$route.fullPath);
