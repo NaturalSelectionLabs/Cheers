@@ -1,6 +1,7 @@
 let currentRootDomain;
 const split = window.location.hostname.split('.');
-if (split.length > 2) {
+const isSubDomainMode = split.length > 2;
+if (isSubDomainMode) {
     currentRootDomain = split[split.length - 2] + '.' + split[split.length - 1];
 } else {
     currentRootDomain = window.location.hostname;
@@ -18,7 +19,7 @@ export default {
     defaultAvatar: 'https://rss3.mypinata.cloud/ipfs/QmVFq9qimnudPcs6QkQv8ZVEsvwD3aqETHWtS5yXgdbYY5',
     hideUnlistedAsstes: false,
     subDomain: {
-        isSubDomainMode: window.location.host.split('.').length >= 3,
+        isSubDomainMode,
         rootDomain: PAGE_ENV === 'production' ? 'rss3.bio' : currentRootDomain,
         cookieExpires: 14,
     },
