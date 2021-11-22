@@ -53,7 +53,7 @@
                                 <NFTItem
                                     class="inline-flex m-0.5"
                                     style="cursor: grab"
-                                    :size="64"
+                                    size="md"
                                     :image-url="element.info?.image_preview_url"
                                     :data-info="JSON.stringify(element)"
                                 />
@@ -106,7 +106,7 @@
                                         <NFTItem
                                             class="inline-flex m-0.5"
                                             style="cursor: grab"
-                                            :size="64"
+                                            size="md"
                                             :image-url="element.info?.image_preview_url"
                                         />
                                     </template>

@@ -30,7 +30,7 @@
                     class="flex mr-1 cursor-pointer"
                     image-url="https://i.imgur.com/GdWEt4z.jpg"
                     poster-url="https://i.imgur.com/GdWEt4z.jpg"
-                    :size="40"
+                    size="sm"
                     v-for="id in 32"
                     :key="id"
                 />
@@ -267,7 +267,7 @@
                     v-for="id in 8"
                     :key="id"
                     class="shadow-nft-sm inline-flex m-0.5"
-                    :size="64"
+                    size="auto"
                     imageUrl="https://i.imgur.com/GdWEt4z.jpg"
                 />
             </template>
@@ -492,16 +492,7 @@
         <!-- <Modal v-show="isLoading">
             <template #body>
                 <span
-                    class="
-                        text-9xl text-primary
-                        opacity-50
-                        block
-                        absolute
-                        top-1/2
-                        left-1/2
-                        transform
-                        -translate-x-1/2 -translate-y-1/2
-                    "
+                    class="absolute block transform -translate-x-1/2 -translate-y-1/2 opacity-50 text-9xl text-primary top-1/2 left-1/2"
                 >
                     <i class="bx bx-loader-alt bx-spin"></i>
                 </span>

@@ -54,7 +54,7 @@
                             class="inline-flex mx-0.5"
                             v-for="asset in nfts"
                             :key="asset.platform + asset.identity + asset.id"
-                            :size="40"
+                            size="sm"
                             :image-url="asset.info.animation_url || asset.info.image_preview_url"
                             :poster-url="asset.info.image_preview_url"
                         />
@@ -87,7 +87,7 @@
                             class="inline-flex mx-0.5"
                             v-for="item in gitcoins"
                             :key="item.platform + item.identity + item.id"
-                            :size="40"
+                            size="sm"
                             :imageUrl="item.info.image_preview_url"
                         />
                     </template>

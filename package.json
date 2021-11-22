@@ -11,7 +11,8 @@
         "serv": "node server.js",
         "serv:dev": "npm run build:dev && npm run serv",
         "serv:prod": "npm run build && npm run serv",
-        "start": "npm run serv"
+        "start": "npm run serv",
+        "pretty": "prettier --write \"./**/*.{js,vue,json}\""
     },
     "lint-staged": {
         "**/*": "prettier --write --ignore-unknown"

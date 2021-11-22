@@ -115,7 +115,6 @@ import AvatarEditor from '@/components/AvatarEditor.vue';
 import Card from '@/components/Card.vue';
 import EVMpAccountItem from '@/components/EVMpAccountItem.vue';
 import AccountItem from '@/components/AccountItem.vue';
-import NFTItem from '@/components/NFT/NFTItem.vue';
 import Input from '@/components/Input.vue';
 import Modal from '@/components/Modal.vue';
 import Loading from '@/components/Loading.vue';
@@ -137,7 +136,6 @@ import BarCard from '@/components/BarCard.vue';
         AvatarEditor,
         Card,
         AccountItem,
-        NFTItem,
         Input,
         Loading,
         LoadingContainer,

@@ -1,11 +1,11 @@
 <template>
     <div
-        :style="{
-            width: size + 'px',
-            height: size + 'px',
-        }"
         class="shadow-nft"
-        :class="size < 60 ? 'rounded-sm' : 'rounded'"
+        :class="{
+            'w-10 h-10 rounded-sm': size === 'sm',
+            'w-16 h-16 rounded': size === 'md',
+            'w-full aspect-w-1 aspect-h-1 rounded': size === 'auto',
+        }"
     >
         <video
             v-if="
@@ -21,11 +21,7 @@
                     : posterUrl
             "
             class="nft-item"
-            :class="[!isShowingDetails ? 'object-cover' : 'object-contain', size < 60 ? 'rounded-sm' : 'rounded']"
-            :style="{
-                width: size + 'px',
-                height: size + 'px',
-            }"
+            :class="[!isShowingDetails ? 'object-cover' : 'object-contain', size === 'sm' ? 'rounded-sm' : 'rounded']"
             :autoplay="isShowingDetails || posterUrl?.endsWith('.mp4') || posterUrl?.endsWith('.mov')"
             loop
             webkit-playsinline
@@ -45,23 +41,14 @@
             "
             :src="imageUrl"
             class="nft-item"
-            :class="[!isShowingDetails ? 'object-cover' : 'object-contain', size < 60 ? 'rounded-sm' : 'rounded']"
-            :style="{
-                width: size + 'px',
-                height: size + 'px',
-            }"
+            :class="[!isShowingDetails ? 'object-cover' : 'object-contain', size === 'sm' ? 'rounded-sm' : 'rounded']"
         />
         <model-viewer
             v-else-if="modelView"
             :src="imageUrl"
             :poster="posterUrl"
             class="nft-item"
-            :class="[!isShowingDetails ? 'object-cover' : 'object-contain', size < 60 ? 'rounded-sm' : 'rounded']"
-            :style="{
-                width: size + 'px',
-                height: size + 'px',
-            }"
-            ar
+            :class="[!isShowingDetails ? 'object-cover' : 'object-contain', size === 'sm' ? 'rounded-sm' : 'rounded']"
             ar-modes="webxr scene-viewer quick-look"
             environment-image="neutral"
             auto-rotate
@@ -72,11 +59,7 @@
             v-else
             :src="showImageUrl"
             class="nft-item"
-            :class="[!isShowingDetails ? 'object-cover' : 'object-contain', size < 60 ? 'rounded-sm' : 'rounded']"
-            :style="{
-                width: size + 'px',
-                height: size + 'px',
-            }"
+            :class="[!isShowingDetails ? 'object-cover' : 'object-contain', size === 'sm' ? 'rounded-sm' : 'rounded']"
         />
     </div>
 </template>
@@ -87,14 +70,14 @@ import config from '@/config';
 
 @Options({
     props: {
-        size: Number,
+        size: String,
         posterUrl: String, // This should be image URL
         imageUrl: String, // This should be detailed URL
         isShowingDetails: Boolean,
     },
 })
 export default class NFTItem extends Vue {
-    size!: Number;
+    size!: String;
     imageUrl!: String;
     posterUrl!: String;
     defaultImage: String = config.defaultAvatar;
@@ -132,7 +115,7 @@ export default class NFTItem extends Vue {
 <style scoped lang="postcss">
 @layer components {
     .nft-item {
-        @apply bg-item-bg border border-item-border filter;
+        @apply w-full h-full bg-item-bg border border-item-border filter;
     }
 }
 </style>
