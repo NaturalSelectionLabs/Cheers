@@ -286,6 +286,7 @@ export default class Setup extends Vue {
     currentTheme: string = '';
     $gtag: any;
     lastRoute: string = '';
+    firstLoad: boolean = true;
 
     async initLoad() {
         if (!(await RSS3.reconnect())) {
@@ -598,11 +599,16 @@ export default class Setup extends Vue {
 
     async mounted() {
         await this.initLoad();
+        this.firstLoad = false;
+        this.startLoadingAccounts();
+        await this.startLoadingAssets();
     }
 
     async activated() {
-        this.startLoadingAccounts();
-        await this.startLoadingAssets();
+        if (this.rss3 && !this.firstLoad) {
+            this.startLoadingAccounts();
+            await this.startLoadingAssets();
+        }
     }
 
     deactivated() {

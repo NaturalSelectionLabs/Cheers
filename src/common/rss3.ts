@@ -156,6 +156,9 @@ export default {
     },
     disconnect: disconnect,
     reconnect: async (): Promise<boolean> => {
+        if (isValidRSS3()) {
+            return true;
+        }
         // Migrate
         const lastConnectMigrate = localStorage.getItem('lastConnect');
         const lastAddressMigrate = localStorage.getItem('lastAddress');
