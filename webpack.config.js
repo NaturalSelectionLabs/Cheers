@@ -3,14 +3,11 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
 const { VueLoaderPlugin } = require('vue-loader');
-
 module.exports = (env, argv) => ({
     devtool: argv.mode === 'production' ? false : 'inline-cheap-module-source-map',
-
     entry: {
         index: './src/index.ts',
     },
-
     output: {
         path: path.resolve(__dirname, 'dist'),
         filename: '[name].[contenthash:8].js',
@@ -22,7 +19,6 @@ module.exports = (env, argv) => ({
                 : '/',
         clean: true,
     },
-
     resolve: {
         extensions: ['.js', '.less', '.ts'],
         alias: {
@@ -39,7 +35,6 @@ module.exports = (env, argv) => ({
             url: false,
         },
     },
-
     module: {
         strictExportPresence: true,
         rules: [
@@ -55,28 +50,6 @@ module.exports = (env, argv) => ({
             {
                 test: /\.tsx?$/,
                 use: [
-                    {
-                        loader: 'babel-loader',
-                        options: {
-                            presets: ['@babel/preset-env', '@babel/preset-typescript'],
-                            plugins: [
-                                [
-                                    '@babel/plugin-proposal-decorators',
-                                    {
-                                        legacy: true,
-                                    },
-                                ],
-                                '@babel/plugin-transform-typescript',
-                                '@babel/plugin-proposal-optional-chaining',
-                                [
-                                    '@babel/plugin-transform-runtime',
-                                    {
-                                        regenerator: true,
-                                    },
-                                ],
-                            ],
-                        },
-                    },
                     {
                         loader: 'ts-loader',
                         options: {
@@ -145,7 +118,6 @@ module.exports = (env, argv) => ({
             },
         ],
     },
-
     plugins: [
         new HtmlWebpackPlugin(
             argv.mode === 'production'
@@ -183,7 +155,6 @@ module.exports = (env, argv) => ({
     experiments: {
         topLevelAwait: true,
     },
-
     devServer: {
         static: path.join(__dirname, 'dist'),
         compress: true,

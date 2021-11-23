@@ -19,7 +19,7 @@
                 />
             </div>
             <section class="m-auto max-w-screen-sm">
-                <GitcoinItem class="mb-4" :imageUrl="grant.logo || defaultAvatar" :size="Width"></GitcoinItem>
+                <GitcoinItem class="mb-4" :imageUrl="grant.logo || defaultAvatar" size="auto" />
                 <div
                     class="
                         flex flex-col

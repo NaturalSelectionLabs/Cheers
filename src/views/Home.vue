@@ -70,7 +70,7 @@
                         :key="item.platform + item.identity + item.id"
                         :image-url="item.info.animation_url || item.info.image_preview_url"
                         :poster-url="item.info.image_preview_url"
-                        :size="40"
+                        size="sm"
                         @click="toSingleItemPage('NFT', item.platform, item.identity, item.id, item.type)"
                     />
                 </template>
@@ -104,7 +104,7 @@
                         class="mr-1 cursor-pointer"
                         v-for="item in gitcoins"
                         :key="item.platform + item.identity + item.id"
-                        :size="40"
+                        size="sm"
                         :imageUrl="item.info.image_preview_url || defaultAvatar"
                         @click="toSingleItemPage('Gitcoin', item.platform, item.identity, item.id, item.type)"
                     />
