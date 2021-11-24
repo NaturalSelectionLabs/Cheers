@@ -132,11 +132,12 @@ export default class SingleNFT extends Vue {
                 this.ethAddress = address;
                 this.rns = await RNSUtils.addr2Name(address);
                 if (this.rns !== '') {
-                    if (config.subDomain.isSubDomainMode) {
-                        window.location.host = this.rns + '.' + config.subDomain.rootDomain;
-                    } else {
-                        await this.$router.push(`/${this.rns}`);
-                    }
+                    window.location.href =
+                        'https://' +
+                        this.rns +
+                        '.' +
+                        config.subDomain.rootDomain +
+                        window.location.pathname.replace(`/${address}`, '');
                 }
             } else {
                 // RNS

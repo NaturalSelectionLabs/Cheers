@@ -812,7 +812,11 @@ export default class Home extends Vue {
     }
 
     async ivLoadAsset(refresh: boolean): Promise<boolean> {
-        let isFinish = true;
+        if (!this.isAccountExist) {
+            // Account not exist, prevent loading assets
+            return true;
+        }
+        let isFinish: boolean;
         const result = await Promise.all([
             this.ivLoadNFT(refresh),
             this.ivLoadGitcoin(refresh),
