@@ -63,7 +63,7 @@
 import { Options, Vue } from 'vue-class-component';
 import Button from '@/components/Button.vue';
 import ImgHolder from '@/components/ImgHolder.vue';
-import FootprintCard from '@/components/FootprintCard.vue';
+import FootprintCard from '@/components/Footprint/FootprintCard.vue';
 import config from '@/config';
 import RNSUtils from '@/common/rns';
 import RSS3 from '@/common/rss3';

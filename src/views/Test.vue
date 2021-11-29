@@ -515,13 +515,13 @@ import Input from '@/components/Input.vue';
 import AvatarEditor from '@/components/AvatarEditor.vue';
 import Card from '@/components/Card.vue';
 import FollowerCard from '@/components/FollowerCard.vue';
-import AccountItem from '@/components/AccountItem.vue';
+import AccountItem from '@/components/Account/AccountItem.vue';
 import NFTItem from '@/components/NFT/NFTItem.vue';
 import NFTBadges from '@/components/NFT/NFTBadges.vue';
 import ScanTag from '@/components/NFT/ScanTag.vue';
 import Modal from '@/components/Modal.vue';
 import RSS3 from '@/common/rss3';
-import FootprintCard from '@/components/FootprintCard.vue';
+import FootprintCard from '@/components/Footprint/FootprintCard.vue';
 
 import draggable from 'vuedraggable';
 

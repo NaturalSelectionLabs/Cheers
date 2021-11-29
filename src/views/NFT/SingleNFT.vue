@@ -56,7 +56,7 @@ import { Options, Vue } from 'vue-class-component';
 import Button from '@/components/Button.vue';
 import NFTItem from '@/components/NFT/NFTItem.vue';
 import NFTDetail from '@/components/NFT/NFTDetails.vue';
-import AccountItem from '@/components/AccountItem.vue';
+import AccountItem from '@/components/Account/AccountItem.vue';
 import NFTBadges from '@/components/NFT/NFTBadges.vue';
 import RSS3, { IRSS3 } from '@/common/rss3';
 import RNSUtils from '@/common/rns';

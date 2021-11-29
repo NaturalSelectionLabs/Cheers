@@ -149,7 +149,7 @@
                                 group="accounts"
                                 itemKey="chain"
                             >
-                                <template #item="{ element, index }">
+                                <template #item="{ element }">
                                     <div
                                         class="inline-flex m-0.5 rounded-full shadow-account-item"
                                         style="cursor: grab"
@@ -350,7 +350,7 @@
 import { Options, Vue } from 'vue-class-component';
 import Button from '@/components/Button.vue';
 import Card from '@/components/Card.vue';
-import AccountItem from '@/components/AccountItem.vue';
+import AccountItem from '@/components/Account/AccountItem.vue';
 import Modal from '@/components/Modal.vue';
 import Loading from '@/components/Loading.vue';
 import LoadingContainer from '@/components/LoadingContainer.vue';

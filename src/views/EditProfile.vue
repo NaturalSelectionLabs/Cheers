@@ -114,7 +114,7 @@ import Button from '@/components/Button.vue';
 import AvatarEditor from '@/components/AvatarEditor.vue';
 import Card from '@/components/Card.vue';
 import EVMpAccountItem from '@/components/EVMpAccountItem.vue';
-import AccountItem from '@/components/AccountItem.vue';
+import AccountItem from '@/components/Account/AccountItem.vue';
 import Input from '@/components/Input.vue';
 import Modal from '@/components/Modal.vue';
 import Loading from '@/components/Loading.vue';

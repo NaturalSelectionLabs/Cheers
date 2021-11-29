@@ -62,8 +62,8 @@
 import { Options, Vue } from 'vue-class-component';
 import Button from '@/components/Button.vue';
 import ImgHolder from '@/components/ImgHolder.vue';
-import GitcoinTitle from '@/components/GitcoinTitle.vue';
-import GitcoinCard from '@/components/GitcoinCard.vue';
+import GitcoinTitle from '@/components/Donation/GitcoinTitle.vue';
+import GitcoinCard from '@/components/Donation/GitcoinCard.vue';
 import config from '@/config';
 import RNSUtils from '@/common/rns';
 import RSS3 from '@/common/rss3';

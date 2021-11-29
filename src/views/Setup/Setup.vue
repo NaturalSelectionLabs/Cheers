@@ -207,7 +207,7 @@ import Button from '@/components/Button.vue';
 import AvatarEditor from '@/components/AvatarEditor.vue';
 import Card from '@/components/Card.vue';
 import BarCard from '@/components/BarCard.vue';
-import AccountItem from '@/components/AccountItem.vue';
+import AccountItem from '@/components/Account/AccountItem.vue';
 import NFTItem from '@/components/NFT/NFTItem.vue';
 import Input from '@/components/Input.vue';
 import Modal from '@/components/Modal.vue';
@@ -224,9 +224,9 @@ import AccountIcon from '@/components/Icons/AccountIcon.vue';
 import FootprintIcon from '@/components/Icons/FootprintIcon.vue';
 
 import { GeneralAsset, GeneralAssetWithTags } from '@/common/types';
-import GitcoinItem from '@/components/GitcoinItem.vue';
+import GitcoinItem from '@/components/Donation/GitcoinItem.vue';
 import RNSUtils from '@/common/rns';
-import FootprintItem from '@/components/FootprintItem.vue';
+import FootprintItem from '@/components/Footprint/FootprintItem.vue';
 import EVMpAccountItem from '@/components/EVMpAccountItem.vue';
 
 @Options({

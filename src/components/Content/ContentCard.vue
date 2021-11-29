@@ -15,7 +15,7 @@
 
 <script lang="ts">
 import { Vue, Options } from 'vue-class-component';
-import ContentBadge from '@/components/ContentBadge.vue';
+import ContentBadge from '@/components/Content/ContentBadge.vue';
 import marked from 'marked';
 
 @Options({

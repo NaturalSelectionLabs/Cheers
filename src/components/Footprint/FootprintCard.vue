@@ -39,7 +39,7 @@
 
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
-import FootprintItem from '@/components/FootprintItem.vue';
+import FootprintItem from '@/components/Footprint/FootprintItem.vue';
 import CalendarIcon from '@/components/Icons/CalendarIcon.vue';
 import LocationIcon from '@/components/Icons/LocationIcon.vue';
 import Button from '@/components/Button.vue';

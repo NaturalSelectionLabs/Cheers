@@ -63,7 +63,7 @@
 import { Options, Vue } from 'vue-class-component';
 import Button from '@/components/Button.vue';
 import ImgHolder from '@/components/ImgHolder.vue';
-import FootprintItem from '@/components/FootprintItem.vue';
+import FootprintItem from '@/components/Footprint/FootprintItem.vue';
 import CalendarIcon from '@/components/Icons/CalendarIcon.vue';
 import LocationIcon from '@/components/Icons/LocationIcon.vue';
 import { POAP } from '@/common/types';

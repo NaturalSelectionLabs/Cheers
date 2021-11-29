@@ -160,7 +160,7 @@ import { GeneralAsset, GeneralAssetWithTags } from '@/common/types';
 import LoadingContainer from '@/components/LoadingContainer.vue';
 import { RSS3Account, RSS3Asset } from 'rss3-next/types/rss3';
 import NFTItem from '@/components/NFT/NFTItem.vue';
-import FootprintItem from '@/components/FootprintItem.vue';
+import FootprintItem from '@/components/Footprint/FootprintItem.vue';
 
 @Options({
     name: 'SetupFootprints',
