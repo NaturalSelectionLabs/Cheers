@@ -38,7 +38,7 @@
                 <Tooltip v-show="isShowingTooltip" text="Copied" viewOption="default" />
             </LinkButton>
             <LinkButton @click="toExternalLink" v-if="website && !isLoadingPersona">
-                <span><i class="bx bx-link align-bottom" />{{ website }}</span>
+                <span><i class="bx bx-link align-bottom" />{{ fixWebsiteURI(website) }}</span>
             </LinkButton>
             <div class="scrollbar-hide max-h-5 flex flex-1 flex-row flex-shrink items-center" v-if="!isLoadingPersona">
                 <slot name="Accounts" />
@@ -93,6 +93,14 @@ export default class Profile extends Vue {
 
     filter(address: string) {
         return `${address.slice(0, 6)}...${address.slice(-4)}`;
+    }
+
+    fixWebsiteURI(website: string) {
+        try {
+            return decodeURI(website);
+        } catch (e) {
+            return website;
+        }
     }
 
     toExternalLink() {
