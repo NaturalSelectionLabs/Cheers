@@ -67,17 +67,10 @@ import FootprintCard from '@/components/Footprint/FootprintCard.vue';
 import config from '@/config';
 import RNSUtils from '@/common/rns';
 import RSS3 from '@/common/rss3';
-import { GeneralAsset, GeneralAssetWithTags } from '@/common/types';
+import { GeneralAsset, GeneralAssetWithTags, Profile } from '@/common/types';
 import { RSS3Asset } from 'rss3-next/types/rss3';
 import { debounce } from 'lodash';
 import { getName } from '@/common/utils';
-
-interface Profile {
-    avatar: string;
-    username: string;
-    address: string;
-    bio: string;
-}
 
 @Options({
     name: 'Footprints',
@@ -94,7 +87,6 @@ export default class Footprints extends Vue {
         address: '',
         bio: '',
     };
-    private defaultAvatar = config.defaultAvatar;
     scrollTop: number = 0;
     lastRoute: string = '';
 

@@ -70,19 +70,13 @@ import Button from '@/components/Button/Button.vue';
 import ImgHolder from '@/components/Common/ImgHolder.vue';
 import EVMpAccountItem from '@/components/Account/EVMpAccountItem.vue';
 import AccountItem from '@/components/Account/AccountItem.vue';
-import RSS3, { IRSS3 } from '@/common/rss3';
-import { RSS3Account, RSS3Index } from 'rss3-next/types/rss3';
+import RSS3 from '@/common/rss3';
+import { RSS3Account } from 'rss3-next/types/rss3';
 import RNSUtils from '@/common/rns';
 import config from '@/config';
 import ContentProviders from '@/common/content-providers';
 import { getName } from '@/common/utils';
-
-interface Profile {
-    avatar: string;
-    username: string;
-    address: string;
-    bio: string;
-}
+import { Profile } from '@/common/types';
 
 @Options({
     name: 'Accounts',
@@ -91,9 +85,9 @@ interface Profile {
 export default class Accounts extends Vue {
     rns: string = '';
     ethAddress: string = '';
-    public isOwner: boolean = false;
-    public accounts: RSS3Account[] = [];
-    public rss3Profile: Profile = {
+    isOwner: boolean = false;
+    accounts: RSS3Account[] = [];
+    rss3Profile: Profile = {
         avatar: config.defaultAvatar,
         username: '',
         address: '',

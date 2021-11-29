@@ -58,20 +58,13 @@ import Button from '@/components/Button/Button.vue';
 import ImgHolder from '@/components/Common/ImgHolder.vue';
 import NFTItem from '@/components/NFT/NFTItem.vue';
 import NFTBadges from '@/components/NFT/NFTBadges.vue';
-import RSS3, { IRSS3 } from '@/common/rss3';
+import RSS3 from '@/common/rss3';
 import RNSUtils from '@/common/rns';
 import config from '@/config';
 import { RSS3Asset } from 'rss3-next/types/rss3';
-import { GeneralAsset, GeneralAssetWithTags } from '@/common/types';
+import { GeneralAsset, GeneralAssetWithTags, Profile } from '@/common/types';
 import { debounce } from 'lodash';
 import { getName } from '@/common/utils';
-
-interface Profile {
-    avatar: string;
-    username: string;
-    address: string;
-    bio: string;
-}
 
 @Options({
     name: 'NFTs',

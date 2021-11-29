@@ -18,98 +18,9 @@
                     @click="toPublicPage(rns, ethAddress)"
                 />
             </div>
-            <section class="m-auto max-w-screen-sm">
-                <GitcoinItem class="mb-4" :imageUrl="grant.logo || defaultAvatar" size="auto" />
-                <div
-                    class="
-                        flex flex-col
-                        gap-4
-                        items-start
-                        justify-start
-                        mt-4
-                        px-5
-                        w-full
-                        text-black text-body-text
-                        border-card
-                        rounded
-                        filter
-                    "
-                >
-                    <div class="w-full">
-                        <h2 class="break-words text-xl font-semibold">
-                            {{ grant.title || 'Inactive Project' }}
-                        </h2>
-                        <div
-                            class="text-gitcoin-title text-sm leading-normal cursor-pointer truncate"
-                            @click="toExternalLink(grant.reference_url)"
-                        >
-                            <i class="bx bx-link align-middle" />
-                            {{ grant.reference_url }}
-                        </div>
-                    </div>
-                    <div class="w-full">
-                        <h2 class="break-words text-xl font-semibold">Description</h2>
-                        <div class="line-clamp-3 break-words text-sm leading-normal">
-                            {{ grant.description || 'No information provided by Gitcoin.' }}
-                        </div>
-                    </div>
-                    <div>
-                        <h2 class="text-xl font-semibold">Contributions</h2>
-                        <h1 class="text-gitcoin-title text-2xl font-semibold">
-                            <vue3-autocounter
-                                ref="counter"
-                                :startAmount="0"
-                                :endAmount="parseInt(donationInfo.length)"
-                                :duration="1"
-                                separator=","
-                                :autoinit="true"
-                            />
-                        </h1>
-                    </div>
-                    <div class="flex flex-col gap-y-2 w-full">
-                        <div
-                            class="flex flex-row gap-x-2 justify-start"
-                            v-for="item in donationInfo"
-                            :key="item.txHash"
-                        >
-                            <div
-                                class="
-                                    flex flex-1 flex-row
-                                    items-center
-                                    justify-between
-                                    px-4
-                                    py-2
-                                    text-black
-                                    bg-body-bg
-                                    rounded-xl
-                                "
-                            >
-                                <div class="flex-shrink pr-2 text-gitcoin-title">
-                                    <vue3-autocounter
-                                        ref="counter"
-                                        :startAmount="0"
-                                        :endAmount="parseFloat(item.formatedAmount)"
-                                        :duration="1"
-                                        separator=","
-                                        :decimals="item.formatedAmount.split('.')[1].length"
-                                        :suffix="item.symbol"
-                                        :autoinit="true"
-                                    />
-                                </div>
-                                <div class="flex-1 w-0 text-right text-gitcoin-title truncate">
-                                    {{ timeDifferent(item.timeStamp) }}
-                                </div>
-                            </div>
-                            <Button
-                                size="sm"
-                                class="ml-1 w-9 h-9 text-gitcoin-btn-m-text bg-gitcoin-btn-m shadow-gitcoin-btn-m"
-                                @click="toScanTx(item)"
-                            >
-                                <i class="bx bx-link-external bx-xs" />
-                            </Button>
-                        </div>
-                    </div>
-                </div>
+            <section class="flex flex-col gap-y-8 m-auto max-w-screen-sm">
+                <GitcoinItem :imageUrl="grant.logo || defaultAvatar" size="auto" />
+                <GitcoinDetails :details="grant" :donationInfo="donationInfo" />
             </section>
         </div>
     </div>
@@ -123,67 +34,32 @@ import GitcoinItem from '@/components/Donation/GitcoinItem.vue';
 import config from '@/config';
 import RNSUtils from '@/common/rns';
 import RSS3 from '@/common/rss3';
-import Vue3Autocounter from 'vue3-autocounter';
 import { getName } from '@/common/utils';
-
-interface Profile {
-    avatar: string;
-    username: string;
-    address: string;
-    bio: string;
-}
-
-export interface GrantInfo {
-    active: boolean;
-    title?: string;
-    slug?: string;
-    description?: string;
-    reference_url?: string;
-    logo?: string;
-    admin_address?: string;
-    amount_received?: string;
-    token_address?: string;
-    token_symbol?: string;
-    contract_address?: string;
-}
-
-type DonationApproach = 'zkSync' | 'Standard';
-export interface DonationInfo {
-    donor: string;
-    tokenAddr?: string;
-    tokenId?: number;
-    amount: string;
-    symbol?: string;
-    formatedAmount?: string;
-    timeStamp: string;
-    txHash: string;
-    approach?: DonationApproach;
-}
+import GitcoinDetails from '@/components/Donation/GitcoinDetails.vue';
+import { DonationInfo, GrantInfo, Profile } from '@/common/types';
 
 @Options({
     name: 'SingleGitcoin',
-    components: { ImgHolder, Button, GitcoinItem, Vue3Autocounter },
+    components: { ImgHolder, Button, GitcoinItem, GitcoinDetails },
 })
 export default class SingleGitcoin extends Vue {
-    public Width: number = Math.min(window.innerWidth - 32, 640);
-    public rns: string = '';
-    public ethAddress: string = '';
-    public rss3Profile: Profile = {
+    rns: string = '';
+    ethAddress: string = '';
+    rss3Profile: Profile = {
         avatar: config.defaultAvatar,
         username: '',
         address: '',
         bio: '',
     };
-    private defaultAvatar = config.defaultAvatar;
 
-    public grant?: GrantInfo = {
+    grant?: GrantInfo = {
         active: true,
         logo: config.defaultAvatar,
         slug: '...',
         reference_url: '...',
         description: '...',
     };
-    public donationInfo?: DonationInfo[] = [];
+    donationInfo?: DonationInfo[] = [];
 
     async mounted() {
         await RSS3.reconnect();
@@ -244,7 +120,7 @@ export default class SingleGitcoin extends Vue {
         return true;
     }
 
-    public async loadGitcoin() {
+    async loadGitcoin() {
         const platform: string = <string>this.$route.params.platform;
         const identity: string = <string>this.$route.params.identity;
         const id: string = <string>this.$route.params.id;
@@ -258,31 +134,8 @@ export default class SingleGitcoin extends Vue {
         }
     }
 
-    public timeDifferent(timeStamp: number) {
-        const date1: any = new Date(timeStamp * 1000);
-        const date2: any = Date.now();
-        const diffTime = Math.abs(date2 - date1);
-        const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-        const diffHours = Math.ceil((diffTime % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        if (diffDays == 0) {
-            return diffHours + ' hours ago';
-        } else if (diffHours == 0) {
-            return diffDays + ' days ago';
-        } else {
-            return diffDays + ' days ' + diffHours + ' hours ago';
-        }
-    }
-
-    public toExternalLink(address: string) {
+    toExternalLink(address: string) {
         window.open(address);
-    }
-
-    toScanTx(item: DonationInfo) {
-        if (item.approach === 'zkSync') {
-            window.open(`https://zkscan.io/explorer/transactions/${item.txHash}`);
-        } else {
-            window.open(`https://etherscan.io/tx/${item.txHash}`);
-        }
     }
 
     toPublicPage(rns: string, ethAddress: string) {

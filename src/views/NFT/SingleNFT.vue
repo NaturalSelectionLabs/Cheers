@@ -58,7 +58,7 @@ import NFTItem from '@/components/NFT/NFTItem.vue';
 import NFTDetail from '@/components/NFT/NFTDetails.vue';
 import AccountItem from '@/components/Account/AccountItem.vue';
 import NFTBadges from '@/components/NFT/NFTBadges.vue';
-import RSS3, { IRSS3 } from '@/common/rss3';
+import RSS3 from '@/common/rss3';
 import RNSUtils from '@/common/rns';
 import { NFT } from '@/common/types';
 import config from '@/config';

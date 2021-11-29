@@ -439,7 +439,7 @@ import RNSUtils from '@/common/rns';
 import { getName } from '@/common/utils';
 import config from '@/config';
 import GitcoinItem from '@/components/Donation/GitcoinItem.vue';
-import { GeneralAsset, GeneralAssetWithTags } from '@/common/types';
+import { GeneralAsset, GeneralAssetWithTags, Profile as ProfileInfo } from '@/common/types';
 
 import NFTIcon from '@/components/Icons/NFTIcon.vue';
 import GitcoinIcon from '@/components/Icons/GitcoinIcon.vue';
@@ -454,18 +454,6 @@ import ContentProviders, { Content } from '@/common/content-providers';
 import Toolbar from '@/components/Profile/Toolbar.vue';
 import FootprintItem from '@/components/Footprint/FootprintItem.vue';
 import EVMpAccountItem from '@/components/Account/EVMpAccountItem.vue';
-
-import activities from '@/common/poap-activity';
-
-// import { useReCaptcha } from 'vue-recaptcha-v3';
-
-interface ProfileInfo {
-    avatar: string;
-    username: string;
-    address: string;
-    bio: string;
-    link: string;
-}
 
 interface Relations {
     followers: RSS3ID[];
@@ -532,7 +520,7 @@ export default class Home extends Vue {
         username: '...',
         address: '',
         bio: '...',
-        link: '',
+        displayAddress: '',
     };
     rss3Relations: Relations = {
         followers: [],
@@ -570,17 +558,6 @@ export default class Home extends Vue {
             lastTS: 0xffffffff,
         },
     ];
-
-    // claimWithCaptcha = setup(() => {
-    //     const { executeRecaptcha, recaptchaLoaded } = useReCaptcha();
-    //     const exec = async (address: string) => {
-    //         await recaptchaLoaded();
-    //         return await executeRecaptcha(address);
-    //     };
-    //     return {
-    //         exec,
-    //     };
-    // });
 
     async mounted() {
         this.isPCLayout = window.innerWidth >= 768;
@@ -650,7 +627,7 @@ export default class Home extends Vue {
                     const splits = fieldPattern.exec(field) || [];
                     switch (splits[1]) {
                         case 'SITE':
-                            this.rss3Profile.link = splits[2];
+                            this.rss3Profile.displayAddress = splits[2];
                             break;
                         default:
                             // Do nothing
@@ -1166,48 +1143,6 @@ export default class Home extends Vue {
         }
     }
 
-    // async claimSpecialPOAP() {
-    //     // Special POAPs: Check status && give notice
-    //     switch (this.footprints[0].id) {
-    //         case 'active':
-    //             const res = await activities.mint(this.ethAddress, await this.claimWithCaptcha.exec(this.ethAddress));
-    //             if (res?.errno) {
-    //                 switch (res.errno) {
-    //                     case 1403:
-    //                         this.notice = 'Invalid address. This should be a Internal Server Error.';
-    //                         break;
-    //                     case 1404:
-    //                         this.notice = 'This address is not on RSS3 currently.';
-    //                         break;
-    //                     case 1405:
-    //                         this.notice = 'Sorry, the limited chances ran out.';
-    //                         break;
-    //                     case 1409:
-    //                         this.notice = 'Sorry, please try again.';
-    //                         break;
-    //                     default:
-    //                         this.notice = 'Sorry, something went wrong.';
-    //                         break;
-    //                 }
-    //             } else {
-    //                 this.footprints[0].id = 'pending';
-    //                 if (res?.data?.tx_hash) {
-    //                     this.notice = 'You have already submit the request. Please be patient.';
-    //                 } else {
-    //                     this.notice = 'Your special footprint is on the way~ Come back later!';
-    //                 }
-    //             }
-    //             this.isShowingNotice = true;
-    //             break;
-    //         case 'pending':
-    //             this.notice = 'You have already submit the request. Please be patient.';
-    //             this.isShowingNotice = true;
-    //             break;
-    //         default:
-    //             break;
-    //     }
-    // }
-
     toSetupPage() {
         this.$gtag.event('visitSetupPage', { userid: this.rns || this.ethAddress });
         this.$router.push(`/profile`);
@@ -1363,7 +1298,7 @@ export default class Home extends Vue {
                 username: '...',
                 address: '',
                 bio: '...',
-                link: '',
+                displayAddress: '',
             };
             this.isContentsHaveMore = true;
             this.isContentsHaveMoreEachProvider = [

@@ -19,41 +19,7 @@
             </div>
             <section class="m-auto max-w-screen-sm">
                 <FootprintItem class="mb-4" :imageUrl="details.event.image_url" size="auto" />
-                <div class="flex flex-col mt-4 px-5 py-4 w-full text-body-text filter">
-                    <div class="flex flex-row items-center justify-between">
-                        <h2 class="text-xl font-semibold truncate">{{ details.event.name }}</h2>
-                        <Button
-                            v-if="details.event.event_url"
-                            size="sm"
-                            class="ml-1 w-9 h-9 text-footprint-btn-m-text bg-footprint-btn-m shadow-footprint-btn-m"
-                            @click="toExternalLink"
-                        >
-                            <i class="bx bx-link-external bx-xs" />
-                        </Button>
-                    </div>
-                    <div v-if="details.event.event_url" class="my-2 text-footprint-title truncate">
-                        <i class="bx bx-link align-middle mr-2" />
-                        <span>{{ details.event.event_url }}</span>
-                    </div>
-                    <section class="flex flex-col gap-2 text-footprint-title text-sm">
-                        <div class="flex flex-row gap-2 items-center">
-                            <CalendarIcon />
-                            <span class="text-body-text">{{ getDate() }}</span>
-                        </div>
-                        <div class="flex flex-row gap-2 items-center">
-                            <LocationIcon />
-                            <span class="text-body-text">{{
-                                details.event.city || details.event.country || 'Metaverse'
-                            }}</span>
-                        </div>
-                    </section>
-                    <section v-if="details.event.description">
-                        <h3 class="my-2 text-footprint-title text-lg font-medium capitalize">Description</h3>
-                        <p class="text-body-text font-medium leading-loose">
-                            {{ details.event.description }}
-                        </p>
-                    </section>
-                </div>
+                <FootprintDetails :details="details" />
             </section>
         </div>
     </div>
@@ -64,24 +30,16 @@ import { Options, Vue } from 'vue-class-component';
 import Button from '@/components/Button/Button.vue';
 import ImgHolder from '@/components/Common/ImgHolder.vue';
 import FootprintItem from '@/components/Footprint/FootprintItem.vue';
-import CalendarIcon from '@/components/Icons/CalendarIcon.vue';
-import LocationIcon from '@/components/Icons/LocationIcon.vue';
-import { POAP } from '@/common/types';
+import { POAP, Profile } from '@/common/types';
 import RSS3 from '@/common/rss3';
 import config from '@/config';
 import RNSUtils from '@/common/rns';
 import { getName } from '@/common/utils';
-
-interface Profile {
-    avatar: string;
-    username: string;
-    address: string;
-    bio: string;
-}
+import FootprintDetails from '@/components/Footprint/FootprintDetails.vue';
 
 @Options({
     name: 'SingleFootprint',
-    components: { ImgHolder, Button, FootprintItem, CalendarIcon, LocationIcon },
+    components: { ImgHolder, Button, FootprintItem, FootprintDetails },
 })
 export default class SingleFootprint extends Vue {
     rns: string = '';
@@ -188,10 +146,6 @@ export default class SingleFootprint extends Vue {
         return true;
     }
 
-    toExternalLink() {
-        window.open(this.details.event.event_url);
-    }
-
     back() {
         if (window.history.state.back) {
             window.history.back();
@@ -200,18 +154,6 @@ export default class SingleFootprint extends Vue {
                 (config.subDomain.isSubDomainMode ? '' : `/${this.rns || this.ethAddress}`) + `/footprints`,
             );
         }
-    }
-
-    getDate(): string {
-        return this.details.event.start_date
-            ? this.formatDate(this.details.event.start_date) +
-                  (this.details.event.end_date && this.details.event.end_date !== this.details.event.start_date
-                      ? ` ~ ${this.formatDate(this.details.event.end_date)}`
-                      : '')
-            : 'Loading...';
-    }
-    formatDate(ts: string): string {
-        return new Date(parseInt(ts) * 1000).toLocaleDateString('en-US');
     }
 }
 </script>

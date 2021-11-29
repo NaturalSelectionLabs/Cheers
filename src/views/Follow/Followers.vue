@@ -44,15 +44,7 @@ import RNSUtils from '@/common/rns';
 import config from '@/config';
 import { reverse } from 'lodash';
 import { getName } from '@/common/utils';
-
-interface Profile {
-    avatar: string;
-    username: string;
-    address: string;
-    bio: string;
-    rns: string;
-    displayAddress: string;
-}
+import { Profile } from '@/common/types';
 
 @Options({
     name: 'Followers',

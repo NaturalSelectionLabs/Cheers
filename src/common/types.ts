@@ -60,6 +60,7 @@ export interface DonationInfo {
     formatedAmount?: string;
     timeStamp: string;
     txHash: string;
+    approach?: 'zkSync' | 'Standard';
 }
 
 export interface DonationDetailByGrant {
@@ -118,4 +119,13 @@ export interface GeneralAsset {
 
 export interface GeneralAssetWithTags extends GeneralAsset {
     tags?: string[];
+}
+
+export interface Profile {
+    avatar: string;
+    username: string;
+    address: string;
+    bio: string;
+    rns?: string;
+    displayAddress?: string;
 }
