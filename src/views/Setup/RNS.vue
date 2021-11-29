@@ -86,13 +86,13 @@
 
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
-import Button from '@/components/Button.vue';
+import Button from '@/components/Button/Button.vue';
 import RSS3, { IRSS3 } from '@/common/rss3';
 import RNSUtils from '@/common/rns';
-import Modal from '@/components/Modal.vue';
-import Input from '@/components/Input.vue';
-import Loading from '@/components/Loading.vue';
-import LoadingContainer from '@/components/LoadingContainer.vue';
+import Modal from '@/components/Common/Modal.vue';
+import Input from '@/components/Input/Input.vue';
+import Loading from '@/components/Loading/Loading.vue';
+import LoadingContainer from '@/components/Loading/LoadingContainer.vue';
 import config from '@/config';
 import { routes } from '@/router';
 function validateNetwork(chain: number | null, cb?: (chain: number | null) => void) {

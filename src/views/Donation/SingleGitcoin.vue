@@ -117,8 +117,8 @@
 
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
-import Button from '@/components/Button.vue';
-import ImgHolder from '@/components/ImgHolder.vue';
+import Button from '@/components/Button/Button.vue';
+import ImgHolder from '@/components/Common/ImgHolder.vue';
 import GitcoinItem from '@/components/Donation/GitcoinItem.vue';
 import config from '@/config';
 import RNSUtils from '@/common/rns';

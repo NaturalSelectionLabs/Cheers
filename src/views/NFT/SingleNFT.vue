@@ -53,7 +53,7 @@
 
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
-import Button from '@/components/Button.vue';
+import Button from '@/components/Button/Button.vue';
 import NFTItem from '@/components/NFT/NFTItem.vue';
 import NFTDetail from '@/components/NFT/NFTDetails.vue';
 import AccountItem from '@/components/Account/AccountItem.vue';

@@ -42,7 +42,7 @@ import { Options, Vue } from 'vue-class-component';
 import FootprintItem from '@/components/Footprint/FootprintItem.vue';
 import CalendarIcon from '@/components/Icons/CalendarIcon.vue';
 import LocationIcon from '@/components/Icons/LocationIcon.vue';
-import Button from '@/components/Button.vue';
+import Button from '@/components/Button/Button.vue';
 
 @Options({
     props: {

@@ -61,8 +61,8 @@
 
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
-import Button from '@/components/Button.vue';
-import ImgHolder from '@/components/ImgHolder.vue';
+import Button from '@/components/Button/Button.vue';
+import ImgHolder from '@/components/Common/ImgHolder.vue';
 import FootprintItem from '@/components/Footprint/FootprintItem.vue';
 import CalendarIcon from '@/components/Icons/CalendarIcon.vue';
 import LocationIcon from '@/components/Icons/LocationIcon.vue';

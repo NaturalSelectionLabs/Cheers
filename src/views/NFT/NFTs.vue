@@ -54,8 +54,8 @@
 
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
-import Button from '@/components/Button.vue';
-import ImgHolder from '@/components/ImgHolder.vue';
+import Button from '@/components/Button/Button.vue';
+import ImgHolder from '@/components/Common/ImgHolder.vue';
 import NFTItem from '@/components/NFT/NFTItem.vue';
 import NFTBadges from '@/components/NFT/NFTBadges.vue';
 import RSS3, { IRSS3 } from '@/common/rss3';

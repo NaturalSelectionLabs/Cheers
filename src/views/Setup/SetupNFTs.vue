@@ -167,17 +167,17 @@
 <script lang="ts">
 import { nextTick } from 'vue';
 import { Options, Vue } from 'vue-class-component';
-import Button from '@/components/Button.vue';
-import Card from '@/components/Card.vue';
+import Button from '@/components/Button/Button.vue';
+import Card from '@/components/Card/Card.vue';
 import NFTItem from '@/components/NFT/NFTItem.vue';
 import { RSS3Asset } from 'rss3-next/types/rss3';
 import RSS3, { IRSS3 } from '@/common/rss3';
 import config from '@/config';
 
 import draggable from 'vuedraggable';
-import LoadingContainer from '@/components/LoadingContainer.vue';
+import LoadingContainer from '@/components/Loading/LoadingContainer.vue';
 import { GeneralAsset, GeneralAssetWithTags } from '@/common/types';
-import ImgHolder from '@/components/ImgHolder.vue';
+import ImgHolder from '@/components/Common/ImgHolder.vue';
 
 interface RSS3AssetCollectionShow {
     collection_name: string;

@@ -25,8 +25,8 @@
 
 <script lang="ts">
 import { Vue, Options } from 'vue-class-component';
-import Button from '@/components/Button.vue';
-import Tooltip from '@/components/Tooltip.vue';
+import Button from '@/components/Button/Button.vue';
+import Tooltip from '@/components/Common/Tooltip.vue';
 import { hex2rgb, hslToRgb, rgb2hex, rgbToHsl } from '@/common/utils';
 
 @Options({

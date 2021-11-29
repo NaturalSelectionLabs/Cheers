@@ -56,8 +56,8 @@
 
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
-import ImgHolder from '@/components/ImgHolder.vue';
-import LinkButton from '@/components/LinkButton.vue';
+import ImgHolder from '@/components/Common/ImgHolder.vue';
+import LinkButton from '@/components/Button/LinkButton.vue';
 import config from '@/config';
 
 @Options({

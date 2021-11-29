@@ -203,16 +203,16 @@
 
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
-import Button from '@/components/Button.vue';
-import AvatarEditor from '@/components/AvatarEditor.vue';
-import Card from '@/components/Card.vue';
-import BarCard from '@/components/BarCard.vue';
+import Button from '@/components/Button/Button.vue';
+import AvatarEditor from '@/components/Profile/AvatarEditor.vue';
+import Card from '@/components/Card/Card.vue';
+import BarCard from '@/components/Card/BarCard.vue';
 import AccountItem from '@/components/Account/AccountItem.vue';
 import NFTItem from '@/components/NFT/NFTItem.vue';
-import Input from '@/components/Input.vue';
-import Modal from '@/components/Modal.vue';
-import Loading from '@/components/Loading.vue';
-import LoadingContainer from '@/components/LoadingContainer.vue';
+import Input from '@/components/Input/Input.vue';
+import Modal from '@/components/Common/Modal.vue';
+import Loading from '@/components/Loading/Loading.vue';
+import LoadingContainer from '@/components/Loading/LoadingContainer.vue';
 import { RSS3Account, RSS3Asset, RSS3Profile } from 'rss3-next/types/rss3';
 import RSS3, { IRSS3 } from '@/common/rss3';
 import config from '@/config';
@@ -227,7 +227,7 @@ import { GeneralAsset, GeneralAssetWithTags } from '@/common/types';
 import GitcoinItem from '@/components/Donation/GitcoinItem.vue';
 import RNSUtils from '@/common/rns';
 import FootprintItem from '@/components/Footprint/FootprintItem.vue';
-import EVMpAccountItem from '@/components/EVMpAccountItem.vue';
+import EVMpAccountItem from '@/components/Account/EVMpAccountItem.vue';
 
 @Options({
     name: 'Setup',

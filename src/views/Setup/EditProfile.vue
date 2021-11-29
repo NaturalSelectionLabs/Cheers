@@ -110,21 +110,21 @@
 
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
-import Button from '@/components/Button.vue';
-import AvatarEditor from '@/components/AvatarEditor.vue';
-import Card from '@/components/Card.vue';
-import EVMpAccountItem from '@/components/EVMpAccountItem.vue';
+import Button from '@/components/Button/Button.vue';
+import AvatarEditor from '@/components/Profile/AvatarEditor.vue';
+import Card from '@/components/Card/Card.vue';
+import EVMpAccountItem from '@/components/Account/EVMpAccountItem.vue';
 import AccountItem from '@/components/Account/AccountItem.vue';
-import Input from '@/components/Input.vue';
-import Modal from '@/components/Modal.vue';
-import Loading from '@/components/Loading.vue';
-import LoadingContainer from '@/components/LoadingContainer.vue';
+import Input from '@/components/Input/Input.vue';
+import Modal from '@/components/Common/Modal.vue';
+import Loading from '@/components/Loading/Loading.vue';
+import LoadingContainer from '@/components/Loading/LoadingContainer.vue';
 import { RSS3Account, RSS3Profile } from 'rss3-next/types/rss3';
 import RSS3, { IRSS3 } from '@/common/rss3';
 import config from '@/config';
-import LinkButton from '@/components/LinkButton.vue';
+import LinkButton from '@/components/Button/LinkButton.vue';
 import RNSUtils from '@/common/rns';
-import BarCard from '@/components/BarCard.vue';
+import BarCard from '@/components/Card/BarCard.vue';
 
 @Options({
     name: 'EditProfile',

@@ -34,8 +34,8 @@
 
 <script lang="ts">
 import { Vue, Options } from 'vue-class-component';
-import Button from '@/components/Button.vue';
-import Tooltip from '@/components/Tooltip.vue';
+import Button from '@/components/Button/Button.vue';
+import Tooltip from '@/components/Common/Tooltip.vue';
 
 @Options({
     components: { Tooltip, Button },

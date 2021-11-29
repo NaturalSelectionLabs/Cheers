@@ -426,15 +426,15 @@
 
 <script lang="ts">
 import { Options, Vue, setup } from 'vue-class-component';
-import Button from '@/components/Button.vue';
-import Card from '@/components/Card.vue';
-import BarCard from '@/components/BarCard.vue';
-import Profile from '@/components/Profile.vue';
+import Button from '@/components/Button/Button.vue';
+import Card from '@/components/Card/Card.vue';
+import BarCard from '@/components/Card/BarCard.vue';
+import Profile from '@/components/Profile/Profile.vue';
 import AccountItem from '@/components/Account/AccountItem.vue';
 import NFTItem from '@/components/NFT/NFTItem.vue';
 import RSS3, { IRSS3 } from '@/common/rss3';
 import { RSS3Account, RSS3Asset, RSS3ID, RSS3Index } from 'rss3-next/types/rss3';
-import Modal from '@/components/Modal.vue';
+import Modal from '@/components/Common/Modal.vue';
 import RNSUtils from '@/common/rns';
 import { getName } from '@/common/utils';
 import config from '@/config';
@@ -445,15 +445,15 @@ import NFTIcon from '@/components/Icons/NFTIcon.vue';
 import GitcoinIcon from '@/components/Icons/GitcoinIcon.vue';
 import ContentIcon from '@/components/Icons/ContentIcon.vue';
 import FootprintIcon from '@/components/Icons/FootprintIcon.vue';
-import Logo from '@/components/Logo.vue';
+import Logo from '@/components/Icons/Logo.vue';
 
 import FootprintCard from '@/components/Footprint/FootprintCard.vue';
 import ContentCard from '@/components/Content/ContentCard.vue';
 import { debounce } from 'lodash';
 import ContentProviders, { Content } from '@/common/content-providers';
-import Toolbar from '@/components/Toolbar.vue';
+import Toolbar from '@/components/Profile/Toolbar.vue';
 import FootprintItem from '@/components/Footprint/FootprintItem.vue';
-import EVMpAccountItem from '@/components/EVMpAccountItem.vue';
+import EVMpAccountItem from '@/components/Account/EVMpAccountItem.vue';
 
 import activities from '@/common/poap-activity';
 

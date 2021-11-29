@@ -66,9 +66,9 @@
 
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
-import Button from '@/components/Button.vue';
-import ImgHolder from '@/components/ImgHolder.vue';
-import EVMpAccountItem from '@/components/EVMpAccountItem.vue';
+import Button from '@/components/Button/Button.vue';
+import ImgHolder from '@/components/Common/ImgHolder.vue';
+import EVMpAccountItem from '@/components/Account/EVMpAccountItem.vue';
 import AccountItem from '@/components/Account/AccountItem.vue';
 import RSS3, { IRSS3 } from '@/common/rss3';
 import { RSS3Account, RSS3Index } from 'rss3-next/types/rss3';

@@ -60,8 +60,8 @@
 
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
-import Button from '@/components/Button.vue';
-import ImgHolder from '@/components/ImgHolder.vue';
+import Button from '@/components/Button/Button.vue';
+import ImgHolder from '@/components/Common/ImgHolder.vue';
 import GitcoinTitle from '@/components/Donation/GitcoinTitle.vue';
 import GitcoinCard from '@/components/Donation/GitcoinCard.vue';
 import config from '@/config';

@@ -46,7 +46,7 @@
 
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
-import Button from '@/components/Button.vue';
+import Button from '@/components/Button/Button.vue';
 
 @Options({
     components: {

@@ -510,23 +510,23 @@
 
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
-import Button from '@/components/Button.vue';
-import Input from '@/components/Input.vue';
-import AvatarEditor from '@/components/AvatarEditor.vue';
-import Card from '@/components/Card.vue';
+import Button from '@/components/Button/Button.vue';
+import Input from '@/components/Input/Input.vue';
+import AvatarEditor from '@/components/Profile/AvatarEditor.vue';
+import Card from '@/components/Card/Card.vue';
 import FollowerCard from '@/components/FollowerCard.vue';
 import AccountItem from '@/components/Account/AccountItem.vue';
 import NFTItem from '@/components/NFT/NFTItem.vue';
 import NFTBadges from '@/components/NFT/NFTBadges.vue';
 import ScanTag from '@/components/NFT/ScanTag.vue';
-import Modal from '@/components/Modal.vue';
+import Modal from '@/components/Common/Modal.vue';
 import RSS3 from '@/common/rss3';
 import FootprintCard from '@/components/Footprint/FootprintCard.vue';
 
 import draggable from 'vuedraggable';
 
-import Loading from '@/components/Loading.vue';
-import BarCard from '@/components/BarCard.vue';
+import Loading from '@/components/Loading/Loading.vue';
+import BarCard from '@/components/Card/BarCard.vue';
 
 import config from '@/config';
 

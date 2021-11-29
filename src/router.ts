@@ -1,29 +1,27 @@
-import { createRouter, createWebHistory } from 'vue-router';
-
+import config from '@/config';
+import Accounts from '@/views/Account/Accounts.vue';
+import Gitcoins from '@/views/Donation/Gitcoins.vue';
+import SingleGitcoin from '@/views/Donation/SingleGitcoin.vue';
+import Followers from '@/views/Follow/Followers.vue';
+import Followings from '@/views/Follow/Followings.vue';
+import Footprints from '@/views/Footprint/Footprints.vue';
+import SingleFootprint from '@/views/Footprint/SingleFootprint.vue';
+import Home from '@/views/Home.vue';
 import Index from '@/views/Index.vue';
+import NFTs from '@/views/NFT/NFTs.vue';
+import SingleNFT from '@/views/NFT/SingleNFT.vue';
+import EditProfile from '@/views/Setup/EditProfile.vue';
+import RNS from '@/views/Setup/RNS.vue';
+import RNSPending from '@/views/Setup/RNSPending.vue';
+import Setup from '@/views/Setup/Setup.vue';
+import SetupAccounts from '@/views/Setup/SetupAccounts.vue';
+import SetupFootprints from '@/views/Setup/SetupFootprints.vue';
+import SetupGitcoins from '@/views/Setup/SetupGitcoins.vue';
+import SetupNFTs from '@/views/Setup/SetupNFTs.vue';
 /* IFTRUE_isDevelop */
 import Test from '@/views/Test.vue';
 /* FITRUE_isDevelop */
-import Home from '@/views/Home.vue';
-import Followings from '@/views/Follow/Followings.vue';
-import Followers from '@/views/Follow/Followers.vue';
-import Accounts from '@/views/Account/Accounts.vue';
-import NFTs from '@/views/NFT/NFTs.vue';
-import Gitcoins from '@/views/Donation/Gitcoins.vue';
-import Footprints from '@/views/Footprint/Footprints.vue';
-import SingleNFT from '@/views/NFT/SingleNFT.vue';
-import SingleGitcoin from '@/views/Donation/SingleGitcoin.vue';
-import SingleFootprint from '@/views/Footprint/SingleFootprint.vue';
-import Setup from '@/views/Setup/Setup.vue';
-import SetupAccounts from '@/views/Setup/SetupAccounts.vue';
-import SetupNFTs from '@/views/Setup/SetupNFTs.vue';
-import SetupGitcoins from '@/views/Setup/SetupGitcoins.vue';
-import SetupFootprints from '@/views/Setup/SetupFootprints.vue';
-import RNS from '@/views/Setup/RNS.vue';
-import EditProfile from '@/views/EditProfile.vue';
-import RNSPending from '@/views/Setup/RNSPending.vue';
-
-import config from '@/config';
+import { createRouter, createWebHistory } from 'vue-router';
 
 export const routes = [
     /* IFTRUE_isDevelop */

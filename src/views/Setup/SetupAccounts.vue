@@ -348,12 +348,12 @@
 
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
-import Button from '@/components/Button.vue';
-import Card from '@/components/Card.vue';
+import Button from '@/components/Button/Button.vue';
+import Card from '@/components/Card/Card.vue';
 import AccountItem from '@/components/Account/AccountItem.vue';
-import Modal from '@/components/Modal.vue';
-import Loading from '@/components/Loading.vue';
-import LoadingContainer from '@/components/LoadingContainer.vue';
+import Modal from '@/components/Common/Modal.vue';
+import Loading from '@/components/Loading/Loading.vue';
+import LoadingContainer from '@/components/Loading/LoadingContainer.vue';
 import { RSS3Account, RSS3Index } from 'rss3-next/types/rss3';
 import RSS3, { IRSS3 } from '@/common/rss3';
 import RNSUtils from '@/common/rns';
@@ -361,9 +361,9 @@ import config from '@/config';
 import ContentProviders from '@/common/content-providers';
 
 import draggable from 'vuedraggable';
-import Input from '@/components/Input.vue';
-import ImgHolder from '@/components/ImgHolder.vue';
-import EVMpAccountItem from '@/components/EVMpAccountItem.vue';
+import Input from '@/components/Input/Input.vue';
+import ImgHolder from '@/components/Common/ImgHolder.vue';
+import EVMpAccountItem from '@/components/Account/EVMpAccountItem.vue';
 
 @Options({
     name: 'SetupAccounts',

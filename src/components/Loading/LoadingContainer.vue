@@ -8,7 +8,7 @@
 
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
-import Loading from '@/components/Loading.vue';
+import Loading from '@/components/Loading/Loading.vue';
 @Options({
     components: {
         Loading,

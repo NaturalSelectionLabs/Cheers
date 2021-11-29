@@ -150,14 +150,14 @@
 
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
-import Button from '@/components/Button.vue';
-import Card from '@/components/Card.vue';
+import Button from '@/components/Button/Button.vue';
+import Card from '@/components/Card/Card.vue';
 import draggable from 'vuedraggable';
-import ImgHolder from '@/components/ImgHolder.vue';
+import ImgHolder from '@/components/Common/ImgHolder.vue';
 import RSS3, { IRSS3 } from '@/common/rss3';
 import config from '@/config';
 import { GeneralAsset, GeneralAssetWithTags } from '@/common/types';
-import LoadingContainer from '@/components/LoadingContainer.vue';
+import LoadingContainer from '@/components/Loading/LoadingContainer.vue';
 import { RSS3Asset } from 'rss3-next/types/rss3';
 import GitcoinItem from '@/components/Donation/GitcoinItem.vue';
 
