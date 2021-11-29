@@ -41,7 +41,7 @@
                     <NFTItem
                         :imageUrl="details.animation_url || details.image_url"
                         :poster-url="details.image_url"
-                        :size="NFTWidth"
+                        size="auto"
                         :is-showing-details="true"
                     />
                 </div>
@@ -71,7 +71,6 @@ import { getName } from '@/common/utils';
 export default class SingleNFT extends Vue {
     rns: string = '';
     ethAddress: string = '';
-    NFTWidth: number = Math.min(window.innerWidth - 32, 640);
     private details: NFT = {
         chain: '',
         token_id: '',

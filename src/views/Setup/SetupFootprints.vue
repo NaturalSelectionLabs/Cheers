@@ -158,15 +158,13 @@ import RSS3, { IRSS3 } from '@/common/rss3';
 import config from '@/config';
 import { GeneralAsset, GeneralAssetWithTags } from '@/common/types';
 import LoadingContainer from '@/components/LoadingContainer.vue';
-import { RSS3Account, RSS3Asset } from 'rss3-next/types/rss3';
-import NFTItem from '@/components/NFT/NFTItem.vue';
+import { RSS3Asset } from 'rss3-next/types/rss3';
 import FootprintItem from '@/components/Footprint/FootprintItem.vue';
 
 @Options({
     name: 'SetupFootprints',
     components: {
         FootprintItem,
-        NFTItem,
         LoadingContainer,
         Button,
         Card,
