@@ -32,10 +32,11 @@
                 md:flex-row md:col-start-2 md:row-start-2 md:items-center
             "
         >
-            <LinkButton class="relative" @click="emitClickAddress">
-                <span v-if="rns">{{ rns }}{{ suffix }}</span>
-                <span v-else>{{ filter(address) }}</span>
-                <Tooltip v-show="isShowingTooltip" text="Copied" viewOption="default" />
+            <LinkButton @click="emitClickAddress">
+                <transition name="tip-fade" mode="out-in">
+                    <span v-if="isShowingTooltip">Copied</span>
+                    <span v-else>{{ rns ? rns + suffix : filter(address) }}</span>
+                </transition>
             </LinkButton>
             <LinkButton @click="toExternalLink" v-if="website && !isLoadingPersona">
                 <span><i class="bx bx-link align-bottom" />{{ fixWebsiteURI(website) }}</span>
@@ -58,10 +59,9 @@ import { Options, Vue } from 'vue-class-component';
 import ImgHolder from '@/components/ImgHolder.vue';
 import LinkButton from '@/components/LinkButton.vue';
 import config from '@/config';
-import Tooltip from '@/components/Tooltip.vue';
 
 @Options({
-    components: { Tooltip, ImgHolder, LinkButton },
+    components: { ImgHolder, LinkButton },
     props: {
         avatar: String,
         username: String,
@@ -113,7 +113,7 @@ export default class Profile extends Vue {
         this.isShowingTooltip = true;
         setTimeout(() => {
             this.isShowingTooltip = false;
-        }, 2000);
+        }, 1500);
     }
 }
 </script>
@@ -122,6 +122,7 @@ export default class Profile extends Vue {
 @layer components {
     .stats-container {
         @apply mb-2 w-16 text-primary-text cursor-pointer;
+
         .stats-number {
             @apply text-xl font-semibold;
         }
@@ -129,6 +130,16 @@ export default class Profile extends Vue {
         .stats-type {
             @apply text-base font-normal leading-none;
         }
+    }
+
+    .tip-fade-enter-active,
+    .tip-fade-leave-active {
+        transition: opacity 0.5s ease;
+    }
+
+    .tip-fade-enter-from,
+    .tip-fade-leave-to {
+        opacity: 0;
     }
 }
 </style>
