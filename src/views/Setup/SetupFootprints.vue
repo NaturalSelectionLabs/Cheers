@@ -51,7 +51,7 @@
                                 <FootprintItem
                                     class="inline-flex mx-0.5"
                                     style="cursor: grab"
-                                    :size="70"
+                                    size="md"
                                     :imageUrl="element.info.image_preview_url"
                                 />
                             </template>
@@ -106,7 +106,7 @@
                                 <FootprintItem
                                     class="inline-flex mx-0.5"
                                     style="cursor: grab"
-                                    :size="70"
+                                    size="md"
                                     :imageUrl="element.info.image_preview_url"
                                 />
                             </template>

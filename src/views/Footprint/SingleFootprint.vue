@@ -18,7 +18,7 @@
                 />
             </div>
             <section class="m-auto max-w-screen-sm">
-                <FootprintItem class="mb-4" :imageUrl="details.event.image_url" :size="FootprintWidth" />
+                <FootprintItem class="mb-4" :imageUrl="details.event.image_url" size="auto" />
                 <div class="flex flex-col mt-4 px-5 py-4 w-full text-body-text filter">
                     <div class="flex flex-row items-center justify-between">
                         <h2 class="text-xl font-semibold truncate">{{ details.event.name }}</h2>
@@ -86,7 +86,6 @@ interface Profile {
 export default class SingleFootprint extends Vue {
     rns: string = '';
     ethAddress: string = '';
-    FootprintWidth: number = Math.min(window.innerWidth - 32, 640);
     rss3Profile: Profile = {
         avatar: config.defaultAvatar,
         username: '',

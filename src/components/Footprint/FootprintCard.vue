@@ -2,7 +2,7 @@
     <div class="flex flex-row gap-2 justify-start p-4">
         <FootprintItem
             :imageUrl="imageUrl"
-            :size="78"
+            size="lg"
             class="flex-shrink-0"
             :class="{
                 'opacity-50 animate-bounce': special,

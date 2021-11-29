@@ -119,7 +119,7 @@
                             class="inline-flex mx-0.5"
                             v-for="asset in footprints"
                             :key="asset.platform + asset.identity + asset.id"
-                            :size="40"
+                            size="sm"
                             :image-url="asset.info.image_preview_url"
                         />
                     </template>

@@ -37,7 +37,6 @@ module.exports = {
                     bg: 'var(--color-body-bg)',
                     text: 'var(--color-body-text)',
                 },
-
                 account: {
                     border: 'var(--color-account-border)',
                     title: 'var(--color-account-title)',
@@ -207,11 +206,13 @@ module.exports = {
                 serif: 'Times New Roman, SourceHanSerif, SourceHanSerifSC, SourceHanSerifTC, SourceHanSerifK, Times, serif',
             },
             width: {
+                19: '4.875rem', //78px, footprint item in footprint card
                 27: '6.75rem', //108px, scan tag width
                 45: '11.25rem', //180px, discard & save button width,
                 50: '12.5rem', //200px
             },
             height: {
+                19: '4.875rem',
                 50: '12.5rem', //200px
                 72: '18rem',
                 112: '28rem',
