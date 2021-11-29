@@ -1,23 +1,23 @@
 import config from '@/config';
 import Accounts from '@/views/Account/Accounts.vue';
 import Gitcoins from '@/views/Donation/Gitcoins.vue';
+import SetupGitcoins from '@/views/Donation/SetupGitcoins.vue';
 import SingleGitcoin from '@/views/Donation/SingleGitcoin.vue';
 import Followers from '@/views/Follow/Followers.vue';
 import Followings from '@/views/Follow/Followings.vue';
 import Footprints from '@/views/Footprint/Footprints.vue';
+import SetupFootprints from '@/views/Footprint/SetupFootprints.vue';
 import SingleFootprint from '@/views/Footprint/SingleFootprint.vue';
 import Home from '@/views/Home.vue';
 import Index from '@/views/Index.vue';
 import NFTs from '@/views/NFT/NFTs.vue';
+import SetupNFTs from '@/views/NFT/SetupNFTs.vue';
 import SingleNFT from '@/views/NFT/SingleNFT.vue';
 import EditProfile from '@/views/Setup/EditProfile.vue';
 import RNS from '@/views/Setup/RNS.vue';
 import RNSPending from '@/views/Setup/RNSPending.vue';
 import Setup from '@/views/Setup/Setup.vue';
 import SetupAccounts from '@/views/Setup/SetupAccounts.vue';
-import SetupFootprints from '@/views/Setup/SetupFootprints.vue';
-import SetupGitcoins from '@/views/Setup/SetupGitcoins.vue';
-import SetupNFTs from '@/views/Setup/SetupNFTs.vue';
 /* IFTRUE_isDevelop */
 import Test from '@/views/Test.vue';
 /* FITRUE_isDevelop */

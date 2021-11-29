@@ -67,10 +67,9 @@ import GitcoinCard from '@/components/Donation/GitcoinCard.vue';
 import config from '@/config';
 import RNSUtils from '@/common/rns';
 import RSS3 from '@/common/rss3';
-import { GeneralAsset, GeneralAssetWithTags, Profile } from '@/common/types';
-import { RSS3Asset } from 'rss3-next/types/rss3';
+import { GeneralAssetWithTags, Profile } from '@/common/types';
 import { debounce } from 'lodash';
-import { getName } from '@/common/utils';
+import utils, { getName } from '@/common/utils';
 
 @Options({
     name: 'Gitcoins',
@@ -122,7 +121,13 @@ export default class Gitcoins extends Vue {
 
         const gitcoinsData = await RSS3.getAssetProfile(this.ethAddress, 'Gitcoin-Donation');
         if (gitcoinsData) {
-            await this.loadGitcoin(await rss3.assets.get(this.ethAddress), gitcoinsData.assets);
+            const { listed } = await utils.initAssets(
+                await rss3.assets.get(this.ethAddress),
+                gitcoinsData.assets,
+                'Gitcoin-Donation',
+            );
+            this.gitcoins = listed;
+            this.grants = this.gitcoins.length;
         }
     }
 
@@ -164,56 +169,6 @@ export default class Gitcoins extends Vue {
         }
 
         return true;
-    }
-
-    private getAssetOrder(asset: RSS3Asset) {
-        let order = -1;
-        asset.tags?.forEach((tag: string) => {
-            if (tag.startsWith('pass:order:')) {
-                order = parseInt(tag.substr(11));
-            }
-        });
-        return order;
-    }
-
-    async loadGitcoin(assetsInRSS3File: RSS3Asset[], assetsGrabbed: GeneralAsset[]) {
-        const assetsMerge: GeneralAssetWithTags[] = await Promise.all(
-            (assetsGrabbed || []).map(async (ag: GeneralAssetWithTags) => {
-                const origType = ag.type;
-                if (config.hideUnlistedAsstes) {
-                    ag.type = 'Invalid'; // Using as a match mark
-                }
-                for (const airf of assetsInRSS3File) {
-                    if (
-                        airf.platform === ag.platform &&
-                        airf.identity === ag.identity &&
-                        airf.id === ag.id &&
-                        airf.type === origType
-                    ) {
-                        // Matched
-                        ag.type = origType; // Recover type
-                        if (airf.tags) {
-                            ag.tags = airf.tags;
-                        }
-                        break;
-                    }
-                }
-                return ag;
-            }),
-        );
-
-        const GitcoinList: GeneralAssetWithTags[] = [];
-
-        for (const am of assetsMerge) {
-            if (am.type.includes('Gitcoin-Donation') && !am.tags?.includes('pass:hidden')) {
-                this.contribs += <number>am.info.total_contribs;
-                GitcoinList.push(am);
-            }
-        }
-
-        this.gitcoins = GitcoinList.sort((a, b) => this.getAssetOrder(a) - this.getAssetOrder(b));
-
-        this.grants = this.gitcoins.length;
     }
 
     toPublicPage(rns: string, ethAddress: string) {

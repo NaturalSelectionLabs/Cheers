@@ -160,6 +160,7 @@ import { GeneralAsset, GeneralAssetWithTags } from '@/common/types';
 import LoadingContainer from '@/components/Loading/LoadingContainer.vue';
 import { RSS3Asset } from 'rss3-next/types/rss3';
 import GitcoinItem from '@/components/Donation/GitcoinItem.vue';
+import utils from '@/common/utils';
 
 @Options({
     name: 'SetupGitcoins',
@@ -212,60 +213,14 @@ export default class SetupGitcoins extends Vue {
 
         const data = await RSS3.getAssetProfile((<IRSS3>this.rss3).account.address, 'Gitcoin-Donation');
         if (data) {
-            await this.loadAssets(
+            const { listed, unlisted } = await utils.initAssets(
                 await (<IRSS3>this.rss3).assets.get((<IRSS3>this.rss3).account.address),
                 <GeneralAsset[]>data.assets,
+                'Gitcoin-Donation',
             );
+            this.show = listed;
+            this.hide = unlisted;
         }
-    }
-
-    private getAssetOrder(nft: RSS3Asset) {
-        let order = -1;
-        nft.tags?.forEach((tag: string) => {
-            if (tag.startsWith('pass:order:')) {
-                order = parseInt(tag.substr(11));
-            }
-        });
-        return order;
-    }
-
-    async loadAssets(assetsInRSS3File: RSS3Asset[], assetsGrabbed: GeneralAsset[]) {
-        const assetsMerge: GeneralAssetWithTags[] = await Promise.all(
-            (assetsGrabbed || []).map(async (ag: GeneralAssetWithTags) => {
-                const origType = ag.type;
-                ag.type = 'Invalid'; // Using as a match mark
-                for (const airf of assetsInRSS3File) {
-                    if (
-                        airf.platform === ag.platform &&
-                        airf.identity === ag.identity &&
-                        airf.id === ag.id &&
-                        airf.type === origType
-                    ) {
-                        // Matched
-                        ag.type = origType; // Recover type
-                        if (airf.tags) {
-                            ag.tags = airf.tags;
-                        }
-                        break;
-                    }
-                }
-                return ag;
-            }),
-        );
-
-        const GitcoinList: GeneralAssetWithTags[] = [];
-
-        for (const am of assetsMerge) {
-            if (am.type.includes('Gitcoin-Donation')) {
-                GitcoinList.push(am);
-            } // else Invalid
-        }
-        this.show = GitcoinList.filter((nft) => !nft.tags || nft.tags.indexOf('pass:hidden') === -1).sort(
-            (a, b) => this.getAssetOrder(a) - this.getAssetOrder(b),
-        );
-        this.hide = GitcoinList.filter((nft) => nft.tags && nft.tags.indexOf('pass:hidden') !== -1).sort(
-            (a, b) => this.getAssetOrder(a) - this.getAssetOrder(b),
-        );
     }
 
     hideAll() {

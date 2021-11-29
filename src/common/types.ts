@@ -16,6 +16,7 @@ export interface GitcoinResponse {
 export interface NFT extends Asset {
     token_id: string;
     name?: string;
+    chain: 'BSC' | 'Ethereum' | 'Polygon';
     description?: string | null;
     image_url?: string | null;
     image_preview_url?: string | null;
@@ -54,9 +55,11 @@ export interface GrantInfo {
 
 export interface DonationInfo {
     donor: string;
+    adminAddr?: string;
     tokenAddr: string;
     amount: string;
     symbol?: string;
+    decimals?: number;
     formatedAmount?: string;
     timeStamp: string;
     txHash: string;
@@ -106,7 +109,7 @@ export interface GeneralAsset {
         animation_original_url?: string | null;
         title?: string;
         total_contribs?: number;
-        token_contribs: {
+        token_contribs?: {
             token: string;
             amount: string;
         }[];

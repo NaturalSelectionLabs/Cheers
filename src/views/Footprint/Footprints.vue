@@ -67,10 +67,9 @@ import FootprintCard from '@/components/Footprint/FootprintCard.vue';
 import config from '@/config';
 import RNSUtils from '@/common/rns';
 import RSS3 from '@/common/rss3';
-import { GeneralAsset, GeneralAssetWithTags, Profile } from '@/common/types';
-import { RSS3Asset } from 'rss3-next/types/rss3';
+import { GeneralAssetWithTags, Profile } from '@/common/types';
 import { debounce } from 'lodash';
-import { getName } from '@/common/utils';
+import utils, { getName } from '@/common/utils';
 
 @Options({
     name: 'Footprints',
@@ -119,7 +118,12 @@ export default class Footprints extends Vue {
 
         const footprintsData = await RSS3.getAssetProfile(this.ethAddress, 'POAP');
         if (footprintsData) {
-            await this.loadFootprint(await rss3.assets.get(this.ethAddress), footprintsData.assets);
+            const { listed } = await utils.initAssets(
+                await rss3.assets.get(this.ethAddress),
+                footprintsData.assets,
+                'POAP',
+            );
+            this.footprints = listed;
         }
     }
 
@@ -161,55 +165,6 @@ export default class Footprints extends Vue {
         }
 
         return true;
-    }
-
-    private getAssetOrder(asset: RSS3Asset) {
-        let order = -1;
-        asset.tags?.forEach((tag: string) => {
-            if (tag.startsWith('pass:order:')) {
-                order = parseInt(tag.substr(11));
-            }
-        });
-        return order;
-    }
-
-    async loadFootprint(assetsInRSS3File: RSS3Asset[], assetsGrabbed: GeneralAsset[]) {
-        const assetsMerge: GeneralAssetWithTags[] = await Promise.all(
-            (assetsGrabbed || []).map(async (ag: GeneralAssetWithTags) => {
-                const origType = ag.type;
-                if (config.hideUnlistedAsstes) {
-                    ag.type = 'Invalid'; // Using as a match mark
-                }
-                for (const airf of assetsInRSS3File) {
-                    if (
-                        airf.platform === ag.platform &&
-                        airf.identity === ag.identity &&
-                        airf.id === ag.id &&
-                        airf.type === origType
-                    ) {
-                        // Matched
-                        ag.type = origType; // Recover type
-                        if (airf.tags) {
-                            ag.tags = airf.tags;
-                        }
-                        break;
-                    }
-                }
-                return ag;
-            }),
-        );
-
-        const FootprintList: GeneralAssetWithTags[] = [];
-
-        for (const am of assetsMerge) {
-            if (am.type.includes('POAP')) {
-                FootprintList.push(am);
-            }
-        }
-
-        this.footprints = FootprintList.filter((asset) => !asset.tags || asset.tags.indexOf('pass:hidden') === -1).sort(
-            (a, b) => this.getAssetOrder(a) - this.getAssetOrder(b),
-        );
     }
 
     toPublicPage(rns: string, ethAddress: string) {
