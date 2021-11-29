@@ -8,6 +8,7 @@
                 'bg-Ronin': chain === 'Ronin',
                 'bg-Misskey': chain === 'Misskey',
                 'bg-Twitter': chain === 'Twitter',
+                'bg-Solana': chain === 'Solana',
             }"
             :style="{ width: size + 'px', height: size + 'px' }"
             @mouseenter="isHover = true"
