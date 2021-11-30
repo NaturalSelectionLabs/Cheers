@@ -5,6 +5,7 @@
             'w-10 h-10 rounded-sm': size === 'sm',
             'w-16 h-16 rounded': size === 'md',
             'w-full aspect-w-1 aspect-h-1 rounded': size === 'auto',
+            rounded: size === 'contain',
         }"
     >
         <video
