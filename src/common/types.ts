@@ -40,6 +40,7 @@ export interface NFT extends Asset {
 }
 
 export interface GrantInfo {
+    id?: string;
     active: boolean;
     title?: string;
     slug?: string;
