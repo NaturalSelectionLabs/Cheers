@@ -1,3 +1,4 @@
+import RNSUtils from '@/common/rns';
 import config from '@/config';
 import { RSS3Account, RSS3Asset } from 'rss3-next/types/rss3';
 import { GeneralAsset, GeneralAssetWithTags } from './types';
@@ -106,7 +107,7 @@ export function getName() {
     return window.location.host.split('.').slice(0, -2).join('.');
 }
 
-const orderPattern = new RegExp(`^${config.tags.prefix}:order:(-?\d+)$`, 'i');
+const orderPattern = new RegExp(`^${config.tags.prefix}:order:(-?\\d+)$`, 'i');
 
 type TypesWithTag = RSS3Account | GeneralAssetWithTags;
 
@@ -219,12 +220,52 @@ async function initAssets(assetInRSS3: RSS3Asset[], assetInAssetProfile: General
     };
 }
 
+async function getAddress(routerAddress: string) {
+    let address: string | undefined;
+    let ethAddress: string = '';
+    let rns: string = '';
+
+    if (config.subDomain.isSubDomainMode) {
+        // Is subdomain mode
+        address = getName();
+    } else if (routerAddress) {
+        address = routerAddress;
+    }
+
+    if (address) {
+        if (address.startsWith('0x')) {
+            // Might be address type
+            // Get RNS and redirect
+            ethAddress = address;
+            rns = await RNSUtils.addr2Name(address);
+            if (rns !== '') {
+                window.location.href =
+                    'https://' +
+                    rns +
+                    '.' +
+                    config.subDomain.rootDomain +
+                    window.location.pathname.replace(`/${address}`, '');
+            }
+        } else {
+            // RNS
+            rns = address;
+            ethAddress = (await RNSUtils.name2Addr(address)).toString();
+            if (parseInt(ethAddress) === 0) {
+                return { ethAddress, rns };
+            }
+        }
+    }
+
+    return { ethAddress, rns };
+}
+
 const utils = {
     sortByOrderTag,
     setOrderTag,
     setHiddenTag,
     mergeAssetsTags,
     initAssets,
+    getAddress,
 };
 
 export default utils;

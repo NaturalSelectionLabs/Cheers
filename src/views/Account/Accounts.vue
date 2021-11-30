@@ -72,10 +72,9 @@ import EVMpAccountItem from '@/components/Account/EVMpAccountItem.vue';
 import AccountItem from '@/components/Account/AccountItem.vue';
 import RSS3 from '@/common/rss3';
 import { RSS3Account } from 'rss3-next/types/rss3';
-import RNSUtils from '@/common/rns';
 import config from '@/config';
 import ContentProviders from '@/common/content-providers';
-import { getName } from '@/common/utils';
+import utils from '@/common/utils';
 import { Profile } from '@/common/types';
 
 @Options({
@@ -107,7 +106,11 @@ export default class Accounts extends Vue {
         await RSS3.reconnect();
         const rss3 = await RSS3.visitor();
         const owner: string = <string>rss3.account.address;
-        await this.getAddress(owner);
+
+        const { ethAddress, rns } = await utils.getAddress(<string>this.$route.params.address);
+        this.ethAddress = ethAddress;
+        this.rns = rns;
+        this.isOwner = ethAddress == owner;
 
         const profile = await rss3.profile.get(this.ethAddress);
         this.rss3Profile.avatar = profile?.avatar?.[0] || config.defaultAvatar;
@@ -133,46 +136,6 @@ export default class Accounts extends Vue {
         await this.loadAccounts(accounts);
     }
 
-    async getAddress(owner: string) {
-        let address: string = '';
-        if (config.subDomain.isSubDomainMode) {
-            // Is subdomain mode
-            address = getName();
-        } else if (this.$route.params.address) {
-            address = <string>this.$route.params.address;
-        } else {
-            return false;
-        }
-
-        if (address) {
-            if (address.startsWith('0x')) {
-                // Might be address type
-                // Get RNS and redirect
-                this.ethAddress = address;
-                this.rns = await RNSUtils.addr2Name(address);
-                if (this.rns !== '') {
-                    window.location.href =
-                        'https://' +
-                        this.rns +
-                        '.' +
-                        config.subDomain.rootDomain +
-                        window.location.pathname.replace(`/${address}`, '');
-                }
-            } else {
-                // RNS
-                this.rns = address;
-                this.ethAddress = (await RNSUtils.name2Addr(address)).toString();
-                if (parseInt(this.ethAddress) === 0) {
-                    return false;
-                }
-            }
-
-            this.isOwner = this.ethAddress === owner;
-        }
-
-        return true;
-    }
-
     getDisplayAddress(account: RSS3Account) {
         if (account.platform === 'Misskey' && account.identity.length <= 14) {
             return account.identity;
@@ -183,11 +146,11 @@ export default class Accounts extends Vue {
     /**
      * filter
      */
-    public filter(address: string) {
+    filter(address: string) {
         return address.length > 14 ? `${address.slice(0, 6)}....${address.slice(-4)}` : address;
     }
 
-    public copyToClipboard(address: string) {
+    copyToClipboard(address: string) {
         navigator.clipboard.writeText(address).then(
             function () {
                 console.log('Async: Copying to clipboard was successful!');
@@ -233,7 +196,7 @@ export default class Accounts extends Vue {
         }
     }
 
-    public toExternalLink(address: string, platform: string) {
+    toExternalLink(address: string, platform: string) {
         switch (platform) {
             case 'BSC':
                 window.open(`https://bscscan.com/address/${address}`);
@@ -248,11 +211,11 @@ export default class Accounts extends Vue {
         }
     }
 
-    public toSetupAccounts() {
+    toSetupAccounts() {
         this.$router.push(`/setup/accounts`);
     }
 
-    public back() {
+    back() {
         if (window.history.state.back) {
             window.history.back();
         } else {

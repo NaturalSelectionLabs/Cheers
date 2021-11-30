@@ -65,11 +65,10 @@ import Button from '@/components/Button/Button.vue';
 import ImgHolder from '@/components/Common/ImgHolder.vue';
 import FootprintCard from '@/components/Footprint/FootprintCard.vue';
 import config from '@/config';
-import RNSUtils from '@/common/rns';
 import RSS3 from '@/common/rss3';
 import { GeneralAssetWithTags, Profile } from '@/common/types';
 import { debounce } from 'lodash';
-import utils, { getName } from '@/common/utils';
+import utils from '@/common/utils';
 
 @Options({
     name: 'Footprints',
@@ -101,7 +100,11 @@ export default class Footprints extends Vue {
         await RSS3.reconnect();
         const rss3 = await RSS3.visitor();
         const owner: string = <string>rss3.account.address;
-        await this.getAddress(owner);
+
+        const { ethAddress, rns } = await utils.getAddress(<string>this.$route.params.address);
+        this.ethAddress = ethAddress;
+        this.rns = rns;
+        this.isOwner = ethAddress == owner;
 
         const profile = await rss3.profile.get(this.ethAddress);
         this.rss3Profile.avatar = profile?.avatar?.[0] || config.defaultAvatar;
@@ -125,46 +128,6 @@ export default class Footprints extends Vue {
             );
             this.footprints = listed;
         }
-    }
-
-    async getAddress(owner: string) {
-        let address: string = '';
-        if (config.subDomain.isSubDomainMode) {
-            // Is subdomain mode
-            address = getName();
-        } else if (this.$route.params.address) {
-            address = <string>this.$route.params.address;
-        } else {
-            return false;
-        }
-
-        if (address) {
-            if (address.startsWith('0x')) {
-                // Might be address type
-                // Get RNS and redirect
-                this.ethAddress = address;
-                this.rns = await RNSUtils.addr2Name(address);
-                if (this.rns !== '') {
-                    window.location.href =
-                        'https://' +
-                        this.rns +
-                        '.' +
-                        config.subDomain.rootDomain +
-                        window.location.pathname.replace(`/${address}`, '');
-                }
-            } else {
-                // RNS
-                this.rns = address;
-                this.ethAddress = (await RNSUtils.name2Addr(address)).toString();
-                if (parseInt(this.ethAddress) === 0) {
-                    return false;
-                }
-            }
-
-            this.isOwner = this.ethAddress === owner;
-        }
-
-        return true;
     }
 
     toPublicPage(rns: string, ethAddress: string) {

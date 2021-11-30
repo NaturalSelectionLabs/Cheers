@@ -43,7 +43,7 @@ import RSS3, { IRSS3 } from '@/common/rss3';
 import RNSUtils from '@/common/rns';
 import config from '@/config';
 import { reverse } from 'lodash';
-import { getName } from '@/common/utils';
+import utils from '@/common/utils';
 import { Profile } from '@/common/types';
 
 @Options({
@@ -65,44 +65,6 @@ export default class Followers extends Vue {
     lastRoute: string = '';
     isPageActive: boolean = false;
     loadingNo: number = 0;
-
-    async setupAddress() {
-        let address: string = '';
-        if (config.subDomain.isSubDomainMode) {
-            // Is subdomain mode
-            address = getName();
-        } else if (this.$route.params.address) {
-            address = <string>this.$route.params.address;
-        } else {
-            return false;
-        }
-
-        if (address) {
-            if (address.startsWith('0x')) {
-                // Might be address type
-                // Get RNS and redirect
-                this.ethAddress = address;
-                this.rns = await RNSUtils.addr2Name(address);
-                if (this.rns !== '') {
-                    window.location.href =
-                        'https://' +
-                        this.rns +
-                        '.' +
-                        config.subDomain.rootDomain +
-                        window.location.pathname.replace(`/${address}`, '');
-                }
-            } else {
-                // RNS
-                this.rns = address;
-                this.ethAddress = (await RNSUtils.name2Addr(address)).toString();
-                if (parseInt(this.ethAddress) === 0) {
-                    return false;
-                }
-            }
-        }
-
-        return true;
-    }
 
     async initLoad() {
         this.lastRoute = this.$route.fullPath;
@@ -195,7 +157,11 @@ export default class Followers extends Vue {
 
     async activated() {
         this.isPageActive = true;
-        await this.setupAddress();
+
+        const { ethAddress, rns } = await utils.getAddress(<string>this.$route.params.address);
+        this.ethAddress = ethAddress;
+        this.rns = rns;
+
         setTimeout(async () => {
             await this.setupTheme();
             await this.setPageTitleFavicon();

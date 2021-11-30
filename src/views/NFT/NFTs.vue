@@ -59,11 +59,10 @@ import ImgHolder from '@/components/Common/ImgHolder.vue';
 import NFTItem from '@/components/NFT/NFTItem.vue';
 import NFTBadges from '@/components/NFT/NFTBadges.vue';
 import RSS3 from '@/common/rss3';
-import RNSUtils from '@/common/rns';
 import config from '@/config';
 import { GeneralAsset, GeneralAssetWithTags, Profile } from '@/common/types';
 import { debounce } from 'lodash';
-import utils, { getName } from '@/common/utils';
+import utils from '@/common/utils';
 
 @Options({
     name: 'NFTs',
@@ -86,13 +85,16 @@ export default class NFTs extends Vue {
 
     async initLoad() {
         this.lastRoute = this.$route.fullPath;
-        this.nfts = [];
         this.rss3Profile.avatar = config.defaultAvatar;
 
         await RSS3.reconnect();
         const rss3 = await RSS3.visitor();
         const owner: string = <string>rss3.account.address;
-        await this.getAddress(owner);
+
+        const { ethAddress, rns } = await utils.getAddress(<string>this.$route.params.address);
+        this.ethAddress = ethAddress;
+        this.rns = rns;
+        this.isOwner = ethAddress == owner;
 
         const profile = await rss3.profile.get(this.ethAddress);
 
@@ -117,46 +119,6 @@ export default class NFTs extends Vue {
             );
             this.nfts = listed;
         }
-    }
-
-    async getAddress(owner: string) {
-        let address: string = '';
-        if (config.subDomain.isSubDomainMode) {
-            // Is subdomain mode
-            address = getName();
-        } else if (this.$route.params.address) {
-            address = <string>this.$route.params.address;
-        } else {
-            return false;
-        }
-
-        if (address) {
-            if (address.startsWith('0x')) {
-                // Might be address type
-                // Get RNS and redirect
-                this.ethAddress = address;
-                this.rns = await RNSUtils.addr2Name(address);
-                if (this.rns !== '') {
-                    window.location.href =
-                        'https://' +
-                        this.rns +
-                        '.' +
-                        config.subDomain.rootDomain +
-                        window.location.pathname.replace(`/${address}`, '');
-                }
-            } else {
-                // RNS
-                this.rns = address;
-                this.ethAddress = (await RNSUtils.name2Addr(address)).toString();
-                if (parseInt(this.ethAddress) === 0) {
-                    return false;
-                }
-            }
-
-            this.isOwner = this.ethAddress === owner;
-        }
-
-        return true;
     }
 
     toSingleNFTPage(platform: string, identity: string, id: string, type: string) {
