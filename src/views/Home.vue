@@ -229,7 +229,7 @@
                                 v-for="item of footprints.slice(1)"
                                 :key="item.platform + item.identity + item.id"
                                 :imageUrl="item.info.image_preview_url"
-                                :size="lg"
+                                size="lg"
                                 class="flex-shrink-0 mr-2"
                                 @click="toSingleItemPage('Footprint', item.platform, item.identity, item.id, item.type)"
                             />
@@ -454,6 +454,7 @@ import ContentProviders, { Content } from '@/common/content-providers';
 import Toolbar from '@/components/Profile/Toolbar.vue';
 import FootprintItem from '@/components/Footprint/FootprintItem.vue';
 import EVMpAccountItem from '@/components/Account/EVMpAccountItem.vue';
+import setupTheme from '@/common/theme';
 
 interface Relations {
     followers: RSS3ID[];
@@ -663,8 +664,6 @@ export default class Home extends Vue {
     }
 
     async getAddress(owner: string) {
-        console.log('Is subdomain mode:', config.subDomain.isSubDomainMode);
-
         let address: string = '';
         if (config.subDomain.isSubDomainMode) {
             // Is subdomain mode
@@ -709,13 +708,7 @@ export default class Home extends Vue {
     async setupTheme() {
         if (this.ethAddress) {
             // Setup theme
-            const themes = RSS3.getAvailableThemes(await (<IRSS3>this.rss3).assets.get(this.ethAddress));
-            if (themes[0]) {
-                this.currentTheme = themes[0].name;
-                document.body.classList.add(themes[0].class);
-            } else {
-                document.body.classList.remove(...document.body.classList);
-            }
+            await setupTheme(await (<IRSS3>this.rss3).assets.get(this.ethAddress));
         } else {
             document.body.classList.remove(...document.body.classList);
         }

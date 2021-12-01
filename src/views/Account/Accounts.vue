@@ -57,6 +57,7 @@ import { RSS3Account, RSS3Profile } from 'rss3-next/types/rss3';
 import ContentProviders from '@/common/content-providers';
 import utils from '@/common/utils';
 import Header from '@/components/Common/Header.vue';
+import setupTheme from '@/common/theme';
 
 @Options({
     name: 'Accounts',
@@ -90,12 +91,7 @@ export default class Accounts extends Vue {
         this.rss3Profile = await rss3.profile.get(this.ethAddress);
 
         // Setup theme
-        const themes = RSS3.getAvailableThemes(await rss3.assets.get(this.ethAddress));
-        if (themes[0]) {
-            document.body.classList.add(themes[0].class);
-        } else {
-            document.body.classList.remove(...document.body.classList);
-        }
+        setupTheme(await rss3.assets.get(this.ethAddress));
 
         this.accounts.push({
             platform: 'EVM+',

@@ -337,6 +337,7 @@ import draggable from 'vuedraggable';
 import Input from '@/components/Input/Input.vue';
 import EVMpAccountItem from '@/components/Account/EVMpAccountItem.vue';
 import Header from '@/components/Common/Header.vue';
+import setupTheme from '@/common/theme';
 
 @Options({
     name: 'SetupAccounts',
@@ -413,12 +414,7 @@ export default class SetupAccounts extends Vue {
         this.rns = await RNSUtils.addr2Name(this.ethAddress);
 
         // Setup theme
-        const themes = RSS3.getAvailableThemes(await (<IRSS3>this.rss3).assets.get());
-        if (themes[0]) {
-            document.body.classList.add(themes[0].class);
-        } else {
-            document.body.classList.remove(...document.body.classList);
-        }
+        setupTheme(await (<IRSS3>this.rss3).assets.get());
 
         const accounts = await (<IRSS3>this.rss3).accounts.get((<IRSS3>this.rss3).account.address);
         if (accounts) {

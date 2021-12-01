@@ -62,6 +62,7 @@ import RSS3 from '@/common/rss3';
 import { NFT } from '@/common/types';
 import config from '@/config';
 import utils from '@/common/utils';
+import setupTheme from '@/common/theme';
 
 @Options({
     name: 'SingleNFT',
@@ -93,12 +94,7 @@ export default class SingleNFT extends Vue {
         const type: string = String(this.$route.params.type);
 
         // Setup theme
-        const themes = RSS3.getAvailableThemes(await rss3.assets.get(this.ethAddress));
-        if (themes[0]) {
-            document.body.classList.add(themes[0].class);
-        } else {
-            document.body.classList.remove(...document.body.classList);
-        }
+        await setupTheme(await rss3.assets.get(this.ethAddress));
 
         const nftData = await RSS3.getAssetProfile(this.ethAddress, 'NFT');
 

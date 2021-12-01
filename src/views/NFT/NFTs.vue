@@ -47,6 +47,7 @@ import { debounce } from 'lodash';
 import utils from '@/common/utils';
 import { RSS3Profile } from 'rss3-next/types/rss3';
 import Header from '@/components/Common/Header.vue';
+import setupTheme from '@/common/theme';
 
 @Options({
     name: 'NFTs',
@@ -77,12 +78,7 @@ export default class NFTs extends Vue {
         this.rss3Profile = await rss3.profile.get(this.ethAddress);
 
         // Setup theme
-        const themes = RSS3.getAvailableThemes(await rss3.assets.get(this.ethAddress));
-        if (themes[0]) {
-            document.body.classList.add(themes[0].class);
-        } else {
-            document.body.classList.remove(...document.body.classList);
-        }
+        setupTheme(await rss3.assets.get(this.ethAddress));
 
         const nftData = await RSS3.getAssetProfile(this.ethAddress, 'NFT');
 

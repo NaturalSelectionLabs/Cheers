@@ -26,6 +26,7 @@ import RSS3, { IRSS3 } from '@/common/rss3';
 import RNSUtils from '@/common/rns';
 import config from '@/config';
 import { reverse } from 'lodash';
+import setupTheme from '@/common/theme';
 import utils from '@/common/utils';
 import { Profile } from '@/common/types';
 import { RSS3Profile } from 'rss3-next/types/rss3';
@@ -68,6 +69,9 @@ export default class Followings extends Vue {
                 this.loadDetails(rss3);
             }, 0);
         }
+
+        // Setup theme
+        setupTheme(await rss3.assets.get(this.ethAddress));
     }
 
     async loadDetails(rss3: IRSS3) {
@@ -87,17 +91,6 @@ export default class Followings extends Vue {
                 }
                 this.loadingNo = i;
             }
-        }
-    }
-
-    async setupTheme() {
-        const rss3 = await RSS3.visitor();
-        // Setup theme
-        const themes = RSS3.getAvailableThemes(await rss3.assets.get(this.ethAddress));
-        if (themes[0]) {
-            document.body.classList.add(themes[0].class);
-        } else {
-            document.body.classList.remove(...document.body.classList);
         }
     }
 
@@ -126,7 +119,6 @@ export default class Followings extends Vue {
         this.rns = rns;
 
         setTimeout(async () => {
-            await this.setupTheme();
             await this.setPageTitleFavicon();
             if (this.lastRoute !== this.$route.fullPath) {
                 await this.setProfile();
@@ -139,6 +131,14 @@ export default class Followings extends Vue {
 
     async deactivated() {
         this.isPageActive = false;
+    }
+
+    async toPublicPage(rns: string, ethAddress: string) {
+        if (rns) {
+            window.location.href = `//${rns}.${config.subDomain.rootDomain}`;
+        } else {
+            window.location.href = `//${config.subDomain.rootDomain}/${ethAddress}`;
+        }
     }
 }
 </script>

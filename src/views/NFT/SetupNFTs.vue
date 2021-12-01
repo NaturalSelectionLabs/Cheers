@@ -151,6 +151,7 @@ import draggable from 'vuedraggable';
 import LoadingContainer from '@/components/Loading/LoadingContainer.vue';
 import { GeneralAssetWithTags } from '@/common/types';
 import Header from '@/components/Common/Header.vue';
+import setupTheme from '@/common/theme';
 
 @Options({
     name: 'SetupNFTs',
@@ -201,12 +202,7 @@ export default class SetupNFTs extends Vue {
         const assetsGrabbed = (await RSS3.getAssetProfile((<IRSS3>this.rss3).account.address, 'NFT'))?.assets;
 
         // Setup theme
-        const themes = RSS3.getAvailableThemes(assetsInRSS3File);
-        if (themes[0]) {
-            document.body.classList.add(themes[0].class);
-        } else {
-            document.body.classList.remove(...document.body.classList);
-        }
+        setupTheme(await (<IRSS3>this.rss3).assets.get());
 
         if (assetsGrabbed) {
             const assetsMatch = await Promise.all(

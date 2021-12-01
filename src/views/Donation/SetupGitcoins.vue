@@ -133,6 +133,7 @@ import LoadingContainer from '@/components/Loading/LoadingContainer.vue';
 import GitcoinItem from '@/components/Donation/GitcoinItem.vue';
 import utils from '@/common/utils';
 import Header from '@/components/Common/Header.vue';
+import setupTheme from '@/common/theme';
 
 @Options({
     name: 'SetupGitcoins',
@@ -176,12 +177,7 @@ export default class SetupGitcoins extends Vue {
         }
 
         // Setup theme
-        const themes = RSS3.getAvailableThemes(await (<IRSS3>this.rss3).assets.get());
-        if (themes[0]) {
-            document.body.classList.add(themes[0].class);
-        } else {
-            document.body.classList.remove(...document.body.classList);
-        }
+        setupTheme(await (<IRSS3>this.rss3).assets.get());
 
         const data = await RSS3.getAssetProfile((<IRSS3>this.rss3).account.address, 'Gitcoin-Donation');
         if (data) {
