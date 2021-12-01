@@ -17,12 +17,16 @@
             <h2 class="break-words text-xl font-semibold">
                 {{ details.title || 'Inactive Project' }}
             </h2>
-            <div
-                class="text-gitcoin-title text-sm leading-normal cursor-pointer truncate"
-                @click="toExternalLink(details.reference_url)"
-            >
-                <i class="bx bx-link align-middle" />
-                {{ details.reference_url }}
+            <div class="inline-flex text-gitcoin-title leading-normal space-x-1">
+                <p class="text-sm cursor-pointer truncate" @click="toExternalLink(details.reference_url)">
+                    <i class="bx bx-link align-middle" />
+                    {{ details.reference_url }}
+                </p>
+                <span v-if="grantsUrl">-</span>
+                <p class="text-sm cursor-pointer truncate" @click="toExternalLink(grantsUrl)">
+                    <i class="bx bx-link align-middle" />
+                    {{ grantsUrl }}
+                </p>
             </div>
         </div>
         <div class="w-full">
@@ -93,6 +97,11 @@ import Button from '@/components/Button/Button.vue';
 export default class GitcoinDetails extends Vue {
     details!: GrantInfo;
     donationInfo!: DonationInfo[];
+
+    get grantsUrl() {
+        if (!this.details?.id) return null;
+        return `https://gitcoin.co/grants/${this.details.id}/${this.details.slug}`;
+    }
 
     timeDifferent(timeStamp: number) {
         const date1: any = new Date(timeStamp * 1000);
