@@ -1,34 +1,7 @@
 <template>
     <div class="h-screen text-body-text bg-body-bg overflow-y-auto">
         <div class="m-auto pb-32 pt-8 px-4 max-w-screen-lg">
-            <div class="flex items-center justify-between mb-4">
-                <Button
-                    size="sm"
-                    class="
-                        w-10
-                        h-10
-                        text-secondary-btn-text
-                        bg-secondary-btn
-                        border-secondary-btn-border
-                        shadow-secondary-btn
-                    "
-                    @click="back"
-                >
-                    <i class="bx bx-chevron-left bx-sm" />
-                </Button>
-                <span class="text-center">
-                    <h1 class="inline text-primary-text text-xl font-bold">Manage NFTs</h1>
-                </span>
-                <span class="avatar">
-                    <ImgHolder
-                        class="inline-flex my-auto w-10 h-10 cursor-pointer"
-                        :is-rounded="true"
-                        :is-border="false"
-                        :src="avatar"
-                        @click="back"
-                    />
-                </span>
-            </div>
+            <Header title="Manage NFTs" theme="nft" :avatar="avatar" />
             <section class="grid gap-4 grid-cols-1 md:grid-cols-2">
                 <Card
                     title="Listed"
@@ -176,14 +149,8 @@ import config from '@/config';
 
 import draggable from 'vuedraggable';
 import LoadingContainer from '@/components/Loading/LoadingContainer.vue';
-import { GeneralAsset, GeneralAssetWithTags } from '@/common/types';
-import ImgHolder from '@/components/Common/ImgHolder.vue';
-
-interface RSS3AssetCollectionShow {
-    collection_name: string;
-    contract_address: string;
-    assets: GeneralAsset[];
-}
+import { GeneralAssetWithTags } from '@/common/types';
+import Header from '@/components/Common/Header.vue';
 
 @Options({
     name: 'SetupNFTs',
@@ -193,7 +160,7 @@ interface RSS3AssetCollectionShow {
         Card,
         NFTItem,
         draggable,
-        ImgHolder,
+        Header,
     },
 })
 export default class SetupNFTs extends Vue {
@@ -301,11 +268,6 @@ export default class SetupNFTs extends Vue {
             }
         });
         return order;
-    }
-
-    async back() {
-        await (<IRSS3>this.rss3).files.get((<IRSS3>this.rss3).account.address, true);
-        window.history.back();
     }
 
     hideAll() {

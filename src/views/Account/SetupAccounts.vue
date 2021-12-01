@@ -1,34 +1,7 @@
 <template>
     <div class="h-screen text-body-text bg-body-bg overflow-y-auto">
         <div class="m-auto pb-32 pt-8 px-4 max-w-screen-lg">
-            <div class="flex items-center justify-between mb-4">
-                <Button
-                    size="sm"
-                    class="
-                        w-10
-                        h-10
-                        text-secondary-btn-text
-                        bg-secondary-btn
-                        border-secondary-btn-border
-                        shadow-secondary-btn
-                    "
-                    @click="back"
-                >
-                    <i class="bx bx-chevron-left bx-sm"></i>
-                </Button>
-                <span class="text-center">
-                    <h1 class="inline text-primary-text text-xl font-bold">Manage Accounts</h1>
-                </span>
-                <span class="avatar">
-                    <ImgHolder
-                        class="inline-flex my-auto w-10 h-10 cursor-pointer"
-                        :is-rounded="true"
-                        :is-border="false"
-                        :src="avatar"
-                        @click="back"
-                    />
-                </span>
-            </div>
+            <Header title="Manage Accounts" theme="account" :avatar="avatar" />
             <section class="grid gap-4 grid-cols-1 md:grid-cols-2">
                 <Card
                     title="Default"
@@ -362,8 +335,8 @@ import ContentProviders from '@/common/content-providers';
 
 import draggable from 'vuedraggable';
 import Input from '@/components/Input/Input.vue';
-import ImgHolder from '@/components/Common/ImgHolder.vue';
 import EVMpAccountItem from '@/components/Account/EVMpAccountItem.vue';
+import Header from '@/components/Common/Header.vue';
 
 @Options({
     name: 'SetupAccounts',
@@ -377,7 +350,7 @@ import EVMpAccountItem from '@/components/Account/EVMpAccountItem.vue';
         draggable,
         Loading,
         LoadingContainer,
-        ImgHolder,
+        Header,
     },
 })
 export default class SetupAccounts extends Vue {
@@ -489,11 +462,6 @@ export default class SetupAccounts extends Vue {
             }
         }
         account.tags.push(`pass:order:${order}`);
-    }
-
-    async back() {
-        // Rollback by remote
-        await window.history.back();
     }
 
     async addMetamaskAccount(platform: string) {

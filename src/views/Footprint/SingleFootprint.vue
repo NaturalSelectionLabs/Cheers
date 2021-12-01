@@ -1,22 +1,14 @@
 <template>
     <div class="h-screen bg-footprint-bg overflow-y-auto">
         <div class="m-auto pb-20 pt-8 px-4 max-w-screen-lg">
-            <div class="header flex items-center justify-between pb-4">
-                <Button
-                    size="sm"
-                    class="w-10 h-10 text-secondary-btn-text bg-secondary-btn shadow-secondary-btn"
-                    @click="back"
-                >
-                    <i class="bx bx-chevron-left bx-sm"></i>
-                </Button>
-                <div class="text-center text-footprint-title text-xl font-bold">Footprints</div>
-                <ImgHolder
-                    class="inline-flex my-auto w-10 h-10 cursor-pointer"
-                    :is-rounded="true"
-                    :is-border="false"
-                    :src="rss3Profile.avatar"
-                />
-            </div>
+            <Header
+                :ethAddress="ethAddress"
+                :rns="rns"
+                :rss3Profile="rss3Profile"
+                title="Footprint"
+                theme="footprint"
+                list="footprints"
+            />
             <section class="m-auto max-w-screen-sm">
                 <FootprintItem class="mb-4" :imageUrl="details.event.image_url" size="auto" />
                 <FootprintDetails :details="details" />
@@ -28,27 +20,22 @@
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
 import Button from '@/components/Button/Button.vue';
-import ImgHolder from '@/components/Common/ImgHolder.vue';
 import FootprintItem from '@/components/Footprint/FootprintItem.vue';
-import { POAP, Profile } from '@/common/types';
+import { POAP } from '@/common/types';
 import RSS3 from '@/common/rss3';
-import config from '@/config';
 import utils from '@/common/utils';
 import FootprintDetails from '@/components/Footprint/FootprintDetails.vue';
+import { RSS3Profile } from 'rss3-next/types/rss3';
+import Header from '@/components/Common/Header.vue';
 
 @Options({
     name: 'SingleFootprint',
-    components: { ImgHolder, Button, FootprintItem, FootprintDetails },
+    components: { Button, FootprintItem, FootprintDetails, Header },
 })
 export default class SingleFootprint extends Vue {
     rns: string = '';
     ethAddress: string = '';
-    rss3Profile: Profile = {
-        avatar: config.defaultAvatar,
-        username: '',
-        address: '',
-        bio: '',
-    };
+    rss3Profile: RSS3Profile = {};
     details: POAP = {
         event: {
             id: 0,
@@ -77,10 +64,7 @@ export default class SingleFootprint extends Vue {
         this.ethAddress = ethAddress;
         this.rns = rns;
 
-        const profile = await rss3.profile.get(this.ethAddress);
-        this.rss3Profile.avatar = profile?.avatar?.[0] || config.defaultAvatar;
-        this.rss3Profile.username = profile?.name || '';
-        this.rss3Profile.address = this.ethAddress;
+        this.rss3Profile = await rss3.profile.get(this.ethAddress);
 
         const platform: string = String(this.$route.params.platform);
         const identity: string = String(this.$route.params.identity);
@@ -102,21 +86,10 @@ export default class SingleFootprint extends Vue {
             );
             if (asset) {
                 const detail = (await RSS3.getFootprintDetail(this.ethAddress, platform, identity, id))?.data;
-                console.log(detail);
                 if (detail) {
                     this.details = detail;
                 }
             }
-        }
-    }
-
-    back() {
-        if (window.history.state.back) {
-            window.history.back();
-        } else {
-            this.$router.push(
-                (config.subDomain.isSubDomainMode ? '' : `/${this.rns || this.ethAddress}`) + `/footprints`,
-            );
         }
     }
 }

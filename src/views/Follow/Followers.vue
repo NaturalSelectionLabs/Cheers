@@ -1,24 +1,7 @@
 <template>
     <div class="h-screen bg-body-bg overflow-y-auto">
         <div class="m-auto pb-20 pt-8 px-4 max-w-screen-lg">
-            <div class="flex items-center justify-between pb-4">
-                <Button
-                    size="sm"
-                    class="w-10 h-10 text-secondary-btn-text bg-secondary-btn shadow-secondary-btn"
-                    @click="back"
-                >
-                    <i class="bx bx-chevron-left bx-sm"></i>
-                </Button>
-                <div class="section-title text-center text-primary-text text-2xl font-bold">Followers</div>
-                <ImgHolder
-                    class="inline-flex my-auto w-10 h-10 cursor-pointer"
-                    :is-rounded="true"
-                    :is-border="false"
-                    :src="rss3Profile.avatar"
-                    :alt="rss3Profile.username"
-                    @click="toPublicPage(rns, ethAddress)"
-                />
-            </div>
+            <Header :ethAddress="ethAddress" :rns="rns" :rss3Profile="rss3Profile" title="Followers" theme="primary" />
             <div class="flex flex-col gap-y-4 m-auto max-w-md">
                 <FollowerCard
                     class="w-auto cursor-pointer"
@@ -45,21 +28,16 @@ import config from '@/config';
 import { reverse } from 'lodash';
 import utils from '@/common/utils';
 import { Profile } from '@/common/types';
+import { RSS3Profile } from 'rss3-next/types/rss3';
+import Header from '@/components/Common/Header.vue';
 
 @Options({
     name: 'Followers',
-    components: { ImgHolder, Button, FollowerCard },
+    components: { ImgHolder, Button, FollowerCard, Header },
 })
 export default class Followers extends Vue {
     followerList: Array<Profile> = [];
-    rss3Profile: Profile = {
-        avatar: config.defaultAvatar,
-        username: '',
-        address: '',
-        bio: '',
-        rns: '',
-        displayAddress: '',
-    };
+    rss3Profile: RSS3Profile = {};
     rns: string = '';
     ethAddress: string = '';
     lastRoute: string = '';
@@ -125,10 +103,7 @@ export default class Followers extends Vue {
 
     async setProfile() {
         const rss3 = await RSS3.visitor();
-        const profile = await rss3.profile.get(this.ethAddress);
-        this.rss3Profile.avatar = profile?.avatar?.[0] || config.defaultAvatar;
-        this.rss3Profile.username = profile?.name || '';
-        this.rss3Profile.address = this.ethAddress;
+        this.rss3Profile = await rss3.profile.get(this.ethAddress);
     }
 
     async setPageTitleFavicon() {
@@ -141,18 +116,6 @@ export default class Followers extends Vue {
 
     filter(address: string) {
         return `${address.slice(0, 6)}...${address.slice(-4)}`;
-    }
-
-    async toPublicPage(rns: string, ethAddress: string) {
-        if (rns) {
-            window.location.href = `//${rns}.${config.subDomain.rootDomain}`;
-        } else {
-            window.location.href = `//${config.subDomain.rootDomain}/${ethAddress}`;
-        }
-    }
-
-    back() {
-        this.$router.push(config.subDomain.isSubDomainMode ? '/' : `/${this.rns || this.ethAddress}`);
     }
 
     async activated() {

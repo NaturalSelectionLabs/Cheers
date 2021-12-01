@@ -1,31 +1,13 @@
 <template>
     <div id="main" class="h-screen bg-footprint-bg overflow-y-auto">
         <div class="m-auto pb-32 pt-8 px-4 max-w-screen-lg">
-            <div class="header flex items-center justify-between pb-4">
-                <Button
-                    size="sm"
-                    class="
-                        border-secondary-button-border
-                        w-10
-                        h-10
-                        text-secondary-btn-text
-                        bg-secondary-btn
-                        shadow-secondary-btn
-                    "
-                    @click="back"
-                >
-                    <i class="bx bx-chevron-left bx-sm"></i>
-                </Button>
-                <div class="section-title text-center text-footprint-title text-2xl font-bold">Footprints</div>
-                <ImgHolder
-                    class="inline-flex my-auto w-10 h-10 cursor-pointer"
-                    :is-rounded="true"
-                    :is-border="false"
-                    :src="rss3Profile.avatar"
-                    :alt="rss3Profile.username"
-                    @click="toPublicPage(rns, ethAddress)"
-                />
-            </div>
+            <Header
+                :ethAddress="ethAddress"
+                :rns="rns"
+                :rss3Profile="rss3Profile"
+                title="Footprints"
+                theme="footprint"
+            />
             <div
                 class="footprint-footprints grid grid-cols-1 divide-footprint-divider divide-y-xs sm:grid-cols-2"
                 :class="{ 'pb-16': isOwner }"
@@ -62,29 +44,25 @@
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
 import Button from '@/components/Button/Button.vue';
-import ImgHolder from '@/components/Common/ImgHolder.vue';
 import FootprintCard from '@/components/Footprint/FootprintCard.vue';
 import config from '@/config';
 import RSS3 from '@/common/rss3';
-import { GeneralAssetWithTags, Profile } from '@/common/types';
+import { GeneralAssetWithTags } from '@/common/types';
 import { debounce } from 'lodash';
 import utils from '@/common/utils';
+import { RSS3Profile } from 'rss3-next/types/rss3';
+import Header from '@/components/Common/Header.vue';
 
 @Options({
     name: 'Footprints',
-    components: { FootprintCard, ImgHolder, Button },
+    components: { FootprintCard, Button, Header },
 })
 export default class Footprints extends Vue {
     rns: string = '';
     ethAddress: string = '';
     footprints: GeneralAssetWithTags[] = [];
     isOwner: boolean = false;
-    rss3Profile: Profile = {
-        avatar: config.defaultAvatar,
-        username: '',
-        address: '',
-        bio: '',
-    };
+    rss3Profile: RSS3Profile = {};
     scrollTop: number = 0;
     lastRoute: string = '';
 
@@ -95,7 +73,6 @@ export default class Footprints extends Vue {
     async initLoad() {
         this.lastRoute = this.$route.fullPath;
         this.footprints = [];
-        this.rss3Profile.avatar = config.defaultAvatar;
 
         await RSS3.reconnect();
         const rss3 = await RSS3.visitor();
@@ -106,10 +83,7 @@ export default class Footprints extends Vue {
         this.rns = rns;
         this.isOwner = ethAddress == owner;
 
-        const profile = await rss3.profile.get(this.ethAddress);
-        this.rss3Profile.avatar = profile?.avatar?.[0] || config.defaultAvatar;
-        this.rss3Profile.username = profile?.name || '';
-        this.rss3Profile.address = this.ethAddress;
+        this.rss3Profile = await rss3.profile.get(this.ethAddress);
 
         // Setup theme
         const themes = RSS3.getAvailableThemes(await rss3.assets.get(this.ethAddress));
@@ -128,18 +102,6 @@ export default class Footprints extends Vue {
             );
             this.footprints = listed;
         }
-    }
-
-    toPublicPage(rns: string, ethAddress: string) {
-        if (rns && config.subDomain.isSubDomainMode) {
-            this.$router.push('/');
-        } else {
-            this.$router.push(`/${rns || ethAddress}`);
-        }
-    }
-
-    back() {
-        this.$router.push(config.subDomain.isSubDomainMode ? '/' : `/${this.rns || this.ethAddress}`);
     }
 
     toSetupFootprints() {

@@ -1,5 +1,6 @@
 import config from '@/config';
 import Accounts from '@/views/Account/Accounts.vue';
+import SetupAccounts from '@/views/Account/SetupAccounts.vue';
 import Gitcoins from '@/views/Donation/Gitcoins.vue';
 import SetupGitcoins from '@/views/Donation/SetupGitcoins.vue';
 import SingleGitcoin from '@/views/Donation/SingleGitcoin.vue';
@@ -17,7 +18,6 @@ import EditProfile from '@/views/Setup/EditProfile.vue';
 import RNS from '@/views/Setup/RNS.vue';
 import RNSPending from '@/views/Setup/RNSPending.vue';
 import Setup from '@/views/Setup/Setup.vue';
-import SetupAccounts from '@/views/Setup/SetupAccounts.vue';
 /* IFTRUE_isDevelop */
 import Test from '@/views/Test.vue';
 /* FITRUE_isDevelop */

@@ -1,34 +1,7 @@
 <template>
     <div class="h-screen text-body-text bg-body-bg overflow-y-auto">
         <div class="m-auto pb-32 pt-8 px-4 max-w-screen-lg">
-            <div class="flex items-center justify-between mb-4">
-                <Button
-                    size="sm"
-                    class="
-                        w-10
-                        h-10
-                        text-secondary-btn-text
-                        bg-secondary-btn
-                        border-secondary-btn-border
-                        shadow-secondary-btn
-                    "
-                    @click="back"
-                >
-                    <i class="bx bx-chevron-left bx-sm" />
-                </Button>
-                <span class="text-center">
-                    <h1 class="inline text-gitcoin-title text-xl font-bold">Manage Donations</h1>
-                </span>
-                <span class="avatar">
-                    <ImgHolder
-                        class="inline-flex my-auto w-10 h-10 cursor-pointer"
-                        :is-rounded="true"
-                        :is-border="false"
-                        :src="avatar"
-                        @click="back"
-                    />
-                </span>
-            </div>
+            <Header title="Manage Donations" theme="gitcoin" :avatar="avatar" />
             <section class="grid gap-4 grid-cols-1 md:grid-cols-2">
                 <Card
                     title="Listed"
@@ -153,14 +126,13 @@ import { Options, Vue } from 'vue-class-component';
 import Button from '@/components/Button/Button.vue';
 import Card from '@/components/Card/Card.vue';
 import draggable from 'vuedraggable';
-import ImgHolder from '@/components/Common/ImgHolder.vue';
 import RSS3, { IRSS3 } from '@/common/rss3';
 import config from '@/config';
 import { GeneralAsset, GeneralAssetWithTags } from '@/common/types';
 import LoadingContainer from '@/components/Loading/LoadingContainer.vue';
-import { RSS3Asset } from 'rss3-next/types/rss3';
 import GitcoinItem from '@/components/Donation/GitcoinItem.vue';
 import utils from '@/common/utils';
+import Header from '@/components/Common/Header.vue';
 
 @Options({
     name: 'SetupGitcoins',
@@ -170,7 +142,7 @@ import utils from '@/common/utils';
         Button,
         Card,
         draggable,
-        ImgHolder,
+        Header,
     },
 })
 export default class SetupGitcoins extends Vue {
@@ -228,10 +200,6 @@ export default class SetupGitcoins extends Vue {
     }
     showAll() {
         this.show.push(...this.hide.splice(0, this.hide.length));
-    }
-
-    back() {
-        window.history.back();
     }
 
     async save() {

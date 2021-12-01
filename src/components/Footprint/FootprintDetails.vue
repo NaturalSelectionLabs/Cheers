@@ -8,7 +8,7 @@
                     class="flex flex-row items-center mt-1 text-footprint-title truncate"
                 >
                     <i class="bx bx-link align-middle mr-2" />
-                    <span>{{ details.event.event_url }}</span>
+                    <span class="flex-1 w-0 truncate">{{ details.event.event_url }}</span>
                 </div>
             </div>
             <Button

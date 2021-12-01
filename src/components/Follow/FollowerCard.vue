@@ -17,7 +17,7 @@
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
 import ColorThief from 'colorthief';
-import { hslToRgb, rgbToHsl } from '@/common/utils';
+import { hslToRgb, rgbToHsl } from '@/common/color';
 import config from '@/config';
 
 @Options({

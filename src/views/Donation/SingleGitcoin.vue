@@ -1,25 +1,9 @@
 <template>
     <div class="h-screen bg-gitcoin-bg overflow-y-auto">
         <div class="m-auto pb-20 pt-8 px-4 max-w-screen-lg">
-            <div class="header flex items-center justify-between pb-4">
-                <Button
-                    size="sm"
-                    class="w-10 h-10 text-secondary-btn-text bg-secondary-btn shadow-secondary-btn"
-                    @click="back"
-                >
-                    <i class="bx bx-chevron-left bx-sm"></i>
-                </Button>
-                <ImgHolder
-                    class="inline-flex my-auto w-10 h-10 cursor-pointer"
-                    :is-rounded="true"
-                    :is-border="false"
-                    :src="rss3Profile.avatar"
-                    :alt="rss3Profile.username"
-                    @click="toPublicPage(rns, ethAddress)"
-                />
-            </div>
+            <Header :ethAddress="ethAddress" :rns="rns" :rss3Profile="rss3Profile" list="gitcoins" />
             <section class="flex flex-col gap-y-8 m-auto max-w-screen-sm">
-                <GitcoinItem :imageUrl="grant.logo || defaultAvatar" size="auto" />
+                <GitcoinItem :imageUrl="grant.logo" size="auto" />
                 <GitcoinDetails :details="grant" :donationInfo="donationInfo" />
             </section>
         </div>
@@ -35,21 +19,18 @@ import config from '@/config';
 import RSS3 from '@/common/rss3';
 import utils from '@/common/utils';
 import GitcoinDetails from '@/components/Donation/GitcoinDetails.vue';
-import { DonationInfo, GrantInfo, Profile } from '@/common/types';
+import { DonationInfo, GrantInfo } from '@/common/types';
+import { RSS3Profile } from 'rss3-next/types/rss3';
+import Header from '@/components/Common/Header.vue';
 
 @Options({
     name: 'SingleGitcoin',
-    components: { ImgHolder, Button, GitcoinItem, GitcoinDetails },
+    components: { ImgHolder, Button, GitcoinItem, GitcoinDetails, Header },
 })
 export default class SingleGitcoin extends Vue {
     rns: string = '';
     ethAddress: string = '';
-    rss3Profile: Profile = {
-        avatar: config.defaultAvatar,
-        username: '',
-        address: '',
-        bio: '',
-    };
+    rss3Profile: RSS3Profile = {};
 
     grant?: GrantInfo = {
         active: true,
@@ -68,10 +49,7 @@ export default class SingleGitcoin extends Vue {
         this.ethAddress = ethAddress;
         this.rns = rns;
 
-        const profile = await rss3.profile.get(this.ethAddress);
-        this.rss3Profile.avatar = profile?.avatar?.[0] || config.defaultAvatar;
-        this.rss3Profile.username = profile?.name || '';
-        this.rss3Profile.address = this.ethAddress;
+        this.rss3Profile = await rss3.profile.get(this.ethAddress);
 
         // Setup theme
         const themes = RSS3.getAvailableThemes(await rss3.assets.get(this.ethAddress));
@@ -100,24 +78,6 @@ export default class SingleGitcoin extends Vue {
 
     toExternalLink(address: string) {
         window.open(address);
-    }
-
-    toPublicPage(rns: string, ethAddress: string) {
-        if (rns && config.subDomain.isSubDomainMode) {
-            this.$router.push('/');
-        } else {
-            this.$router.push(`/${rns || ethAddress}`);
-        }
-    }
-
-    back() {
-        if (window.history.state.back) {
-            window.history.back();
-        } else {
-            this.$router.push(
-                (config.subDomain.isSubDomainMode ? '' : `/${this.rns || this.ethAddress}`) + `/gitcoins`,
-            );
-        }
     }
 }
 </script>
