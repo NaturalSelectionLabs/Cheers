@@ -152,6 +152,7 @@ import LoadingContainer from '@/components/Loading/LoadingContainer.vue';
 import { GeneralAssetWithTags } from '@/common/types';
 import Header from '@/components/Common/Header.vue';
 import setupTheme from '@/common/theme';
+import utils from '@/common/utils';
 
 @Options({
     name: 'SetupNFTs',
@@ -205,42 +206,10 @@ export default class SetupNFTs extends Vue {
         setupTheme(await (<IRSS3>this.rss3).assets.get());
 
         if (assetsGrabbed) {
-            const assetsMatch = await Promise.all(
-                (assetsGrabbed || []).map(async (ag: GeneralAssetWithTags) => {
-                    const origType = ag.type;
-                    ag.type = 'Invalid'; // Using as a match mark
-                    for (const airf of assetsInRSS3File) {
-                        if (
-                            airf.platform === ag.platform &&
-                            airf.identity === ag.identity &&
-                            airf.id === ag.id &&
-                            airf.type === origType
-                        ) {
-                            // Matched
-                            ag.type = origType; // Recover type
-                            if (airf.tags) {
-                                ag.tags = airf.tags;
-                            }
-                            if (!ag.info.collection) {
-                                ag.info.collection = 'Other';
-                            }
-                            break;
-                        }
-                    }
-                    return ag;
-                }),
-            );
-            for (const am of assetsMatch) {
-                if (am.type.includes('NFT')) {
-                    this.nfts.push(am);
-                }
-            }
-            this.displayedNFTs = this.nfts
-                .filter((nft) => !nft.tags || nft.tags.indexOf('pass:hidden') === -1)
-                .sort((a, b) => this.getOrder(a) - this.getOrder(b));
-            this.hiddenNFTs = this.nfts
-                .filter((nft) => nft.tags && nft.tags.indexOf('pass:hidden') !== -1)
-                .sort((a, b) => this.getOrder(a) - this.getOrder(b));
+            const { listed, unlisted, assets } = await utils.initAssets(assetsInRSS3File, assetsGrabbed, 'NFT');
+            this.displayedNFTs = listed;
+            this.hiddenNFTs = unlisted;
+            this.nfts = assets;
             const collections: {
                 [key: string]: boolean;
             } = {};
@@ -254,16 +223,6 @@ export default class SetupNFTs extends Vue {
                 this.hiddenList[collection] = this.hiddenNFTs.filter((nft) => nft.info.collection === collection);
             });
         }
-    }
-
-    private getOrder(nft: RSS3Asset) {
-        let order = -1;
-        nft.tags?.forEach((tag: string) => {
-            if (tag.startsWith('pass:order:')) {
-                order = parseInt(tag.substr(11));
-            }
-        });
-        return order;
     }
 
     hideAll() {
@@ -302,10 +261,7 @@ export default class SetupNFTs extends Vue {
             this.displayedNFTs.map((nft, index) => {
                 return this.rss3?.assets.patchTags(
                     {
-                        type: nft.type,
-                        platform: nft.platform,
-                        identity: nft.identity,
-                        id: nft.id,
+                        ...nft,
                     },
                     [`pass:order:${index}`],
                 );
@@ -313,13 +269,10 @@ export default class SetupNFTs extends Vue {
         );
         for (const collection in this.hiddenList) {
             await Promise.all(
-                this.hiddenList[collection].map((nft, index) => {
+                this.hiddenList[collection].map((nft) => {
                     return this.rss3?.assets.patchTags(
                         {
-                            type: nft.type,
-                            platform: nft.platform,
-                            identity: nft.identity,
-                            id: nft.id,
+                            ...nft,
                         },
                         ['pass:hidden'],
                     );

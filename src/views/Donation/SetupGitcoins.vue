@@ -204,10 +204,7 @@ export default class SetupGitcoins extends Vue {
             this.show.map((gitcoin, index) => {
                 return this.rss3?.assets.patchTags(
                     {
-                        type: gitcoin.type,
-                        platform: gitcoin.platform,
-                        identity: gitcoin.identity,
-                        id: gitcoin.id,
+                        ...gitcoin,
                     },
                     [`pass:order:${index}`],
                 );
@@ -217,10 +214,7 @@ export default class SetupGitcoins extends Vue {
             this.hide.map((gitcoin) => {
                 return this.rss3?.assets.patchTags(
                     {
-                        type: gitcoin.type,
-                        platform: gitcoin.platform,
-                        identity: gitcoin.identity,
-                        id: gitcoin.id,
+                        ...gitcoin,
                     },
                     ['pass:hidden'],
                 );

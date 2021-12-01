@@ -77,8 +77,6 @@ export default class Accounts extends Vue {
 
     async initLoad() {
         this.lastRoute = this.$route.fullPath;
-        this.accounts = [];
-
         await RSS3.reconnect();
         const rss3 = await RSS3.visitor();
         const owner: string = <string>rss3.account.address;
@@ -93,15 +91,15 @@ export default class Accounts extends Vue {
         // Setup theme
         setupTheme(await rss3.assets.get(this.ethAddress));
 
-        this.accounts.push({
+        const allAccounts = await rss3.accounts.get(this.ethAddress);
+        const { listed } = await utils.initAccounts(allAccounts);
+        this.accounts = listed;
+        this.accounts.unshift({
             platform: 'EVM+',
             identity: this.ethAddress,
             signature: '',
             tags: ['pass:order:-1'],
         });
-
-        const accounts = await rss3.accounts.get(this.ethAddress);
-        await this.loadAccounts(accounts);
     }
 
     getDisplayAddress(account: RSS3Account) {
@@ -127,33 +125,6 @@ export default class Accounts extends Vue {
                 console.log('Async: Could not copy the account: ', err);
             },
         );
-    }
-
-    async loadAccounts(accounts: RSS3Account[]) {
-        // Get accounts
-        if (accounts) {
-            accounts.forEach((account: RSS3Account) => {
-                if (!account.tags?.includes('hidden')) {
-                    this.accounts.push(account);
-                }
-            });
-            this.accounts.sort((a, b) => {
-                return this.getTaggedOrder(a) - this.getTaggedOrder(b);
-            });
-        }
-    }
-
-    getTaggedOrder(taggedElement: RSS3Account): number {
-        if (!taggedElement.tags) {
-            return -1;
-        }
-        const orderPattern = /^pass:order:(-?\d+)$/i;
-        for (const tag of taggedElement.tags) {
-            if (orderPattern.test(tag)) {
-                return parseInt(orderPattern.exec(tag)?.[1] || '-1');
-            }
-        }
-        return -1;
     }
 
     toExternalLink(address: string, platform: string) {

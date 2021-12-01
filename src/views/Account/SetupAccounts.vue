@@ -338,6 +338,7 @@ import Input from '@/components/Input/Input.vue';
 import EVMpAccountItem from '@/components/Account/EVMpAccountItem.vue';
 import Header from '@/components/Common/Header.vue';
 import setupTheme from '@/common/theme';
+import utils from '@/common/utils';
 
 @Options({
     name: 'SetupAccounts',
@@ -418,19 +419,10 @@ export default class SetupAccounts extends Vue {
 
         const accounts = await (<IRSS3>this.rss3).accounts.get((<IRSS3>this.rss3).account.address);
         if (accounts) {
-            accounts.forEach((account: RSS3Account) => {
-                if (account.tags?.includes('hidden')) {
-                    this.hide.push(account);
-                } else {
-                    this.show.push(account);
-                }
-            });
-            this.hide.sort((a, b) => {
-                return this.getTaggedOrder(a) - this.getTaggedOrder(b);
-            });
-            this.show.sort((a, b) => {
-                return this.getTaggedOrder(a) - this.getTaggedOrder(b);
-            });
+            const allAccounts = await (<IRSS3>this.rss3).accounts.get((<IRSS3>this.rss3).account.address);
+            const { listed, unlisted } = await utils.initAccounts(allAccounts);
+            this.show = listed;
+            this.hide = unlisted;
         }
     }
 
@@ -571,8 +563,7 @@ export default class SetupAccounts extends Vue {
             this.setTaggedOrder(account, order);
             await (<IRSS3>this.rss3).accounts.patchTags(
                 {
-                    platform: account.platform,
-                    identity: account.identity,
+                    ...account,
                 },
                 account.tags,
             );
@@ -588,8 +579,7 @@ export default class SetupAccounts extends Vue {
             this.setTaggedOrder(account, order);
             await (<IRSS3>this.rss3).accounts.patchTags(
                 {
-                    platform: account.platform,
-                    identity: account.identity,
+                    ...account,
                 },
                 account.tags,
             );

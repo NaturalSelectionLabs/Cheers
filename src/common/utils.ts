@@ -85,6 +85,9 @@ const mergeAssetsTags = async (assetsInRSS3File: RSS3Asset[], assetsGrabbed: Gen
                     if (airf.tags) {
                         ag.tags = airf.tags;
                     }
+                    if (!ag.info.collection) {
+                        ag.info.collection = 'Other';
+                    }
                     break;
                 }
             }
@@ -116,7 +119,26 @@ async function initAssets(assetInRSS3: RSS3Asset[], assetInAssetProfile: General
 
     return {
         listed: utils.sortByOrderTag(listed),
-        unlisted: unlisted,
+        unlisted: utils.sortByOrderTag(unlisted),
+        assets: allAssets,
+    };
+}
+
+async function initAccounts(accounts: RSS3Account[]) {
+    const listed: RSS3Account[] = [];
+    const unlisted: RSS3Account[] = [];
+
+    for (const account of accounts) {
+        if (!account.tags?.includes('hidden')) {
+            listed.push(account);
+        } else {
+            unlisted.push(account);
+        }
+    }
+
+    return {
+        listed: utils.sortByOrderTag(listed),
+        unlisted: utils.sortByOrderTag(unlisted),
     };
 }
 
@@ -165,6 +187,7 @@ const utils = {
     setHiddenTag,
     mergeAssetsTags,
     initAssets,
+    initAccounts,
     getAddress,
     getName,
 };

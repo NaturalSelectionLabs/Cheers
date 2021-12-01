@@ -204,10 +204,7 @@ export default class SetupFootprints extends Vue {
             this.show.map((footprint, index) => {
                 return this.rss3?.assets.patchTags(
                     {
-                        type: footprint.type,
-                        platform: footprint.platform,
-                        identity: footprint.identity,
-                        id: footprint.id,
+                        ...footprint,
                     },
                     [`pass:order:${index}`],
                 );
@@ -217,10 +214,7 @@ export default class SetupFootprints extends Vue {
             this.hide.map((footprint) => {
                 return this.rss3?.assets.patchTags(
                     {
-                        type: footprint.type,
-                        platform: footprint.platform,
-                        identity: footprint.identity,
-                        id: footprint.id,
+                        ...footprint,
                     },
                     ['pass:hidden'],
                 );
