@@ -13,7 +13,7 @@
             :src="mainUrl"
             :poster="subUrl"
             class="nft-item"
-            :class="[!isShowingDetails ? 'object-cover' : 'object-contain', size === 'sm' ? 'rounded-sm' : 'rounded']"
+            :class="variableNFTClass"
             :autoplay="isShowingDetails"
             loop
             webkit-playsinline
@@ -21,29 +21,19 @@
             muted
             :controls="isShowingDetails"
         />
-        <iframe
-            v-else-if="viewType === 'website'"
-            :src="mainUrl"
-            class="nft-item"
-            :class="[!isShowingDetails ? 'object-cover' : 'object-contain', size === 'sm' ? 'rounded-sm' : 'rounded']"
-        />
+        <iframe v-else-if="viewType === 'website'" :src="mainUrl" class="nft-item" :class="variableNFTClass" />
         <model-viewer
             v-else-if="viewType === 'model'"
             :src="mainUrl"
             class="nft-item"
-            :class="[!isShowingDetails ? 'object-cover' : 'object-contain', size === 'sm' ? 'rounded-sm' : 'rounded']"
+            :class="variableNFTClass"
             ar-modes="webxr scene-viewer quick-look"
             environment-image="neutral"
             auto-rotate
             camera-controls
             loading="eager"
         />
-        <img
-            v-else
-            :src="mainUrl"
-            class="nft-item"
-            :class="[!isShowingDetails ? 'object-cover' : 'object-contain', size === 'sm' ? 'rounded-sm' : 'rounded']"
-        />
+        <img v-else :src="mainUrl" class="nft-item" :class="variableNFTClass" />
     </div>
 </template>
 
@@ -83,7 +73,7 @@ export default class NFTItem extends Vue {
     }
 
     get viewType(): 'video' | 'website' | 'model' | 'image' {
-        if (this.imageUrl?.endsWith('.mp4') || this.imageUrl?.endsWith('.mov') || this.imageUrl?.endsWith('.webm')) {
+        if (this.mainUrl.endsWith('.mp4') || this.mainUrl.endsWith('.mov') || this.mainUrl.endsWith('.webm')) {
             if (
                 !(
                     this.posterUrl?.endsWith('.mp4') ||
@@ -97,19 +87,26 @@ export default class NFTItem extends Vue {
             }
             return 'video';
         } else if (
-            this.imageUrl?.endsWith('.html') ||
-            this.imageUrl?.includes('farmhero.io') ||
-            this.imageUrl?.includes('0xAdventures.com') ||
-            this.imageUrl?.includes('crudefingers.com') ||
-            this.imageUrl?.includes('artblocks.io')
+            this.mainUrl.endsWith('.html') ||
+            this.mainUrl.includes('farmhero.io') ||
+            this.mainUrl.includes('0xAdventures.com') ||
+            this.mainUrl.includes('crudefingers.com') ||
+            this.mainUrl.includes('artblocks.io')
         ) {
             return 'website';
-        } else if (this.imageUrl?.endsWith('.gltf') || this.imageUrl?.endsWith('.glb')) {
+        } else if (this.mainUrl.endsWith('.gltf') || this.mainUrl.endsWith('.glb')) {
             import(/* webpackChunkName: "model-viewer" */ '@google/model-viewer');
             return 'model';
         } else {
             return 'image';
         }
+    }
+
+    get variableNFTClass() {
+        return [
+            !this.isShowingDetails ? 'object-cover' : 'object-contain',
+            this.size === 'sm' ? 'rounded-sm' : 'rounded',
+        ];
     }
 }
 </script>
