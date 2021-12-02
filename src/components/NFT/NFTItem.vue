@@ -4,63 +4,36 @@
         :class="{
             'w-10 h-10 rounded-sm': size === 'sm',
             'w-16 h-16 rounded': size === 'md',
-            'w-full aspect-w-1 aspect-h-1 rounded': size === 'auto',
+            'w-full aspect-w-1 aspect-h-1 rounded': size === 'auto' || (viewType === 'model' && this.isShowingDetails),
+            rounded: size === 'contain',
         }"
     >
         <video
-            v-if="
-                imageUrl?.endsWith('.mp4') ||
-                imageUrl?.endsWith('.mov') ||
-                imageUrl?.endsWith('.webm') ||
-                imageUrl?.endsWith('.mp3')
-            "
-            :src="imageUrl"
-            :poster="
-                posterUrl?.endsWith('.mp4') || posterUrl?.endsWith('.mov') || posterUrl?.endsWith('.webm')
-                    ? undefined
-                    : posterUrl
-            "
+            v-if="viewType === 'video'"
+            :src="mainUrl"
+            :poster="subUrl"
             class="nft-item"
-            :class="[!isShowingDetails ? 'object-cover' : 'object-contain', size === 'sm' ? 'rounded-sm' : 'rounded']"
-            :autoplay="isShowingDetails || posterUrl?.endsWith('.mp4') || posterUrl?.endsWith('.mov')"
+            :class="variableNFTClass"
+            :autoplay="isShowingDetails"
             loop
             webkit-playsinline
             playsinline
             muted
             :controls="isShowingDetails"
         />
-        <iframe
-            v-else-if="
-                (imageUrl?.endsWith('embed') ||
-                    imageUrl?.includes('farmhero.io') ||
-                    imageUrl?.includes('0xAdventures.com') ||
-                    imageUrl?.includes('crudefingers.com') ||
-                    imageUrl?.includes('artblocks.io') ||
-                    imageUrl?.endsWith('.html')) &&
-                isShowingDetails
-            "
-            :src="imageUrl"
-            class="nft-item"
-            :class="[!isShowingDetails ? 'object-cover' : 'object-contain', size === 'sm' ? 'rounded-sm' : 'rounded']"
-        />
+        <iframe v-else-if="viewType === 'website'" :src="mainUrl" class="nft-item" :class="variableNFTClass" />
         <model-viewer
-            v-else-if="modelView"
-            :src="imageUrl"
-            :poster="posterUrl"
+            v-else-if="viewType === 'model'"
+            :src="mainUrl"
             class="nft-item"
-            :class="[!isShowingDetails ? 'object-cover' : 'object-contain', size === 'sm' ? 'rounded-sm' : 'rounded']"
+            :class="variableNFTClass"
             ar-modes="webxr scene-viewer quick-look"
             environment-image="neutral"
             auto-rotate
             camera-controls
             loading="eager"
         />
-        <img
-            v-else
-            :src="showImageUrl"
-            class="nft-item"
-            :class="[!isShowingDetails ? 'object-cover' : 'object-contain', size === 'sm' ? 'rounded-sm' : 'rounded']"
-        />
+        <img v-else :src="mainUrl" class="nft-item" :class="variableNFTClass" />
     </div>
 </template>
 
@@ -71,8 +44,8 @@ import config from '@/config';
 @Options({
     props: {
         size: String,
-        posterUrl: String, // This should be image URL
-        imageUrl: String, // This should be detailed URL
+        posterUrl: String, // This should be preview URL
+        imageUrl: String, // This should be detail URL
         isShowingDetails: Boolean,
     },
 })
@@ -80,26 +53,15 @@ export default class NFTItem extends Vue {
     size!: String;
     imageUrl!: String;
     posterUrl!: String;
-    defaultImage: String = config.defaultAvatar;
     isShowingDetails!: boolean;
+    subUrl: string | undefined;
 
-    get modelView() {
-        const result = (this.imageUrl?.endsWith('.glb') || this.imageUrl?.endsWith('.gltf')) && this.isShowingDetails;
-        if (result) {
-            import(/* webpackChunkName: "model-viewer" */ '@google/model-viewer');
-        }
-        return result;
-    }
-
-    get showImageUrl() {
-        // isShowingDetails ? imageUrl || posterUrl || defaultImage : posterUrl || imageUrl || defaultImage
-        if (this.isShowingDetails) {
-            // Prefer detailed URL
-            return this.handleIPFS(this.imageUrl || this.posterUrl || this.defaultImage);
-        } else {
-            // Prefer preview URL
-            return this.handleIPFS(this.posterUrl || this.imageUrl || this.defaultImage);
-        }
+    get mainUrl() {
+        return this.handleIPFS(
+            this.isShowingDetails
+                ? this.imageUrl || this.posterUrl || config.defaultAvatar
+                : this.posterUrl || this.imageUrl || config.defaultAvatar,
+        );
     }
 
     handleIPFS(url: String) {
@@ -108,6 +70,43 @@ export default class NFTItem extends Vue {
         } else {
             return url;
         }
+    }
+
+    get viewType(): 'video' | 'website' | 'model' | 'image' {
+        if (this.mainUrl.endsWith('.mp4') || this.mainUrl.endsWith('.mov') || this.mainUrl.endsWith('.webm')) {
+            if (
+                !(
+                    this.posterUrl?.endsWith('.mp4') ||
+                    this.posterUrl?.endsWith('.mov') ||
+                    this.posterUrl?.endsWith('.webm')
+                )
+            ) {
+                this.subUrl = this.posterUrl.toString();
+            } else {
+                this.subUrl = undefined;
+            }
+            return 'video';
+        } else if (
+            this.mainUrl.endsWith('.html') ||
+            this.mainUrl.includes('farmhero.io') ||
+            this.mainUrl.includes('0xAdventures.com') ||
+            this.mainUrl.includes('crudefingers.com') ||
+            this.mainUrl.includes('artblocks.io')
+        ) {
+            return 'website';
+        } else if (this.mainUrl.endsWith('.gltf') || this.mainUrl.endsWith('.glb')) {
+            import(/* webpackChunkName: "model-viewer" */ '@google/model-viewer');
+            return 'model';
+        } else {
+            return 'image';
+        }
+    }
+
+    get variableNFTClass() {
+        return [
+            !this.isShowingDetails ? 'object-cover' : 'object-contain',
+            this.size === 'sm' ? 'rounded-sm' : 'rounded',
+        ];
     }
 }
 </script>
