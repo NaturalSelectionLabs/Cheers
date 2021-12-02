@@ -4,7 +4,10 @@
         :class="{
             'w-10 h-10 rounded-sm': size === 'sm',
             'w-16 h-16 rounded': size === 'md',
-            'w-full aspect-w-1 aspect-h-1 rounded': size === 'auto' || (viewType === 'model' && this.isShowingDetails),
+            'w-full aspect-w-1 aspect-h-1 rounded':
+                size === 'auto' ||
+                (viewType === 'model' && isShowingDetails) ||
+                (!(imageUrl && posterUrl) && isShowingDetails),
             rounded: size === 'contain',
         }"
     >

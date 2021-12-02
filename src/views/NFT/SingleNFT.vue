@@ -41,7 +41,7 @@
                     <NFTItem
                         :imageUrl="details.animation_url || details.image_url"
                         :poster-url="details.image_url"
-                        size="auto"
+                        size="contain"
                         :is-showing-details="true"
                     />
                 </div>

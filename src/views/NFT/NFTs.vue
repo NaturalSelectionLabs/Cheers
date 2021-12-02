@@ -2,7 +2,7 @@
     <div id="main" class="h-screen bg-nft-bg overflow-y-auto">
         <div class="m-auto pb-32 pt-8 px-4 max-w-screen-lg">
             <Header :ethAddress="ethAddress" :rns="rns" :rss3Profile="rss3Profile" title="NFTs" theme="nft" />
-            <div class="nft-list grid gap-6 grid-cols-2 justify-items-center sm:grid-cols-3">
+            <div class="grid gap-6 grid-cols-2 justify-items-center sm:grid-cols-3">
                 <div class="relative w-full" v-for="item in nfts" :key="item.platform + item.identity + item.id">
                     <NFTItem
                         class="cursor-pointer"

@@ -9,7 +9,7 @@
                 theme="footprint"
             />
             <div
-                class="footprint-footprints grid grid-cols-1 divide-footprint-divider divide-y-xs sm:grid-cols-2"
+                class="grid grid-cols-1 divide-footprint-divider divide-y-xs sm:grid-cols-2"
                 :class="{ 'pb-16': isOwner }"
             >
                 <FootprintCard

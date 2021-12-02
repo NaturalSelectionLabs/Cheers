@@ -1,7 +1,7 @@
 <template>
     <div class="flex flex-col gap-y-2.5 mt-4 px-5 py-4 w-full text-body-text">
-        <div class="flex flex-row items-start justify-between">
-            <div>
+        <div class="flex flex-row gap-2 items-start justify-between">
+            <div class="flex-1 w-0">
                 <h2 class="text-xl font-semibold truncate">{{ details.event.name }}</h2>
                 <div
                     v-if="details.event.event_url"

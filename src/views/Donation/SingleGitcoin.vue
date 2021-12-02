@@ -3,7 +3,7 @@
         <div class="m-auto pb-20 pt-8 px-4 max-w-screen-lg">
             <Header :ethAddress="ethAddress" :rns="rns" :rss3Profile="rss3Profile" list="gitcoins" />
             <section class="flex flex-col gap-y-8 m-auto max-w-screen-sm">
-                <GitcoinItem :imageUrl="grant.logo" size="auto" />
+                <GitcoinItem :imageUrl="grant.logo" size="contain" />
                 <GitcoinDetails :details="grant" :donationInfo="donationInfo" />
             </section>
         </div>

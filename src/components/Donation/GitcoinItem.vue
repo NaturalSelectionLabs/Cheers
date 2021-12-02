@@ -5,11 +5,11 @@
             'w-10 h-10 rounded-sm': size === 'sm',
             'w-16 h-16 rounded': size === 'md',
             'w-full aspect-w-1 aspect-h-1 rounded': size === 'auto',
+            rounded: size === 'contain',
         }"
-        :style="{
-            backgroundImage: `url(${imageUrl})`,
-        }"
-    />
+    >
+        <img :src="imageUrl" class="w-full h-full" />
+    </div>
 </template>
 
 <script lang="ts">
@@ -30,7 +30,7 @@ export default class GitcoinItem extends Vue {
 <style scoped lang="postcss">
 @layer components {
     .gitcoin-item {
-        @apply bg-white bg-cover bg-center bg-no-repeat border border-white rounded shadow-gitcoin filter;
+        @apply bg-white bg-cover bg-center bg-no-repeat border border-white rounded shadow-gitcoin overflow-hidden;
     }
 }
 </style>

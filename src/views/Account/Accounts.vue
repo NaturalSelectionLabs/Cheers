@@ -5,13 +5,13 @@
             <div class="m-auto max-w-md">
                 <div class="flex flex-col gap-y-4">
                     <div
-                        class="account-wrapper grid grid-cols-6 items-center justify-items-center"
+                        class="grid grid-cols-6 items-center justify-items-center"
                         v-for="item in accounts"
                         :key="item.platform + item.identity"
                     >
                         <EVMpAccountItem v-if="item.platform === 'EVM+'" :size="70" :address="item.identity" />
                         <AccountItem v-else :size="70" :chain="item.platform" :address="item.identity" />
-                        <span class="address col-span-3 text-account-title text-2xl font-semibold">{{
+                        <span class="col-span-3 text-account-title text-2xl font-semibold">{{
                             getDisplayAddress(item)
                         }}</span>
                         <Button

@@ -4,7 +4,7 @@
             <Header :ethAddress="ethAddress" :rns="rns" :rss3Profile="rss3Profile" title="Donations" theme="gitcoin" />
             <GitcoinTitle class="mb-6" :grants="grants" :contributions="contribs" />
             <div
-                class="gitcoin-gitcoins grid gap-6 grid-cols-1 sm:grid-cols-2"
+                class="grid gap-6 grid-cols-1 sm:grid-cols-2"
                 :class="{ 'pb-16': isOwner }"
                 v-show="gitcoins.length !== 0"
             >
