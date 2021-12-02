@@ -426,19 +426,6 @@ export default class SetupAccounts extends Vue {
         }
     }
 
-    getTaggedOrder(account: RSS3Account): number {
-        if (!account.tags) {
-            return -1;
-        }
-        const orderPattern = /^pass:order:(-?\d+)$/i;
-        for (const tag of account.tags) {
-            if (orderPattern.test(tag)) {
-                return parseInt(orderPattern.exec(tag)?.[1] || '-1');
-            }
-        }
-        return -1;
-    }
-
     setTaggedOrder(account: RSS3Account, order: number): void {
         if (!account.tags) {
             account.tags = [];

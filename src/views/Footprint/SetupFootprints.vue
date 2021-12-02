@@ -200,27 +200,7 @@ export default class SetupFootprints extends Vue {
 
     async save() {
         this.isLoading = true;
-        await Promise.all(
-            this.show.map((footprint, index) => {
-                return this.rss3?.assets.patchTags(
-                    {
-                        ...footprint,
-                    },
-                    [`pass:order:${index}`],
-                );
-            }),
-        );
-        await Promise.all(
-            this.hide.map((footprint) => {
-                return this.rss3?.assets.patchTags(
-                    {
-                        ...footprint,
-                    },
-                    ['pass:hidden'],
-                );
-            }),
-        );
-        await this.rss3?.files.sync();
+        await utils.saveAssetsOrder(this.show, this.hide);
         this.isLoading = false;
         window.history.back();
     }

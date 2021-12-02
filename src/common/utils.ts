@@ -1,4 +1,5 @@
 import RNSUtils from '@/common/rns';
+import RSS3 from '@/common/rss3';
 import config from '@/config';
 import { RSS3Account, RSS3Asset } from 'rss3-next/types/rss3';
 import { GeneralAsset, GeneralAssetWithTags } from './types';
@@ -99,9 +100,14 @@ const mergeAssetsTags = async (assetsInRSS3File: RSS3Asset[], assetsGrabbed: Gen
 interface AssetsList {
     listed: GeneralAssetWithTags[];
     unlisted: GeneralAssetWithTags[];
+    assets: GeneralAssetWithTags[];
 }
 
-async function initAssets(assetInRSS3: RSS3Asset[], assetInAssetProfile: GeneralAsset[], type: string) {
+async function initAssets(
+    assetInRSS3: RSS3Asset[],
+    assetInAssetProfile: GeneralAsset[],
+    type: string,
+): Promise<AssetsList> {
     const listed: GeneralAssetWithTags[] = [];
     const unlisted: GeneralAssetWithTags[] = [];
 
@@ -119,7 +125,7 @@ async function initAssets(assetInRSS3: RSS3Asset[], assetInAssetProfile: General
 
     return {
         listed: utils.sortByOrderTag(listed),
-        unlisted: utils.sortByOrderTag(unlisted),
+        unlisted: unlisted,
         assets: allAssets,
     };
 }
@@ -181,6 +187,31 @@ async function getAddress(routerAddress: string) {
     return { ethAddress, rns };
 }
 
+async function saveAssetsOrder(listed: GeneralAssetWithTags[], unlisted: GeneralAssetWithTags[]) {
+    const rss3 = await RSS3.get();
+    await Promise.all(
+        listed.map((asset, index) => {
+            return rss3?.assets.patchTags(
+                {
+                    ...asset,
+                },
+                [`pass:order:${index}`],
+            );
+        }),
+    );
+    await Promise.all(
+        unlisted.map((asset) => {
+            return rss3?.assets.patchTags(
+                {
+                    ...asset,
+                },
+                ['pass:hidden'],
+            );
+        }),
+    );
+    await rss3?.files.sync();
+}
+
 const utils = {
     sortByOrderTag,
     setOrderTag,
@@ -190,6 +221,7 @@ const utils = {
     initAccounts,
     getAddress,
     getName,
+    saveAssetsOrder,
 };
 
 export default utils;

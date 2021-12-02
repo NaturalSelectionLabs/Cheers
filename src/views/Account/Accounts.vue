@@ -11,7 +11,7 @@
                     >
                         <EVMpAccountItem v-if="item.platform === 'EVM+'" :size="70" :address="item.identity" />
                         <AccountItem v-else :size="70" :chain="item.platform" :address="item.identity" />
-                        <span class="col-span-3 text-account-title text-2xl font-semibold">{{
+                        <span class="col-span-3 text-account-title text-xl font-semibold sm:text-2xl">{{
                             getDisplayAddress(item)
                         }}</span>
                         <Button

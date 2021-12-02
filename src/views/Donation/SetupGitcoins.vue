@@ -200,27 +200,7 @@ export default class SetupGitcoins extends Vue {
 
     async save() {
         this.isLoading = true;
-        await Promise.all(
-            this.show.map((gitcoin, index) => {
-                return this.rss3?.assets.patchTags(
-                    {
-                        ...gitcoin,
-                    },
-                    [`pass:order:${index}`],
-                );
-            }),
-        );
-        await Promise.all(
-            this.hide.map((gitcoin) => {
-                return this.rss3?.assets.patchTags(
-                    {
-                        ...gitcoin,
-                    },
-                    ['pass:hidden'],
-                );
-            }),
-        );
-        await this.rss3?.files.sync();
+        await utils.saveAssetsOrder(this.show, this.hide);
         this.isLoading = false;
         window.history.back();
     }

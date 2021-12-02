@@ -143,7 +143,6 @@ import { Options, Vue } from 'vue-class-component';
 import Button from '@/components/Button/Button.vue';
 import Card from '@/components/Card/Card.vue';
 import NFTItem from '@/components/NFT/NFTItem.vue';
-import { RSS3Asset } from 'rss3-next/types/rss3';
 import RSS3, { IRSS3 } from '@/common/rss3';
 import config from '@/config';
 
@@ -153,6 +152,7 @@ import { GeneralAssetWithTags } from '@/common/types';
 import Header from '@/components/Common/Header.vue';
 import setupTheme from '@/common/theme';
 import utils from '@/common/utils';
+import { flattenDeep, values } from 'lodash';
 
 @Options({
     name: 'SetupNFTs',
@@ -231,7 +231,6 @@ export default class SetupNFTs extends Vue {
         this.collections.forEach((collection) => {
             this.hiddenList[collection] = this.hiddenNFTs.filter((nft) => nft.info?.collection === collection);
         });
-        this.sync();
     }
 
     showAll() {
@@ -240,7 +239,6 @@ export default class SetupNFTs extends Vue {
         this.collections.forEach((collection) => {
             this.hiddenList[collection] = [];
         });
-        this.sync();
     }
 
     async chooseAsset(ev: any) {
@@ -249,41 +247,13 @@ export default class SetupNFTs extends Vue {
         this.activatedGroupID = this.collections.findIndex(
             (collection) => collection === JSON.parse(ev.item.dataset.info).info?.collection,
         );
-        console.log(this.activatedGroupID);
     }
 
-    async nftMoveEnd(e: any) {
-        this.sync();
-    }
-
-    async sync() {
-        await Promise.all(
-            this.displayedNFTs.map((nft, index) => {
-                return this.rss3?.assets.patchTags(
-                    {
-                        ...nft,
-                    },
-                    [`pass:order:${index}`],
-                );
-            }),
-        );
-        for (const collection in this.hiddenList) {
-            await Promise.all(
-                this.hiddenList[collection].map((nft) => {
-                    return this.rss3?.assets.patchTags(
-                        {
-                            ...nft,
-                        },
-                        ['pass:hidden'],
-                    );
-                }),
-            );
-        }
-    }
+    async nftMoveEnd(e: any) {}
 
     async save() {
         this.isLoading = true;
-        await this.rss3?.files.sync();
+        await utils.saveAssetsOrder(this.displayedNFTs, flattenDeep(values(this.hiddenList)));
         this.isLoading = false;
         window.history.back();
     }
