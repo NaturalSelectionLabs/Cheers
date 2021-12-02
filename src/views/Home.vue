@@ -229,7 +229,7 @@
                                 v-for="item of footprints.slice(1)"
                                 :key="item.platform + item.identity + item.id"
                                 :imageUrl="item.info.image_preview_url"
-                                size="lg"
+                                size="sm"
                                 class="flex-shrink-0 mr-2"
                                 @click="toSingleItemPage('Footprint', item.platform, item.identity, item.id, item.type)"
                             />
@@ -586,6 +586,7 @@ export default class Home extends Vue {
         this.rss3 = await RSS3.visitor();
         const owner: string = <string>this.rss3.account.address;
         this.ownerETHAddress = owner;
+
         if (!(await this.getAddress(owner))) {
             if (this.isAccountExist) {
                 if (this.isOwnerValidRSS3) {
@@ -658,7 +659,7 @@ export default class Home extends Vue {
 
         // Load Contents
         setTimeout(async () => {
-            await this.initLoadContents(accounts);
+            await this.loadMoreContents(true);
             this.initIntersectionObserver();
         }, 0);
     }
@@ -705,15 +706,6 @@ export default class Home extends Vue {
         return true;
     }
 
-    async setupTheme() {
-        if (this.ethAddress) {
-            // Setup theme
-            await setupTheme(await (<IRSS3>this.rss3).assets.get(this.ethAddress));
-        } else {
-            document.body.classList.remove(...document.body.classList);
-        }
-    }
-
     async setPageTitleFavicon() {
         if (this.ethAddress) {
             const rss3 = await RSS3.visitor();
@@ -727,26 +719,27 @@ export default class Home extends Vue {
     startLoadingAccounts(accounts: RSS3Account[]) {
         this.accounts = [];
         setTimeout(async () => {
+            const { listed } = await utils.initAccounts(accounts);
+            this.accounts = listed;
             // Push original account
-            this.accounts.push({
+            this.accounts.unshift({
                 platform: 'EVM+',
                 identity: this.ethAddress,
                 signature: '',
                 tags: ['pass:order:-1'],
             });
-
-            await this.loadAccounts(accounts);
         }, 0);
     }
 
     async ivLoadNFT(refresh: boolean): Promise<boolean> {
         const data = await RSS3.getAssetProfile(this.ethAddress, 'NFT', refresh);
         if (data && data.status !== false) {
-            await this.mergeAssets(
+            const { listed } = await utils.initAssets(
                 await (<IRSS3>this.rss3).assets.get(this.ethAddress),
                 <GeneralAsset[]>data.assets,
                 'NFT',
             );
+            this.nfts = listed;
             this.isLoadingAssets.NFT = false;
             return true;
         }
@@ -756,11 +749,12 @@ export default class Home extends Vue {
     async ivLoadGitcoin(refresh: boolean): Promise<boolean> {
         const data = await RSS3.getAssetProfile(this.ethAddress, 'Gitcoin-Donation', refresh);
         if (data && data.status !== false) {
-            await this.mergeAssets(
+            const { listed } = await utils.initAssets(
                 await (<IRSS3>this.rss3).assets.get(this.ethAddress),
                 <GeneralAsset[]>data.assets,
                 'Gitcoin-Donation',
             );
+            this.gitcoins = listed;
             this.isLoadingAssets.Gitcoin = false;
             return true;
         }
@@ -770,11 +764,12 @@ export default class Home extends Vue {
     async ivLoadFootprint(refresh: boolean): Promise<boolean> {
         const data = await RSS3.getAssetProfile(this.ethAddress, 'POAP', refresh);
         if (data && data.status !== false) {
-            await this.mergeAssets(
+            const { listed } = await utils.initAssets(
                 await (<IRSS3>this.rss3).assets.get(this.ethAddress),
                 <GeneralAsset[]>data.assets,
                 'POAP',
             );
+            this.footprints = listed;
             this.isLoadingAssets.Footprint = false;
             return true;
         }
@@ -817,93 +812,6 @@ export default class Home extends Vue {
         }
     }
 
-    getTaggedOrder(taggedElement: RSS3Account | RSS3Asset): number {
-        if (!taggedElement.tags) {
-            return -1;
-        }
-        const orderPattern = /^pass:order:(-?\d+)$/i;
-        for (const tag of taggedElement.tags) {
-            if (orderPattern.test(tag)) {
-                return parseInt(orderPattern.exec(tag)?.[1] || '-1');
-            }
-        }
-        return -1;
-    }
-
-    private getAssetOrder(nft: RSS3Asset) {
-        let order = -1;
-        nft.tags?.forEach((tag: string) => {
-            if (tag.startsWith('pass:order:')) {
-                order = parseInt(tag.substr(11));
-            }
-        });
-        return order;
-    }
-
-    async loadAccounts(accounts: RSS3Account[]) {
-        // Get accounts
-        if (accounts) {
-            accounts.forEach((account: RSS3Account) => {
-                if (!account.tags?.includes('hidden')) {
-                    this.accounts.push(account);
-                }
-            });
-            this.accounts.sort((a, b) => {
-                return this.getTaggedOrder(a) - this.getTaggedOrder(b);
-            });
-        }
-    }
-
-    async mergeAssets(assetsInRSS3File: RSS3Asset[], assetsGrabbed: GeneralAsset[], type: string) {
-        const assetsMerge: GeneralAssetWithTags[] = await Promise.all(
-            (assetsGrabbed || []).map(async (ag: GeneralAssetWithTags) => {
-                const origType = ag.type;
-                if (config.hideUnlistedAsstes) {
-                    ag.type = 'Invalid'; // Using as a match mark
-                }
-                for (const airf of assetsInRSS3File) {
-                    if (
-                        airf.platform === ag.platform &&
-                        airf.identity === ag.identity &&
-                        airf.id === ag.id &&
-                        airf.type === origType
-                    ) {
-                        // Matched
-                        ag.type = origType; // Recover type
-                        if (airf.tags) {
-                            ag.tags = airf.tags;
-                        }
-                        break;
-                    }
-                }
-                return ag;
-            }),
-        );
-
-        const List: GeneralAssetWithTags[] = [];
-
-        for (const am of assetsMerge) {
-            if (am.type.includes(type)) {
-                List.push(am);
-            } // else Invalid
-        }
-
-        const res = List.filter((asset) => !asset.tags || asset.tags.indexOf('pass:hidden') === -1).sort(
-            (a, b) => this.getAssetOrder(a) - this.getAssetOrder(b),
-        );
-
-        if (type.includes('NFT')) {
-            this.nfts = res;
-        } else if (type === 'Gitcoin-Donation') {
-            this.gitcoins = res;
-        } else if (type === 'POAP') {
-            // Check special footprint
-            await this.checkSpecialPoap(res);
-
-            this.footprints = res;
-        }
-    }
-
     async checkSpecialPoap(res: GeneralAssetWithTags[]) {
         if (config.poapActivity.info.title && this.isOwner) {
             if (res.findIndex((asset) => asset.info.title === config.poapActivity.info.title) === -1) {
@@ -916,10 +824,6 @@ export default class Home extends Vue {
                 });
             }
         }
-    }
-
-    async initLoadContents(accounts: RSS3Account[]) {
-        await this.loadMoreContents(true);
     }
 
     async loadMoreContents(isInitLoad: boolean = false) {
@@ -1210,10 +1114,6 @@ export default class Home extends Vue {
         );
     }
 
-    toMakeDonation() {
-        window.open('https://gitcoin.co/');
-    }
-
     async logout() {
         if (confirm('Are you sure to logout?')) {
             (<HTMLLinkElement>document.getElementById('favicon')).href = '/favicon.ico';
@@ -1312,7 +1212,12 @@ export default class Home extends Vue {
             await this.initLoad();
         }
         await this.setPageTitleFavicon();
-        await this.setupTheme();
+        if (this.ethAddress) {
+            // Setup theme
+            await setupTheme(await (<IRSS3>this.rss3).assets.get(this.ethAddress));
+        } else {
+            document.body.classList.remove(...document.body.classList);
+        }
     }
 
     async deactivated() {

@@ -56,7 +56,6 @@ import { Options, Vue } from 'vue-class-component';
 import Button from '@/components/Button/Button.vue';
 import NFTItem from '@/components/NFT/NFTItem.vue';
 import NFTDetail from '@/components/NFT/NFTDetails.vue';
-import AccountItem from '@/components/Account/AccountItem.vue';
 import NFTBadges from '@/components/NFT/NFTBadges.vue';
 import RSS3 from '@/common/rss3';
 import { NFT } from '@/common/types';
@@ -66,7 +65,7 @@ import setupTheme from '@/common/theme';
 
 @Options({
     name: 'SingleNFT',
-    components: { Button, NFTDetail, NFTItem, AccountItem, NFTBadges },
+    components: { Button, NFTDetail, NFTItem, NFTBadges },
 })
 export default class SingleNFT extends Vue {
     rns: string = '';
