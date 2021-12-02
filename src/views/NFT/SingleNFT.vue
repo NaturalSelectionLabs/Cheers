@@ -1,10 +1,9 @@
 <template>
     <div class="h-screen bg-nft-bg overflow-y-auto">
         <div class="m-auto pb-20 pt-8 px-4 max-w-screen-lg">
-            <div class="header relative pb-4">
+            <div class="relative pb-4">
                 <div
                     class="
-                        section-title
                         absolute
                         z-0
                         top-0

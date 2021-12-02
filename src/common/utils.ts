@@ -212,6 +212,27 @@ async function saveAssetsOrder(listed: GeneralAssetWithTags[], unlisted: General
     await rss3?.files.sync();
 }
 
+function extractEmbedFields(raw: string, fieldsEmbed: string[]) {
+    const fieldPattern = /<([A-Z]+?)#(.+?)>/gi;
+    const fields = raw.match(fieldPattern) || [];
+    const extracted = raw.replace(fieldPattern, '');
+    const fieldsMatch: {
+        [key: string]: string;
+    } = {};
+
+    for (const field of fields) {
+        const splits = fieldPattern.exec(field) || [];
+        if (fieldsEmbed.includes(splits[1])) {
+            fieldsMatch[splits[1]] = splits[2];
+        }
+    }
+
+    return {
+        extracted,
+        fieldsMatch,
+    };
+}
+
 const utils = {
     sortByOrderTag,
     setOrderTag,
@@ -222,6 +243,7 @@ const utils = {
     getAddress,
     getName,
     saveAssetsOrder,
+    extractEmbedFields,
 };
 
 export default utils;

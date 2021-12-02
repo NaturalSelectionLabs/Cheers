@@ -1,9 +1,9 @@
 <template>
-    <div class="header flex items-center justify-between pb-4">
+    <div class="flex items-center justify-between pb-4">
         <Button size="sm" class="w-10 h-10 text-secondary-btn-text bg-secondary-btn shadow-secondary-btn" @click="back">
             <i class="bx bx-chevron-left bx-sm" />
         </Button>
-        <div class="section-title text-center font-bold" :class="getTitleStyle()" v-if="title">
+        <div class="text-center font-bold" :class="getTitleStyle()" v-if="title">
             {{ title }}
         </div>
         <ImgHolder
@@ -62,7 +62,7 @@ export default class Header extends Vue {
         } else {
             if (this.list) {
                 this.$router.push(
-                    config.subDomain.isSubDomainMode ? '/' : `/${this.rns || this.ethAddress}` + `/${this.list}`,
+                    (config.subDomain.isSubDomainMode ? '' : `/${this.rns || this.ethAddress}`) + `/${this.list}`,
                 );
             } else {
                 this.$router.push(config.subDomain.isSubDomainMode ? '/' : `/${this.rns || this.ethAddress}`);

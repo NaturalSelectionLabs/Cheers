@@ -419,8 +419,7 @@ export default class SetupAccounts extends Vue {
 
         const accounts = await (<IRSS3>this.rss3).accounts.get((<IRSS3>this.rss3).account.address);
         if (accounts) {
-            const allAccounts = await (<IRSS3>this.rss3).accounts.get((<IRSS3>this.rss3).account.address);
-            const { listed, unlisted } = await utils.initAccounts(allAccounts);
+            const { listed, unlisted } = await utils.initAccounts(accounts);
             this.show = listed;
             this.hide = unlisted;
         }

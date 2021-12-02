@@ -112,7 +112,6 @@
 import { Options, Vue } from 'vue-class-component';
 import Button from '@/components/Button/Button.vue';
 import AvatarEditor from '@/components/Profile/AvatarEditor.vue';
-import Card from '@/components/Card/Card.vue';
 import EVMpAccountItem from '@/components/Account/EVMpAccountItem.vue';
 import AccountItem from '@/components/Account/AccountItem.vue';
 import Input from '@/components/Input/Input.vue';
@@ -125,6 +124,8 @@ import config from '@/config';
 import LinkButton from '@/components/Button/LinkButton.vue';
 import RNSUtils from '@/common/rns';
 import BarCard from '@/components/Card/BarCard.vue';
+import utils from '@/common/utils';
+import setupTheme from '@/common/theme';
 
 @Options({
     name: 'EditProfile',
@@ -134,7 +135,6 @@ import BarCard from '@/components/Card/BarCard.vue';
         Modal,
         Button,
         AvatarEditor,
-        Card,
         AccountItem,
         Input,
         Loading,
@@ -179,75 +179,32 @@ export default class EditProfile extends Vue {
         this.profile.avatar = profile?.avatar?.[0] || config.defaultAvatar;
         this.profile.name = profile?.name || '';
         if (profile?.bio) {
-            const fieldPattern = /<([A-Z]+?)#(.+?)?>/gi;
-            const fields = profile.bio.match(fieldPattern) || [];
-            this.profile.bio = profile.bio.replace(fieldPattern, '');
-
-            for (const field of fields) {
-                const splits = fieldPattern.exec(field) || [];
-                switch (splits[1]) {
-                    case 'SITE':
-                        this.profile.link = splits[2];
-                        break;
-                    default:
-                        // Do nothing
-                        break;
-                }
-            }
+            // Profile
+            const { extracted, fieldsMatch } = utils.extractEmbedFields(profile?.bio || '', ['SITE']);
+            this.profile.bio = extracted;
+            this.profile.link = fieldsMatch?.['SITE'] || '';
         }
 
-        const accounts = await (<IRSS3>this.rss3).accounts.get(this.ethAddress);
-        this.startLoadingAccounts(accounts);
+        this.startLoadingAccounts();
 
         // Setup theme
-        const themes = RSS3.getAvailableThemes(await (<IRSS3>this.rss3).assets.get());
-        if (themes[0]) {
-            document.body.classList.add(themes[0].class);
-        } else {
-            document.body.classList.remove(...document.body.classList);
-        }
+        setupTheme(await (<IRSS3>this.rss3).assets.get());
     }
 
-    startLoadingAccounts(accounts: RSS3Account[]) {
+    startLoadingAccounts() {
         this.accounts = [];
         setTimeout(async () => {
+            const accounts = await (<IRSS3>this.rss3).accounts.get();
+            const { listed } = await utils.initAccounts(accounts);
+            this.accounts = listed;
             // Push original account
-            this.accounts.push({
+            this.accounts.unshift({
                 platform: 'EVM+',
-                identity: this.ethAddress,
+                identity: (<IRSS3>this.rss3).account.address,
                 signature: '',
                 tags: ['pass:order:-1'],
             });
-
-            await this.loadAccounts(accounts);
         }, 0);
-    }
-
-    async loadAccounts(accounts: RSS3Account[]) {
-        // Get accounts
-        if (accounts) {
-            accounts.forEach((account: RSS3Account) => {
-                if (!account.tags?.includes('hidden')) {
-                    this.accounts.push(account);
-                }
-            });
-            this.accounts.sort((a, b) => {
-                return this.getTaggedOrder(a) - this.getTaggedOrder(b);
-            });
-        }
-    }
-
-    getTaggedOrder(taggedElement: RSS3Account): number {
-        if (!taggedElement.tags) {
-            return -1;
-        }
-        const orderPattern = /^pass:order:(-?\d+)$/i;
-        for (const tag of taggedElement.tags) {
-            if (orderPattern.test(tag)) {
-                return parseInt(orderPattern.exec(tag)?.[1] || '-1');
-            }
-        }
-        return -1;
     }
 
     setOversizeNotice(field: string) {

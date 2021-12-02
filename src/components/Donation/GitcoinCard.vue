@@ -8,13 +8,13 @@
             text-body-text
             bg-body-bg
             border-card
-            rounded rounded-2xl
+            rounded-2xl
             shadow-gitcoin
             cursor-pointer
         "
     >
         <div
-            class="flex-shrink m-0.5 w-32 h-32 bg-cover bg-center bg-no-repeat rounded rounded-2xl"
+            class="flex-shrink m-0.5 w-32 h-32 bg-cover bg-center bg-no-repeat rounded-2xl"
             :style="{ backgroundImage: `url(${imageUrl})` }"
         ></div>
         <div class="flex-1 px-8 w-45">

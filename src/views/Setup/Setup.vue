@@ -205,7 +205,6 @@
 import { Options, Vue } from 'vue-class-component';
 import Button from '@/components/Button/Button.vue';
 import AvatarEditor from '@/components/Profile/AvatarEditor.vue';
-import Card from '@/components/Card/Card.vue';
 import BarCard from '@/components/Card/BarCard.vue';
 import AccountItem from '@/components/Account/AccountItem.vue';
 import NFTItem from '@/components/NFT/NFTItem.vue';
@@ -216,6 +215,7 @@ import LoadingContainer from '@/components/Loading/LoadingContainer.vue';
 import { RSS3Account, RSS3Asset, RSS3Profile } from 'rss3-next/types/rss3';
 import RSS3, { IRSS3 } from '@/common/rss3';
 import config from '@/config';
+import setupTheme from '@/common/theme';
 
 import NFTIcon from '@/components/Icons/NFTIcon.vue';
 import GitcoinIcon from '@/components/Icons/GitcoinIcon.vue';
@@ -228,6 +228,7 @@ import GitcoinItem from '@/components/Donation/GitcoinItem.vue';
 import RNSUtils from '@/common/rns';
 import FootprintItem from '@/components/Footprint/FootprintItem.vue';
 import EVMpAccountItem from '@/components/Account/EVMpAccountItem.vue';
+import utils from '@/common/utils';
 
 @Options({
     name: 'Setup',
@@ -237,7 +238,6 @@ import EVMpAccountItem from '@/components/Account/EVMpAccountItem.vue';
         Modal,
         Button,
         AvatarEditor,
-        Card,
         BarCard,
         GitcoinItem,
         AccountItem,
@@ -320,60 +320,44 @@ export default class Setup extends Vue {
         }
 
         if (profile?.bio) {
-            const fieldPattern = /<([A-Z]+?)#(.+?)?>/gi;
-            const fields = profile.bio.match(fieldPattern) || [];
-            this.profile.bio = profile.bio.replace(fieldPattern, '');
-
-            for (const field of fields) {
-                const splits = fieldPattern.exec(field) || [];
-                switch (splits[1]) {
-                    case 'SITE':
-                        this.profile.link = splits[2];
-                        break;
-                    default:
-                        // Do nothing
-                        break;
-                }
-            }
+            // Profile
+            const { extracted, fieldsMatch } = utils.extractEmbedFields(profile?.bio || '', ['SITE']);
+            this.profile.bio = extracted;
+            this.profile.link = fieldsMatch?.['SITE'] || '';
         }
 
         // Setup theme
-        const themes = RSS3.getAvailableThemes(await (<IRSS3>this.rss3).assets.get());
-        if (themes[0]) {
-            this.currentTheme = themes[0].name;
-            document.body.classList.add(themes[0].class);
-        } else {
-            document.body.classList.remove(...document.body.classList);
-        }
+        setupTheme(await (<IRSS3>this.rss3).assets.get());
 
         // this.startLoadingAssets();
-
         this.isLoading = false;
     }
 
     startLoadingAccounts() {
         this.accounts = [];
         setTimeout(async () => {
+            const accounts = await (<IRSS3>this.rss3).accounts.get();
+            const { listed } = await utils.initAccounts(accounts);
+            this.accounts = listed;
             // Push original account
-            this.accounts.push({
+            this.accounts.unshift({
                 platform: 'EVM+',
                 identity: (<IRSS3>this.rss3).account.address,
                 signature: '',
                 tags: ['pass:order:-1'],
             });
-
-            await this.loadMoreAccounts(await (<IRSS3>this.rss3).accounts.get());
         }, 0);
     }
 
     async ivLoadNFT(refresh: boolean): Promise<boolean> {
         const data = await RSS3.getAssetProfile((<IRSS3>this.rss3).account.address, 'NFT', refresh);
         if (data && data.status !== false) {
-            await this.mergeAssets(
+            const { listed } = await utils.initAssets(
                 await (<IRSS3>this.rss3).assets.get((<IRSS3>this.rss3).account.address),
                 <GeneralAsset[]>data.assets,
                 'NFT',
             );
+            this.nfts = listed;
             this.isLoadingAssets.NFT = false;
             return true;
         }
@@ -383,11 +367,12 @@ export default class Setup extends Vue {
     async ivLoadGitcoin(refresh: boolean): Promise<boolean> {
         const data = await RSS3.getAssetProfile((<IRSS3>this.rss3).account.address, 'Gitcoin-Donation', refresh);
         if (data && data.status !== false) {
-            await this.mergeAssets(
+            const { listed } = await utils.initAssets(
                 await (<IRSS3>this.rss3).assets.get((<IRSS3>this.rss3).account.address),
                 <GeneralAsset[]>data.assets,
                 'Gitcoin-Donation',
             );
+            this.gitcoins = listed;
             this.isLoadingAssets.Gitcoin = false;
             return true;
         }
@@ -397,11 +382,12 @@ export default class Setup extends Vue {
     async ivLoadFootprint(refresh: boolean): Promise<boolean> {
         const data = await RSS3.getAssetProfile((<IRSS3>this.rss3).account.address, 'POAP', refresh);
         if (data && data.status !== false) {
-            await this.mergeAssets(
+            const { listed } = await utils.initAssets(
                 await (<IRSS3>this.rss3).assets.get((<IRSS3>this.rss3).account.address),
                 <GeneralAsset[]>data.assets,
                 'POAP',
             );
+            this.footprints = listed;
             this.isLoadingAssets.Footprint = false;
             return true;
         }
@@ -436,94 +422,11 @@ export default class Setup extends Vue {
         }
     }
 
-    getTaggedOrder(taggedElement: RSS3Account | RSS3Asset): number {
-        if (!taggedElement.tags) {
-            return -1;
-        }
-        const orderPattern = /^pass:order:(-?\d+)$/i;
-        for (const tag of taggedElement.tags) {
-            if (orderPattern.test(tag)) {
-                return parseInt(orderPattern.exec(tag)?.[1] || '-1');
-            }
-        }
-        return -1;
-    }
-
-    private getAssetOrder(nft: RSS3Asset) {
-        let order = -1;
-        nft.tags?.forEach((tag: string) => {
-            if (tag.startsWith('pass:order:')) {
-                order = parseInt(tag.substr(11));
-            }
-        });
-        return order;
-    }
-
-    async loadMoreAccounts(accounts: RSS3Account[]) {
-        // Get accounts
-        if (accounts) {
-            accounts.forEach((account: RSS3Account) => {
-                if (!account.tags?.includes('hidden')) {
-                    this.accounts.push(account);
-                }
-            });
-            this.accounts.sort((a, b) => {
-                return this.getTaggedOrder(a) - this.getTaggedOrder(b);
-            });
-        }
-    }
-
-    async mergeAssets(assetsInRSS3File: RSS3Asset[], assetsGrabbed: GeneralAsset[], type: string) {
-        const assetsMerge: GeneralAssetWithTags[] = await Promise.all(
-            (assetsGrabbed || []).map(async (ag: GeneralAssetWithTags) => {
-                const origType = ag.type;
-                if (config.hideUnlistedAsstes) {
-                    ag.type = 'Invalid'; // Using as a match mark
-                }
-                for (const airf of assetsInRSS3File) {
-                    if (
-                        airf.platform === ag.platform &&
-                        airf.identity === ag.identity &&
-                        airf.id === ag.id &&
-                        airf.type === origType
-                    ) {
-                        // Matched
-                        ag.type = origType; // Recover type
-                        if (airf.tags) {
-                            ag.tags = airf.tags;
-                        }
-                        break;
-                    }
-                }
-                return ag;
-            }),
-        );
-
-        const List: GeneralAssetWithTags[] = [];
-
-        for (const am of assetsMerge) {
-            if (am.type.includes(type)) {
-                List.push(am);
-            } // else Invalid
-        }
-
-        const res = List.filter((asset) => !asset.tags || asset.tags.indexOf('pass:hidden') === -1).sort(
-            (a, b) => this.getAssetOrder(a) - this.getAssetOrder(b),
-        );
-
-        if (type.includes('NFT')) {
-            this.nfts = res;
-        } else if (type === 'Gitcoin-Donation') {
-            this.gitcoins = res;
-        } else if (type === 'POAP') {
-            this.footprints = res;
-        }
-    }
-
     toManageAccounts() {
         // this.saveEdited();
         this.$router.push('/setup/accounts');
     }
+
     toManageNFTs() {
         // this.saveEdited();
         if (this.isLoadingAssets.NFT) {
@@ -533,6 +436,7 @@ export default class Setup extends Vue {
             this.$router.push('/setup/nfts');
         }
     }
+
     toManageGitcoins() {
         if (this.isLoadingAssets.Gitcoin) {
             this.notice = 'Gitcoins still loading... Maybe check back later?';
@@ -541,6 +445,7 @@ export default class Setup extends Vue {
             this.$router.push('/setup/gitcoins');
         }
     }
+
     toManageFootprints() {
         if (this.isLoadingAssets.Footprint) {
             this.notice = 'Footprints still loading... Maybe check back later?';
@@ -549,11 +454,13 @@ export default class Setup extends Vue {
             this.$router.push('/setup/footprints');
         }
     }
+
     async back() {
         // this.clearEdited();
         this.$gtag.event('cancelEditProfile', { userid: (<IRSS3>this.rss3).account.address });
         window.history.back();
     }
+
     async save() {
         this.isLoading = true;
         if (!this.rss3) {

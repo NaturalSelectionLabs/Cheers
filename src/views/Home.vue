@@ -13,7 +13,7 @@
                     :followers="rss3Relations.followers.length"
                     :followings="rss3Relations.followings.length"
                     :bio="rss3Profile.bio"
-                    :website="rss3Profile.link"
+                    :website="rss3Profile.displayAddress"
                     :is-loading-persona="isLoadingPersona"
                     @click-address="clickAddress"
                 >
@@ -619,28 +619,16 @@ export default class Home extends Vue {
 
             this.rss3Profile.avatar = profile?.avatar?.[0] || config.defaultAvatar;
             this.rss3Profile.username = profile?.name || '';
+            this.rss3Profile.address = this.ethAddress;
 
             if (profile?.bio) {
-                const fieldPattern = /<([A-Z]+?)#(.+?)>/gi;
-                const fields = profile.bio.match(fieldPattern) || [];
-                this.rss3Profile.bio = profile.bio.replace(fieldPattern, '');
-
-                for (const field of fields) {
-                    const splits = fieldPattern.exec(field) || [];
-                    switch (splits[1]) {
-                        case 'SITE':
-                            this.rss3Profile.displayAddress = splits[2];
-                            break;
-                        default:
-                            // Do nothing
-                            break;
-                    }
-                }
+                // Profile
+                const { extracted, fieldsMatch } = utils.extractEmbedFields(profile?.bio || '', ['SITE']);
+                this.rss3Profile.bio = extracted;
+                this.rss3Profile.displayAddress = fieldsMatch?.['SITE'] || '';
             } else {
                 this.rss3Profile.bio = '';
             }
-
-            this.rss3Profile.address = this.ethAddress;
 
             this.isLoadingPersona = false;
         }, 0);
