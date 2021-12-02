@@ -18,19 +18,9 @@ import EditProfile from '@/views/Setup/EditProfile.vue';
 import RNS from '@/views/Setup/RNS.vue';
 import RNSPending from '@/views/Setup/RNSPending.vue';
 import Setup from '@/views/Setup/Setup.vue';
-/* IFTRUE_isDevelop */
-import Test from '@/views/Test.vue';
-/* FITRUE_isDevelop */
 import { createRouter, createWebHistory } from 'vue-router';
 
 export const routes = [
-    /* IFTRUE_isDevelop */
-    {
-        path: '/test',
-        name: 'Test',
-        component: Test,
-    },
-    /* FITRUE_isDevelop */
     config.subDomain.isSubDomainMode
         ? {
               path: '/',
