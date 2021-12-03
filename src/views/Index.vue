@@ -1,6 +1,6 @@
 <template>
     <div class="onboarding flex items-center justify-center h-screen text-center bg-pass3gradient bg-cover bg-fixed">
-        <div class="body flex flex-col items-center justify-start px-4 h-2/3">
+        <div class="body flex flex-col items-center justify-between px-4 h-2/3">
             <Logo :size="200" />
             <div class="mx-auto w-83.5 text-white text-2xl leading-17.5">
                 <Button
