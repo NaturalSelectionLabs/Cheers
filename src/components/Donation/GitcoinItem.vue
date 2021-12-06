@@ -8,7 +8,7 @@
             rounded: size === 'contain',
         }"
     >
-        <img :src="imageUrl" class="w-full h-full" />
+        <img :src="imageUrl" class="w-full h-full object-cover" />
     </div>
 </template>
 
