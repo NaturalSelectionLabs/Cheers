@@ -18,7 +18,6 @@ import EditProfile from '@/views/Setup/EditProfile.vue';
 import RNS from '@/views/Setup/RNS.vue';
 import RNSPending from '@/views/Setup/RNSPending.vue';
 import Setup from '@/views/Setup/Setup.vue';
-import Test from '@/views/Test.vue';
 import { createRouter, createWebHistory } from 'vue-router';
 
 export const routes = [
@@ -42,11 +41,6 @@ export const routes = [
         path: (config.subDomain.isSubDomainMode ? '' : '/:address') + '/followings',
         name: 'Followings',
         component: Followings,
-    },
-    {
-        path: '/test',
-        name: 'Test',
-        component: Test,
     },
     {
         path: (config.subDomain.isSubDomainMode ? '' : '/:address') + '/accounts',
