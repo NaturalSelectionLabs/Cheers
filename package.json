@@ -53,7 +53,7 @@
         "js-cookie": "3.0.1",
         "koa": "2.13.4",
         "koa-static": "5.0.0",
-        "koa-views": "7.0.1",
+        "koa-views": "8.0.0",
         "lodash": "4.17.21",
         "marked": "3.0.7",
         "moment": "2.29.1",
