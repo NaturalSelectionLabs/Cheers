@@ -121,6 +121,7 @@
                                 :list="show"
                                 group="accounts"
                                 itemKey="chain"
+                                :animation="200"
                             >
                                 <template #item="{ element }">
                                     <div
@@ -188,6 +189,7 @@
                             :list="hide"
                             group="accounts"
                             itemKey="chain"
+                            :animation="200"
                         >
                             <template #item="{ element }">
                                 <div class="inline-flex m-0.5 rounded-full" style="cursor: grab">

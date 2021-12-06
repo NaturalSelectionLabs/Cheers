@@ -19,6 +19,7 @@
                             group="gitcoins"
                             data-type="displayed"
                             item-key="displayed"
+                            :animation="200"
                         >
                             <template #item="{ element }">
                                 <GitcoinItem
@@ -74,6 +75,7 @@
                             group="gitcoins"
                             data-type="displayed"
                             item-key="displayed"
+                            :animation="200"
                         >
                             <template #item="{ element }">
                                 <GitcoinItem

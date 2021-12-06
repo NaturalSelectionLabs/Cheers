@@ -21,6 +21,7 @@
                             @end="nftMoveEnd"
                             data-type="displayed"
                             item-key="displayed"
+                            :animation="200"
                         >
                             <template #item="{ element }">
                                 <NFTItem
@@ -74,6 +75,7 @@
                                     data-type="hidden"
                                     :item-key="collection"
                                     @end="nftMoveEnd"
+                                    :animation="200"
                                 >
                                     <template #item="{ element }">
                                         <NFTItem

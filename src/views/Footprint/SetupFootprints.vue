@@ -19,6 +19,7 @@
                             group="footprints"
                             data-type="displayed"
                             item-key="displayed"
+                            :animation="200"
                         >
                             <template #item="{ element }">
                                 <FootprintItem
@@ -74,6 +75,7 @@
                             group="footprints"
                             data-type="displayed"
                             item-key="displayed"
+                            :animation="200"
                         >
                             <template #item="{ element }">
                                 <FootprintItem
