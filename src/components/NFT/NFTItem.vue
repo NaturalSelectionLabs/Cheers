@@ -17,7 +17,7 @@
                 imageUrl?.endsWith('.webm') ||
                 imageUrl?.endsWith('.mp3')
             "
-            :src="imageUrl"
+            :src="showImageUrl"
             :poster="
                 posterUrl?.endsWith('.mp4') || posterUrl?.endsWith('.mov') || posterUrl?.endsWith('.webm')
                     ? undefined
@@ -107,7 +107,7 @@ export default class NFTItem extends Vue {
 
     handleIPFS(url: String) {
         if (url.startsWith('ipfs://')) {
-            return url.replace('ipfs://', 'https://cloudflare-ipfs.com/ipfs/');
+            return url.replace('ipfs://', 'https://infura-ipfs.io/ipfs/');
         } else {
             return url;
         }
