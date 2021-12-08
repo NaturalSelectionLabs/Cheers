@@ -107,7 +107,7 @@ export default class NFTItem extends Vue {
 
     handleIPFS(url: String) {
         if (url.startsWith('ipfs://')) {
-            return url.replace('ipfs://', 'https://ipfs.io/ipfs/');
+            return url.replace('ipfs://', 'https://infura-ipfs.io/ipfs/');
         } else {
             return url;
         }
