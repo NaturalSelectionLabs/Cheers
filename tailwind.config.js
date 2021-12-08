@@ -227,6 +227,7 @@ module.exports = {
                 Ronin: 'url(@/assets/images/chains/Ronin.png)',
                 Misskey: 'url(@/assets/images/chains/Misskey.png)',
                 Twitter: 'url(@/assets/images/chains/Twitter.png)',
+                Solana: 'url(@/assets/images/chains/Solana.png)',
                 Roninscan: 'url(@/assets/images/scans/Roninscan.png)',
                 pass3gif: 'url(@/assets/images/pass3.gif)',
                 pass3logo: 'url(@/assets/images/pass3logo.svg)',
