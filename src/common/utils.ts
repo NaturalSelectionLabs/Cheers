@@ -178,9 +178,9 @@ async function getAddress(routerAddress: string) {
             // RNS
             rns = address;
             ethAddress = (await RNSUtils.name2Addr(address)).toString();
-            if (parseInt(ethAddress) === 0) {
-                return { ethAddress, rns };
-            }
+            // if (parseInt(ethAddress) === 0) {
+            //     return { ethAddress, rns };
+            // }
         }
     }
 

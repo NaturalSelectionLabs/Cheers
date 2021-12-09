@@ -653,42 +653,15 @@ export default class Home extends Vue {
     }
 
     async getAddress(owner: string) {
-        let address: string = '';
-        if (config.subDomain.isSubDomainMode) {
-            // Is subdomain mode
-            address = utils.getName();
-        } else if (this.$route.params.address) {
-            address = <string>this.$route.params.address;
-        } else {
-            return false;
-        }
+        const { ethAddress, rns } = await utils.getAddress(<string>this.$route.params.address);
+        this.ethAddress = ethAddress;
+        this.rns = rns;
+        this.isOwner = ethAddress == owner;
 
-        if (address) {
-            if (address.startsWith('0x')) {
-                // Might be address type
-                // Get RNS and redirect
-                this.ethAddress = address;
-                this.rns = await RNSUtils.addr2Name(address);
-                if (this.rns !== '') {
-                    window.location.href = '//' + this.rns + '.' + config.subDomain.rootDomain;
-                }
-            } else {
-                // RNS
-                this.rns = address;
-                this.ethAddress = (await RNSUtils.name2Addr(address)).toString();
-                if (parseInt(this.ethAddress) === 0) {
-                    this.isAccountExist = false;
-                    return false;
-                }
-            }
+        const file = <RSS3Index>await (<IRSS3>this.rss3).files.get(this.ethAddress);
 
-            const file = <RSS3Index>await (<IRSS3>this.rss3).files.get(this.ethAddress);
-
-            if (!file.signature) {
-                this.isAccountExist = false;
-            }
-
-            this.isOwner = this.ethAddress === owner;
+        if (!file.signature) {
+            this.isAccountExist = false;
         }
 
         return true;
