@@ -18,6 +18,10 @@ export default {
     hubEndpoint: PAGE_ENV === 'production' ? 'https://hub.pass3.me' : 'https://hub-dev.pass3.me',
     defaultAvatar: 'https://rss3.mypinata.cloud/ipfs/QmVFq9qimnudPcs6QkQv8ZVEsvwD3aqETHWtS5yXgdbYY5',
     hideUnlistedAsstes: false,
+    tags: {
+        prefix: 'pass',
+        hiddenTag: 'hidden',
+    },
     subDomain: {
         isSubDomainMode,
         rootDomain: PAGE_ENV === 'production' ? 'rss3.bio' : currentRootDomain,

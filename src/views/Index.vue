@@ -1,6 +1,6 @@
 <template>
     <div class="onboarding flex items-center justify-center h-screen text-center bg-pass3gradient bg-cover bg-fixed">
-        <div class="body flex flex-col items-center justify-between justify-start px-4 h-2/3">
+        <div class="body flex flex-col items-center justify-between px-4 h-2/3">
             <Logo :size="200" />
             <div class="mx-auto w-83.5 text-white text-2xl leading-17.5">
                 <Button
@@ -28,16 +28,16 @@
 
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
-import Button from '@/components/Button.vue';
+import Button from '@/components/Button/Button.vue';
 import RSS3, { IRSS3 } from '@/common/rss3';
-import Modal from '@/components/Modal.vue';
+import Modal from '@/components/Common/Modal.vue';
 import { RSS3Profile } from 'rss3-next/types/rss3';
 import RNSUtils from '@/common/rns';
 import WalletConnect from '@/components/Icons/WalletConnect.vue';
 import Metamask from '@/components/Icons/Metamask.vue';
-import Loading from '@/components/Loading.vue';
-import LoadingContainer from '@/components/LoadingContainer.vue';
-import Logo from '@/components/Logo.vue';
+import Loading from '@/components/Loading/Loading.vue';
+import LoadingContainer from '@/components/Loading/LoadingContainer.vue';
+import Logo from '@/components/Icons/Logo.vue';
 import config from '@/config';
 @Options({
     name: 'Index',

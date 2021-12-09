@@ -16,6 +16,7 @@ export interface GitcoinResponse {
 export interface NFT extends Asset {
     token_id: string;
     name?: string;
+    chain: 'BSC' | 'Ethereum' | 'Polygon';
     description?: string | null;
     image_url?: string | null;
     image_preview_url?: string | null;
@@ -39,6 +40,7 @@ export interface NFT extends Asset {
 }
 
 export interface GrantInfo {
+    id?: string;
     active: boolean;
     title?: string;
     slug?: string;
@@ -54,12 +56,15 @@ export interface GrantInfo {
 
 export interface DonationInfo {
     donor: string;
+    adminAddr?: string;
     tokenAddr: string;
     amount: string;
     symbol?: string;
+    decimals?: number;
     formatedAmount?: string;
     timeStamp: string;
     txHash: string;
+    approach?: 'zkSync' | 'Standard';
 }
 
 export interface DonationDetailByGrant {
@@ -105,7 +110,7 @@ export interface GeneralAsset {
         animation_original_url?: string | null;
         title?: string;
         total_contribs?: number;
-        token_contribs: {
+        token_contribs?: {
             token: string;
             amount: string;
         }[];
@@ -118,4 +123,13 @@ export interface GeneralAsset {
 
 export interface GeneralAssetWithTags extends GeneralAsset {
     tags?: string[];
+}
+
+export interface Profile {
+    avatar: string;
+    username: string;
+    address: string;
+    bio: string;
+    rns?: string;
+    displayAddress?: string;
 }
