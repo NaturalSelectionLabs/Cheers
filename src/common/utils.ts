@@ -161,8 +161,8 @@ async function getAddress(routerAddress: string) {
     }
 
     if (address) {
-        if (address.startsWith('0x')) {
-            // Might be address type
+        if (/^0x[a-fA-F0-9]{40}$/.test(address)) {
+            // Should be address type
             // Get RNS and redirect
             ethAddress = address;
             rns = await RNSUtils.addr2Name(address);

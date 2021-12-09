@@ -7,6 +7,7 @@ const koaViews = require('koa-views');
 const koaStatic = require('koa-static');
 const path = require('path');
 const axios = require('axios');
+const ethers = require('ethers');
 
 const app = new Koa();
 app.use(CORS());
@@ -28,7 +29,7 @@ const getName = async (host, url) => {
 };
 
 const getAddress = async (name) => {
-    if (/^0x/.test(name) && name.length === 42) {
+    if (/^0x[a-fA-F0-9]{40}$/.test(name)) {
         return name;
     } else {
         try {
