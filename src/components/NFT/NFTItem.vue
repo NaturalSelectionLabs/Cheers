@@ -13,7 +13,7 @@
     >
         <video
             v-if="viewType === 'video'"
-            :src="mainUrl"
+            :src="showImageUrl"
             :poster="subUrl"
             class="nft-item"
             :class="variableNFTClass"
@@ -69,7 +69,7 @@ export default class NFTItem extends Vue {
 
     handleIPFS(url: String) {
         if (url.startsWith('ipfs://')) {
-            return url.replace('ipfs://', 'https://cloudflare-ipfs.com/ipfs/');
+            return url.replace('ipfs://', 'https://infura-ipfs.io/ipfs/');
         } else {
             return url;
         }
