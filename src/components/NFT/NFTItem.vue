@@ -13,7 +13,7 @@
     >
         <video
             v-if="viewType === 'video'"
-            :src="showImageUrl"
+            :src="mainUrl"
             :poster="subUrl"
             class="nft-item"
             :class="variableNFTClass"
