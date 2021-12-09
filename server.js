@@ -28,7 +28,7 @@ const getName = async (host, url) => {
 };
 
 const getAddress = async (name) => {
-    if (/^0x/.test(name) && name.length === 42) {
+    if (/^0x[a-fA-F0-9]{40}$/.test(name)) {
         return name;
     } else {
         try {
