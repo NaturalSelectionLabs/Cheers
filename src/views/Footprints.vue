@@ -143,7 +143,7 @@ export default class Footprints extends Vue {
         }
 
         if (address) {
-            if (address.startsWith('0x')) {
+            if (/^0x[a-fA-F0-9]{40}$/.test(address)) {
                 // Might be address type
                 // Get RNS and redirect
                 this.ethAddress = address;
