@@ -2,17 +2,14 @@
     <div class="flex flex-col gap-y-2.5 mt-4 px-5 py-4 w-full text-body-text">
         <div class="flex flex-row gap-2 items-start justify-between">
             <div class="flex-1 w-0">
-                <h2 class="text-xl font-semibold truncate">{{ details.event.name }}</h2>
-                <div
-                    v-if="details.event.event_url"
-                    class="flex flex-row items-center mt-1 text-footprint-title truncate"
-                >
+                <h2 class="text-xl font-semibold truncate">{{ details.name }}</h2>
+                <div v-if="details.event_url" class="flex flex-row items-center mt-1 text-footprint-title truncate">
                     <i class="bx bx-link align-middle mr-2" />
-                    <span class="flex-1 w-0 truncate">{{ details.event.event_url }}</span>
+                    <span class="flex-1 w-0 truncate">{{ details.event_url }}</span>
                 </div>
             </div>
             <Button
-                v-if="details.event.event_url"
+                v-if="details.event_url"
                 size="sm"
                 class="ml-1 w-9 h-9 text-footprint-btn-m-text bg-footprint-btn-m shadow-footprint-btn-m"
                 @click="toExternalLink"
@@ -27,13 +24,13 @@
             </div>
             <div class="flex flex-row gap-2 items-center">
                 <LocationIcon />
-                <span class="text-body-text">{{ details.event.city || details.event.country || 'Metaverse' }}</span>
+                <span class="text-body-text">{{ details.city || details.country || 'Metaverse' }}</span>
             </div>
         </section>
-        <section v-if="details.event.description">
+        <section v-if="details.description">
             <h3 class="text-footprint-title text-lg font-medium capitalize">Description</h3>
             <p class="text-body-text font-medium leading-loose">
-                {{ details.event.description }}
+                {{ details.description }}
             </p>
         </section>
     </div>
@@ -57,14 +54,14 @@ export default class SingleFootprint extends Vue {
     details!: POAP;
 
     toExternalLink() {
-        window.open(this.details.event.event_url);
+        window.open(this.details.event_url);
     }
 
     getDate(): string {
-        return this.details.event.start_date
-            ? this.formatDate(this.details.event.start_date) +
-                  (this.details.event.end_date && this.details.event.end_date !== this.details.event.start_date
-                      ? ` ~ ${this.formatDate(this.details.event.end_date)}`
+        return this.details.start_date
+            ? this.details.start_date +
+                  (this.details.end_date && this.details.end_date !== this.details.start_date
+                      ? ` ~ ${this.details.end_date}`
                       : '')
             : 'Loading...';
     }
