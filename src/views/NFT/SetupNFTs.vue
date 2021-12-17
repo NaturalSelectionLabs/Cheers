@@ -199,13 +199,10 @@ export default class SetupNFTs extends Vue {
         setupTheme((await loginUser.persona?.assets.auto.getList(loginUser.address)) || []);
 
         // Get NFTs
-        console.log('Getting NFTs...');
         const { nfts, hiddenNfts } = await utils.initAssets();
 
         this.displayedNFTs = await utils.loadAssets(nfts);
         const hiddenNFTs = await utils.loadAssets(hiddenNfts);
-        console.log('DisplayedNFTs', this.displayedNFTs);
-        console.log('HiddenNFTs', hiddenNFTs);
         this.displayedNFTs.forEach((nft) => {
             if (nft.detail.collection?.name) {
                 this.collections.push(nft.detail.collection.name);
