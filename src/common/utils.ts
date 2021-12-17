@@ -4,7 +4,7 @@ import { formatter } from './address';
 import legacyConfig from '@/config';
 import config from './config';
 import RNS from './rns';
-import RSS3 from './rss3';
+import RSS3, { IRSS3 } from './rss3';
 import {
     CustomField_Pass,
     DonationDetailByGrant,
@@ -90,13 +90,13 @@ async function initAssets() {
 }
 
 async function loadAssets(parsedAssets: AnyObject[]) {
-    const pageOwner = await RSS3.getPageOwner();
+    const apiUser = (await RSS3.getAPIUser().persona) as IRSS3;
 
     const assetIDList = parsedAssets.map((asset) =>
         RSS3Utils.id.getAsset(asset.platform, asset.identity, asset.type, asset.uniqueID),
     );
     return assetIDList.length !== 0
-        ? (await pageOwner.assets?.getDetails({
+        ? (await apiUser.assets.getDetails({
               assets: assetIDList,
               full: true,
           })) || []
