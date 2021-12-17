@@ -96,9 +96,9 @@
                                     :key="item.id"
                                 >
                                     <EVMpAccountItem
-                                        v-if="item.id.startsWith('EVM+')"
+                                        v-if="parseAccount(item.id).platform === 'EVM+'"
                                         :size="64"
-                                        :address="item.id.split('-')[1]"
+                                        :address="parseAccount(item.id).identity"
                                         :enable-tooltip="true"
                                         :delete-mode="true"
                                         @delete-account="deleteAccount(index)"
@@ -106,8 +106,8 @@
                                     <AccountItem
                                         v-else
                                         :size="64"
-                                        :chain="item.id.split('-')[0]"
-                                        :address="item.id.split('-')[1]"
+                                        :chain="parseAccount(item.id).platform"
+                                        :address="parseAccount(item.id).identity"
                                         :enable-tooltip="true"
                                         :delete-mode="true"
                                         @delete-account="deleteAccount(index)"
@@ -129,16 +129,16 @@
                                         style="cursor: grab"
                                     >
                                         <EVMpAccountItem
-                                            v-if="element.id.startWith('EVM+')"
+                                            v-if="parseAccount(element.id).platform === 'EVM+'"
                                             :size="64"
-                                            :address="element.id.split('-')[1]"
+                                            :address="parseAccount(element.id).identity"
                                             :enable-tooltip="true"
                                         />
                                         <AccountItem
                                             v-else
                                             :size="64"
-                                            :chain="element.id.split('-')[0]"
-                                            :address="element.id.split('-')[1]"
+                                            :chain="parseAccount(element.id).platform"
+                                            :address="parseAccount(element.id).identity"
                                             :enable-tooltip="true"
                                         />
                                     </div>
@@ -194,16 +194,16 @@
                             <template #item="{ element }">
                                 <div class="inline-flex m-0.5 rounded-full" style="cursor: grab">
                                     <EVMpAccountItem
-                                        v-if="element.id.startWith('EVM+')"
+                                        v-if="parseAccount(element.id).platform === 'EVM+'"
                                         :size="64"
-                                        :address="element.id.split('-')[1]"
+                                        :address="parseAccount(element.id).identity"
                                         :enable-tooltip="true"
                                     />
                                     <AccountItem
                                         v-else
                                         :size="64"
-                                        :chain="element.id.split('-')[0]"
-                                        :address="element.id.split('-')[1]"
+                                        :chain="parseAccount(element.id).platform"
+                                        :address="parseAccount(element.id).identity"
                                         :enable-tooltip="true"
                                     />
                                 </div>
@@ -330,6 +330,7 @@ import Modal from '@/components/Common/Modal.vue';
 import Loading from '@/components/Loading/Loading.vue';
 import LoadingContainer from '@/components/Loading/LoadingContainer.vue';
 import RSS3 from '@/common/rss3';
+import { utils as RSS3Utils } from 'rss3';
 import config from '@/config';
 import ContentProviders from '@/common/content-providers';
 
@@ -389,6 +390,8 @@ export default class SetupAccounts extends Vue {
         prefix: '',
         suffix: '',
     };
+
+    parseAccount = RSS3Utils.id.parseAccount;
 
     async mounted() {
         if (!(await RSS3.reconnect())) {
