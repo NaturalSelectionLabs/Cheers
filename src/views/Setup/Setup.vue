@@ -312,15 +312,6 @@ export default class Setup extends Vue {
         this.profile.name = profile?.name || '';
         this.profile.bio = profile?.bio || '';
 
-        if (profile?.avatar?.[0]) {
-            const favicon = <HTMLLinkElement>document.getElementById('favicon');
-            favicon.href = profile.avatar[0];
-        }
-
-        if (profile?.name) {
-            document.title = profile.name;
-        }
-
         if (profile?.bio) {
             // Profile
             const { extracted, fieldsMatch } = utils.extractEmbedFields(profile?.bio || '', ['SITE']);

@@ -99,14 +99,6 @@ export default class Followings extends Vue {
         this.rss3Profile = await rss3.profile.get(this.ethAddress);
     }
 
-    async setPageTitleFavicon() {
-        const rss3 = await RSS3.visitor();
-        const profile = await rss3.profile.get(this.ethAddress);
-        const favicon = <HTMLLinkElement>document.getElementById('favicon');
-        favicon.href = profile?.avatar?.[0] || '/favicon.ico';
-        document.title = profile?.name || 'Web3 Pass';
-    }
-
     filter(address: string) {
         return `${address.slice(0, 6)}...${address.slice(-4)}`;
     }
@@ -119,7 +111,6 @@ export default class Followings extends Vue {
         this.rns = rns;
 
         setTimeout(async () => {
-            await this.setPageTitleFavicon();
             if (this.lastRoute !== this.$route.fullPath) {
                 await this.setProfile();
                 await this.initLoad();

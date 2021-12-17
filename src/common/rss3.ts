@@ -311,6 +311,17 @@ function dispatchEvent(event: string, detail: any) {
     document.dispatchEvent(evt);
 }
 
+async function setPageTitleFavicon() {
+    const profile = RSS3PageOwner.profile;
+    const favicon = <HTMLLinkElement>document.getElementById('favicon');
+    if (profile?.avatar?.[0]) {
+        favicon.href = utils.fixURLSchemas(profile.avatar[0]);
+    } else {
+        favicon.href = '/favicon.ico';
+    }
+    document.title = profile?.name || 'Web3 Pass';
+}
+
 export default {
     connect: {
         walletConnect: async () => {
@@ -387,6 +398,7 @@ export default {
         if (isReloadRequired) {
             await initUser(RSS3PageOwner);
         }
+        await setPageTitleFavicon();
         dispatchEvent(Events.pageOwnerReady, RSS3PageOwner);
         return RSS3PageOwner;
     },

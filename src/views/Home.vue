@@ -626,15 +626,6 @@ export default class Home extends Vue {
         }, 0);
     }
 
-    async setPageTitleFavicon() {
-        if (this.ethAddress) {
-            const profile = RSS3.getPageOwner().profile;
-            const favicon = <HTMLLinkElement>document.getElementById('favicon');
-            favicon.href = profile?.avatar?.[0] || '/favicon.ico';
-            document.title = profile?.name || 'Web3 Pass';
-        }
-    }
-
     startLoadingAccounts() {
         this.accounts = [];
         const pageOwner = RSS3.getPageOwner();
@@ -1057,7 +1048,6 @@ export default class Home extends Vue {
 
             await this.initLoad();
         }
-        await this.setPageTitleFavicon();
         const loginUser = RSS3.getLoginUser();
         if (this.ethAddress) {
             // Setup theme
