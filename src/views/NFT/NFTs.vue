@@ -56,7 +56,6 @@ import RSS3 from '@/common/rss3';
 import config from '@/config';
 import { debounce } from 'lodash';
 import utils from '@/common/utils';
-import { RSS3Profile } from 'rss3-next/types/rss3';
 import Header from '@/components/Common/Header.vue';
 import setupTheme from '@/common/theme';
 
@@ -69,7 +68,7 @@ export default class NFTs extends Vue {
     ethAddress: string = '';
     isOwner: boolean = false;
     nfts: any[] = [];
-    rss3Profile: RSS3Profile = {};
+    rss3Profile: any = {};
     $gtag: any;
     scrollTop: number = 0;
     lastRoute: string = '';
@@ -87,7 +86,7 @@ export default class NFTs extends Vue {
         this.rss3Profile = await pageOwner.profile;
 
         // Setup theme
-        setupTheme((await pageOwner.persona?.items.auto.getList(pageOwner.address)) || []);
+        setupTheme((await pageOwner.persona?.assets.auto.getList(pageOwner.address)) || []);
 
         const { nfts } = await utils.initAssets();
         this.nfts = await utils.loadAssets(nfts);

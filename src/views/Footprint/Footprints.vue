@@ -56,7 +56,6 @@ import config from '@/config';
 import RSS3 from '@/common/rss3';
 import { debounce } from 'lodash';
 import utils from '@/common/utils';
-import { RSS3Profile } from 'rss3-next/types/rss3';
 import Header from '@/components/Common/Header.vue';
 import setupTheme from '@/common/theme';
 
@@ -69,7 +68,7 @@ export default class Footprints extends Vue {
     ethAddress: string = '';
     footprints: any[] = [];
     isOwner: boolean = false;
-    rss3Profile: RSS3Profile = {};
+    rss3Profile: any = {};
     scrollTop: number = 0;
     lastRoute: string = '';
 

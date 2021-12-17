@@ -51,7 +51,6 @@ import RSS3 from '@/common/rss3';
 import { GeneralAssetWithTags } from '@/common/types';
 import { debounce } from 'lodash';
 import utils from '@/common/utils';
-import { RSS3Profile } from 'rss3-next/types/rss3';
 import Header from '@/components/Common/Header.vue';
 import setupTheme from '@/common/theme';
 
@@ -64,9 +63,9 @@ export default class Gitcoins extends Vue {
     ethAddress: string = '';
     grants: number = 0;
     contribs: number = 0;
-    gitcoins: GeneralAssetWithTags[] = [];
+    gitcoins: any[] = [];
     isOwner: boolean = false;
-    rss3Profile: RSS3Profile = {};
+    rss3Profile: any = {};
     scrollTop: number = 0;
     lastRoute: string = '';
 
