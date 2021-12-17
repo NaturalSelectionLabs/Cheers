@@ -457,15 +457,13 @@ export default class Setup extends Vue {
 
     async back() {
         // this.clearEdited();
-        this.$gtag.event('cancelEditProfile', { userid: (<IRSS3>this.rss3).account.address });
+        this.$gtag.event('cancelEditProfile', { userid: RSS3.getLoginUser().address });
         window.history.back();
     }
 
     async save() {
         this.isLoading = true;
-        if (!this.rss3) {
-            this.rss3 = await RSS3.get();
-        }
+        const loginUser = await RSS3.getLoginUser();
         if (this.profile.name.length > this.maxValueLength) {
             this.notice = `Name cannot be longer than ${this.maxValueLength} chars`;
             this.isLoading = false;
@@ -479,28 +477,24 @@ export default class Setup extends Vue {
             return;
         }
         const newProfile: RSS3Profile = {
+            avatar: [this.profile.avatar],
             name: this.profile.name,
             bio: this.profile.bio + (this.profile.link ? `<SITE#${this.profile.link}>` : ''),
         };
+
+        // Upload avatar
         const avatarUrl = await (<any>this.$refs.avatar).upload();
         if (avatarUrl) {
             newProfile.avatar = [avatarUrl];
         }
-        await (<IRSS3>this.rss3).profile.patch(newProfile);
-        try {
-            await (<IRSS3>this.rss3).files.sync();
-        } catch (e) {
-            console.log(e);
-            this.isLoading = false;
-            return;
-        }
+        await loginUser.persona?.profile.patch(newProfile);
         // this.clearEdited();
-        this.$gtag.event('finishEditProfile', { userid: (<IRSS3>this.rss3).account.address });
+        this.$gtag.event('finishEditProfile', { userid: loginUser.address });
         this.isLoading = false;
         const redirectFrom = sessionStorage.getItem('redirectFrom');
         sessionStorage.removeItem('redirectFrom');
 
-        const ethAddress = (<IRSS3>this.rss3).account.address;
+        const ethAddress = loginUser.address;
         const rns = await RNSUtils.addr2Name(ethAddress);
         if (rns && config.subDomain.isSubDomainMode) {
             window.location.href = '//' + rns + '.' + config.subDomain.rootDomain;
@@ -517,7 +511,7 @@ export default class Setup extends Vue {
     }
 
     async activated() {
-        if (this.rss3 && !this.firstLoad) {
+        if (RSS3.isValidRSS3() && !this.firstLoad) {
             this.startLoadingAccounts();
             await this.startLoadingAssets();
         }
