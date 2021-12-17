@@ -433,11 +433,12 @@ import Profile from '@/components/Profile/Profile.vue';
 import AccountItem from '@/components/Account/AccountItem.vue';
 import NFTItem from '@/components/NFT/NFTItem.vue';
 import RSS3, { IRSS3 } from '@/common/rss3';
-import { RSS3Account, RSS3Asset, RSS3ID, RSS3Index } from 'rss3-next/types/rss3';
+import { RSS3Account, RSS3Asset, RSS3ID, RSS3Index } from 'rss3';
 import Modal from '@/components/Common/Modal.vue';
 import RNSUtils from '@/common/rns';
 import utils from '@/common/utils';
-import config from '@/config';
+import config from '@/common/config';
+import legacyConfig from '@/config';
 import GitcoinItem from '@/components/Donation/GitcoinItem.vue';
 import { GeneralAsset, GeneralAssetWithTags, Profile as ProfileInfo } from '@/common/types';
 
@@ -517,7 +518,7 @@ export default class Home extends Vue {
     isLoadingPersona: boolean = true;
 
     rss3Profile: ProfileInfo = {
-        avatar: config.defaultAvatar,
+        avatar: legacyConfig.defaultAvatar,
         username: '...',
         address: '',
         bio: '...',
@@ -537,7 +538,7 @@ export default class Home extends Vue {
     scrollNftsLeft: number = 0;
     scrollGitcoinsLeft: number = 0;
     lastRoute: string = '';
-    defaultAvatar = config.defaultAvatar;
+    defaultAvatar = legacyConfig.defaultAvatar;
     notice: string = '';
     isShowingNotice: boolean = false;
     isContentsHaveMore: boolean = true;
@@ -583,7 +584,7 @@ export default class Home extends Vue {
         document.title = 'Web3 Pass';
 
         this.isOwnerValidRSS3 = await RSS3.reconnect();
-        this.rss3 = await RSS3.visitor();
+        this.rss3 = await RSS3.getAPIUser();
         const owner: string = <string>this.rss3.account.address;
         this.ownerETHAddress = owner;
 
@@ -593,15 +594,15 @@ export default class Home extends Vue {
                     this.rns = await RNSUtils.addr2Name(owner);
                     this.ethAddress = owner;
                     this.isOwner = true;
-                    if (this.rns && config.subDomain.rootDomain) {
-                        window.location.href = '//' + this.rns + '.' + config.subDomain.rootDomain;
+                    if (this.rns && legacyConfig.subDomain.rootDomain) {
+                        window.location.href = '//' + this.rns + '.' + legacyConfig.subDomain.rootDomain;
                     }
                 } else {
                     this.isOwner = false;
                     sessionStorage.setItem('redirectFrom', this.$route.fullPath);
                     this.ethAddress = '';
-                    if (config.subDomain.isSubDomainMode) {
-                        window.location.href = '//' + config.subDomain.rootDomain;
+                    if (legacyConfig.subDomain.isSubDomainMode) {
+                        window.location.href = '//' + legacyConfig.subDomain.rootDomain;
                     } else {
                         await this.$router.push('/');
                     }
@@ -617,7 +618,7 @@ export default class Home extends Vue {
             const profile = await (<IRSS3>this.rss3).profile.get(this.ethAddress);
             await this.checkIsFollowing();
 
-            this.rss3Profile.avatar = profile?.avatar?.[0] || config.defaultAvatar;
+            this.rss3Profile.avatar = profile?.avatar?.[0] || legacyConfig.defaultAvatar;
             this.rss3Profile.username = profile?.name || '';
             this.rss3Profile.address = this.ethAddress;
 
@@ -774,14 +775,14 @@ export default class Home extends Vue {
     }
 
     async checkSpecialPoap(res: GeneralAssetWithTags[]) {
-        if (config.poapActivity.info.title && this.isOwner) {
-            if (res.findIndex((asset) => asset.info.title === config.poapActivity.info.title) === -1) {
+        if (legacyConfig.poapActivity.info.title && this.isOwner) {
+            if (res.findIndex((asset) => asset.info.title === legacyConfig.poapActivity.info.title) === -1) {
                 res.unshift({
                     platform: 'EVM+',
                     type: 'xDai-POAP',
                     identity: 'Special', // Impossible value for 'Special' identification
                     id: 'active', // status (active / pending)
-                    info: config.poapActivity.info,
+                    info: legacyConfig.poapActivity.info,
                 });
             }
         }
@@ -802,7 +803,7 @@ export default class Home extends Vue {
                         this.ethAddress,
                         provider.lastTS,
                     );
-                    if (contents.length < config.contentRequestLimit) {
+                    if (contents.length < legacyConfig.contentRequestLimit) {
                         // No more
                         provider.more = false;
                     } else {
@@ -899,8 +900,8 @@ export default class Home extends Vue {
             document.title = 'Web3 Pass';
 
             sessionStorage.setItem('redirectFrom', this.$route.fullPath);
-            if (config.subDomain.isSubDomainMode) {
-                window.location.href = '//' + config.subDomain.rootDomain;
+            if (legacyConfig.subDomain.isSubDomainMode) {
+                window.location.href = '//' + legacyConfig.subDomain.rootDomain;
             } else {
                 await this.$router.push('/');
             }
@@ -974,13 +975,16 @@ export default class Home extends Vue {
 
     toAccountsPage() {
         this.$gtag.event('visitAccountsPage', { userid: this.rns || this.ethAddress });
-        this.$router.push((config.subDomain.isSubDomainMode ? '' : `/${this.rns || this.ethAddress}`) + `/accounts`);
+        this.$router.push(
+            (legacyConfig.subDomain.isSubDomainMode ? '' : `/${this.rns || this.ethAddress}`) + `/accounts`,
+        );
     }
 
     toListPage(type: string) {
         this.$gtag.event(`visit${type}Page`, { userid: this.rns || this.ethAddress });
         this.$router.push(
-            (config.subDomain.isSubDomainMode ? '' : `/${this.rns || this.ethAddress}`) + `/${type.toLowerCase()}s`,
+            (legacyConfig.subDomain.isSubDomainMode ? '' : `/${this.rns || this.ethAddress}`) +
+                `/${type.toLowerCase()}s`,
         );
     }
 
@@ -995,7 +999,7 @@ export default class Home extends Vue {
                 type,
             });
             this.$router.push(
-                (config.subDomain.isSubDomainMode ? '' : `/${this.rns || this.ethAddress}`) +
+                (legacyConfig.subDomain.isSubDomainMode ? '' : `/${this.rns || this.ethAddress}`) +
                     `/single${type.toLowerCase()}/${platform}/${identity}/${id}/${fullType}`,
             );
         }
@@ -1015,12 +1019,12 @@ export default class Home extends Vue {
         if (!this.isOwner && this.isOwnerValidRSS3) {
             const ownerRNS = await RNSUtils.addr2Name(this.ownerETHAddress);
             if (ownerRNS) {
-                window.location.href = '//' + ownerRNS + '.' + config.subDomain.rootDomain;
+                window.location.href = '//' + ownerRNS + '.' + legacyConfig.subDomain.rootDomain;
             } else {
                 await this.$router.push(`/${this.ownerETHAddress}`);
             }
         } else {
-            window.location.href = '//' + config.subDomain.rootDomain;
+            window.location.href = '//' + legacyConfig.subDomain.rootDomain;
         }
     }
 
@@ -1070,8 +1074,8 @@ export default class Home extends Vue {
     clickAddress() {
         navigator.clipboard.writeText(
             this.rns
-                ? `https://${this.rns}.${config.subDomain.rootDomain}`
-                : `https://${config.subDomain.rootDomain}/${this.ethAddress}`,
+                ? `https://${this.rns}.${legacyConfig.subDomain.rootDomain}`
+                : `https://${legacyConfig.subDomain.rootDomain}/${this.ethAddress}`,
         );
     }
 
@@ -1081,8 +1085,8 @@ export default class Home extends Vue {
             document.title = 'Web3 Pass';
 
             await RSS3.disconnect();
-            if (config.subDomain.isSubDomainMode) {
-                window.location.href = '//' + config.subDomain.rootDomain;
+            if (legacyConfig.subDomain.isSubDomainMode) {
+                window.location.href = '//' + legacyConfig.subDomain.rootDomain;
             } else {
                 await this.$router.push('/');
             }
@@ -1148,7 +1152,7 @@ export default class Home extends Vue {
             this.isOwner = false;
             this.isLoadingContents = true;
             this.rss3Profile = {
-                avatar: config.defaultAvatar,
+                avatar: legacyConfig.defaultAvatar,
                 username: '...',
                 address: '',
                 bio: '...',
