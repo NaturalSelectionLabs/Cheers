@@ -53,10 +53,10 @@
                         <NFTItem
                             class="inline-flex mx-0.5"
                             v-for="asset in nfts"
-                            :key="asset.platform + asset.identity + asset.id"
+                            :key="asset.id"
                             size="sm"
-                            :image-url="asset.info.animation_url || asset.info.image_preview_url"
-                            :poster-url="asset.info.image_preview_url"
+                            :image-url="asset.detail.animation_url || asset.detail.image_preview_url"
+                            :poster-url="asset.detail.image_preview_url"
                         />
                     </template>
                 </template>
@@ -86,9 +86,9 @@
                         <GitcoinItem
                             class="inline-flex mx-0.5"
                             v-for="item in gitcoins"
-                            :key="item.platform + item.identity + item.id"
+                            :key="item.id"
                             size="sm"
-                            :imageUrl="item.info.image_preview_url"
+                            :imageUrl="item.detail.image_preview_url"
                         />
                     </template>
                 </template>
@@ -118,9 +118,9 @@
                         <FootprintItem
                             class="inline-flex mx-0.5"
                             v-for="asset in footprints"
-                            :key="asset.platform + asset.identity + asset.id"
+                            :key="asset.id"
                             size="sm"
-                            :image-url="asset.info.image_preview_url"
+                            :image-url="asset.detail.image_url"
                         />
                     </template>
                 </template>
@@ -229,6 +229,7 @@ import FootprintItem from '@/components/Footprint/FootprintItem.vue';
 import EVMpAccountItem from '@/components/Account/EVMpAccountItem.vue';
 import utils from '@/common/utils';
 import { utils as RSS3Utils } from 'rss3';
+import { AnyObject } from 'rss3/types/extend';
 
 @Options({
     name: 'Setup',
@@ -268,9 +269,9 @@ export default class Setup extends Vue {
         platform: string;
         identity: string;
     }[] = [];
-    nfts: GeneralAssetWithTags[] = [];
-    gitcoins: GeneralAssetWithTags[] = [];
-    footprints: GeneralAssetWithTags[] = [];
+    nfts: AnyObject[] = [];
+    gitcoins: AnyObject[] = [];
+    footprints: AnyObject[] = [];
     isLoading: Boolean = true;
     isLoadingAssets: {
         NFT: boolean;
@@ -322,6 +323,9 @@ export default class Setup extends Vue {
         // Setup theme
         setupTheme((await loginUser.persona?.assets.auto.getList(loginUser.address)) || []);
 
+        // Load assets
+        setTimeout(this.startLoadingAssets, 0);
+
         // this.startLoadingAssets();
         this.isLoading = false;
     }
@@ -339,78 +343,20 @@ export default class Setup extends Vue {
             ].concat(accountList);
         }, 0);
     }
-
-    async ivLoadNFT(refresh: boolean): Promise<boolean> {
-        const data = await RSS3.getAssetProfile((<IRSS3>this.rss3).account.address, 'NFT', refresh);
-        if (data && data.status !== false) {
-            const { listed } = await utils.initAssets(
-                await (<IRSS3>this.rss3).assets.get((<IRSS3>this.rss3).account.address),
-                <GeneralAsset[]>data.assets,
-                'NFT',
-            );
-            this.nfts = listed;
-            this.isLoadingAssets.NFT = false;
-            return true;
-        }
-        return false;
-    }
-
-    async ivLoadGitcoin(refresh: boolean): Promise<boolean> {
-        const data = await RSS3.getAssetProfile((<IRSS3>this.rss3).account.address, 'Gitcoin-Donation', refresh);
-        if (data && data.status !== false) {
-            const { listed } = await utils.initAssets(
-                await (<IRSS3>this.rss3).assets.get((<IRSS3>this.rss3).account.address),
-                <GeneralAsset[]>data.assets,
-                'Gitcoin-Donation',
-            );
-            this.gitcoins = listed;
-            this.isLoadingAssets.Gitcoin = false;
-            return true;
-        }
-        return false;
-    }
-
-    async ivLoadFootprint(refresh: boolean): Promise<boolean> {
-        const data = await RSS3.getAssetProfile((<IRSS3>this.rss3).account.address, 'POAP', refresh);
-        if (data && data.status !== false) {
-            const { listed } = await utils.initAssets(
-                await (<IRSS3>this.rss3).assets.get((<IRSS3>this.rss3).account.address),
-                <GeneralAsset[]>data.assets,
-                'POAP',
-            );
-            this.footprints = listed;
-            this.isLoadingAssets.Footprint = false;
-            return true;
-        }
-        return false;
-    }
-
-    async ivLoadAssets(refresh: boolean = true): Promise<boolean> {
-        let isFinish = true;
-        if (this.isLoadingAssets.NFT) {
-            isFinish = (await this.ivLoadNFT(refresh)) && isFinish;
-        }
-        if (this.isLoadingAssets.Gitcoin) {
-            isFinish = (await this.ivLoadGitcoin(refresh)) && isFinish;
-        }
-        if (this.isLoadingAssets.Footprint) {
-            isFinish = (await this.ivLoadFootprint(refresh)) && isFinish;
-        }
-        if (isFinish) {
-            if (this.loadingAssetsIntervalID) {
-                clearInterval(this.loadingAssetsIntervalID);
-                this.loadingAssetsIntervalID = null;
-            }
-        }
-        return isFinish;
-    }
-
     async startLoadingAssets() {
-        if (!(await this.ivLoadAssets())) {
-            this.loadingAssetsIntervalID = setInterval(async () => {
-                await this.ivLoadAssets();
-            }, 2000);
-        }
+        const { nfts, donations, footprints } = await utils.initAssets();
+        setTimeout(async () => {
+            this.nfts = await utils.loadAssets(nfts);
+            this.isLoadingAssets.NFT = false;
+        }, 0);
+        setTimeout(async () => {
+            this.gitcoins = await utils.loadAssets(donations);
+            this.isLoadingAssets.Gitcoin = false;
+        }, 0);
+        setTimeout(async () => {
+            this.footprints = await utils.loadAssets(footprints);
+            this.isLoadingAssets.Footprint = false;
+        }, 0);
     }
 
     toManageAccounts() {
