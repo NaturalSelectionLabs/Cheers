@@ -1,6 +1,6 @@
 <template>
     <router-view v-slot="{ Component }">
-        <keep-alive include="Setup,EditProfile,Home,Accounts,NFTs,Gitcoins,Footprints">
+        <keep-alive include="Setup,EditProfile,Home,Accounts,NFTs,Gitcoins,Footprints,Followers,Followings">
             <component :is="Component" />
         </keep-alive>
     </router-view>

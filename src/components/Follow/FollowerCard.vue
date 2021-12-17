@@ -1,7 +1,7 @@
 <template>
     <div class="follower-container" ref="card">
         <div class="avatar">
-            <img :src="$props.avatar" ref="avatar" crossorigin="anonymous" />
+            <img :src="fixedUrl" :alt="name" ref="avatar" crossorigin="anonymous" />
         </div>
         <div class="info">
             <p class="username">
@@ -19,6 +19,7 @@ import { Options, Vue } from 'vue-class-component';
 import ColorThief from 'colorthief';
 import { hslToRgb, rgbToHsl } from '@/common/color';
 import config from '@/config';
+import utils from '@/common/utils';
 
 @Options({
     props: {
@@ -28,8 +29,13 @@ import config from '@/config';
     },
 })
 export default class FollowerCard extends Vue {
+    avatar!: string;
     name!: string;
     suffix: string = '.' + config.subDomain.rootDomain;
+
+    get fixedUrl() {
+        return utils.fixURLSchemas(this.avatar);
+    }
 
     mounted() {
         const colorThief = new ColorThief();

@@ -23,13 +23,12 @@ import Button from '@/components/Button/Button.vue';
 import ImgHolder from '@/components/Common/ImgHolder.vue';
 import FollowerCard from '@/components/Follow/FollowerCard.vue';
 import RSS3, { IRSS3 } from '@/common/rss3';
-import RNSUtils from '@/common/rns';
-import config from '@/config';
+import RNS from '@/common/rns';
+import legacyConfig from '@/config';
+import config from '@/common/config';
 import { reverse, uniq } from 'lodash';
-import setupTheme from '@/common/theme';
 import utils from '@/common/utils';
 import { Profile } from '@/common/types';
-import { RSS3Profile } from 'rss3-next/types/rss3';
 import Header from '@/components/Common/Header.vue';
 
 @Options({
@@ -37,7 +36,7 @@ import Header from '@/components/Common/Header.vue';
     components: { ImgHolder, Button, FollowerCard, Header },
 })
 export default class Followings extends Vue {
-    followingList: Array<Profile> = [];
+    followingList: Profile[] = [];
     rss3Profile: RSS3Profile = {};
     rns: string = '';
     ethAddress: string = '';
@@ -50,53 +49,55 @@ export default class Followings extends Vue {
         this.followingList = [];
         this.loadingNo = 0;
 
-        const rss3 = await RSS3.visitor();
-        const initFollowersList = (await rss3.links.get(this.ethAddress, 'following'))?.list || [];
-        const followersList = uniq(reverse(initFollowersList));
+        const addrOrName = utils.getAddress(<string>this.$route.params.address);
+        const pageOwner = await RSS3.setPageOwner(addrOrName);
+        const apiUser = RSS3.getAPIUser().persona as IRSS3;
 
-        if (rss3 && followersList) {
-            for (const item of followersList) {
+        this.ethAddress = pageOwner.address;
+        this.rns = pageOwner.name;
+
+        if (pageOwner.profile) {
+            this.rss3Profile = pageOwner.profile;
+        }
+
+        const followingList = pageOwner.followings;
+
+        // Get profile
+
+        if (followingList) {
+            const profiles = await apiUser.profile.getList(reverse(uniq(followingList)));
+
+            for (const profile of profiles) {
+                const { extracted } = utils.extractEmbedFields(profile.bio || '', []);
                 this.followingList.push({
-                    avatar: config.defaultAvatar,
-                    username: '',
-                    bio: '',
-                    address: item,
-                    displayAddress: this.filter(item),
+                    avatar: profile.avatar?.[0] || config.undefinedImageAlt,
+                    username: profile.name || '',
+                    bio: extracted,
+                    address: profile.persona,
+                    displayAddress: this.filter(profile.persona),
                     rns: '',
                 });
             }
             setTimeout(() => {
-                this.loadDetails(rss3);
+                this.loadDetails();
             }, 0);
         }
-
-        // Setup theme
-        setupTheme(await rss3.assets.get(this.ethAddress));
     }
 
-    async loadDetails(rss3: IRSS3) {
+    async loadDetails() {
         const startNo = this.loadingNo;
         const endNo = this.followingList.length;
         for (let i = startNo; i < endNo; i++) {
             if (this.isPageActive) {
                 const item = this.followingList[i];
                 try {
-                    const profile = (await rss3.profile.get(item.address)) || {};
-                    item.avatar = profile.avatar?.[0] || config.defaultAvatar;
-                    item.username = profile.name || '';
-                    item.bio = profile.bio || '';
-                    item.rns = await RNSUtils.addr2Name(item.address);
+                    item.rns = await RNS.addr2Name(item.address);
                 } catch (e) {
                     console.log(item, e);
                 }
                 this.loadingNo = i;
             }
         }
-    }
-
-    async setProfile() {
-        const rss3 = await RSS3.visitor();
-        this.rss3Profile = await rss3.profile.get(this.ethAddress);
     }
 
     filter(address: string) {
@@ -106,16 +107,11 @@ export default class Followings extends Vue {
     async activated() {
         this.isPageActive = true;
 
-        const { ethAddress, rns } = await utils.getAddress(<string>this.$route.params.address);
-        this.ethAddress = ethAddress;
-        this.rns = rns;
-
         setTimeout(async () => {
             if (this.lastRoute !== this.$route.fullPath) {
-                await this.setProfile();
                 await this.initLoad();
             } else if (this.loadingNo < this.followingList.length) {
-                await this.loadDetails(await RSS3.visitor());
+                await this.loadDetails();
             }
         }, 0);
     }
@@ -126,9 +122,9 @@ export default class Followings extends Vue {
 
     async toPublicPage(rns: string, ethAddress: string) {
         if (rns) {
-            window.location.href = `//${rns}.${config.subDomain.rootDomain}`;
+            window.location.href = `//${rns}.${legacyConfig.subDomain.rootDomain}`;
         } else {
-            window.location.href = `//${config.subDomain.rootDomain}/${ethAddress}`;
+            window.location.href = `//${legacyConfig.subDomain.rootDomain}/${ethAddress}`;
         }
     }
 }
