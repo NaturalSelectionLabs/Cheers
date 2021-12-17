@@ -32,7 +32,9 @@ export default class Avatar extends Vue {
 
     preview(evt: any) {
         this.file = evt.target?.files?.[0];
-        this.newUrl = URL.createObjectURL(this.file);
+        if (this.file) {
+            this.newUrl = URL.createObjectURL(this.file);
+        }
     }
 
     async upload() {
