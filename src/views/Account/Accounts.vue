@@ -83,6 +83,8 @@ export default class Accounts extends Vue {
         this.rns = pageOwner.name;
         this.isOwner = RSS3.isNowOwner();
 
+        utils.subDomainModeRedirect(this.rns, this.ethAddress);
+
         if (pageOwner.profile) {
             this.rss3Profile = pageOwner.profile;
         }

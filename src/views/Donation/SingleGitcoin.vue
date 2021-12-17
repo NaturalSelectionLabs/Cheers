@@ -47,6 +47,8 @@ export default class SingleGitcoin extends Vue {
         this.ethAddress = pageOwner.address;
         this.rns = pageOwner.name;
 
+        utils.subDomainModeRedirect(this.rns, this.ethAddress);
+
         this.rss3Profile = await pageOwner.profile;
 
         await this.loadGitcoin();

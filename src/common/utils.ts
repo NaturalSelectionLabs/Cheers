@@ -399,6 +399,19 @@ function getAddress(routerAddress: string) {
     }
 }
 
+const subDomainModeRedirect = (rns: string, ethAddress: string) => {
+    if (config.subDomain.preferSubDomainMode) {
+        // We prefer subdomain mode
+        if (rns && !legacyConfig.subDomain.isSubDomainMode) {
+            // Redirect
+            window.location.href = window.location.href.replace(
+                `${legacyConfig.subDomain.rootDomain}/${ethAddress}`,
+                `${rns}.${legacyConfig.subDomain.rootDomain}`,
+            );
+        }
+    }
+};
+
 const utils = {
     sortByOrderTag,
     initAssets,
@@ -411,6 +424,7 @@ const utils = {
     setAccountsTags,
     isAssetNotHidden,
     getAddress,
+    subDomainModeRedirect,
 };
 
 export default utils;

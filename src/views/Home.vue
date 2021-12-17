@@ -559,11 +559,7 @@ export default class Home extends Vue {
         this.ethAddress = pageOwner.address;
         this.isOwner = RSS3.isNowOwner();
 
-        // We prefer subdomain mode
-        if (this.rns && !legacyConfig.subDomain.isSubDomainMode) {
-            // Redirect
-            window.location.href = `//${this.rns}.${legacyConfig.subDomain.rootDomain}`;
-        }
+        utils.subDomainModeRedirect(this.rns, this.ethAddress);
 
         const apiUser = RSS3.getAPIUser().persona;
         if ((<RSS3Index>await apiUser?.files.get(pageOwner.address)).signature) {

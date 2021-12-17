@@ -23,6 +23,9 @@ const config = {
         hiddenTag: 'hidden',
     },
     productsList,
+    subDomain: {
+        preferSubDomainMode: true,
+    },
     fieldMaxLength: 280,
     walletConnectOptions: {
         rpc: {
