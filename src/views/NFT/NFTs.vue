@@ -14,14 +14,7 @@
                             item.detail.animation_original_url
                         "
                         :poster-url="item.detail.image_preview_url"
-                        @click="
-                            toSingleNFTPage(
-                                item.id.split('-')[0],
-                                item.id.split('-')[1],
-                                item.id.split('-')[3].replaceAll('.', '-'),
-                                item.id.split('-')[2].replaceAll('.', '-'),
-                            )
-                        "
+                        @click="toSingleNFTPage(item.id)"
                     />
                     <NFTBadges
                         class="absolute right-2.5 top-2.5"
@@ -56,10 +49,9 @@ import RSS3 from '@/common/rss3';
 import config from '@/config';
 import { debounce } from 'lodash';
 import utils from '@/common/utils';
-import { RSS3Profile } from 'rss3-next/types/rss3';
 import Header from '@/components/Common/Header.vue';
 import setupTheme from '@/common/theme';
-
+import { utils as RSS3Utils } from 'rss3';
 @Options({
     name: 'NFTs',
     components: { Button, NFTItem, NFTBadges, Header },
@@ -69,7 +61,7 @@ export default class NFTs extends Vue {
     ethAddress: string = '';
     isOwner: boolean = false;
     nfts: any[] = [];
-    rss3Profile: RSS3Profile = {};
+    rss3Profile: any = {};
     $gtag: any;
     scrollTop: number = 0;
     lastRoute: string = '';
@@ -87,23 +79,24 @@ export default class NFTs extends Vue {
         this.rss3Profile = await pageOwner.profile;
 
         // Setup theme
-        setupTheme((await pageOwner.persona?.items.auto.getList(pageOwner.address)) || []);
+        setupTheme((await pageOwner.persona?.assets.auto.getList(pageOwner.address)) || []);
 
         const { nfts } = await utils.initAssets();
         this.nfts = await utils.loadAssets(nfts);
     }
 
-    toSingleNFTPage(platform: string, identity: string, id: string, type: string) {
+    toSingleNFTPage(id: string) {
+        const { platform, identity, type, uniqueID } = RSS3Utils.id.parseAsset(id);
         this.$gtag.event('visitSingleNft', {
             userid: this.rns || this.ethAddress,
-            platform: platform,
-            nftidentity: identity,
-            nftid: id,
-            nfttype: type,
+            platform,
+            identity,
+            uniqueID,
+            type,
         });
         this.$router.push(
             (config.subDomain.isSubDomainMode ? '' : `/${this.rns || this.ethAddress}`) +
-                `/singlenft/${platform}/${identity}/${id}/${type}`,
+                `/singlenft/${platform}/${identity}/${uniqueID}/${type}`,
         );
     }
 

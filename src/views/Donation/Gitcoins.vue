@@ -15,14 +15,7 @@
                     :name="item.detail.grant.title || 'Inactive Project'"
                     :contrib="item.detail.txs.length"
                     :amount="item.detail.txs"
-                    @click="
-                        toSingleGitcoin(
-                            item.id.split('-')[0],
-                            item.id.split('-')[1],
-                            item.id.split('-')[3].replaceAll('.', '-'),
-                            item.id.split('-')[2].replaceAll('.', '-'),
-                        )
-                    "
+                    @click="toSingleGitcoin(item.id)"
                 ></GitcoinCard>
             </div>
             <div
@@ -51,10 +44,10 @@ import RSS3 from '@/common/rss3';
 import { GeneralAssetWithTags } from '@/common/types';
 import { debounce } from 'lodash';
 import utils from '@/common/utils';
-import { RSS3Profile } from 'rss3-next/types/rss3';
 import Header from '@/components/Common/Header.vue';
 import setupTheme from '@/common/theme';
-
+import { AnyObject } from 'rss3/types/extend';
+import { utils as RSS3Utils } from 'rss3';
 @Options({
     name: 'Gitcoins',
     components: { Button, GitcoinTitle, GitcoinCard, Header },
@@ -64,12 +57,12 @@ export default class Gitcoins extends Vue {
     ethAddress: string = '';
     grants: number = 0;
     contribs: number = 0;
-    gitcoins: GeneralAssetWithTags[] = [];
+    gitcoins: AnyObject[] = [];
     isOwner: boolean = false;
-    rss3Profile: RSS3Profile = {};
+    rss3Profile: any = {};
     scrollTop: number = 0;
     lastRoute: string = '';
-
+    $gtag: any;
     async mounted() {
         this.mountScrollEvent();
     }
@@ -104,10 +97,18 @@ export default class Gitcoins extends Vue {
         window.open(`https://gitcoin.co/`);
     }
 
-    toSingleGitcoin(platform: string, identity: string, id: string, type: string) {
+    toSingleGitcoin(id: string) {
+        const { platform, identity, type, uniqueID } = RSS3Utils.id.parseAsset(id);
+        this.$gtag.event('visitSingleGitcoin', {
+            userid: this.rns || this.ethAddress,
+            platform,
+            identity,
+            uniqueID,
+            type,
+        });
         this.$router.push(
             (config.subDomain.isSubDomainMode ? '' : `/${this.rns || this.ethAddress}`) +
-                `/singlegitcoin/${platform}/${identity}/${id}/${type}`,
+                `/singlegitcoin/${platform}/${identity}/${uniqueID}/${type}`,
         );
     }
 

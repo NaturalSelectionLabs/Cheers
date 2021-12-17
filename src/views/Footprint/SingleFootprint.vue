@@ -63,15 +63,22 @@ export default class SingleFootprint extends Vue {
         const platform: string = String(this.$route.params.platform);
         const identity: string = String(this.$route.params.identity);
         const id: string = String(this.$route.params.id);
+        const type: string = String(this.$route.params.type);
+
+        // const id: string = String(this.$route.params.id);
 
         // Setup theme
         setupTheme((await pageOwner.persona?.assets.auto.getList(pageOwner.address)) || []);
 
+        // const footprint = (await pageOwner.assets?.getDetails({
+        //       assets: [id],
+        //       full: true,
+        //   })) as unknown as POAPResponse;
         const footprint = (await utils.loadAssets([
             {
                 platform: platform,
                 identity: identity,
-                type: 'xDai.POAP',
+                type: type,
                 uniqueID: id,
             },
         ])) as unknown as POAPResponse;

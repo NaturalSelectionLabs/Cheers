@@ -16,6 +16,7 @@
 <script lang="ts">
 import { Vue, Options } from 'vue-class-component';
 import ContentBadge from '@/components/Content/ContentBadge.vue';
+import { timeDifferent } from '@/common/timeStamp';
 import marked from 'marked';
 
 @Options({
@@ -39,7 +40,7 @@ export default class ContentCard extends Vue {
     }
 
     getDate(timestamp: number): string {
-        return new Date(timestamp * 1000).toLocaleDateString('en-US');
+        return timeDifferent(timestamp);
     }
 }
 </script>

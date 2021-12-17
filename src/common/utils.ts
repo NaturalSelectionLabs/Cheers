@@ -156,7 +156,7 @@ async function initContent(timestamp: string = '', following: boolean = false) {
     const apiUser = await RSS3.getAPIUser();
     const pageOwner = await RSS3.getPageOwner();
 
-    const items =
+    const allItems =
         (following
             ? await pageOwner.items?.getListByPersona({
                   persona: pageOwner.address,
@@ -170,20 +170,21 @@ async function initContent(timestamp: string = '', following: boolean = false) {
                   tsp: timestamp,
               })) || [];
 
-    const haveMore = items.length === config.contents.limit;
+    const haveMore = allItems.length === config.contents.limit;
 
     profileSet.add(pageOwner.address);
+    const items = allItems.filter((item) => 'target' in item && !isAsset(item.target.field));
     items.forEach((item) => {
-        if ('target' in item) {
-            // Is auto item
-            if (isAsset(item.target.field)) {
-                assetSet.add(item.target.field.substring(7, item.target.field.length));
-            }
-        }
+        // if ('target' in item) {
+        //     // Is auto item
+        //     if (isAsset(item.target.field)) {
+        //         assetSet.add(item.target.field.substring(7, item.target.field.length));
+        //     }
+        // }
         profileSet.add(item.id.split('-')[0]);
     });
 
-    const details = assetSet.size !== 0 ? await getAssetsTillSuccess(assetSet) : [];
+    // const details = assetSet.size !== 0 ? await getAssetsTillSuccess(assetSet) : [];
 
     const profiles =
         profileSet.size !== 0 ? (await apiUser.persona?.profile.getList(Array.from(profileSet))) || [] : [];
@@ -198,57 +199,57 @@ async function initContent(timestamp: string = '', following: boolean = false) {
             name: profile?.name || formatter(profile?.persona) || '',
         };
 
-        if ('target' in item) {
-            // Is auto item
-            if (isAsset(item.target.field)) {
-                let assetDetails: {
-                    name?: string;
-                    description?: string | null;
-                    image_url?: string | null;
-                } = {
-                    image_url: config.undefinedImageAlt,
-                };
+        // if ('target' in item) {
+        //     // Is auto item
+        //     if (isAsset(item.target.field)) {
+        //         let assetDetails: {
+        //             name?: string;
+        //             description?: string | null;
+        //             image_url?: string | null;
+        //         } = {
+        //             image_url: config.undefinedImageAlt,
+        //         };
 
-                const asset = details.find(
-                    (asset) => asset.id === item.target?.field.substring(7, item.target.field.length),
-                );
+        //         const asset = details.find(
+        //             (asset) => asset.id === item.target?.field.substring(7, item.target.field.length),
+        //         );
 
-                if (asset) {
-                    if (item.target.field.includes('Gitcoin')) {
-                        // handle Gitcoin record
-                        let DonationDetails = asset.detail as DonationDetailByGrant;
-                        assetDetails = {
-                            name: DonationDetails.grant.title,
-                            description: DonationDetails.grant.description,
-                            image_url: DonationDetails.grant.logo,
-                        };
-                    } else if (item.target.field.includes('NFT')) {
-                        // handle NFT
-                        let NFTDetails = asset.detail as NFT;
-                        assetDetails = {
-                            name: NFTDetails.name,
-                            description: NFTDetails.description,
-                            image_url:
-                                NFTDetails.image_preview_url ||
-                                NFTDetails.image_url ||
-                                NFTDetails.image_thumbnail_url ||
-                                NFTDetails.animation_url ||
-                                NFTDetails.animation_original_url,
-                        };
-                    } else {
-                        // handle POAP
-                        let POAPDetails = asset.detail as POAP;
-                        assetDetails = {
-                            name: POAPDetails.name,
-                            description: POAPDetails.description,
-                            image_url: POAPDetails.image_url,
-                        };
-                    }
-                }
+        //         if (asset) {
+        //             if (item.target.field.includes('Gitcoin')) {
+        //                 // handle Gitcoin record
+        //                 let DonationDetails = asset.detail as DonationDetailByGrant;
+        //                 assetDetails = {
+        //                     name: DonationDetails.grant.title,
+        //                     description: DonationDetails.grant.description,
+        //                     image_url: DonationDetails.grant.logo,
+        //                 };
+        //             } else if (item.target.field.includes('NFT')) {
+        //                 // handle NFT
+        //                 let NFTDetails = asset.detail as NFT;
+        //                 assetDetails = {
+        //                     name: NFTDetails.name,
+        //                     description: NFTDetails.description,
+        //                     image_url:
+        //                         NFTDetails.image_preview_url ||
+        //                         NFTDetails.image_url ||
+        //                         NFTDetails.image_thumbnail_url ||
+        //                         NFTDetails.animation_url ||
+        //                         NFTDetails.animation_original_url,
+        //                 };
+        //             } else {
+        //                 // handle POAP
+        //                 let POAPDetails = asset.detail as POAP;
+        //                 assetDetails = {
+        //                     name: POAPDetails.name,
+        //                     description: POAPDetails.description,
+        //                     image_url: POAPDetails.image_url,
+        //                 };
+        //             }
+        //         }
 
-                ItemDetails.details = assetDetails;
-            }
-        }
+        //         ItemDetails.details = assetDetails;
+        //     }
+        // }
 
         listed.push(ItemDetails);
     });

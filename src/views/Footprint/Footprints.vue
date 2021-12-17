@@ -22,14 +22,7 @@
                     :end-date="item.detail.end_date"
                     :location="item.detail.city || item.detail.country || 'Metaverse'"
                     class="cursor-pointer"
-                    @click="
-                        toSingleFootprint(
-                            item.id.split('-')[0],
-                            item.id.split('-')[1],
-                            item.id.split('-')[3].replaceAll('.', '-'),
-                            item.id.split('-')[2].replaceAll('.', '-'),
-                        )
-                    "
+                    @click="toSingleFootprint(item.id)"
                 />
             </div>
             <div
@@ -56,10 +49,9 @@ import config from '@/config';
 import RSS3 from '@/common/rss3';
 import { debounce } from 'lodash';
 import utils from '@/common/utils';
-import { RSS3Profile } from 'rss3-next/types/rss3';
 import Header from '@/components/Common/Header.vue';
 import setupTheme from '@/common/theme';
-
+import { utils as RSS3Utils } from 'rss3';
 @Options({
     name: 'Footprints',
     components: { FootprintCard, Button, Header },
@@ -69,10 +61,10 @@ export default class Footprints extends Vue {
     ethAddress: string = '';
     footprints: any[] = [];
     isOwner: boolean = false;
-    rss3Profile: RSS3Profile = {};
+    rss3Profile: any = {};
     scrollTop: number = 0;
     lastRoute: string = '';
-
+    $gtag: any;
     async mounted() {
         this.mountScrollEvent();
     }
@@ -101,10 +93,18 @@ export default class Footprints extends Vue {
         this.$router.push(`/setup/footprints`);
     }
 
-    toSingleFootprint(platform: string, identity: string, id: string, type: string) {
+    toSingleFootprint(id: string) {
+        const { platform, identity, type, uniqueID } = RSS3Utils.id.parseAsset(id);
+        this.$gtag.event('visitSingleFootprint', {
+            userid: this.rns || this.ethAddress,
+            platform,
+            identity,
+            uniqueID,
+            type,
+        });
         this.$router.push(
             (config.subDomain.isSubDomainMode ? '' : `/${this.rns || this.ethAddress}`) +
-                `/singlefootprint/${platform}/${identity}/${id}/${type}`,
+                `/singlefootprint/${platform}/${identity}/${uniqueID}/${type}`,
         );
     }
 

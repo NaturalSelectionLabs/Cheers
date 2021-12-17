@@ -21,7 +21,7 @@
                         <div
                             class="inline-block mr-1 cursor-pointer"
                             v-for="item in accounts"
-                            :key="item.platform + item.identity"
+                            :key="item.identity"
                             @click="displayDialog(item.identity, item.platform)"
                         >
                             <EVMpAccountItem v-if="item.platform === 'EVM+'" :size="30" :address="item.identity" />
@@ -67,11 +67,17 @@
                     <NFTItem
                         class="mr-1 cursor-pointer"
                         v-for="item in nfts"
-                        :key="item.platform + item.identity + item.id"
-                        :image-url="item.info.animation_url || item.info.image_preview_url"
-                        :poster-url="item.info.image_preview_url"
+                        :key="item.id"
+                        :image-url="item.detail.animation_url || item.detail.image_preview_url || defaultAvatar"
+                        :poster-url="
+                            item.detail.image_preview_url ||
+                            item.detail.image_url ||
+                            item.detail.animation_url ||
+                            item.detail.animation_original_url ||
+                            defaultAvatar
+                        "
                         size="sm"
-                        @click="toSingleItemPage('NFT', item.platform, item.identity, item.id, item.type)"
+                        @click="toSingleItemPage(item.id)"
                     />
                 </template>
                 <template #footer>
@@ -103,10 +109,10 @@
                     <GitcoinItem
                         class="mr-1 cursor-pointer"
                         v-for="item in gitcoins"
-                        :key="item.platform + item.identity + item.id"
+                        :key="item.id"
                         size="sm"
-                        :imageUrl="item.info.image_preview_url || defaultAvatar"
-                        @click="toSingleItemPage('Gitcoin', item.platform, item.identity, item.id, item.type)"
+                        :imageUrl="item.detail.grant.logo || defaultAvatar"
+                        @click="toSingleItemPage(item.id)"
                     />
                 </template>
                 <template #footer>
@@ -175,19 +181,14 @@
                             <!-- FootprintCard example -->
                             <FootprintCard
                                 v-for="item of footprints"
-                                :key="item.platform + item.identity + item.id"
-                                :imageUrl="item.info.image_preview_url"
+                                :key="item.id"
+                                :imageUrl="item.detail.image_url || defaultAvatar"
                                 :username="rss3Profile.username"
-                                :activity="item.info.title"
-                                :start-date="item.info.start_date"
-                                :end-date="item.info.end_date"
-                                :location="item.info.city || item.info.country || 'Metaverse'"
-                                :special="item.identity === 'Special'"
-                                @claim="claimSpecialPOAP"
-                                :class="{
-                                    'cursor-pointer': item.identity !== 'Special',
-                                }"
-                                @click="toSingleItemPage('Footprint', item.platform, item.identity, item.id, item.type)"
+                                :activity="item.detail.name"
+                                :start-date="item.detail.start_date"
+                                :end-date="item.detail.end_date"
+                                :location="item.detail.city || item.detail.country || 'Metaverse'"
+                                @click="toSingleItemPage(item.id)"
                             />
                         </div>
                         <div v-else>
@@ -202,36 +203,26 @@
                     >
                         <div>
                             <FootprintCard
-                                :imageUrl="footprints[0].info.image_preview_url"
+                                :imageUrl="footprints[0].detail.image_url"
                                 :username="rss3Profile.username"
-                                :activity="footprints[0].info.title"
-                                :start-date="footprints[0].info.start_date"
-                                :end-date="footprints[0].info.end_date"
-                                :location="footprints[0].info.city || footprints[0].info.country || 'Metaverse'"
-                                :special="footprints[0].identity === 'Special'"
-                                @claim="claimSpecialPOAP"
+                                :activity="footprints[0].detail.name"
+                                :start-date="footprints[0].detail.start_date"
+                                :end-date="footprints[0].detail.end_date"
+                                :location="footprints[0].detail.city || footprints[0].detail.country || 'Metaverse'"
                                 :class="{
                                     'cursor-pointer': footprints[0].identity !== 'Special',
                                 }"
-                                @click="
-                                    toSingleItemPage(
-                                        'Footprint',
-                                        footprints[0].platform,
-                                        footprints[0].identity,
-                                        footprints[0].id,
-                                        footprints[0].type,
-                                    )
-                                "
+                                @click="toSingleItemPage(footprints[0].id)"
                             />
                         </div>
                         <div class="inline-flex p-4 overflow-x-auto" style="scrollbar-width: thin">
                             <FootprintItem
                                 v-for="item of footprints.slice(1)"
-                                :key="item.platform + item.identity + item.id"
-                                :imageUrl="item.info.image_preview_url"
+                                :key="item.id"
+                                :imageUrl="item.detail.image_url"
                                 size="sm"
                                 class="flex-shrink-0 mr-2"
-                                @click="toSingleItemPage('Footprint', item.platform, item.identity, item.id, item.type)"
+                                @click="toSingleItemPage(item.id)"
                             />
                         </div>
                     </div>
@@ -262,13 +253,14 @@
                         }"
                     >
                         <div v-if="contents.length > 0" class="divide-content-divider divide-y-xs">
-                            <div v-for="item in contents" :key="item.id">
+                            <div v-for="element in contents" :key="element.item.id">
                                 <ContentCard
-                                    :timestamp="parseInt(item.info.timestamp)"
-                                    :content="item.info.pre_content"
-                                    :title="item.info.title"
-                                    :provider="item.type"
-                                    @click="toContentLink(item.info.link)"
+                                    v-if="element.item.id.includes('auto')"
+                                    :timestamp="new Date(element.item.date_updated).valueOf()"
+                                    :content="element.item.summary"
+                                    :title="element.item.title"
+                                    :provider="element.item.target.field.split('-')[2]"
+                                    @click="toContentLink(element.info.link)"
                                 />
                             </div>
                             <div>
@@ -515,6 +507,8 @@ export default class Home extends Vue {
     };
     loadingAssetsIntervalID: ReturnType<typeof setInterval> | null = null;
     isLoadingContents: boolean = true;
+    isContentsHaveMore: boolean = true;
+    isLoadingMore: boolean = false;
     currentTheme: string = '';
     isLoadingPersona: boolean = true;
 
@@ -529,7 +523,7 @@ export default class Home extends Vue {
         followers: [],
         followings: [],
     };
-    accounts: RSS3Account[] = [];
+    accounts: AnyObject[] = [];
     nfts: AnyObject[] = [];
     gitcoins: AnyObject[] = [];
     footprints: AnyObject[] = [];
@@ -542,7 +536,7 @@ export default class Home extends Vue {
     defaultAvatar = legacyConfig.defaultAvatar;
     notice: string = '';
     isShowingNotice: boolean = false;
-    isContentsHaveMore: boolean = true;
+
     isPCLayout: boolean = false;
     isOwnerValidRSS3: boolean = false;
     ownerETHAddress: string = '';
@@ -605,7 +599,6 @@ export default class Home extends Vue {
             this.isLoadingPersona = false;
         }, 0);
 
-        const accounts = pageOwner.profile?.accounts;
         this.startLoadingAccounts();
 
         setTimeout(async () => {
@@ -620,7 +613,9 @@ export default class Home extends Vue {
         setTimeout(async () => {
             const { listed, haveMore } = await utils.initContent();
             this.contents = listed;
+            console.log(listed);
             this.isContentsHaveMore = haveMore;
+            this.isLoadingContents = false;
             await this.loadMoreContents(true);
             this.initIntersectionObserver();
         }, 0);
@@ -641,11 +636,12 @@ export default class Home extends Vue {
         setTimeout(async () => {
             const { listed } = await utils.initAccounts();
             // Push original account
-            this.accounts = [
+            const accounts = [
                 {
                     id: RSS3Utils.id.getAccount('EVM+', pageOwner?.address),
                 },
             ].concat(listed);
+            this.accounts = accounts.map((account) => RSS3Utils.id.parseAccount(account.id));
         }, 0);
     }
 
@@ -725,10 +721,10 @@ export default class Home extends Vue {
     }
 
     async loadMoreContents(isInitLoad: boolean = false) {
-        if ((!isInitLoad && this.isLoadingContents) || !this.isContentsHaveMore) {
-            // Is already loading or not having more
-            return;
-        }
+        // if ((!isInitLoad && this.isLoadingContents) || !this.isContentsHaveMore) {
+        //     // Is already loading or not having more
+        //     return;
+        // }
         this.isLoadingContents = true;
 
         const timestamp = [...this.contents].pop()?.item.date_created || '';
@@ -880,21 +876,34 @@ export default class Home extends Vue {
         );
     }
 
-    toSingleItemPage(type: string, platform: string, identity: string, id: string, fullType: string) {
-        if (identity !== 'Special') {
-            // Default
-            this.$gtag.event(`visitSingle${type}`, {
-                userid: this.rns || this.ethAddress,
-                platform,
-                identity,
-                id,
-                type,
-            });
-            this.$router.push(
-                (legacyConfig.subDomain.isSubDomainMode ? '' : `/${this.rns || this.ethAddress}`) +
-                    `/single${type.toLowerCase()}/${platform}/${identity}/${id}/${fullType}`,
-            );
+    toSingleItemPage(id: string) {
+        const { platform, identity, type, uniqueID } = RSS3Utils.id.parseAsset(id);
+        let assetType = '';
+        switch (type.split('.')[1]) {
+            case 'NFT':
+                assetType = 'Nft';
+                break;
+            case 'Donation':
+                assetType = 'Gitcoin';
+                break;
+            case 'POAP':
+                assetType = 'Footprint';
+                break;
+            default:
+                break;
         }
+        // Default
+        this.$gtag.event(`visitSingle${assetType}`, {
+            userid: this.rns || this.ethAddress,
+            platform,
+            identity,
+            uniqueID,
+            type,
+        });
+        this.$router.push(
+            (legacyConfig.subDomain.isSubDomainMode ? '' : `/${this.rns || this.ethAddress}`) +
+                `/single${assetType.toLowerCase()}/${platform}/${identity}/${uniqueID}/${type}`,
+        );
     }
 
     toSetupPage() {
