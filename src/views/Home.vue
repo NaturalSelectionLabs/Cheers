@@ -178,7 +178,6 @@
                         }"
                     >
                         <div v-if="footprints.length > 0" class="divide-footprint-divider divide-y-xs">
-                            <!-- FootprintCard example -->
                             <FootprintCard
                                 v-for="item of footprints"
                                 :key="item.id"
@@ -188,6 +187,7 @@
                                 :start-date="item.detail.start_date"
                                 :end-date="item.detail.end_date"
                                 :location="item.detail.city || item.detail.country || 'Metaverse'"
+                                class="cursor-pointer"
                                 @click="toSingleItemPage(item.id)"
                             />
                         </div>
@@ -209,9 +209,7 @@
                                 :start-date="footprints[0].detail.start_date"
                                 :end-date="footprints[0].detail.end_date"
                                 :location="footprints[0].detail.city || footprints[0].detail.country || 'Metaverse'"
-                                :class="{
-                                    'cursor-pointer': footprints[0].identity !== 'Special',
-                                }"
+                                class="cursor-pointer"
                                 @click="toSingleItemPage(footprints[0].id)"
                             />
                         </div>
@@ -221,7 +219,7 @@
                                 :key="item.id"
                                 :imageUrl="item.detail.image_url"
                                 size="sm"
-                                class="flex-shrink-0 mr-2"
+                                class="flex-shrink-0 mr-2 cursor-pointer"
                                 @click="toSingleItemPage(item.id)"
                             />
                         </div>
