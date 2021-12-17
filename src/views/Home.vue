@@ -415,15 +415,14 @@
 </template>
 
 <script lang="ts">
-import { Options, Vue, setup } from 'vue-class-component';
+import { Options, Vue } from 'vue-class-component';
 import Button from '@/components/Button/Button.vue';
 import Card from '@/components/Card/Card.vue';
 import BarCard from '@/components/Card/BarCard.vue';
 import Profile from '@/components/Profile/Profile.vue';
 import AccountItem from '@/components/Account/AccountItem.vue';
 import NFTItem from '@/components/NFT/NFTItem.vue';
-import RSS3, { IRSS3, RSS3DetailPersona } from '@/common/rss3';
-//
+import RSS3 from '@/common/rss3';
 import { utils as RSS3Utils } from 'rss3';
 import Modal from '@/components/Common/Modal.vue';
 import RNSUtils from '@/common/rns';
@@ -431,7 +430,7 @@ import utils from '@/common/utils';
 import config from '@/common/config';
 import legacyConfig from '@/config';
 import GitcoinItem from '@/components/Donation/GitcoinItem.vue';
-import { GeneralAsset, GeneralAssetWithTags, Profile as ProfileInfo } from '@/common/types';
+import { Profile as ProfileInfo } from '@/common/types';
 
 import NFTIcon from '@/components/Icons/NFTIcon.vue';
 import GitcoinIcon from '@/components/Icons/GitcoinIcon.vue';
@@ -442,11 +441,10 @@ import Logo from '@/components/Icons/Logo.vue';
 import FootprintCard from '@/components/Footprint/FootprintCard.vue';
 import ContentCard from '@/components/Content/ContentCard.vue';
 import { debounce } from 'lodash';
-import ContentProviders, { Content } from '@/common/content-providers';
+import ContentProviders from '@/common/content-providers';
 import Toolbar from '@/components/Profile/Toolbar.vue';
 import FootprintItem from '@/components/Footprint/FootprintItem.vue';
 import EVMpAccountItem from '@/components/Account/EVMpAccountItem.vue';
-import setupTheme from '@/common/theme';
 import { AnyObject } from 'rss3/types/extend';
 
 interface Relations {
@@ -560,6 +558,12 @@ export default class Home extends Vue {
         this.rns = pageOwner.name;
         this.ethAddress = pageOwner.address;
         this.isOwner = RSS3.isNowOwner();
+
+        // We prefer subdomain mode
+        if (this.rns && !legacyConfig.subDomain.isSubDomainMode) {
+            // Redirect
+            window.location.href = `//${this.rns}.${legacyConfig.subDomain.rootDomain}`;
+        }
 
         const apiUser = RSS3.getAPIUser().persona;
         if ((<RSS3Index>await apiUser?.files.get(pageOwner.address)).signature) {
