@@ -10,13 +10,13 @@
             >
                 <GitcoinCard
                     v-for="item in gitcoins"
-                    :key="item.detail.platform + item.detail.identity + item.detail.id"
+                    :key="item.id"
                     :imageUrl="item.detail.grant.logo || defaultAvatar"
                     :name="item.detail.grant.title || 'Inactive Project'"
                     :contrib="item.detail.txs.length"
                     :amount="item.detail.txs"
                     @click="toSingleGitcoin(item.id)"
-                ></GitcoinCard>
+                />
             </div>
             <div
                 class="fixed bottom-2 left-0 right-0 flex gap-5 m-auto px-4 py-4 w-full max-w-md bg-btn-container"
@@ -41,7 +41,7 @@ import GitcoinTitle from '@/components/Donation/GitcoinTitle.vue';
 import GitcoinCard from '@/components/Donation/GitcoinCard.vue';
 import config from '@/config';
 import RSS3 from '@/common/rss3';
-import { GeneralAssetWithTags } from '@/common/types';
+import { DetailedFootprint, GeneralAssetWithTags } from '@/common/types';
 import { debounce } from 'lodash';
 import utils from '@/common/utils';
 import Header from '@/components/Common/Header.vue';
@@ -57,7 +57,7 @@ export default class Gitcoins extends Vue {
     ethAddress: string = '';
     grants: number = 0;
     contribs: number = 0;
-    gitcoins: AnyObject[] = [];
+    gitcoins: DetailedFootprint[] = [];
     isOwner: boolean = false;
     rss3Profile: any = {};
     scrollTop: number = 0;
@@ -74,19 +74,18 @@ export default class Gitcoins extends Vue {
 
         const addrOrName = utils.getAddress(<string>this.$route.params.address);
         const pageOwner = await RSS3.setPageOwner(addrOrName);
-        const loginUser = await RSS3.getLoginUser();
         this.ethAddress = pageOwner.address;
         this.rns = pageOwner.name;
-        this.isOwner = pageOwner.address === loginUser.address;
+        this.isOwner = RSS3.isNowOwner();
 
         this.rss3Profile = await pageOwner.profile;
-
-        // Setup theme
-        setupTheme((await pageOwner.persona?.assets.auto.getList(pageOwner.address)) || []);
 
         const { donations } = await utils.initAssets();
         this.gitcoins = await utils.loadAssets(donations);
         this.grants = this.gitcoins.length;
+        for (const grant of this.gitcoins) {
+            this.contribs += grant.detail.txs.length;
+        }
     }
 
     toSetupGitcoins() {
@@ -131,6 +130,7 @@ export default class Gitcoins extends Vue {
                 el.scrollTop = this.scrollTop;
             }
         } else {
+            console.log('init load');
             this.initLoad();
         }
     }

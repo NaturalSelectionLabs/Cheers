@@ -17,6 +17,7 @@ import {
 } from './types';
 
 const orderPattern = new RegExp(`^${config.tags.prefix}:order:(-?\\d+)$`, 'i');
+const hiddenTag = `${config.tags.prefix}:${config.tags.hiddenTag}`;
 
 type TypesWithTag = RSS3Account;
 
@@ -54,7 +55,7 @@ async function initAssets() {
         .map((asset: { id: string }) => asset.id);
 
     const orderedList = taggedList
-        .filter((asset: any) => !asset.hasOwnProperty('hide'))
+        .filter((asset: any) => asset.hasOwnProperty('order'))
         .sort((a: any, b: any) => a.order - b.order)
         .map((asset: { id: string }) => asset.id);
 
@@ -64,17 +65,27 @@ async function initAssets() {
     if (orderedList.length > 0) {
         assetList = assetList?.filter((asset) => orderedList.indexOf(asset) < 0);
     }
+    const hiddenAssetList = hiddenList;
     const orderedAssetList = assetList?.concat(orderedList);
 
+    const parsedHidden = hiddenAssetList?.map((asset) => RSS3Utils.id.parseAsset(asset));
     const parsedAssets = orderedAssetList?.map((asset) => RSS3Utils.id.parseAsset(asset));
+
     const nfts = parsedAssets?.filter((asset) => asset.type.split('.')[1] === 'NFT');
     const donations = parsedAssets?.filter((asset) => asset.type.split('.')[1] === 'Donation');
     const footprints = parsedAssets?.filter((asset) => asset.type.split('.')[1] === 'POAP');
 
+    const hidenNfts = parsedHidden?.filter((asset) => asset.type.split('.')[1] === 'NFT');
+    const hiddenDonations = parsedHidden?.filter((asset) => asset.type.split('.')[1] === 'Donation');
+    const hiddenFootprints = parsedHidden?.filter((asset) => asset.type.split('.')[1] === 'POAP');
+
     return {
-        nfts: nfts && nfts.length > 0 ? nfts : <AnyObject[]>[],
-        donations: donations && donations.length > 0 ? donations : <AnyObject[]>[],
-        footprints: footprints && footprints.length > 0 ? footprints : <AnyObject[]>[],
+        nfts: nfts || [],
+        donations: donations || [],
+        footprints: footprints || [],
+        hiddenNfts: hidenNfts || [],
+        hiddenDonations: hiddenDonations || [],
+        hiddenFootprints: hiddenFootprints || [],
     };
 }
 
@@ -125,11 +136,10 @@ async function getAssetsTillSuccess(assetSet: Set<string>, delay: number = 1500,
     });
 }
 
-async function initAccounts() {
+async function initAccounts(pageOwner = RSS3.getPageOwner()) {
     const listed: RSS3Account[] = [];
     const unlisted: RSS3Account[] = [];
 
-    const pageOwner = RSS3.getPageOwner();
     const allAccounts = (await pageOwner.profile?.accounts) || [];
     for (const account of allAccounts) {
         if (account.tags?.includes(`${config.tags.prefix}:${config.tags.hiddenTag}`)) {
@@ -325,9 +335,7 @@ async function updateAssetTags(assetFields: CustomField_Pass[]) {
     }
 }
 
-type RSS3GeneralAssetsList = (RSS3AutoAsset | RSS3CustomAsset)[];
-
-async function setAssetTags(listed: RSS3GeneralAssetsList, unlisted: RSS3GeneralAssetsList) {
+async function setAssetTags(listed: RSS3AutoAsset[], unlisted: RSS3AutoAsset[]) {
     const assets: CustomField_Pass[] = [];
     await Promise.all(
         listed.map(async (asset, index) => {
@@ -351,16 +359,15 @@ async function setAssetTags(listed: RSS3GeneralAssetsList, unlisted: RSS3General
 }
 
 const setTaggedOrder = (tagged: TypesWithTag, order?: number) => {
-    if (!tagged.tags) {
-        tagged.tags = [];
-    } else {
-        // const orderPattern = /^pass:order:(-?\d+)$/i;
-        const oldIndex = tagged.tags.findIndex((tag) => orderPattern.test(tag));
-        if (oldIndex !== -1) {
-            tagged.tags.splice(oldIndex, 1);
+    const reservedTags: string[] = [];
+    while (tagged.tags?.length) {
+        if (!orderPattern.test(tagged.tags[0]) && tagged.tags[0] !== hiddenTag) {
+            reservedTags.push(tagged.tags[0]);
         }
+        tagged.tags.splice(tagged.tags.indexOf(tagged.tags[0]), 1);
     }
-    if (order) {
+    tagged.tags = reservedTags;
+    if (typeof order === 'number') {
         tagged.tags.push(`${config.tags.prefix}:order:${order}`);
     } else {
         tagged.tags.push(`${config.tags.prefix}:${config.tags.hiddenTag}`);

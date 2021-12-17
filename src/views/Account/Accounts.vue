@@ -53,11 +53,12 @@ import Button from '@/components/Button/Button.vue';
 import EVMpAccountItem from '@/components/Account/EVMpAccountItem.vue';
 import AccountItem from '@/components/Account/AccountItem.vue';
 import RSS3 from '@/common/rss3';
-import { RSS3Account, RSS3Profile } from 'rss3-next/types/rss3';
+import { utils as RSS3Utils } from 'rss3';
 import ContentProviders from '@/common/content-providers';
 import utils from '@/common/utils';
 import Header from '@/components/Common/Header.vue';
 import setupTheme from '@/common/theme';
+import { DetailedAccount } from '@/common/types';
 
 @Options({
     name: 'Accounts',
@@ -67,7 +68,7 @@ export default class Accounts extends Vue {
     rns: string = '';
     ethAddress: string = '';
     isOwner: boolean = false;
-    accounts: RSS3Account[] = [];
+    accounts: DetailedAccount[] = [];
     lastRoute: string = '';
     rss3Profile: RSS3Profile = {};
 
@@ -76,33 +77,27 @@ export default class Accounts extends Vue {
     }
 
     async initLoad() {
-        this.lastRoute = this.$route.fullPath;
-        await RSS3.reconnect();
-        const rss3 = await RSS3.visitor();
-        const owner: string = <string>rss3.account.address;
+        const addrOrName = utils.getAddress(<string>this.$route.params.address);
+        const pageOwner = await RSS3.setPageOwner(addrOrName);
+        this.ethAddress = pageOwner.address;
+        this.rns = pageOwner.name;
+        this.isOwner = RSS3.isNowOwner();
 
-        const { ethAddress, rns } = await utils.getAddress(<string>this.$route.params.address);
-        this.ethAddress = ethAddress;
-        this.rns = rns;
-        this.isOwner = ethAddress == owner;
+        if (pageOwner.profile) {
+            this.rss3Profile = pageOwner.profile;
+        }
 
-        this.rss3Profile = await rss3.profile.get(this.ethAddress);
-
-        // Setup theme
-        setupTheme(await rss3.assets.get(this.ethAddress));
-
-        const allAccounts = await rss3.accounts.get(this.ethAddress);
-        const { listed } = await utils.initAccounts(allAccounts);
-        this.accounts = listed;
-        this.accounts.unshift({
-            platform: 'EVM+',
-            identity: this.ethAddress,
-            signature: '',
-            tags: ['pass:order:-1'],
-        });
+        const { listed } = await utils.initAccounts();
+        const accountDetails = listed.map((account) => RSS3Utils.id.parseAccount(account.id));
+        this.accounts = [
+            {
+                platform: 'EVM+',
+                identity: RSS3.getLoginUser().address,
+            },
+        ].concat(accountDetails);
     }
 
-    getDisplayAddress(account: RSS3Account) {
+    getDisplayAddress(account: DetailedAccount) {
         if (account.platform === 'Misskey' && account.identity.length <= 14) {
             return account.identity;
         } else {
@@ -129,10 +124,7 @@ export default class Accounts extends Vue {
 
     toExternalLink(address: string, platform: string) {
         switch (platform) {
-            case 'BSC':
-                window.open(`https://bscscan.com/address/${address}`);
-                break;
-            case 'Ethereum':
+            case 'EVM+':
                 window.open(`https://etherscan.io/address/${address}`);
                 break;
             case 'Misskey':

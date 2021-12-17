@@ -49,18 +49,6 @@ export default class SingleGitcoin extends Vue {
 
         this.rss3Profile = await pageOwner.profile;
 
-        // Setup theme
-        setupTheme((await pageOwner.persona?.assets.auto.getList(pageOwner.address)) || []);
-
-        // const id: string = <string>this.$route.params.id;
-
-        // const Donation = (await pageOwner.assets?.getDetails({
-        //       assets: [id],
-        //       full: true,
-        //   })) as unknown as GitcoinResponse;
-        //   console.log(id)
-        // this.grant = Donation?.[0].detail.grant;
-        // this.donationInfo = Donation?.[0].detail.txs;
         await this.loadGitcoin();
     }
 

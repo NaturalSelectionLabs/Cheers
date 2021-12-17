@@ -405,7 +405,7 @@ export default class SetupAccounts extends Vue {
             return;
         }
         const loginUser = await RSS3.getLoginUser();
-        const pageOwner = await RSS3.setPageOwner(loginUser.address);
+        await RSS3.setPageOwner(loginUser.address);
         if (sessionStorage.getItem('profile')) {
             const profile = JSON.parse(<string>sessionStorage.getItem('profile'));
             this.avatar = profile.avatar;
@@ -416,9 +416,6 @@ export default class SetupAccounts extends Vue {
         this.ethAddress = loginUser.address;
         this.rns = loginUser.name;
 
-        // Setup theme
-        setupTheme((await loginUser.persona?.assets.auto.getList(loginUser.address)) || []);
-
         const accounts = await loginUser.persona?.profile.accounts;
         if (accounts) {
             const { listed, unlisted } = await utils.initAccounts();
@@ -427,7 +424,7 @@ export default class SetupAccounts extends Vue {
         }
     }
 
-    async addMetamaskAccount(platform: string) {
+    async addMetamaskAccount() {
         if (!(window as any).ethereum) {
             this.addAccountNotice =
                 'Adding accounts are now only supported with MetaMask browser extension enabled. (PC recommended)';
@@ -522,7 +519,7 @@ export default class SetupAccounts extends Vue {
             return;
         }
         // Apply changes
-        await utils.setAccountsTags(this.show, this.hide);
+        const accounts = await utils.setAccountsTags(this.show, this.hide);
         for (const account of this.toAdd) {
             const showIndex = this.toDelete.findIndex((needDeleteAccount) => account.id === needDeleteAccount.id);
             if (showIndex === -1) {
@@ -533,6 +530,14 @@ export default class SetupAccounts extends Vue {
         }
         for (const account of this.toDelete) {
             await loginUser.persona.profile.accounts.delete(account.id);
+        }
+
+        console.log(accounts);
+
+        for (const account of accounts) {
+            if (account.tags) {
+                await loginUser.persona.profile.accounts.patchTags(account.id, account.tags);
+            }
         }
 
         // Empty arrays before sync

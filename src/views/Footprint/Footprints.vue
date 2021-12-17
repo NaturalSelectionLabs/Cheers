@@ -14,7 +14,7 @@
             >
                 <FootprintCard
                     v-for="item of footprints"
-                    :key="item.detail.platform + item.detail.identity + item.detail.id"
+                    :key="item.id"
                     :imageUrl="item.detail.image_url"
                     :username="rss3Profile.name"
                     :activity="item.detail.name"
@@ -47,11 +47,13 @@ import Button from '@/components/Button/Button.vue';
 import FootprintCard from '@/components/Footprint/FootprintCard.vue';
 import config from '@/config';
 import RSS3 from '@/common/rss3';
+import { utils as RSS3Utils } from 'rss3';
 import { debounce } from 'lodash';
 import utils from '@/common/utils';
 import Header from '@/components/Common/Header.vue';
 import setupTheme from '@/common/theme';
-import { utils as RSS3Utils } from 'rss3';
+import { DetailedFootprint } from '@/common/types';
+
 @Options({
     name: 'Footprints',
     components: { FootprintCard, Button, Header },
@@ -59,7 +61,7 @@ import { utils as RSS3Utils } from 'rss3';
 export default class Footprints extends Vue {
     rns: string = '';
     ethAddress: string = '';
-    footprints: any[] = [];
+    footprints: DetailedFootprint[] = [];
     isOwner: boolean = false;
     rss3Profile: any = {};
     scrollTop: number = 0;
@@ -75,15 +77,11 @@ export default class Footprints extends Vue {
 
         const addrOrName = utils.getAddress(<string>this.$route.params.address);
         const pageOwner = await RSS3.setPageOwner(addrOrName);
-        const loginUser = await RSS3.getLoginUser();
         this.ethAddress = pageOwner.address;
         this.rns = pageOwner.name;
-        this.isOwner = pageOwner.address === loginUser.address;
+        this.isOwner = RSS3.isNowOwner();
 
         this.rss3Profile = await pageOwner.profile;
-
-        // Setup theme
-        setupTheme((await pageOwner.persona?.assets.auto.getList(pageOwner.address)) || []);
 
         const { footprints } = await utils.initAssets();
         this.footprints = await utils.loadAssets(footprints);

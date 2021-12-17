@@ -189,9 +189,6 @@ export default class EditProfile extends Vue {
         }
 
         this.startLoadingAccounts();
-
-        // Setup theme
-        setupTheme((await loginUser.persona?.assets.auto.getList(loginUser.address)) || []);
     }
 
     startLoadingAccounts() {

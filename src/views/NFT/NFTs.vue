@@ -3,7 +3,7 @@
         <div class="m-auto pb-32 pt-8 px-4 max-w-screen-lg">
             <Header :ethAddress="ethAddress" :rns="rns" :rss3Profile="rss3Profile" title="NFTs" theme="nft" />
             <div class="grid gap-6 grid-cols-2 justify-items-center sm:grid-cols-3">
-                <div class="relative w-full" v-for="item in nfts" :key="item.platform + item.identity + item.id">
+                <div class="relative w-full" v-for="item in nfts" :key="item.id">
                     <NFTItem
                         class="cursor-pointer"
                         size="auto"
@@ -46,12 +46,14 @@ import Button from '@/components/Button/Button.vue';
 import NFTItem from '@/components/NFT/NFTItem.vue';
 import NFTBadges from '@/components/NFT/NFTBadges.vue';
 import RSS3 from '@/common/rss3';
+import { utils as RSS3Utils } from 'rss3';
 import config from '@/config';
 import { debounce } from 'lodash';
 import utils from '@/common/utils';
 import Header from '@/components/Common/Header.vue';
 import setupTheme from '@/common/theme';
-import { utils as RSS3Utils } from 'rss3';
+import { DetailedNFT } from '@/common/types';
+
 @Options({
     name: 'NFTs',
     components: { Button, NFTItem, NFTBadges, Header },
@@ -60,7 +62,7 @@ export default class NFTs extends Vue {
     rns: string = '';
     ethAddress: string = '';
     isOwner: boolean = false;
-    nfts: any[] = [];
+    nfts: DetailedNFT[] = [];
     rss3Profile: any = {};
     $gtag: any;
     scrollTop: number = 0;
@@ -71,15 +73,11 @@ export default class NFTs extends Vue {
 
         const addrOrName = utils.getAddress(<string>this.$route.params.address);
         const pageOwner = await RSS3.setPageOwner(addrOrName);
-        const loginUser = await RSS3.getLoginUser();
         this.ethAddress = pageOwner.address;
         this.rns = pageOwner.name;
-        this.isOwner = pageOwner.address === loginUser.address;
+        this.isOwner = RSS3.isNowOwner();
 
-        this.rss3Profile = await pageOwner.profile;
-
-        // Setup theme
-        setupTheme((await pageOwner.persona?.assets.auto.getList(pageOwner.address)) || []);
+        this.rss3Profile = pageOwner.profile;
 
         const { nfts } = await utils.initAssets();
         this.nfts = await utils.loadAssets(nfts);

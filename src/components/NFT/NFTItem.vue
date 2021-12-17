@@ -42,8 +42,9 @@
 
 <script lang="ts">
 import { Vue, Options } from 'vue-class-component';
-import config from '@/config';
 import legacyConfig from '@/config';
+import config from '@/common/config';
+
 @Options({
     props: {
         size: String,
@@ -62,8 +63,8 @@ export default class NFTItem extends Vue {
     get mainUrl() {
         return this.handleIPFS(
             this.isShowingDetails
-                ? this.imageUrl || this.posterUrl || this.defaultAvatar
-                : this.posterUrl || this.imageUrl || this.defaultAvatar,
+                ? this.imageUrl || this.posterUrl || config.undefinedImageAlt
+                : this.posterUrl || this.imageUrl || config.undefinedImageAlt,
         );
     }
 

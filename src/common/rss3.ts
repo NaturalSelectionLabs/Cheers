@@ -13,6 +13,7 @@ import Assets from 'rss3/dist/assets/index';
 import legacyConfig from '@/config';
 import Cookies from 'js-cookie';
 import utils from '@/common/utils';
+import setupTheme from '@/common/theme';
 
 export interface IAssetProfile {
     assets: GeneralAsset[];
@@ -308,7 +309,35 @@ function dispatchEvent(event: string, detail: any) {
         bubbles: true,
         composed: true,
     });
+    console.log(event, detail);
     document.dispatchEvent(evt);
+}
+
+async function setPageTitleFavicon() {
+    const profile = RSS3PageOwner.profile;
+    const favicon = <HTMLLinkElement>document.getElementById('favicon');
+    if (profile?.avatar?.[0]) {
+        favicon.href = utils.fixURLSchemas(profile.avatar[0]);
+    } else {
+        favicon.href = '/favicon.ico';
+    }
+    document.title = profile?.name || 'Web3 Pass';
+}
+
+async function ensureLoginUser() {
+    return new Promise((resolve, reject) => {
+        if (!isValidRSS3()) {
+            reject(new Error('Not logged in'));
+        } else {
+            if (RSS3LoginUser.isReady) {
+                resolve(RSS3LoginUser);
+            } else {
+                document.addEventListener(Events.connect, () => {
+                    resolve(RSS3LoginUser);
+                });
+            }
+        }
+    });
 }
 
 export default {
@@ -349,24 +378,10 @@ export default {
     getLoginUser: () => {
         return RSS3LoginUser;
     },
-    ensureLoginUser: async () => {
-        return new Promise((resolve, reject) => {
-            if (!isValidRSS3()) {
-                reject(new Error('Not logged in'));
-            } else {
-                if (RSS3LoginUser.isReady) {
-                    resolve(RSS3LoginUser);
-                } else {
-                    document.addEventListener(Events.loginUserReady, () => {
-                        resolve(RSS3LoginUser);
-                    });
-                }
-            }
-        });
-    },
+    ensureLoginUser,
     reloadLoginUser: async () => {
         await initUser(RSS3LoginUser);
-        dispatchEvent(Events.loginUserReady, RSS3LoginUser);
+        dispatchEvent(Events.connect, RSS3LoginUser);
         return RSS3LoginUser;
     },
     setPageOwner: async (addrOrName: string) => {
@@ -387,6 +402,8 @@ export default {
         if (isReloadRequired) {
             await initUser(RSS3PageOwner);
         }
+        await setPageTitleFavicon();
+        await setupTheme(); // Setup theme
         dispatchEvent(Events.pageOwnerReady, RSS3PageOwner);
         return RSS3PageOwner;
     },
@@ -399,10 +416,10 @@ export default {
         return RSS3PageOwner;
     },
     isNowOwner: () => {
+        // await ensureLoginUser();
         return isValidRSS3() && RSS3LoginUser.address === RSS3PageOwner.address;
     },
     isValidRSS3,
-
     getAssetProfile: async (address: string, type: string, refresh: boolean = false) => {
         if (assetsProfileCache.has(address + type) && !refresh) {
             return <IAssetProfile>assetsProfileCache.get(address + type);
@@ -507,7 +524,7 @@ export default {
             for (const asset of assets) {
                 const { type, uniqueID } = RSS3Utils.id.parseAsset(asset);
                 if (
-                    type?.includes('NFT') &&
+                    type.includes('NFT') &&
                     utils.isAssetNotHidden(asset) &&
                     uniqueID.split('.')[0] === theme.nftIdPrefix
                 ) {

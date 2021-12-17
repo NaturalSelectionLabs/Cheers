@@ -31,7 +31,7 @@ export default {
         {
             name: 'loot',
             class: 'theme-loot',
-            nftIdPrefix: '0xff9c1b15b16263c61d017ee9f65c50e4ae0113d7-',
+            nftIdPrefix: '0xff9c1b15b16263c61d017ee9f65c50e4ae0113d7',
         },
     ],
     walletConnectOptions: {

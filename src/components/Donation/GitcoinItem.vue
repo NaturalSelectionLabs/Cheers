@@ -8,12 +8,13 @@
             rounded: size === 'contain',
         }"
     >
-        <img :src="imageUrl" class="w-full h-full object-cover" />
+        <img :src="imageUrl || config.undefinedImageAlt" class="w-full h-full object-cover" />
     </div>
 </template>
 
 <script lang="ts">
 import { Vue, Options } from 'vue-class-component';
+import config from '@/common/config';
 
 @Options({
     props: {
@@ -24,6 +25,7 @@ import { Vue, Options } from 'vue-class-component';
 export default class GitcoinItem extends Vue {
     size!: String;
     imageUrl!: String;
+    config = config;
 }
 </script>
 

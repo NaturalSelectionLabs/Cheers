@@ -26,7 +26,7 @@
                                     class="inline-flex mx-0.5"
                                     style="cursor: grab"
                                     size="md"
-                                    :imageUrl="element.info.image_preview_url"
+                                    :imageUrl="element.detail.image_url"
                                 />
                             </template>
                         </draggable>
@@ -82,7 +82,7 @@
                                     class="inline-flex mx-0.5"
                                     style="cursor: grab"
                                     size="md"
-                                    :imageUrl="element.info.image_preview_url"
+                                    :imageUrl="element.detail.image_url"
                                 />
                             </template>
                         </draggable>
@@ -128,9 +128,9 @@ import { Options, Vue } from 'vue-class-component';
 import Button from '@/components/Button/Button.vue';
 import Card from '@/components/Card/Card.vue';
 import draggable from 'vuedraggable';
-import RSS3, { IRSS3 } from '@/common/rss3';
+import RSS3 from '@/common/rss3';
 import config from '@/config';
-import { GeneralAsset, GeneralAssetWithTags } from '@/common/types';
+import { DetailedFootprint } from '@/common/types';
 import LoadingContainer from '@/components/Loading/LoadingContainer.vue';
 import FootprintItem from '@/components/Footprint/FootprintItem.vue';
 import utils from '@/common/utils';
@@ -150,47 +150,24 @@ import setupTheme from '@/common/theme';
 })
 export default class SetupFootprints extends Vue {
     avatar: string = config.defaultAvatar;
-    rss3: IRSS3 | null = null;
     isLoading: Boolean = false;
 
-    show: GeneralAssetWithTags[] = [];
-    hide: GeneralAssetWithTags[] = [];
+    show: DetailedFootprint[] = [];
+    hide: DetailedFootprint[] = [];
 
     isPCLayout: boolean = window.innerWidth > 768;
 
     async mounted() {
-        if (!(await RSS3.reconnect())) {
-            if (config.subDomain.isSubDomainMode) {
-                // redirect back to root domain
-                window.location.host = config.subDomain.rootDomain;
-            } else {
-                sessionStorage.setItem('redirectFrom', this.$route.fullPath);
-                await this.$router.push('/');
-            }
-            return;
-        }
-        this.rss3 = await RSS3.get();
-        if (sessionStorage.getItem('profile')) {
-            const profile = JSON.parse(<string>sessionStorage.getItem('profile'));
-            this.avatar = profile.avatar;
-        } else {
-            const profile = await (<IRSS3>this.rss3).profile.get();
-            this.avatar = profile?.avatar?.[0] || config.defaultAvatar;
-        }
+        const loginUser = await RSS3.getLoginUser();
+        await RSS3.setPageOwner(loginUser.address);
+        const profile = loginUser.profile;
+        this.avatar = profile?.avatar?.[0] || config.defaultAvatar;
 
-        // Setup theme
-        setupTheme(await (<IRSS3>this.rss3).assets.get());
+        // Get NFTs
+        const { footprints, hiddenFootprints } = await utils.initAssets();
 
-        const data = await RSS3.getAssetProfile((<IRSS3>this.rss3).account.address, 'POAP');
-        if (data) {
-            const { listed, unlisted } = await utils.initAssets(
-                await (<IRSS3>this.rss3).assets.get((<IRSS3>this.rss3).account.address),
-                <GeneralAsset[]>data.assets,
-                'POAP',
-            );
-            this.show = listed;
-            this.hide = unlisted;
-        }
+        this.show = await utils.loadAssets(footprints);
+        this.hide = await utils.loadAssets(hiddenFootprints);
     }
 
     hideAll() {
@@ -202,8 +179,15 @@ export default class SetupFootprints extends Vue {
 
     async save() {
         this.isLoading = true;
-        await utils.saveAssetsOrder(this.show, this.hide);
+        await utils.setAssetTags(
+            this.show.map((asset) => asset.id),
+            this.hide.map((asset) => asset.id),
+        );
         this.isLoading = false;
+        window.history.back();
+    }
+
+    back() {
         window.history.back();
     }
 }

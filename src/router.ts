@@ -18,9 +18,9 @@ import EditProfile from '@/views/Setup/EditProfile.vue';
 import RNS from '@/views/Setup/RNS.vue';
 import RNSPending from '@/views/Setup/RNSPending.vue';
 import Setup from '@/views/Setup/Setup.vue';
-import { createRouter, createWebHistory } from 'vue-router';
+import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
 
-export const routes = [
+export const routes: RouteRecordRaw[] = [
     config.subDomain.isSubDomainMode
         ? {
               path: '/',

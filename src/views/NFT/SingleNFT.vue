@@ -90,13 +90,6 @@ export default class SingleNFT extends Vue {
         const type: string = String(this.$route.params.type);
         // const id: string = String(this.$route.params.id);
 
-        // Setup theme
-        setupTheme((await pageOwner.persona?.assets.auto.getList(pageOwner.address)) || []);
-
-        // const nftData = (await pageOwner.assets?.getDetails({
-        //       assets: [id],
-        //       full: true,
-        //   })) as unknown as NFTResponse;
         const nftData = (await utils.loadAssets([
             {
                 platform: platform,
