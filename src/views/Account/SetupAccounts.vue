@@ -522,7 +522,7 @@ export default class SetupAccounts extends Vue {
             return;
         }
         // Apply changes
-        await utils.setAccountsTags(this.show, this.hide);
+        const accounts = await utils.setAccountsTags(this.show, this.hide);
         for (const account of this.toAdd) {
             const showIndex = this.toDelete.findIndex((needDeleteAccount) => account.id === needDeleteAccount.id);
             if (showIndex === -1) {
@@ -533,6 +533,14 @@ export default class SetupAccounts extends Vue {
         }
         for (const account of this.toDelete) {
             await loginUser.persona.profile.accounts.delete(account.id);
+        }
+
+        console.log(accounts);
+
+        for (const account of accounts) {
+            if (account.tags) {
+                await loginUser.persona.profile.accounts.patchTags(account.id, account.tags);
+            }
         }
 
         // Empty arrays before sync

@@ -17,6 +17,7 @@ import {
 } from './types';
 
 const orderPattern = new RegExp(`^${config.tags.prefix}:order:(-?\\d+)$`, 'i');
+const hiddenTag = `${config.tags.prefix}:${config.tags.hiddenTag}`;
 
 type TypesWithTag = RSS3Account;
 
@@ -357,16 +358,15 @@ async function setAssetTags(listed: RSS3AutoAsset[], unlisted: RSS3AutoAsset[]) 
 }
 
 const setTaggedOrder = (tagged: TypesWithTag, order?: number) => {
-    if (!tagged.tags) {
-        tagged.tags = [];
-    } else {
-        // const orderPattern = /^pass:order:(-?\d+)$/i;
-        const oldIndex = tagged.tags.findIndex((tag) => orderPattern.test(tag));
-        if (oldIndex !== -1) {
-            tagged.tags.splice(oldIndex, 1);
+    const reservedTags: string[] = [];
+    while (tagged.tags?.length) {
+        if (!orderPattern.test(tagged.tags[0]) && tagged.tags[0] !== hiddenTag) {
+            reservedTags.push(tagged.tags[0]);
         }
+        tagged.tags.splice(tagged.tags.indexOf(tagged.tags[0]), 1);
     }
-    if (order) {
+    tagged.tags = reservedTags;
+    if (typeof order === 'number') {
         tagged.tags.push(`${config.tags.prefix}:order:${order}`);
     } else {
         tagged.tags.push(`${config.tags.prefix}:${config.tags.hiddenTag}`);
