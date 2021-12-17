@@ -377,6 +377,16 @@ const setAccountsTags = async (listed: TypesWithTag[], unlisted: TypesWithTag[])
     return listed.concat(unlisted);
 };
 
+const isAssetNotHidden = async (asset: RSS3AutoAsset | RSS3CustomAsset) => {
+    const pageOwner = await RSS3.getPageOwner();
+    const apiUser = await RSS3.getAPIUser();
+    const personaFile = await apiUser.persona?.files.get(pageOwner.address);
+    // Init base structure
+    const assets: CustomField_Pass[] = personaFile?.['_pass']?.assets;
+    const af = assets?.find((oaf) => oaf.id === asset);
+    return !!af?.hide;
+};
+
 const utils = {
     sortByOrderTag,
     initAssets,
@@ -387,6 +397,7 @@ const utils = {
     fixURLSchemas,
     setAssetTags,
     setAccountsTags,
+    isAssetNotHidden,
 };
 
 export default utils;
