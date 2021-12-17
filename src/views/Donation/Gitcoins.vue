@@ -83,6 +83,9 @@ export default class Gitcoins extends Vue {
         const { donations } = await utils.initAssets();
         this.gitcoins = await utils.loadAssets(donations);
         this.grants = this.gitcoins.length;
+        for (const grant of this.gitcoins) {
+            this.contribs += grant.detail.txs.length;
+        }
     }
 
     toSetupGitcoins() {
