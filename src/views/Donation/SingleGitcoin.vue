@@ -44,8 +44,8 @@ export default class SingleGitcoin extends Vue {
 
     async mounted() {
         await RSS3.reconnect();
-        const addrOrName = <string>this.$route.params.address || '';
-        const pageOwner = await RSS3.setPageOwner(addrOrName);
+        const { ethAddress } = await utils.getAddress();
+        const pageOwner = await RSS3.setPageOwner(ethAddress);
         this.ethAddress = pageOwner.address;
         this.rns = pageOwner.name;
 
