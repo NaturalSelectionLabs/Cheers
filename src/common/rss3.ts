@@ -12,9 +12,7 @@ import Assets from 'rss3/dist/assets/index';
 
 import legacyConfig from '@/config';
 import Cookies from 'js-cookie';
-
-let rss3: RSS3 | null;
-let assets: Map<string, IAssetProfile> = new Map();
+import utils from '@/common/utils';
 
 export interface IAssetProfile {
     assets: GeneralAsset[];
@@ -40,8 +38,6 @@ let assetsProfileCache: Map<string, IAssetProfile> = new Map();
 let walletConnectProvider: WalletConnectProvider;
 let ethersProvider: ethers.providers.Web3Provider | null;
 
-export type IRSS3 = RSS3;
-
 export interface IAssetProfile {
     assets: GeneralAsset[];
     status?: boolean;
@@ -62,13 +58,13 @@ export interface RSS3DetailPersona {
 
 function setStorage(key: string, value: string) {
     if (value) {
-        localStorage.setItem(key, value);
+        Cookies.set(key, value, cookieOptions);
     } else {
-        localStorage.removeItem(key);
+        Cookies.remove(key, cookieOptions);
     }
 }
 function getStorage(key: string): string {
-    return localStorage.getItem(key) || '';
+    return Cookies.get(key) || '';
 }
 
 const KeyNames = {
@@ -90,19 +86,6 @@ const cookieOptions: Cookies.CookieAttributes = {
     sameSite: 'Strict',
     expires: legacyConfig.subDomain.cookieExpires,
 };
-
-const methodKey = 'RSS3BioConnectMethod';
-const addressKey = 'RSS3BioConnectAddress';
-
-async function visitor(): Promise<RSS3> {
-    if (rss3) {
-        return rss3;
-    } else {
-        return new RSS3({
-            endpoint: config.hubEndpoint,
-        });
-    }
-}
 
 async function wcConn(skipSignSync: boolean = false) {
     // WalletConnect Connect
@@ -516,14 +499,16 @@ export default {
         }
         return '';
     },
-    getAvailableThemes(assets: RSS3Asset[]) {
+    getAvailableThemes(assets: RSS3AutoAsset[]) {
+        // ${platform}-${identity}-${type}-${uniqueID}
         const availableThemes: Theme[] = [];
         for (const theme of legacyConfig.theme) {
             for (const asset of assets) {
+                const [platform, identity, type, uniqueID] = asset.split('-');
                 if (
-                    asset.type?.includes('NFT') &&
-                    !asset.tags?.includes('pass:hidden') &&
-                    asset.id.startsWith(theme.nftIdPrefix)
+                    type?.includes('NFT') &&
+                    utils.isAssetNotHidden(asset) &&
+                    uniqueID.split('.')[0] === theme.nftIdPrefix
                 ) {
                     availableThemes.push(theme);
                     break;
@@ -531,5 +516,41 @@ export default {
             }
         }
         return availableThemes;
+    },
+    addNewMetamaskAccount: async (): Promise<RSS3Account> => {
+        // js don't support multiple return values,
+        // so here I'm using signature as a message provider
+
+        if (!isValidRSS3()) {
+            return {
+                id: '',
+                signature: 'Not logged in',
+            };
+        }
+        const metamaskEthereum = (window as any).ethereum;
+        ethersProvider = new ethers.providers.Web3Provider(metamaskEthereum);
+        try {
+            const accounts = await metamaskEthereum.request({
+                method: 'eth_requestAccounts',
+            });
+            const address = ethers.utils.getAddress(accounts[0]);
+
+            // ${platform}-${identity}
+            const newAccount = {
+                id: `EVM+-${address}`,
+            };
+            const sigMessage = await (<RSS3>RSS3LoginUser.persona).profile.accounts.getSigMessage(newAccount);
+            const signature = await ethersProvider?.getSigner().signMessage(sigMessage);
+            return {
+                ...newAccount,
+                signature,
+            };
+        } catch (e: any) {
+            console.log(e);
+            return {
+                id: '',
+                signature: e.message,
+            };
+        }
     },
 };
