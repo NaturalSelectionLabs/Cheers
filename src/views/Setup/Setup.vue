@@ -222,7 +222,7 @@ import ContentIcon from '@/components/Icons/ContentIcon.vue';
 import AccountIcon from '@/components/Icons/AccountIcon.vue';
 import FootprintIcon from '@/components/Icons/FootprintIcon.vue';
 
-import { GeneralAsset, GeneralAssetWithTags } from '@/common/types';
+import { DetailedFootprint, DetailedGitcoin, DetailedNFT, GeneralAsset, GeneralAssetWithTags } from '@/common/types';
 import GitcoinItem from '@/components/Donation/GitcoinItem.vue';
 import RNSUtils from '@/common/rns';
 import FootprintItem from '@/components/Footprint/FootprintItem.vue';
@@ -269,9 +269,9 @@ export default class Setup extends Vue {
         platform: string;
         identity: string;
     }[] = [];
-    nfts: AnyObject[] = [];
-    gitcoins: AnyObject[] = [];
-    footprints: AnyObject[] = [];
+    nfts: DetailedNFT[] = [];
+    gitcoins: DetailedGitcoin[] = [];
+    footprints: DetailedFootprint[] = [];
     isLoading: Boolean = true;
     isLoadingAssets: {
         NFT: boolean;

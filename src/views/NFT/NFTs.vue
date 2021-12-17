@@ -52,6 +52,7 @@ import { debounce } from 'lodash';
 import utils from '@/common/utils';
 import Header from '@/components/Common/Header.vue';
 import setupTheme from '@/common/theme';
+import { DetailedNFT } from '@/common/types';
 
 @Options({
     name: 'NFTs',
@@ -61,7 +62,7 @@ export default class NFTs extends Vue {
     rns: string = '';
     ethAddress: string = '';
     isOwner: boolean = false;
-    nfts: any[] = [];
+    nfts: DetailedNFT[] = [];
     rss3Profile: any = {};
     $gtag: any;
     scrollTop: number = 0;

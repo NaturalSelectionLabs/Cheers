@@ -41,7 +41,7 @@ import GitcoinTitle from '@/components/Donation/GitcoinTitle.vue';
 import GitcoinCard from '@/components/Donation/GitcoinCard.vue';
 import config from '@/config';
 import RSS3 from '@/common/rss3';
-import { GeneralAssetWithTags } from '@/common/types';
+import { DetailedFootprint, GeneralAssetWithTags } from '@/common/types';
 import { debounce } from 'lodash';
 import utils from '@/common/utils';
 import Header from '@/components/Common/Header.vue';
@@ -57,7 +57,7 @@ export default class Gitcoins extends Vue {
     ethAddress: string = '';
     grants: number = 0;
     contribs: number = 0;
-    gitcoins: any[] = [];
+    gitcoins: DetailedFootprint[] = [];
     isOwner: boolean = false;
     rss3Profile: any = {};
     scrollTop: number = 0;

@@ -54,7 +54,7 @@ async function initAssets() {
         .map((asset: { id: string }) => asset.id);
 
     const orderedList = taggedList
-        .filter((asset: any) => !asset.hasOwnProperty('hide'))
+        .filter((asset: any) => asset.hasOwnProperty('order'))
         .sort((a: any, b: any) => a.order - b.order)
         .map((asset: { id: string }) => asset.id);
 
@@ -64,17 +64,27 @@ async function initAssets() {
     if (orderedList.length > 0) {
         assetList = assetList?.filter((asset) => orderedList.indexOf(asset) < 0);
     }
+    const hiddenAssetList = hiddenList;
     const orderedAssetList = assetList?.concat(orderedList);
 
+    const parsedHidden = hiddenAssetList?.map((asset) => RSS3Utils.id.parseAsset(asset));
     const parsedAssets = orderedAssetList?.map((asset) => RSS3Utils.id.parseAsset(asset));
+
     const nfts = parsedAssets?.filter((asset) => asset.type.split('.')[1] === 'NFT');
     const donations = parsedAssets?.filter((asset) => asset.type.split('.')[1] === 'Donation');
     const footprints = parsedAssets?.filter((asset) => asset.type.split('.')[1] === 'POAP');
 
+    const hidenNfts = parsedHidden?.filter((asset) => asset.type.split('.')[1] === 'NFT');
+    const hiddenDonations = parsedHidden?.filter((asset) => asset.type.split('.')[1] === 'Donation');
+    const hiddenFootprints = parsedHidden?.filter((asset) => asset.type.split('.')[1] === 'POAP');
+
     return {
-        nfts: nfts && nfts.length > 0 ? nfts : <AnyObject[]>[],
-        donations: donations && donations.length > 0 ? donations : <AnyObject[]>[],
-        footprints: footprints && footprints.length > 0 ? footprints : <AnyObject[]>[],
+        nfts: nfts || [],
+        donations: donations || [],
+        footprints: footprints || [],
+        hiddenNfts: hidenNfts || [],
+        hiddenDonations: hiddenDonations || [],
+        hiddenFootprints: hiddenFootprints || [],
     };
 }
 
@@ -324,9 +334,7 @@ async function updateAssetTags(assetFields: CustomField_Pass[]) {
     }
 }
 
-type RSS3GeneralAssetsList = (RSS3AutoAsset | RSS3CustomAsset)[];
-
-async function setAssetTags(listed: RSS3GeneralAssetsList, unlisted: RSS3GeneralAssetsList) {
+async function setAssetTags(listed: RSS3AutoAsset[], unlisted: RSS3AutoAsset[]) {
     const assets: CustomField_Pass[] = [];
     await Promise.all(
         listed.map(async (asset, index) => {

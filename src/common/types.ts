@@ -1,3 +1,5 @@
+import { AnyObject } from 'rss3/types/extend';
+
 interface Asset {
     chain: string;
 }
@@ -148,3 +150,17 @@ export interface CustomField_Pass {
     hide?: boolean;
     order?: number;
 }
+
+export type DetailedNFT = AnyObject;
+export type DetailedGitcoin = AnyObject;
+export type DetailedFootprint = AnyObject;
+
+// export interface DetailedNFT extends AnyObject {
+//     id: string;
+// }
+// export interface DetailedGitcoin extends AnyObject {
+//     id: string;
+// }
+// export interface DetailedFootprint extends AnyObject {
+//     id: string;
+// }

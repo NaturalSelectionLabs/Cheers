@@ -52,6 +52,7 @@ import utils from '@/common/utils';
 import Header from '@/components/Common/Header.vue';
 import setupTheme from '@/common/theme';
 import { utils as RSS3Utils } from 'rss3';
+import { DetailedFootprint } from '@/common/types';
 
 @Options({
     name: 'Footprints',
@@ -60,7 +61,7 @@ import { utils as RSS3Utils } from 'rss3';
 export default class Footprints extends Vue {
     rns: string = '';
     ethAddress: string = '';
-    footprints: any[] = [];
+    footprints: DetailedFootprint[] = [];
     isOwner: boolean = false;
     rss3Profile: any = {};
     scrollTop: number = 0;
