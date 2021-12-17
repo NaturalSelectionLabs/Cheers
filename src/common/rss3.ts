@@ -1,14 +1,44 @@
+/* eslint-disable import/no-anonymous-default-export */
 import WalletConnectProvider from '@walletconnect/web3-provider';
 import { ethers } from 'ethers';
-import RSS3 from 'rss3-next';
-import { RSS3Account, RSS3Asset } from 'rss3-next/types/rss3';
+import RSS3, { utils as RSS3Utils } from 'rss3';
 import axios from 'axios';
 import { GitcoinResponse, GeneralAsset, NFTResponse, POAPResponse } from './types';
+import config from './config';
+import rns from './rns';
+import Events from './events';
+import Items from 'rss3/dist/items/index';
+import Assets from 'rss3/dist/assets/index';
+
 import config from '@/config';
 import Cookies from 'js-cookie';
 
 let rss3: RSS3 | null;
 let assets: Map<string, IAssetProfile> = new Map();
+
+export type IRSS3 = RSS3;
+
+export interface IAssetProfile {
+    assets: GeneralAsset[];
+    status?: boolean;
+}
+
+export const EMPTY_RSS3_DP: RSS3DetailPersona = {
+    files: null,
+    persona: null,
+    address: '',
+    name: '',
+    profile: null,
+    followers: [],
+    followings: [],
+    items: null,
+    assets: null,
+    isReady: false,
+};
+
+let RSS3PageOwner: RSS3DetailPersona = Object.create(EMPTY_RSS3_DP);
+let RSS3LoginUser: RSS3DetailPersona = Object.create(EMPTY_RSS3_DP);
+let assetsProfileCache: Map<string, IAssetProfile> = new Map();
 let walletConnectProvider: WalletConnectProvider;
 let ethersProvider: ethers.providers.Web3Provider | null;
 
@@ -18,6 +48,37 @@ export interface IAssetProfile {
     assets: GeneralAsset[];
     status?: boolean;
 }
+
+export interface RSS3DetailPersona {
+    files: any;
+    persona: RSS3 | null;
+    address: string;
+    name: string;
+    profile: RSS3Profile | null;
+    followers: string[];
+    followings: string[];
+    items: Items | null;
+    assets: Assets | null;
+    isReady: boolean;
+}
+
+function setStorage(key: string, value: string) {
+    if (value) {
+        localStorage.setItem(key, value);
+    } else {
+        localStorage.removeItem(key);
+    }
+}
+function getStorage(key: string): string {
+    return localStorage.getItem(key) || '';
+}
+
+const KeyNames = {
+    ConnectMethod: 'CONNECT_METHOD',
+    ConnectAddress: 'CONNECT_ADDRESS',
+    MetaMask: 'MetaMask',
+    WalletConnect: 'WalletConnect',
+};
 
 export interface Theme {
     name: string;
@@ -35,7 +96,18 @@ const cookieOptions: Cookies.CookieAttributes = {
 const methodKey = 'RSS3BioConnectMethod';
 const addressKey = 'RSS3BioConnectAddress';
 
-async function walletConnect(skipSign?: boolean) {
+async function visitor(): Promise<RSS3> {
+    if (rss3) {
+        return rss3;
+    } else {
+        return new RSS3({
+            endpoint: config.hubEndpoint,
+        });
+    }
+}
+
+async function wcConn(skipSignSync: boolean = false) {
+    // WalletConnect Connect
     walletConnectProvider = new WalletConnectProvider(config.walletConnectOptions);
 
     //  Enable session (triggers QR Code modal)
@@ -56,14 +128,15 @@ async function walletConnect(skipSign?: boolean) {
     // Subscribe to session disconnection
     walletConnectProvider.on('disconnect', (code: number, reason: string) => {
         console.log(code, reason);
-        rss3 = null;
-        ethersProvider = null;
+        disconnect();
     });
 
-    const address = await ethersProvider.getSigner().getAddress();
-    console.log('address', address);
+    let address = getStorage(KeyNames.ConnectAddress);
+    if (!address) {
+        address = await ethersProvider.getSigner().getAddress();
+    }
 
-    rss3 = new RSS3({
+    RSS3LoginUser.persona = new RSS3({
         endpoint: config.hubEndpoint,
         address: address,
         agentSign: true,
@@ -77,196 +150,288 @@ async function walletConnect(skipSign?: boolean) {
             );
         },
     });
-    if (!skipSign) {
-        rss3.files.set(await rss3.files.get(address));
-        await rss3.files.sync();
-    }
+    await initUser(RSS3LoginUser, skipSignSync);
 
-    return rss3;
+    return RSS3LoginUser;
 }
 
-async function visitor(): Promise<RSS3> {
-    if (rss3) {
-        return rss3;
-    } else {
-        return new RSS3({
-            endpoint: config.hubEndpoint,
-        });
+async function mmConn(skipSignSync: boolean = false) {
+    // MetaMask Connect
+    if (!(window as any).ethereum) {
+        return null;
     }
-}
 
-async function metamaskConnect(skipSign?: boolean) {
     const metamaskEthereum = (window as any).ethereum;
     ethersProvider = new ethers.providers.Web3Provider(metamaskEthereum);
 
-    let address: string;
-    if (Cookies.get(methodKey) === 'metamask' && Cookies.get(addressKey)) {
-        address = Cookies.get(addressKey) || '';
-    } else {
+    let address = getStorage(KeyNames.ConnectAddress);
+    if (!address) {
         const accounts = await metamaskEthereum.request({
             method: 'eth_requestAccounts',
         });
         address = ethers.utils.getAddress(accounts[0]);
     }
 
-    rss3 = new RSS3({
+    RSS3LoginUser.persona = new RSS3({
         endpoint: config.hubEndpoint,
         address: address,
         agentSign: true,
         sign: async (data: string) => (await ethersProvider?.getSigner().signMessage(data)) || '',
     });
-    if (!skipSign) {
-        rss3.files.set(await rss3.files.get(address));
-        await rss3.files.sync();
-    }
+    await initUser(RSS3LoginUser, skipSignSync);
 
-    return rss3;
+    return RSS3LoginUser;
+}
+
+function saveConnect(method: string) {
+    if (isValidRSS3()) {
+        setStorage(KeyNames.ConnectMethod, method);
+        setStorage(KeyNames.ConnectAddress, RSS3LoginUser.address);
+    }
+}
+
+async function reconnect() {
+    if (isValidRSS3()) {
+        return true;
+    }
+    const lastConnect = getStorage(KeyNames.ConnectMethod);
+    const address = getStorage(KeyNames.ConnectAddress);
+    if (address) {
+        switch (lastConnect) {
+            case KeyNames.WalletConnect:
+                ethersProvider = null;
+                RSS3LoginUser.persona = new RSS3({
+                    endpoint: config.hubEndpoint,
+                    address: address,
+                    agentSign: true,
+                    sign: async (data: string) => {
+                        if (!ethersProvider) {
+                            walletConnectProvider = new WalletConnectProvider(config.walletConnectOptions);
+                            let session;
+                            try {
+                                session = await walletConnectProvider.enable();
+                            } catch (e) {}
+                            if (!session) {
+                                return '';
+                            }
+                            ethersProvider = new ethers.providers.Web3Provider(walletConnectProvider);
+                            if (!ethersProvider) {
+                                return '';
+                            }
+                            walletConnectProvider.on('disconnect', (code: number, reason: string) => {
+                                console.log(code, reason);
+                                disconnect();
+                            });
+                        }
+                        alert('Ready to sign... You may need to prepare your wallet.');
+                        return (
+                            (await ethersProvider?.send('personal_sign', [
+                                ethers.utils.hexlify(ethers.utils.toUtf8Bytes(data)),
+                                address.toLowerCase(),
+                            ])) || ''
+                        );
+                    },
+                });
+                break;
+            case KeyNames.MetaMask:
+                ethersProvider = null;
+                RSS3LoginUser.persona = new RSS3({
+                    endpoint: config.hubEndpoint,
+                    address: address,
+                    agentSign: true,
+                    sign: async (data: string) => {
+                        if (!ethersProvider) {
+                            const metamaskEthereum = (window as any).ethereum;
+                            ethersProvider = new ethers.providers.Web3Provider(metamaskEthereum);
+                            await metamaskEthereum.request({
+                                method: 'eth_requestAccounts',
+                            });
+                        }
+                        return (await ethersProvider?.getSigner().signMessage(data)) || '';
+                    },
+                });
+                break;
+        }
+        await initUser(RSS3LoginUser, true);
+    } else if (!isValidRSS3()) {
+        switch (lastConnect) {
+            case KeyNames.WalletConnect:
+                await wcConn(true);
+                break;
+            case KeyNames.MetaMask:
+                await mmConn(true);
+                break;
+            default:
+                setStorage(KeyNames.ConnectMethod, ''); // logout
+                break;
+        }
+        return isValidRSS3();
+    }
+    return true;
+}
+
+async function initUser(user: RSS3DetailPersona, skipSignSync: boolean = false) {
+    user.isReady = false;
+    if (user.persona) {
+        if (!user.address) {
+            user.address = user.persona.account.address;
+        }
+        user.persona.files.set(await user.persona.files.get(user.address));
+        if (!skipSignSync) {
+            await user.persona.files.sync();
+        }
+    }
+    if (user.name && !user.address) {
+        user.address = await rns.name2Addr(user.name);
+    }
+    if (user.address && !user.name) {
+        user.name = await rns.addr2Name(user.address);
+    }
+    const RSS3APIPersona = apiPersona();
+    user.profile = await RSS3APIPersona.profile.get(user.address);
+    user.followers = await RSS3APIPersona.backlinks.getList(user.address, 'following');
+    user.followings = await RSS3APIPersona.links.getList(user.address, 'following');
+    user.items = await RSS3APIPersona.items;
+    user.assets = await RSS3APIPersona.assets;
+    user.files = await RSS3APIPersona.files;
+    user.isReady = true;
+}
+
+function apiPersona(): RSS3 {
+    return (
+        RSS3LoginUser.persona ||
+        new RSS3({
+            endpoint: config.hubEndpoint,
+        })
+    );
 }
 
 function isValidRSS3() {
-    return !!rss3;
+    return !!RSS3LoginUser.persona;
 }
 
 async function disconnect() {
-    rss3 = null;
+    RSS3LoginUser = Object.create(EMPTY_RSS3_DP);
     ethersProvider = null;
     if (walletConnectProvider) {
         await walletConnectProvider.disconnect();
     }
-    Cookies.remove(methodKey, cookieOptions);
-    Cookies.remove(addressKey, cookieOptions);
+    setStorage(KeyNames.ConnectMethod, '');
+    setStorage(KeyNames.ConnectAddress, '');
+}
+
+function dispatchEvent(event: string, detail: any) {
+    const evt = new CustomEvent(event, {
+        detail,
+        bubbles: true,
+        composed: true,
+    });
+    document.dispatchEvent(evt);
 }
 
 export default {
-    walletConnect: async () => {
-        await walletConnect();
-        if (isValidRSS3()) {
-            Cookies.set(methodKey, 'walletConnect', cookieOptions);
-            Cookies.set(addressKey, (<RSS3>rss3).account.address, cookieOptions);
-        }
-        return rss3;
+    connect: {
+        walletConnect: async () => {
+            if (await wcConn()) {
+                saveConnect(KeyNames.WalletConnect);
+                dispatchEvent(Events.connect, RSS3LoginUser);
+                return RSS3LoginUser;
+            } else {
+                return null;
+            }
+        },
+        metamask: async () => {
+            if (await mmConn()) {
+                saveConnect(KeyNames.MetaMask);
+                dispatchEvent(Events.connect, RSS3LoginUser);
+                return RSS3LoginUser;
+            } else {
+                return null;
+            }
+        },
     },
-    metamaskConnect: async () => {
-        await metamaskConnect();
-        if (isValidRSS3()) {
-            Cookies.set(methodKey, 'metamask', cookieOptions);
-            Cookies.set(addressKey, (<RSS3>rss3).account.address, cookieOptions);
-        }
-        return rss3;
+    disconnect: async () => {
+        await disconnect();
+        dispatchEvent(Events.disconnect, RSS3LoginUser);
     },
-    disconnect: disconnect,
-    reconnect: async (): Promise<boolean> => {
-        if (isValidRSS3()) {
-            return true;
+    reconnect: async () => {
+        const res = await reconnect();
+        dispatchEvent(Events.connect, RSS3LoginUser);
+        return res;
+    },
+    getAPIUser: (): RSS3DetailPersona => {
+        const user = Object.create(EMPTY_RSS3_DP);
+        user.persona = apiPersona();
+        return user;
+    },
+    getLoginUser: () => {
+        return RSS3LoginUser;
+    },
+    ensureLoginUser: async () => {
+        return new Promise((resolve, reject) => {
+            if (!isValidRSS3()) {
+                reject(new Error('Not logged in'));
+            } else {
+                if (RSS3LoginUser.isReady) {
+                    resolve(RSS3LoginUser);
+                } else {
+                    document.addEventListener(Events.loginUserReady, () => {
+                        resolve(RSS3LoginUser);
+                    });
+                }
+            }
+        });
+    },
+    reloadLoginUser: async () => {
+        await initUser(RSS3LoginUser);
+        dispatchEvent(Events.loginUserReady, RSS3LoginUser);
+        return RSS3LoginUser;
+    },
+    setPageOwner: async (addrOrName: string) => {
+        let isReloadRequired = false;
+        if (addrOrName.startsWith('0x') && addrOrName.length === 42) {
+            if (RSS3PageOwner.address !== addrOrName) {
+                isReloadRequired = true;
+                RSS3PageOwner.address = addrOrName;
+                RSS3PageOwner.name = '';
+            }
+        } else {
+            if (RSS3PageOwner.name !== addrOrName) {
+                isReloadRequired = true;
+                RSS3PageOwner.name = addrOrName;
+                RSS3PageOwner.address = '';
+            }
         }
-        // Migrate
-        const lastConnectMigrate = localStorage.getItem('lastConnect');
-        const lastAddressMigrate = localStorage.getItem('lastAddress');
-        if (lastConnectMigrate) {
-            Cookies.set(methodKey, lastConnectMigrate, cookieOptions);
-            localStorage.removeItem('lastConnect');
+        if (isReloadRequired) {
+            await initUser(RSS3PageOwner);
         }
-        if (lastAddressMigrate) {
-            Cookies.set(addressKey, lastAddressMigrate, cookieOptions);
-            localStorage.removeItem('lastAddress');
-        }
+        dispatchEvent(Events.pageOwnerReady, RSS3PageOwner);
+        return RSS3PageOwner;
+    },
+    getPageOwner: () => {
+        return RSS3PageOwner;
+    },
+    reloadPageOwner: async () => {
+        await initUser(RSS3PageOwner);
+        dispatchEvent(Events.pageOwnerReady, RSS3PageOwner);
+        return RSS3PageOwner;
+    },
+    isNowOwner: () => {
+        return isValidRSS3() && RSS3LoginUser.address === RSS3PageOwner.address;
+    },
+    isValidRSS3,
 
-        const lastConnect = Cookies.get(methodKey);
-        const address = Cookies.get(addressKey);
-        if (address) {
-            switch (lastConnect) {
-                case 'walletConnect':
-                    ethersProvider = null;
-                    rss3 = new RSS3({
-                        endpoint: config.hubEndpoint,
-                        address: address,
-                        agentSign: true,
-                        sign: async (data: string) => {
-                            if (!ethersProvider) {
-                                walletConnectProvider = new WalletConnectProvider(config.walletConnectOptions);
-                                let session;
-                                try {
-                                    session = await walletConnectProvider.enable();
-                                } catch (e) {}
-                                if (!session) {
-                                    return '';
-                                }
-                                ethersProvider = new ethers.providers.Web3Provider(walletConnectProvider);
-                                if (!ethersProvider) {
-                                    return '';
-                                }
-                                walletConnectProvider.on('disconnect', (code: number, reason: string) => {
-                                    console.log(code, reason);
-                                    rss3 = null;
-                                    ethersProvider = null;
-                                });
-                            }
-                            alert('Ready to sign... You may need to prepare your wallet.');
-                            return (
-                                (await ethersProvider?.send('personal_sign', [
-                                    ethers.utils.hexlify(ethers.utils.toUtf8Bytes(data)),
-                                    address.toLowerCase(),
-                                ])) || ''
-                            );
-                        },
-                    });
-                    break;
-                case 'metamask':
-                    ethersProvider = null;
-                    rss3 = new RSS3({
-                        endpoint: config.hubEndpoint,
-                        address: address,
-                        agentSign: true,
-                        sign: async (data: string) => {
-                            if (!ethersProvider) {
-                                const metamaskEthereum = (window as any).ethereum;
-                                ethersProvider = new ethers.providers.Web3Provider(metamaskEthereum);
-                                await metamaskEthereum.request({
-                                    method: 'eth_requestAccounts',
-                                });
-                            }
-                            return (await ethersProvider?.getSigner().signMessage(data)) || '';
-                        },
-                    });
-                    break;
-            }
-        } else if (!isValidRSS3()) {
-            switch (lastConnect) {
-                case 'walletConnect':
-                    await walletConnect(true);
-                    break;
-                case 'metamask':
-                    await metamaskConnect(true);
-                    break;
-                default:
-                    localStorage.removeItem('walletconnect'); // logout
-                    break;
-            }
-            return isValidRSS3();
-        }
-        return true;
-    },
-    visitor: visitor,
-    isValidRSS3: isValidRSS3,
-    get: async () => {
-        return rss3;
-    },
     getAssetProfile: async (address: string, type: string, refresh: boolean = false) => {
-        if (assets.has(address + type) && !refresh) {
-            return <IAssetProfile>assets.get(address + type);
+        if (assetsProfileCache.has(address + type) && !refresh) {
+            return <IAssetProfile>assetsProfileCache.get(address + type);
         } else {
             let data: IAssetProfile | null = null;
             try {
-                const res = await axios.get(`${config.hubEndpoint}/assets/list`, {
-                    params: {
-                        personaID: address,
-                        type: type,
-                    },
-                });
-                if (res && res.data) {
-                    data = <IAssetProfile>res.data;
-                    assets.set(address + type, data);
-                }
+                const autoAssets = (await RSS3PageOwner.assets?.auto.getList(address))?.map((asset) =>
+                    RSS3Utils.id.parseAsset(asset),
+                );
+                data = <IAssetProfile>{ assets: autoAssets, status: autoAssets };
+                assetsProfileCache.set(address + type, data);
             } catch (error) {
                 data = null;
             }
@@ -276,9 +441,8 @@ export default {
     getNFTDetails: async (address: string, platform: string, identity: string, id: string, type: string) => {
         let data: NFTResponse | null = null;
         try {
-            const res = await axios({
-                method: 'get',
-                url: `${config.hubEndpoint}/assets/details`,
+            const res = await axios.get(`/assets/details`, {
+                baseURL: config.hubEndpoint,
                 params: {
                     personaID: address,
                     platform: 'EVM+',
@@ -298,9 +462,8 @@ export default {
     getGitcoinDonation: async (address: string, platform: string, identity: string, id: string) => {
         let data: GitcoinResponse | null = null;
         try {
-            const res = await axios({
-                method: 'get',
-                url: `${config.hubEndpoint}/assets/details`,
+            const res = await axios.get(`/assets/details`, {
+                baseURL: config.hubEndpoint,
                 params: {
                     personaID: address,
                     platform: 'EVM+',
@@ -320,9 +483,8 @@ export default {
     getFootprintDetail: async (address: string, platform: string, identity: string, id: string) => {
         let data: POAPResponse | null = null;
         try {
-            const res = await axios({
-                method: 'get',
-                url: `${config.hubEndpoint}/assets/details`,
+            const res = await axios.get(`/assets/details`, {
+                baseURL: config.hubEndpoint,
                 params: {
                     personaID: address,
                     platform: 'EVM+',
@@ -339,36 +501,22 @@ export default {
         }
         return data;
     },
-    addNewMetamaskAccount: async (): Promise<RSS3Account> => {
-        // js don't support multiple return values,
-        // so here I'm using signature as a message provider
-        if (!rss3) {
-            return {
-                platform: '',
-                identity: '',
-                signature: 'Not logged in',
-            };
+
+    buildProductBaseURL: (product: string, address: string, name?: string) => {
+        if (product in config.productsList) {
+            const p = config.productsList[product];
+            if (p.subDomainMode) {
+                if (name) {
+                    const fixedName = name.endsWith(config.rns.suffix) ? name.replace(config.rns.suffix, '') : name;
+                    return `${p.schema}${fixedName}.${p.baseDomain}`;
+                } else {
+                    return `${p.schema}${p.baseDomain}/${address}`;
+                }
+            } else {
+                return `${p.schema}${p.baseDomain}/${name || address}`;
+            }
         }
-        const metamaskEthereum = (window as any).ethereum;
-        ethersProvider = new ethers.providers.Web3Provider(metamaskEthereum);
-        const accounts = await metamaskEthereum.request({
-            method: 'eth_requestAccounts',
-        });
-        const address = ethers.utils.getAddress(accounts[0]);
-
-        const newTmpAddress: RSS3Account = {
-            platform: 'EVM+',
-            identity: address,
-        };
-
-        const signature =
-            (await ethersProvider?.getSigner().signMessage(rss3.accounts.getSigMessage(newTmpAddress))) || '';
-
-        return {
-            platform: 'EVM+',
-            identity: address,
-            signature: signature,
-        };
+        return '';
     },
     getAvailableThemes(assets: RSS3Asset[]) {
         const availableThemes: Theme[] = [];
