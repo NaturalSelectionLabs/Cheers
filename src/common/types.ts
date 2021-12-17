@@ -142,3 +142,9 @@ export interface Profile {
     rns?: string;
     displayAddress?: string;
 }
+
+export interface CustomField_Pass {
+    id: string;
+    hide?: boolean;
+    order?: number;
+}

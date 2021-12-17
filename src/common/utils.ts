@@ -1,16 +1,22 @@
-import RNSUtils from '@/common/rns';
-import RSS3 from '@/common/rss3';
-import config from '@/config';
-import { RSS3Account, RSS3Asset } from 'rss3-next/types/rss3';
-import { GeneralAsset, GeneralAssetWithTags } from './types';
-
-const getName = () => {
-    return window.location.host.split('.').slice(0, -2).join('.');
-};
+import {
+    CustomField_Pass,
+    DonationDetailByGrant,
+    GitcoinResponse,
+    ItemDetails,
+    NFT,
+    NFTResponse,
+    POAP,
+    POAPResponse,
+} from './types';
+import config from './config';
+import RSS3 from './rss3';
+import { utils as RSS3Utils } from 'rss3';
+import { AnyObject } from 'rss3/types/extend';
+import { formatter } from './address';
 
 const orderPattern = new RegExp(`^${config.tags.prefix}:order:(-?\\d+)$`, 'i');
 
-type TypesWithTag = RSS3Account | GeneralAssetWithTags;
+type TypesWithTag = RSS3Account;
 
 const getTaggedOrder = (tagged: TypesWithTag): number => {
     if (!tagged.tags) {
@@ -25,77 +31,12 @@ const getTaggedOrder = (tagged: TypesWithTag): number => {
     return -1;
 };
 
-const setTaggedOrder = (tagged: TypesWithTag, order?: number): void => {
-    if (!tagged.tags) {
-        tagged.tags = [];
-    } else {
-        // const orderPattern = /^pass:order:(-?\d+)$/i;
-        const oldIndex = tagged.tags.findIndex((tag) => orderPattern.test(tag));
-        if (oldIndex !== -1) {
-            tagged.tags.splice(oldIndex, 1);
-        }
-    }
-    if (order) {
-        tagged.tags.push(`${config.tags.prefix}:order:${order}`);
-    } else {
-        tagged.tags.push(`${config.tags.prefix}:${config.tags.hiddenTag}`);
-    }
-};
-
 function sortByOrderTag<T extends TypesWithTag>(taggeds: T[]): T[] {
     taggeds.sort((a, b) => {
         return getTaggedOrder(a) - getTaggedOrder(b);
     });
     return taggeds;
 }
-
-const setOrderTag = async (taggeds: TypesWithTag[]): Promise<TypesWithTag[]> => {
-    await Promise.all(
-        taggeds.map(async (tagged, index) => {
-            setTaggedOrder(tagged, index);
-        }),
-    );
-    return taggeds;
-};
-
-const setHiddenTag = async (taggeds: TypesWithTag[]): Promise<TypesWithTag[]> => {
-    await Promise.all(
-        taggeds.map(async (tagged) => {
-            setTaggedOrder(tagged);
-        }),
-    );
-    return taggeds;
-};
-
-const mergeAssetsTags = async (assetsInRSS3File: RSS3Asset[], assetsGrabbed: GeneralAsset[]) => {
-    return await Promise.all(
-        (assetsGrabbed || []).map(async (ag: GeneralAssetWithTags) => {
-            const origType = ag.type;
-            if (config.hideUnlistedAsstes) {
-                ag.type = 'Invalid'; // Using as a match mark
-            }
-            for (const airf of assetsInRSS3File) {
-                if (
-                    airf.platform === ag.platform &&
-                    airf.identity === ag.identity &&
-                    airf.id === ag.id &&
-                    airf.type === origType
-                ) {
-                    // Matched
-                    ag.type = origType; // Recover type
-                    if (airf.tags) {
-                        ag.tags = airf.tags;
-                    }
-                    if (!ag.info.collection) {
-                        ag.info.collection = 'Other';
-                    }
-                    break;
-                }
-            }
-            return ag;
-        }),
-    );
-};
 
 async function initAssets() {
     const pageOwner = RSS3.getPageOwner();
@@ -344,83 +285,108 @@ function fixURLSchemas(url: string) {
     }
     return fixedUrl;
 }
-async function getAddress(routerAddress: string) {
-    let address: string | undefined;
-    let ethAddress: string = '';
-    let rns: string = '';
 
-    if (config.subDomain.isSubDomainMode) {
-        // Is subdomain mode
-        address = getName();
-    } else if (routerAddress) {
-        address = routerAddress;
+async function updateAssetTags(assetFields: CustomField_Pass[]) {
+    const loginUser = await RSS3.getLoginUser();
+    if (loginUser.persona) {
+        const personaFile = await loginUser.persona.files.get();
+        // Init base structure
+        if (!personaFile['_pass']) {
+            personaFile['_pass'] = {
+                assets: [],
+            };
+        } else if (!personaFile['_pass'].assets) {
+            personaFile['_pass'].assets = [];
+        }
+        const assets: CustomField_Pass[] = personaFile['_pass'].assets;
+        await Promise.all(
+            assetFields.map((afo) => {
+                // Asset Field Object (afo)
+                // Old   Asset Field  (oaf)
+                const index = assets.findIndex((oaf) => oaf.id === afo.id);
+                if (index === -1) {
+                    // New Asset
+                    assets.push(afo);
+                } else {
+                    // Replace old Asset
+                    assets.splice(index, 1, afo);
+                }
+            }),
+        );
+
+        // Update field
+        personaFile['_pass'].assets = assets;
+        loginUser.persona?.files.set(personaFile);
+        // Sync File
+        await loginUser.persona?.files.sync();
     }
+}
 
-    if (address) {
-        if (/^0x[a-fA-F0-9]{40}$/.test(address)) {
-            // Should be address type
-            // Get RNS and redirect
-            ethAddress = address;
-            rns = await RNSUtils.addr2Name(address);
-            if (rns !== '') {
-                window.location.href =
-                    'https://' +
-                    rns +
-                    '.' +
-                    config.subDomain.rootDomain +
-                    window.location.pathname.replace(`/${address}`, '');
-            }
-        } else {
-            // RNS
-            rns = address;
-            ethAddress = (await RNSUtils.name2Addr(address)).toString();
-            // if (parseInt(ethAddress) === 0) {
-            //     return { ethAddress, rns };
-            // }
+type RSS3GeneralAssetsList = (RSS3AutoAsset | RSS3CustomAsset)[];
+
+async function setAssetTags(listed: RSS3GeneralAssetsList, unlisted: RSS3GeneralAssetsList) {
+    const assets: CustomField_Pass[] = [];
+    await Promise.all(
+        listed.map(async (asset, index) => {
+            const afo: CustomField_Pass = {
+                id: asset,
+                order: index,
+            };
+            assets.push(afo);
+        }),
+    );
+    await Promise.all(
+        unlisted.map(async (asset) => {
+            const afo: CustomField_Pass = {
+                id: asset,
+                hide: true,
+            };
+            assets.push(afo);
+        }),
+    );
+    await updateAssetTags(assets);
+}
+
+const setTaggedOrder = (tagged: TypesWithTag, order?: number): void => {
+    if (!tagged.tags) {
+        tagged.tags = [];
+    } else {
+        // const orderPattern = /^pass:order:(-?\d+)$/i;
+        const oldIndex = tagged.tags.findIndex((tag) => orderPattern.test(tag));
+        if (oldIndex !== -1) {
+            tagged.tags.splice(oldIndex, 1);
         }
     }
-
-    return { ethAddress, rns };
-}
-
-async function saveAssetsOrder(listed: GeneralAssetWithTags[], unlisted: GeneralAssetWithTags[]) {
-    const rss3 = await RSS3.get();
+    if (order) {
+        tagged.tags.push(`${config.tags.prefix}:order:${order}`);
+    } else {
+        tagged.tags.push(`${config.tags.prefix}:${config.tags.hiddenTag}`);
+    }
+};
+const setAccountsTags = async (listed: TypesWithTag[], unlisted: TypesWithTag[]): Promise<TypesWithTag[]> => {
     await Promise.all(
-        listed.map((asset, index) => {
-            return rss3?.assets.patchTags(
-                {
-                    ...asset,
-                },
-                [`pass:order:${index}`],
-            );
+        listed.map(async (tagged, index) => {
+            setTaggedOrder(tagged, index);
         }),
     );
     await Promise.all(
-        unlisted.map((asset) => {
-            return rss3?.assets.patchTags(
-                {
-                    ...asset,
-                },
-                ['pass:hidden'],
-            );
+        unlisted.map(async (tagged) => {
+            setTaggedOrder(tagged);
         }),
     );
-    await rss3?.files.sync();
-}
+    return listed.concat(unlisted);
+};
 
 const utils = {
     sortByOrderTag,
-    setOrderTag,
-    setHiddenTag,
-    mergeAssetsTags,
     initAssets,
+    loadAssets,
     initAccounts,
-    getAddress,
-    getName,
-    saveAssetsOrder,
     extractEmbedFields,
     initContent,
     fixURLSchemas,
+    setAssetTags,
+    setAccountsTags,
 };
 
 export default utils;
