@@ -173,7 +173,7 @@ export default class EditProfile extends Vue {
         }
 
         const loginUser = RSS3.getLoginUser();
-        const pageOwner = await RSS3.setPageOwner(loginUser.address);
+        await RSS3.setPageOwner(loginUser.address);
         this.ethAddress = loginUser.address;
         this.rns = loginUser.name;
 

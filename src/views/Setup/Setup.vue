@@ -300,7 +300,9 @@ export default class Setup extends Vue {
         // await RSS3.getAssetProfile((<IRSS3>this.rss3).account.address, true);
         // await (<IRSS3>this.rss3).files.get((<IRSS3>this.rss3).account.address, true);
 
-        const profile = await (<IRSS3>this.rss3).profile.get();
+        const loginUser = await RSS3.getLoginUser();
+        await RSS3.setPageOwner(loginUser.address);
+        const profile = loginUser.profile;
         console.log(profile);
         this.profile.avatar = profile?.avatar?.[0] || config.defaultAvatar;
         this.profile.name = profile?.name || '';
@@ -323,7 +325,7 @@ export default class Setup extends Vue {
         }
 
         // Setup theme
-        setupTheme(await (<IRSS3>this.rss3).assets.get());
+        setupTheme((await loginUser.persona?.assets.auto.getList(loginUser.address)) || []);
 
         // this.startLoadingAssets();
         this.isLoading = false;
