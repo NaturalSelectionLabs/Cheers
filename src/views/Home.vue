@@ -260,7 +260,7 @@
                                     :content="element.item.summary"
                                     :title="element.item.title"
                                     :provider="element.item.target.field.split('-')[2]"
-                                    @click="toContentLink(element.info.link)"
+                                    @click="toContentLink(element.item)"
                                 />
                             </div>
                             <div>
@@ -911,8 +911,18 @@ export default class Home extends Vue {
         }
     }
 
-    toContentLink(link: string) {
-        window.open(link);
+    toContentLink(content: any) {
+        const [type, mode, platform, user] = content.target.field.split('-');
+        let link = '';
+        if (platform === 'Twitter') {
+            link = `https://twitter.com/${user}/status/${content.target.action.payload}`;
+        } else if (platform === 'Misskey') {
+            const [username, instance] = user.split('@');
+            link = `https://${instance}/notes/${content.target.action.payload}`;
+        }
+        if (link) {
+            window.open(link, '_blank');
+        }
     }
 
     displayDialog(address: string, platform: string) {
