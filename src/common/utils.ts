@@ -399,15 +399,18 @@ function getAddress(routerAddress: string) {
     }
 }
 
-const subDomainModeRedirect = (rns: string, ethAddress: string) => {
+const subDomainModeRedirect = (rns: string) => {
     if (config.subDomain.preferSubDomainMode) {
         // We prefer subdomain mode
         if (rns && !legacyConfig.subDomain.isSubDomainMode) {
             // Redirect
-            window.location.href = window.location.href.replace(
-                `${legacyConfig.subDomain.rootDomain}/${ethAddress}`,
-                `${rns}.${legacyConfig.subDomain.rootDomain}`,
-            );
+            const oldUrlPattern = new RegExp(`${legacyConfig.subDomain.rootDomain}/.+?/`);
+            window.location.href = window.location.href = (window.location.href + '/') // Add trailing slash for pattern (rss3.test/candinya)
+                .replace(oldUrlPattern, `${rns}.${legacyConfig.subDomain.rootDomain}/`)
+                .replace(
+                    /\/$/, // Remove ending slash (if any) for format consistency
+                    '',
+                );
         }
     }
 };

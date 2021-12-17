@@ -58,7 +58,7 @@ export default class SingleFootprint extends Vue {
         this.ethAddress = pageOwner.address;
         this.rns = pageOwner.name;
 
-        utils.subDomainModeRedirect(this.rns, this.ethAddress);
+        utils.subDomainModeRedirect(this.rns);
 
         this.rss3Profile = await pageOwner.profile;
 

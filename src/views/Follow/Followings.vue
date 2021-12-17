@@ -56,7 +56,7 @@ export default class Followings extends Vue {
         this.ethAddress = pageOwner.address;
         this.rns = pageOwner.name;
 
-        utils.subDomainModeRedirect(this.rns, this.ethAddress);
+        utils.subDomainModeRedirect(this.rns);
 
         if (pageOwner.profile) {
             this.rss3Profile = pageOwner.profile;

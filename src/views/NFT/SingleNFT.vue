@@ -84,7 +84,7 @@ export default class SingleNFT extends Vue {
         this.ethAddress = pageOwner.address;
         this.rns = pageOwner.name;
 
-        utils.subDomainModeRedirect(this.rns, this.ethAddress);
+        utils.subDomainModeRedirect(this.rns);
 
         const platform: string = String(this.$route.params.platform);
         const identity: string = String(this.$route.params.identity);

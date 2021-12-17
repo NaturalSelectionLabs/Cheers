@@ -81,7 +81,7 @@ export default class Footprints extends Vue {
         this.rns = pageOwner.name;
         this.isOwner = RSS3.isNowOwner();
 
-        utils.subDomainModeRedirect(this.rns, this.ethAddress);
+        utils.subDomainModeRedirect(this.rns);
 
         this.rss3Profile = await pageOwner.profile;
 
