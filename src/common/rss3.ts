@@ -10,13 +10,11 @@ import Events from './events';
 import Items from 'rss3/dist/items/index';
 import Assets from 'rss3/dist/assets/index';
 
-import config from '@/config';
+import legacyConfig from '@/config';
 import Cookies from 'js-cookie';
 
 let rss3: RSS3 | null;
 let assets: Map<string, IAssetProfile> = new Map();
-
-export type IRSS3 = RSS3;
 
 export interface IAssetProfile {
     assets: GeneralAsset[];
@@ -87,10 +85,10 @@ export interface Theme {
 }
 
 const cookieOptions: Cookies.CookieAttributes = {
-    domain: '.' + config.subDomain.rootDomain,
+    domain: '.' + legacyConfig.subDomain.rootDomain,
     secure: true,
     sameSite: 'Strict',
-    expires: config.subDomain.cookieExpires,
+    expires: legacyConfig.subDomain.cookieExpires,
 };
 
 const methodKey = 'RSS3BioConnectMethod';
@@ -520,7 +518,7 @@ export default {
     },
     getAvailableThemes(assets: RSS3Asset[]) {
         const availableThemes: Theme[] = [];
-        for (const theme of config.theme) {
+        for (const theme of legacyConfig.theme) {
             for (const asset of assets) {
                 if (
                     asset.type?.includes('NFT') &&
