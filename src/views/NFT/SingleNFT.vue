@@ -79,9 +79,8 @@ export default class SingleNFT extends Vue {
     private market: string = 'opensea';
 
     async mounted() {
-        await RSS3.reconnect();
-        const { ethAddress } = await utils.getAddress();
-        const pageOwner = await RSS3.setPageOwner(ethAddress);
+        const addrOrName = utils.getAddress(<string>this.$route.params.address);
+        const pageOwner = await RSS3.setPageOwner(addrOrName);
         this.ethAddress = pageOwner.address;
         this.rns = pageOwner.name;
 

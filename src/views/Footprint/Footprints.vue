@@ -14,15 +14,22 @@
             >
                 <FootprintCard
                     v-for="item of footprints"
-                    :key="item.platform + item.identity + item.id"
-                    :imageUrl="item.info.image_preview_url"
-                    :username="rss3Profile.username"
-                    :activity="item.info.title"
-                    :start-date="item.info.start_date"
-                    :end-date="item.info.end_date"
-                    :location="item.info.city || item.info.country || 'Metaverse'"
+                    :key="item.detail.platform + item.detail.identity + item.detail.id"
+                    :imageUrl="item.detail.image_url"
+                    :username="rss3Profile.name"
+                    :activity="item.detail.name"
+                    :start-date="item.detail.start_date"
+                    :end-date="item.detail.end_date"
+                    :location="item.detail.city || item.detail.country || 'Metaverse'"
                     class="cursor-pointer"
-                    @click="toSingleFootprint(item.platform, item.identity, item.id, item.type)"
+                    @click="
+                        toSingleFootprint(
+                            item.id.split('-')[0],
+                            item.id.split('-')[1],
+                            item.id.split('-')[3].replaceAll('.', '-'),
+                            item.id.split('-')[2].replaceAll('.', '-'),
+                        )
+                    "
                 />
             </div>
             <div
@@ -47,7 +54,6 @@ import Button from '@/components/Button/Button.vue';
 import FootprintCard from '@/components/Footprint/FootprintCard.vue';
 import config from '@/config';
 import RSS3 from '@/common/rss3';
-import { GeneralAssetWithTags } from '@/common/types';
 import { debounce } from 'lodash';
 import utils from '@/common/utils';
 import { RSS3Profile } from 'rss3-next/types/rss3';
@@ -61,7 +67,7 @@ import setupTheme from '@/common/theme';
 export default class Footprints extends Vue {
     rns: string = '';
     ethAddress: string = '';
-    footprints: GeneralAssetWithTags[] = [];
+    footprints: any[] = [];
     isOwner: boolean = false;
     rss3Profile: RSS3Profile = {};
     scrollTop: number = 0;
@@ -75,29 +81,20 @@ export default class Footprints extends Vue {
         this.lastRoute = this.$route.fullPath;
         this.footprints = [];
 
-        await RSS3.reconnect();
-        const rss3 = await RSS3.visitor();
-        const owner: string = <string>rss3.account.address;
+        const addrOrName = utils.getAddress(<string>this.$route.params.address);
+        const pageOwner = await RSS3.setPageOwner(addrOrName);
+        const loginUser = await RSS3.getLoginUser();
+        this.ethAddress = pageOwner.address;
+        this.rns = pageOwner.name;
+        this.isOwner = pageOwner.address === loginUser.address;
 
-        const { ethAddress, rns } = await utils.getAddress(<string>this.$route.params.address);
-        this.ethAddress = ethAddress;
-        this.rns = rns;
-        this.isOwner = ethAddress == owner;
-
-        this.rss3Profile = await rss3.profile.get(this.ethAddress);
+        this.rss3Profile = await pageOwner.profile;
 
         // Setup theme
-        await setupTheme(await rss3.assets.get(this.ethAddress));
+        setupTheme((await pageOwner.persona?.assets.auto.getList(pageOwner.address)) || []);
 
-        const footprintsData = await RSS3.getAssetProfile(this.ethAddress, 'POAP');
-        if (footprintsData) {
-            const { listed } = await utils.initAssets(
-                await rss3.assets.get(this.ethAddress),
-                footprintsData.assets,
-                'POAP',
-            );
-            this.footprints = listed;
-        }
+        const { footprints } = await utils.initAssets();
+        this.footprints = await utils.loadAssets(footprints);
     }
 
     toSetupFootprints() {

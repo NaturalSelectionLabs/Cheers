@@ -10,12 +10,19 @@
             >
                 <GitcoinCard
                     v-for="item in gitcoins"
-                    :key="item.platform + item.identity + item.id"
-                    :imageUrl="item.info.image_preview_url || defaultAvatar"
-                    :name="item.info.title || 'Inactive Project'"
-                    :contrib="item.info.total_contribs"
-                    :amount="item.info.token_contribs"
-                    @click="toSingleGitcoin(item.platform, item.identity, item.id, item.type)"
+                    :key="item.detail.platform + item.detail.identity + item.detail.id"
+                    :imageUrl="item.detail.grant.logo || defaultAvatar"
+                    :name="item.detail.grant.title || 'Inactive Project'"
+                    :contrib="item.detail.txs.length"
+                    :amount="item.detail.txs"
+                    @click="
+                        toSingleGitcoin(
+                            item.id.split('-')[0],
+                            item.id.split('-')[1],
+                            item.id.split('-')[3].replaceAll('.', '-'),
+                            item.id.split('-')[2].replaceAll('.', '-'),
+                        )
+                    "
                 ></GitcoinCard>
             </div>
             <div
@@ -72,30 +79,21 @@ export default class Gitcoins extends Vue {
         this.contribs = 0;
         this.gitcoins = [];
 
-        await RSS3.reconnect();
-        const rss3 = await RSS3.visitor();
-        const owner: string = <string>rss3.account.address;
+        const addrOrName = utils.getAddress(<string>this.$route.params.address);
+        const pageOwner = await RSS3.setPageOwner(addrOrName);
+        const loginUser = await RSS3.getLoginUser();
+        this.ethAddress = pageOwner.address;
+        this.rns = pageOwner.name;
+        this.isOwner = pageOwner.address === loginUser.address;
 
-        const { ethAddress, rns } = await utils.getAddress(<string>this.$route.params.address);
-        this.ethAddress = ethAddress;
-        this.rns = rns;
-        this.isOwner = ethAddress == owner;
-
-        this.rss3Profile = await rss3.profile.get(this.ethAddress);
+        this.rss3Profile = await pageOwner.profile;
 
         // Setup theme
-        setupTheme(await rss3.assets.get(this.ethAddress));
+        setupTheme((await pageOwner.persona?.assets.auto.getList(pageOwner.address)) || []);
 
-        const gitcoinsData = await RSS3.getAssetProfile(this.ethAddress, 'Gitcoin-Donation');
-        if (gitcoinsData) {
-            const { listed } = await utils.initAssets(
-                await rss3.assets.get(this.ethAddress),
-                gitcoinsData.assets,
-                'Gitcoin-Donation',
-            );
-            this.gitcoins = listed;
-            this.grants = this.gitcoins.length;
-        }
+        const { donations } = await utils.initAssets();
+        this.gitcoins = await utils.loadAssets(donations);
+        this.grants = this.gitcoins.length;
     }
 
     toSetupGitcoins() {

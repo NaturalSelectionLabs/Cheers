@@ -7,15 +7,27 @@
                     <NFTItem
                         class="cursor-pointer"
                         size="auto"
-                        :imageUrl="item.info.animation_url || item.info.image_preview_url"
-                        :poster-url="item.info.image_preview_url"
-                        @click="toSingleNFTPage(item.platform, item.identity, item.id, item.type)"
+                        :imageUrl="
+                            item.detail.image_preview_url ||
+                            item.detail.image_url ||
+                            item.detail.animation_url ||
+                            item.detail.animation_original_url
+                        "
+                        :poster-url="item.detail.image_preview_url"
+                        @click="
+                            toSingleNFTPage(
+                                item.id.split('-')[0],
+                                item.id.split('-')[1],
+                                item.id.split('-')[3].replaceAll('.', '-'),
+                                item.id.split('-')[2].replaceAll('.', '-'),
+                            )
+                        "
                     />
                     <NFTBadges
                         class="absolute right-2.5 top-2.5"
-                        :chain="item.type.split('-')[0]"
+                        :chain="item.detail.chain"
                         location="overlay"
-                        :collectionImg="item.info.collection_icon"
+                        :collectionImg="item.detail.collection?.image_url"
                     />
                 </div>
             </div>
@@ -42,7 +54,6 @@ import NFTItem from '@/components/NFT/NFTItem.vue';
 import NFTBadges from '@/components/NFT/NFTBadges.vue';
 import RSS3 from '@/common/rss3';
 import config from '@/config';
-import { GeneralAsset, GeneralAssetWithTags } from '@/common/types';
 import { debounce } from 'lodash';
 import utils from '@/common/utils';
 import { RSS3Profile } from 'rss3-next/types/rss3';
@@ -57,7 +68,7 @@ export default class NFTs extends Vue {
     rns: string = '';
     ethAddress: string = '';
     isOwner: boolean = false;
-    nfts: GeneralAssetWithTags[] = [];
+    nfts: any[] = [];
     rss3Profile: RSS3Profile = {};
     $gtag: any;
     scrollTop: number = 0;
@@ -66,30 +77,20 @@ export default class NFTs extends Vue {
     async initLoad() {
         this.lastRoute = this.$route.fullPath;
 
-        await RSS3.reconnect();
-        const rss3 = await RSS3.visitor();
-        const owner: string = <string>rss3.account.address;
+        const addrOrName = utils.getAddress(<string>this.$route.params.address);
+        const pageOwner = await RSS3.setPageOwner(addrOrName);
+        const loginUser = await RSS3.getLoginUser();
+        this.ethAddress = pageOwner.address;
+        this.rns = pageOwner.name;
+        this.isOwner = pageOwner.address === loginUser.address;
 
-        const { ethAddress, rns } = await utils.getAddress(<string>this.$route.params.address);
-        this.ethAddress = ethAddress;
-        this.rns = rns;
-        this.isOwner = ethAddress == owner;
-
-        this.rss3Profile = await rss3.profile.get(this.ethAddress);
+        this.rss3Profile = await pageOwner.profile;
 
         // Setup theme
-        setupTheme(await rss3.assets.get(this.ethAddress));
+        setupTheme((await pageOwner.persona?.items.auto.getList(pageOwner.address)) || []);
 
-        const nftData = await RSS3.getAssetProfile(this.ethAddress, 'NFT');
-
-        if (nftData) {
-            const { listed } = await utils.initAssets(
-                await rss3.assets.get(this.ethAddress),
-                nftData.assets as GeneralAsset[],
-                'NFT',
-            );
-            this.nfts = listed;
-        }
+        const { nfts } = await utils.initAssets();
+        this.nfts = await utils.loadAssets(nfts);
     }
 
     toSingleNFTPage(platform: string, identity: string, id: string, type: string) {
