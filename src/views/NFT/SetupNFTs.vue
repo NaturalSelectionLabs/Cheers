@@ -146,17 +146,15 @@ import { Options, Vue } from 'vue-class-component';
 import Button from '@/components/Button/Button.vue';
 import Card from '@/components/Card/Card.vue';
 import NFTItem from '@/components/NFT/NFTItem.vue';
-import RSS3, { IRSS3 } from '@/common/rss3';
+import RSS3 from '@/common/rss3';
 import config from '@/config';
 
 import draggable from 'vuedraggable';
 import LoadingContainer from '@/components/Loading/LoadingContainer.vue';
-import { DetailedNFT, GeneralAssetWithTags } from '@/common/types';
+import { DetailedNFT } from '@/common/types';
 import Header from '@/components/Common/Header.vue';
 import setupTheme from '@/common/theme';
 import utils from '@/common/utils';
-import { flattenDeep, values } from 'lodash';
-import { AnyObject } from 'rss3/types/extend';
 
 @Options({
     name: 'SetupNFTs',

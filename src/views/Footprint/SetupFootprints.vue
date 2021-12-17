@@ -130,7 +130,7 @@ import Card from '@/components/Card/Card.vue';
 import draggable from 'vuedraggable';
 import RSS3, { IRSS3 } from '@/common/rss3';
 import config from '@/config';
-import { DetailedFootprint, GeneralAsset, GeneralAssetWithTags } from '@/common/types';
+import { DetailedFootprint } from '@/common/types';
 import LoadingContainer from '@/components/Loading/LoadingContainer.vue';
 import FootprintItem from '@/components/Footprint/FootprintItem.vue';
 import utils from '@/common/utils';
