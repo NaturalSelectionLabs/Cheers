@@ -228,6 +228,7 @@ import RNSUtils from '@/common/rns';
 import FootprintItem from '@/components/Footprint/FootprintItem.vue';
 import EVMpAccountItem from '@/components/Account/EVMpAccountItem.vue';
 import utils from '@/common/utils';
+import { utils as RSS3Utils } from 'rss3';
 
 @Options({
     name: 'Setup',
@@ -263,7 +264,10 @@ export default class Setup extends Vue {
         bio: '',
         link: '',
     };
-    accounts: RSS3Account[] = [];
+    accounts: {
+        platform: string;
+        identity: string;
+    }[] = [];
     nfts: GeneralAssetWithTags[] = [];
     gitcoins: GeneralAssetWithTags[] = [];
     footprints: GeneralAssetWithTags[] = [];
@@ -334,16 +338,14 @@ export default class Setup extends Vue {
     startLoadingAccounts() {
         this.accounts = [];
         setTimeout(async () => {
-            const accounts = await (<IRSS3>this.rss3).accounts.get();
-            const { listed } = await utils.initAccounts(accounts);
-            this.accounts = listed;
-            // Push original account
-            this.accounts.unshift({
-                platform: 'EVM+',
-                identity: (<IRSS3>this.rss3).account.address,
-                signature: '',
-                tags: ['pass:order:-1'],
-            });
+            const { listed } = await utils.initAccounts();
+            const accountList = listed.map((account) => RSS3Utils.id.parseAccount(account.id));
+            this.accounts = [
+                {
+                    platform: 'EVM+',
+                    identity: RSS3.getLoginUser().address,
+                },
+            ].concat(accountList);
         }, 0);
     }
 
