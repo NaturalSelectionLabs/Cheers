@@ -276,6 +276,7 @@ async function initUser(user: RSS3DetailPersona, skipSignSync: boolean = false) 
     user.assets = await RSS3APIPersona.assets;
     user.files = await RSS3APIPersona.files;
     user.isReady = true;
+    console.log(RSS3APIPersona);
 }
 
 function apiPersona(): RSS3 {

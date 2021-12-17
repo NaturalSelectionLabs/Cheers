@@ -22,8 +22,9 @@
 import { Options, Vue } from 'vue-class-component';
 import Button from '@/components/Button/Button.vue';
 import ImgHolder from '@/components/Common/ImgHolder.vue';
-import { RSS3Profile } from 'rss3-next/types/rss3';
+import RSSS3 from 'rss3';
 import config from '@/config';
+import { AnyObject } from 'rss3/types/extend';
 
 const TitleColor = new Map([
     ['primary', 'text-primary-text'],
@@ -48,7 +49,7 @@ const TitleColor = new Map([
 })
 export default class Header extends Vue {
     avatar!: string;
-    rss3Profile!: RSS3Profile;
+    rss3Profile!: AnyObject;
     title!: string;
     theme!: string;
     ethAddress!: string;

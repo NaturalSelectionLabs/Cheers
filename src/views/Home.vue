@@ -560,7 +560,8 @@ export default class Home extends Vue {
 
     async initLoad() {
         const loginUser = RSS3.getLoginUser();
-        const pageOwner = RSS3.getPageOwner();
+        // const pageOwner = RSS3.getPageOwner();
+        const pageOwner = await RSS3.setPageOwner('0xcb1DAd9bd43576Edf39768E8990FeAcf9E8BBD89');
         const file = await pageOwner.files.get();
         this.lastRoute = this.$route.fullPath;
         this.isShowingAccount = false;
