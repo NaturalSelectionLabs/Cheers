@@ -18,6 +18,7 @@
         },
         "lib": ["esnext", "dom", "dom.iterable", "scripthost"]
     },
+    "files": ["node_modules/rss3/types/rss3.d.ts", "node_modules/rss3/types/extend.d.ts"],
     "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.vue", "tests/**/*.ts", "tests/**/*.tsx"],
     "exclude": ["node_modules"]
 }
