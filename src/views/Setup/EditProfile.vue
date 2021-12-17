@@ -118,8 +118,8 @@ import Input from '@/components/Input/Input.vue';
 import Modal from '@/components/Common/Modal.vue';
 import Loading from '@/components/Loading/Loading.vue';
 import LoadingContainer from '@/components/Loading/LoadingContainer.vue';
-import { RSS3Account, RSS3Profile } from 'rss3-next/types/rss3';
-import RSS3, { IRSS3 } from '@/common/rss3';
+import RSS3 from '@/common/rss3';
+import { utils as RSS3Utils } from 'rss3';
 import config from '@/config';
 import LinkButton from '@/components/Button/LinkButton.vue';
 import RNSUtils from '@/common/rns';
@@ -154,7 +154,6 @@ export default class EditProfile extends Vue {
         bio: '',
         link: '',
     };
-    rss3: IRSS3 | null = null;
     isLoading: Boolean = false;
     maxValueLength: Number = 280;
     notice: String = '';
@@ -162,19 +161,23 @@ export default class EditProfile extends Vue {
     ethAddress: string = '';
     rns: string = '';
     $gtag: any;
-    accounts: RSS3Account[] = [];
+    accounts: {
+        platform: string;
+        identity: string;
+    }[] = [];
 
     async mounted() {
-        if (!(await RSS3.reconnect())) {
+        if (!RSS3.isValidRSS3()) {
             sessionStorage.setItem('redirectFrom', this.$route.fullPath);
             await this.$router.push('/');
-        } else {
-            this.rss3 = await RSS3.get();
-            this.ethAddress = await (<IRSS3>this.rss3).account.address;
-            this.rns = await RNSUtils.addr2Name(this.ethAddress, true);
         }
 
-        const profile = await (<IRSS3>this.rss3).profile.get();
+        const loginUser = RSS3.getLoginUser();
+        const pageOwner = await RSS3.setPageOwner(loginUser.address);
+        this.ethAddress = loginUser.address;
+        this.rns = loginUser.name;
+
+        const profile = loginUser.profile;
 
         this.profile.avatar = profile?.avatar?.[0] || config.defaultAvatar;
         this.profile.name = profile?.name || '';
@@ -188,22 +191,20 @@ export default class EditProfile extends Vue {
         this.startLoadingAccounts();
 
         // Setup theme
-        setupTheme(await (<IRSS3>this.rss3).assets.get());
+        setupTheme((await loginUser.persona?.assets.auto.getList(loginUser.address)) || []);
     }
 
     startLoadingAccounts() {
         this.accounts = [];
         setTimeout(async () => {
-            const accounts = await (<IRSS3>this.rss3).accounts.get();
-            const { listed } = await utils.initAccounts(accounts);
-            this.accounts = listed;
-            // Push original account
-            this.accounts.unshift({
-                platform: 'EVM+',
-                identity: (<IRSS3>this.rss3).account.address,
-                signature: '',
-                tags: ['pass:order:-1'],
-            });
+            const { listed } = await utils.initAccounts();
+            const accountList = listed.map((account) => RSS3Utils.id.parseAccount(account.id));
+            this.accounts = [
+                {
+                    platform: 'EVM+',
+                    identity: RSS3.getLoginUser().address,
+                },
+            ].concat(accountList);
         }, 0);
     }
 
@@ -215,14 +216,11 @@ export default class EditProfile extends Vue {
 
     async back() {
         // this.clearEdited();
-        this.$gtag.event('cancelEditProfile', { userid: (<IRSS3>this.rss3).account.address });
+        this.$gtag.event('cancelEditProfile', { userid: RSS3.getLoginUser().address });
         window.history.back();
     }
     async save() {
         this.isLoading = true;
-        if (!this.rss3) {
-            this.rss3 = await RSS3.get();
-        }
         if (this.profile.name.length > this.maxValueLength) {
             this.setOversizeNotice('Name');
             return;
@@ -231,7 +229,10 @@ export default class EditProfile extends Vue {
             this.setOversizeNotice('Bio');
             return;
         }
+
+        const loginUserPersona = RSS3.getLoginUser().persona;
         const newProfile: RSS3Profile = {
+            avatar: [this.profile.avatar],
             name: this.profile.name,
             bio: this.profile.bio + (this.profile.link ? `<SITE#${this.profile.link}>` : ''),
         };
@@ -241,18 +242,18 @@ export default class EditProfile extends Vue {
         if (avatarUrl) {
             newProfile.avatar = [avatarUrl];
         }
-        await (<IRSS3>this.rss3).profile.patch(newProfile);
+        await loginUserPersona?.profile.patch(newProfile);
 
         // Save
         try {
-            await (<IRSS3>this.rss3).files.sync();
+            await loginUserPersona?.files.sync();
         } catch (e) {
             console.log(e);
             this.isLoading = false;
             return;
         }
         // this.clearEdited();
-        this.$gtag.event('finishEditProfile', { userid: (<IRSS3>this.rss3).account.address });
+        this.$gtag.event('finishEditProfile', { userid: RSS3.getLoginUser().address });
         this.isLoading = false;
         const redirectFrom = sessionStorage.getItem('redirectFrom');
         sessionStorage.removeItem('redirectFrom');
@@ -262,7 +263,7 @@ export default class EditProfile extends Vue {
     }
 
     async isPassEnough(): Promise<boolean> {
-        const passBalance = await RNSUtils.balanceOfPass3((<IRSS3>this.rss3).account.address);
+        const passBalance = await RNSUtils.balanceOfPass3(RSS3.getLoginUser().address);
         console.log('Your $PASS: ', passBalance);
         return passBalance >= 1;
     }
