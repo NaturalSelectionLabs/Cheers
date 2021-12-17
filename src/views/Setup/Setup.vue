@@ -213,6 +213,7 @@ import Modal from '@/components/Common/Modal.vue';
 import Loading from '@/components/Loading/Loading.vue';
 import LoadingContainer from '@/components/Loading/LoadingContainer.vue';
 import RSS3 from '@/common/rss3';
+import { utils as RSS3Utils } from 'rss3';
 import config from '@/config';
 import setupTheme from '@/common/theme';
 
@@ -228,7 +229,6 @@ import RNSUtils from '@/common/rns';
 import FootprintItem from '@/components/Footprint/FootprintItem.vue';
 import EVMpAccountItem from '@/components/Account/EVMpAccountItem.vue';
 import utils from '@/common/utils';
-import { utils as RSS3Utils } from 'rss3';
 
 @Options({
     name: 'Setup',

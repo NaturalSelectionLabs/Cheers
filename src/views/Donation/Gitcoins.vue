@@ -41,12 +41,12 @@ import GitcoinTitle from '@/components/Donation/GitcoinTitle.vue';
 import GitcoinCard from '@/components/Donation/GitcoinCard.vue';
 import config from '@/config';
 import RSS3 from '@/common/rss3';
+import { utils as RSS3Utils } from 'rss3';
 import { DetailedFootprint, GeneralAssetWithTags } from '@/common/types';
 import { debounce } from 'lodash';
 import utils from '@/common/utils';
 import Header from '@/components/Common/Header.vue';
 import setupTheme from '@/common/theme';
-import { utils as RSS3Utils } from 'rss3';
 
 @Options({
     name: 'Gitcoins',
@@ -77,7 +77,7 @@ export default class Gitcoins extends Vue {
         const loginUser = await RSS3.getLoginUser();
         this.ethAddress = pageOwner.address;
         this.rns = pageOwner.name;
-        this.isOwner = pageOwner.address === loginUser.address;
+        this.isOwner = await RSS3.isNowOwner();
 
         this.rss3Profile = await pageOwner.profile;
 

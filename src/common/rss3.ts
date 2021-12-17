@@ -322,6 +322,22 @@ async function setPageTitleFavicon() {
     document.title = profile?.name || 'Web3 Pass';
 }
 
+async function ensureLoginUser() {
+    return new Promise((resolve, reject) => {
+        if (!isValidRSS3()) {
+            reject(new Error('Not logged in'));
+        } else {
+            if (RSS3LoginUser.isReady) {
+                resolve(RSS3LoginUser);
+            } else {
+                document.addEventListener(Events.connect, () => {
+                    resolve(RSS3LoginUser);
+                });
+            }
+        }
+    });
+}
+
 export default {
     connect: {
         walletConnect: async () => {
@@ -360,21 +376,7 @@ export default {
     getLoginUser: () => {
         return RSS3LoginUser;
     },
-    ensureLoginUser: async () => {
-        return new Promise((resolve, reject) => {
-            if (!isValidRSS3()) {
-                reject(new Error('Not logged in'));
-            } else {
-                if (RSS3LoginUser.isReady) {
-                    resolve(RSS3LoginUser);
-                } else {
-                    document.addEventListener(Events.connect, () => {
-                        resolve(RSS3LoginUser);
-                    });
-                }
-            }
-        });
-    },
+    ensureLoginUser,
     reloadLoginUser: async () => {
         await initUser(RSS3LoginUser);
         dispatchEvent(Events.connect, RSS3LoginUser);
@@ -410,11 +412,11 @@ export default {
         dispatchEvent(Events.pageOwnerReady, RSS3PageOwner);
         return RSS3PageOwner;
     },
-    isNowOwner: () => {
+    isNowOwner: async () => {
+        // await ensureLoginUser();
         return isValidRSS3() && RSS3LoginUser.address === RSS3PageOwner.address;
     },
     isValidRSS3,
-
     getAssetProfile: async (address: string, type: string, refresh: boolean = false) => {
         if (assetsProfileCache.has(address + type) && !refresh) {
             return <IAssetProfile>assetsProfileCache.get(address + type);

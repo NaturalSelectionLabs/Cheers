@@ -151,6 +151,11 @@ export interface CustomField_Pass {
     order?: number;
 }
 
+export interface DetailedAccount {
+    platform: string;
+    identity: string;
+}
+
 export type DetailedNFT = AnyObject;
 export type DetailedDonation = AnyObject;
 export type DetailedFootprint = AnyObject;

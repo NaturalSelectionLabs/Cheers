@@ -73,10 +73,9 @@ export default class NFTs extends Vue {
 
         const addrOrName = utils.getAddress(<string>this.$route.params.address);
         const pageOwner = await RSS3.setPageOwner(addrOrName);
-        const loginUser = await RSS3.getLoginUser();
         this.ethAddress = pageOwner.address;
         this.rns = pageOwner.name;
-        this.isOwner = pageOwner.address === loginUser.address;
+        this.isOwner = await RSS3.isNowOwner();
 
         this.rss3Profile = await pageOwner.profile;
 

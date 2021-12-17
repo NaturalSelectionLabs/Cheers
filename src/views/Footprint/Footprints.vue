@@ -47,11 +47,11 @@ import Button from '@/components/Button/Button.vue';
 import FootprintCard from '@/components/Footprint/FootprintCard.vue';
 import config from '@/config';
 import RSS3 from '@/common/rss3';
+import { utils as RSS3Utils } from 'rss3';
 import { debounce } from 'lodash';
 import utils from '@/common/utils';
 import Header from '@/components/Common/Header.vue';
 import setupTheme from '@/common/theme';
-import { utils as RSS3Utils } from 'rss3';
 import { DetailedFootprint } from '@/common/types';
 
 @Options({
@@ -77,10 +77,9 @@ export default class Footprints extends Vue {
 
         const addrOrName = utils.getAddress(<string>this.$route.params.address);
         const pageOwner = await RSS3.setPageOwner(addrOrName);
-        const loginUser = await RSS3.getLoginUser();
         this.ethAddress = pageOwner.address;
         this.rns = pageOwner.name;
-        this.isOwner = pageOwner.address === loginUser.address;
+        this.isOwner = await RSS3.isNowOwner();
 
         this.rss3Profile = await pageOwner.profile;
 

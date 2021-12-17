@@ -574,7 +574,7 @@ export default class Home extends Vue {
 
         this.rns = pageOwner.name;
         this.ethAddress = pageOwner.address;
-        this.isOwner = RSS3.isNowOwner();
+        this.isOwner = await RSS3.isNowOwner();
 
         const apiUser = RSS3.getAPIUser().persona;
         if ((<RSS3Index>await apiUser?.files.get(pageOwner.address)).signature) {
