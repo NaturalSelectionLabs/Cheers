@@ -1,6 +1,6 @@
 <template>
     <label class="avatar" :class="size">
-        <img class="image" :src="newUrl || url" v-show="newUrl || url" alt="Avatar Upload" />
+        <ImgHolder class="image" :src="newUrl || url" v-show="newUrl || url" :isRounded="true" alt="Avatar Upload" />
         <div
             class="plus"
             :class="{
@@ -16,8 +16,10 @@
 <script lang="ts">
 import { Vue, Options } from 'vue-class-component';
 import ipfs from '@/common/ipfs';
+import ImgHolder from '@/components/Common/ImgHolder.vue';
 
 @Options({
+    components: { ImgHolder },
     props: {
         size: String,
         url: String,
