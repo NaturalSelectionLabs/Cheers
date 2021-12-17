@@ -93,12 +93,12 @@
                                 <div
                                     class="inline-flex m-0.5 rounded-full shadow-account cursor-pointer"
                                     v-for="(item, index) in show"
-                                    :key="item.platform + item.identity"
+                                    :key="item.id"
                                 >
                                     <EVMpAccountItem
-                                        v-if="item.platform === 'EVM+'"
+                                        v-if="item.id.startsWith('EVM+')"
                                         :size="64"
-                                        :address="item.identity"
+                                        :address="item.id.split('-')[1]"
                                         :enable-tooltip="true"
                                         :delete-mode="true"
                                         @delete-account="deleteAccount(index)"
@@ -106,8 +106,8 @@
                                     <AccountItem
                                         v-else
                                         :size="64"
-                                        :chain="item.platform"
-                                        :address="item.identity"
+                                        :chain="item.id.split('-')[0]"
+                                        :address="item.id.split('-')[1]"
                                         :enable-tooltip="true"
                                         :delete-mode="true"
                                         @delete-account="deleteAccount(index)"
@@ -129,16 +129,16 @@
                                         style="cursor: grab"
                                     >
                                         <EVMpAccountItem
-                                            v-if="element.platform === 'EVM+'"
+                                            v-if="element.id.startWith('EVM+')"
                                             :size="64"
-                                            :address="element.identity"
+                                            :address="element.id.split('-')[1]"
                                             :enable-tooltip="true"
                                         />
                                         <AccountItem
                                             v-else
                                             :size="64"
-                                            :chain="element.platform"
-                                            :address="element.identity"
+                                            :chain="element.id.split('-')[0]"
+                                            :address="element.id.split('-')[1]"
                                             :enable-tooltip="true"
                                         />
                                     </div>
@@ -194,16 +194,16 @@
                             <template #item="{ element }">
                                 <div class="inline-flex m-0.5 rounded-full" style="cursor: grab">
                                     <EVMpAccountItem
-                                        v-if="element.platform === 'EVM+'"
+                                        v-if="element.id.startWith('EVM+')"
                                         :size="64"
-                                        :address="element.identity"
+                                        :address="element.id.split('-')[1]"
                                         :enable-tooltip="true"
                                     />
                                     <AccountItem
                                         v-else
                                         :size="64"
-                                        :chain="element.platform"
-                                        :address="element.identity"
+                                        :chain="element.id.split('-')[0]"
+                                        :address="element.id.split('-')[1]"
                                         :enable-tooltip="true"
                                     />
                                 </div>
@@ -329,9 +329,7 @@ import AccountItem from '@/components/Account/AccountItem.vue';
 import Modal from '@/components/Common/Modal.vue';
 import Loading from '@/components/Loading/Loading.vue';
 import LoadingContainer from '@/components/Loading/LoadingContainer.vue';
-import { RSS3Account, RSS3Index } from 'rss3-next/types/rss3';
-import RSS3, { IRSS3 } from '@/common/rss3';
-import RNSUtils from '@/common/rns';
+import RSS3 from '@/common/rss3';
 import config from '@/config';
 import ContentProviders from '@/common/content-providers';
 
@@ -365,7 +363,6 @@ export default class SetupAccounts extends Vue {
     hide: RSS3Account[] = [];
     toAdd: RSS3Account[] = [];
     toDelete: RSS3Account[] = [];
-    rss3: IRSS3 | null = null;
     isLoading: Boolean = false;
     isShowingAddAccountNotice: Boolean = false;
     addAccountNotice: String = '';
@@ -404,40 +401,27 @@ export default class SetupAccounts extends Vue {
             }
             return;
         }
-        this.rss3 = await RSS3.get();
+        const loginUser = await RSS3.getLoginUser();
+        const pageOwner = await RSS3.setPageOwner(loginUser.address);
         if (sessionStorage.getItem('profile')) {
             const profile = JSON.parse(<string>sessionStorage.getItem('profile'));
             this.avatar = profile.avatar;
         } else {
-            const profile = await (<IRSS3>this.rss3).profile.get();
-            this.avatar = profile?.avatar?.[0] || config.defaultAvatar;
+            this.avatar = loginUser.profile?.avatar?.[0] || config.defaultAvatar;
         }
 
-        this.ethAddress = (<IRSS3>this.rss3).account.address;
-        this.rns = await RNSUtils.addr2Name(this.ethAddress);
+        this.ethAddress = loginUser.address;
+        this.rns = loginUser.name;
 
         // Setup theme
-        setupTheme(await (<IRSS3>this.rss3).assets.get());
+        setupTheme((await loginUser.persona?.assets.auto.getList(loginUser.address)) || []);
 
-        const accounts = await (<IRSS3>this.rss3).accounts.get((<IRSS3>this.rss3).account.address);
+        const accounts = await loginUser.persona?.profile.accounts;
         if (accounts) {
-            const { listed, unlisted } = await utils.initAccounts(accounts);
+            const { listed, unlisted } = await utils.initAccounts();
             this.show = listed;
             this.hide = unlisted;
         }
-    }
-
-    setTaggedOrder(account: RSS3Account, order: number): void {
-        if (!account.tags) {
-            account.tags = [];
-        } else {
-            const orderPattern = /^pass:order:(-?\d+)$/i;
-            const oldIndex = account.tags.findIndex((tag) => orderPattern.test(tag));
-            if (oldIndex !== -1) {
-                account.tags.splice(oldIndex, 1);
-            }
-        }
-        account.tags.push(`pass:order:${order}`);
     }
 
     async addMetamaskAccount(platform: string) {
@@ -447,16 +431,12 @@ export default class SetupAccounts extends Vue {
             this.isShowingAddAccountNotice = true;
             return;
         }
+        const loginUser = await RSS3.getLoginUser();
         const newAccount = await RSS3.addNewMetamaskAccount();
-        if (newAccount.identity) {
-            const equalDefaultAccount =
-                newAccount.platform === 'EVM+' && newAccount.identity === (<IRSS3>this.rss3).account.address;
-            const showIndex = this.show.findIndex(
-                (account) => account.platform === newAccount.platform && account.identity === newAccount.identity,
-            );
-            const hideIndex = this.hide.findIndex(
-                (account) => account.platform === newAccount.platform && account.identity === newAccount.identity,
-            );
+        if (newAccount.id) {
+            const equalDefaultAccount = newAccount.id === `EVM+-${loginUser.address}`;
+            const showIndex = this.show.findIndex((account) => account.id === newAccount.id);
+            const hideIndex = this.hide.findIndex((account) => account.id === newAccount.id);
             if (equalDefaultAccount || showIndex !== -1 || hideIndex !== -1) {
                 this.addAccountNotice = 'Account already exist';
                 this.isShowingAddAccountNotice = true;
@@ -486,17 +466,12 @@ export default class SetupAccounts extends Vue {
         this.isLoading = true;
 
         const newAccount = {
-            platform: this.specifyNoSignAccount.platform,
-            identity: this.specifyNoSignAccount.account,
+            id: `${this.specifyNoSignAccount.platform}-${this.specifyNoSignAccount.account}`,
             signature: '',
         };
 
-        const showIndex = this.show.findIndex(
-            (account) => account.platform === newAccount.platform && account.identity === newAccount.identity,
-        );
-        const hideIndex = this.hide.findIndex(
-            (account) => account.platform === newAccount.platform && account.identity === newAccount.identity,
-        );
+        const showIndex = this.show.findIndex((account) => account.id === newAccount.id);
+        const hideIndex = this.hide.findIndex((account) => account.id === newAccount.id);
 
         if (showIndex !== -1 || hideIndex !== -1) {
             this.addAccountNotice = 'Account already exist';
@@ -512,7 +487,7 @@ export default class SetupAccounts extends Vue {
     }
 
     async deleteAccount(i: number) {
-        if (confirm(`Sure to delete ${this.show[i].identity} ?`)) {
+        if (confirm(`Sure to delete ${this.show[i].id} ?`)) {
             this.toDelete.push(...this.show.splice(i, 1));
         }
     }
@@ -539,52 +514,22 @@ export default class SetupAccounts extends Vue {
 
     async save() {
         this.isLoading = true;
+        const loginUser = RSS3.getLoginUser();
+        if (!loginUser.persona) {
+            return;
+        }
         // Apply changes
-        for (const [order, account] of this.show.entries()) {
-            if (!account.tags) {
-                account.tags = [];
-            }
-            if (account.tags.includes('hidden')) {
-                // Newly shown
-                account.tags.splice(account.tags?.indexOf('hidden'), 1);
-            }
-            this.setTaggedOrder(account, order);
-            await (<IRSS3>this.rss3).accounts.patchTags(
-                {
-                    ...account,
-                },
-                account.tags,
-            );
-        }
-        for (const [order, account] of this.hide.entries()) {
-            if (!account.tags) {
-                account.tags = [];
-            }
-            if (!account.tags?.includes('hidden')) {
-                // Newly hide
-                account.tags.push('hidden');
-            }
-            this.setTaggedOrder(account, order);
-            await (<IRSS3>this.rss3).accounts.patchTags(
-                {
-                    ...account,
-                },
-                account.tags,
-            );
-        }
+        await utils.setAccountsTags(this.show, this.hide);
         for (const account of this.toAdd) {
-            const showIndex = this.toDelete.findIndex(
-                (needDeleteAccount) =>
-                    account.platform === needDeleteAccount.platform && account.identity === needDeleteAccount.identity,
-            );
+            const showIndex = this.toDelete.findIndex((needDeleteAccount) => account.id === needDeleteAccount.id);
             if (showIndex === -1) {
-                await (<IRSS3>this.rss3).accounts.post(account);
+                await loginUser.persona.profile.accounts.post(account);
             } else {
                 this.toDelete.splice(showIndex, 1);
             }
         }
         for (const account of this.toDelete) {
-            await (<IRSS3>this.rss3).accounts.delete(account);
+            await loginUser.persona.profile.accounts.delete(account.id);
         }
 
         // Empty arrays before sync
@@ -592,7 +537,7 @@ export default class SetupAccounts extends Vue {
         this.toDelete.splice(0, this.toDelete.length);
 
         try {
-            await (<IRSS3>this.rss3).files.sync();
+            await loginUser.persona.files.sync();
         } catch (e) {
             console.log(e);
             this.isLoading = false;

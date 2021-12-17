@@ -347,7 +347,7 @@ async function setAssetTags(listed: RSS3GeneralAssetsList, unlisted: RSS3General
     await updateAssetTags(assets);
 }
 
-const setTaggedOrder = (tagged: TypesWithTag, order?: number): void => {
+const setTaggedOrder = (tagged: TypesWithTag, order?: number) => {
     if (!tagged.tags) {
         tagged.tags = [];
     } else {
@@ -362,18 +362,11 @@ const setTaggedOrder = (tagged: TypesWithTag, order?: number): void => {
     } else {
         tagged.tags.push(`${config.tags.prefix}:${config.tags.hiddenTag}`);
     }
+    return tagged;
 };
 const setAccountsTags = async (listed: TypesWithTag[], unlisted: TypesWithTag[]): Promise<TypesWithTag[]> => {
-    await Promise.all(
-        listed.map(async (tagged, index) => {
-            setTaggedOrder(tagged, index);
-        }),
-    );
-    await Promise.all(
-        unlisted.map(async (tagged) => {
-            setTaggedOrder(tagged);
-        }),
-    );
+    await Promise.all(listed.map((tagged, index) => setTaggedOrder(tagged, index)));
+    await Promise.all(unlisted.map((tagged) => setTaggedOrder(tagged)));
     return listed.concat(unlisted);
 };
 
