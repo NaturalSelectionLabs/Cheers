@@ -152,13 +152,13 @@ export interface CustomField_Pass {
 }
 
 export type DetailedNFT = AnyObject;
-export type DetailedGitcoin = AnyObject;
+export type DetailedDonation = AnyObject;
 export type DetailedFootprint = AnyObject;
 
 // export interface DetailedNFT extends AnyObject {
 //     id: string;
 // }
-// export interface DetailedGitcoin extends AnyObject {
+// export interface DetailedDonation extends AnyObject {
 //     id: string;
 // }
 // export interface DetailedFootprint extends AnyObject {

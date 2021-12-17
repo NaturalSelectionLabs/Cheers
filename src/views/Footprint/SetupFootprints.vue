@@ -128,7 +128,7 @@ import { Options, Vue } from 'vue-class-component';
 import Button from '@/components/Button/Button.vue';
 import Card from '@/components/Card/Card.vue';
 import draggable from 'vuedraggable';
-import RSS3, { IRSS3 } from '@/common/rss3';
+import RSS3 from '@/common/rss3';
 import config from '@/config';
 import { DetailedFootprint } from '@/common/types';
 import LoadingContainer from '@/components/Loading/LoadingContainer.vue';
@@ -150,7 +150,6 @@ import setupTheme from '@/common/theme';
 })
 export default class SetupFootprints extends Vue {
     avatar: string = config.defaultAvatar;
-    rss3: IRSS3 | null = null;
     isLoading: Boolean = false;
 
     show: DetailedFootprint[] = [];

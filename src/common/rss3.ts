@@ -368,7 +368,7 @@ export default {
                 if (RSS3LoginUser.isReady) {
                     resolve(RSS3LoginUser);
                 } else {
-                    document.addEventListener(Events.loginUserReady, () => {
+                    document.addEventListener(Events.connect, () => {
                         resolve(RSS3LoginUser);
                     });
                 }
@@ -377,7 +377,7 @@ export default {
     },
     reloadLoginUser: async () => {
         await initUser(RSS3LoginUser);
-        dispatchEvent(Events.loginUserReady, RSS3LoginUser);
+        dispatchEvent(Events.connect, RSS3LoginUser);
         return RSS3LoginUser;
     },
     setPageOwner: async (addrOrName: string) => {

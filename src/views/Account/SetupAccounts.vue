@@ -427,7 +427,7 @@ export default class SetupAccounts extends Vue {
         }
     }
 
-    async addMetamaskAccount(platform: string) {
+    async addMetamaskAccount() {
         if (!(window as any).ethereum) {
             this.addAccountNotice =
                 'Adding accounts are now only supported with MetaMask browser extension enabled. (PC recommended)';

@@ -88,7 +88,7 @@
                             v-for="item in gitcoins"
                             :key="item.id"
                             size="sm"
-                            :imageUrl="item.detail.image_preview_url"
+                            :imageUrl="item.detail.grant.logo"
                         />
                     </template>
                 </template>
@@ -222,14 +222,13 @@ import ContentIcon from '@/components/Icons/ContentIcon.vue';
 import AccountIcon from '@/components/Icons/AccountIcon.vue';
 import FootprintIcon from '@/components/Icons/FootprintIcon.vue';
 
-import { DetailedFootprint, DetailedGitcoin, DetailedNFT, GeneralAsset, GeneralAssetWithTags } from '@/common/types';
+import { DetailedFootprint, DetailedDonation, DetailedNFT } from '@/common/types';
 import GitcoinItem from '@/components/Donation/GitcoinItem.vue';
 import RNSUtils from '@/common/rns';
 import FootprintItem from '@/components/Footprint/FootprintItem.vue';
 import EVMpAccountItem from '@/components/Account/EVMpAccountItem.vue';
 import utils from '@/common/utils';
 import { utils as RSS3Utils } from 'rss3';
-import { AnyObject } from 'rss3/types/extend';
 
 @Options({
     name: 'Setup',
@@ -270,7 +269,7 @@ export default class Setup extends Vue {
         identity: string;
     }[] = [];
     nfts: DetailedNFT[] = [];
-    gitcoins: DetailedGitcoin[] = [];
+    gitcoins: DetailedDonation[] = [];
     footprints: DetailedFootprint[] = [];
     isLoading: Boolean = true;
     isLoadingAssets: {
@@ -289,9 +288,9 @@ export default class Setup extends Vue {
     currentTheme: string = '';
     $gtag: any;
     lastRoute: string = '';
-    firstLoad: boolean = true;
 
     async initLoad() {
+        this.isLoading = true;
         if (!RSS3.isValidRSS3()) {
             if (config.subDomain.isSubDomainMode) {
                 // redirect back to root domain
@@ -301,10 +300,7 @@ export default class Setup extends Vue {
                 await this.$router.push('/');
             }
         }
-        // Trigger force refresh
-        // await RSS3.getAssetProfile((<IRSS3>this.rss3).account.address, true);
-        // await (<IRSS3>this.rss3).files.get((<IRSS3>this.rss3).account.address, true);
-
+        await RSS3.ensureLoginUser();
         const loginUser = await RSS3.getLoginUser();
         await RSS3.setPageOwner(loginUser.address);
         const profile = loginUser.profile;
@@ -333,7 +329,8 @@ export default class Setup extends Vue {
     startLoadingAccounts() {
         this.accounts = [];
         setTimeout(async () => {
-            const { listed } = await utils.initAccounts();
+            await RSS3.ensureLoginUser();
+            const { listed } = await utils.initAccounts(RSS3.getLoginUser());
             const accountList = listed.map((account) => RSS3Utils.id.parseAccount(account.id));
             this.accounts = [
                 {
@@ -442,16 +439,11 @@ export default class Setup extends Vue {
 
     async mounted() {
         await this.initLoad();
-        this.firstLoad = false;
-        this.startLoadingAccounts();
-        await this.startLoadingAssets();
     }
 
     async activated() {
-        if (RSS3.isValidRSS3() && !this.firstLoad) {
-            this.startLoadingAccounts();
-            await this.startLoadingAssets();
-        }
+        this.startLoadingAccounts();
+        await this.startLoadingAssets();
     }
 
     deactivated() {

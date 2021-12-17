@@ -135,11 +135,10 @@ async function getAssetsTillSuccess(assetSet: Set<string>, delay: number = 1500,
     });
 }
 
-async function initAccounts() {
+async function initAccounts(pageOwner = RSS3.getPageOwner()) {
     const listed: RSS3Account[] = [];
     const unlisted: RSS3Account[] = [];
 
-    const pageOwner = RSS3.getPageOwner();
     const allAccounts = (await pageOwner.profile?.accounts) || [];
     for (const account of allAccounts) {
         if (account.tags?.includes(`${config.tags.prefix}:${config.tags.hiddenTag}`)) {
