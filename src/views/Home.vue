@@ -432,8 +432,9 @@ import BarCard from '@/components/Card/BarCard.vue';
 import Profile from '@/components/Profile/Profile.vue';
 import AccountItem from '@/components/Account/AccountItem.vue';
 import NFTItem from '@/components/NFT/NFTItem.vue';
-import RSS3, { IRSS3 } from '@/common/rss3';
-import { RSS3Account, RSS3Asset, RSS3ID, RSS3Index } from 'rss3';
+import RSS3, { IRSS3, RSS3DetailPersona } from '@/common/rss3';
+//
+import { utils as RSS3Utils } from 'rss3';
 import Modal from '@/components/Common/Modal.vue';
 import RNSUtils from '@/common/rns';
 import utils from '@/common/utils';
@@ -456,10 +457,11 @@ import Toolbar from '@/components/Profile/Toolbar.vue';
 import FootprintItem from '@/components/Footprint/FootprintItem.vue';
 import EVMpAccountItem from '@/components/Account/EVMpAccountItem.vue';
 import setupTheme from '@/common/theme';
+import { AnyObject } from 'rss3/types/extend';
 
 interface Relations {
-    followers: RSS3ID[];
-    followings: RSS3ID[];
+    followers: string[];
+    followings: string[];
 }
 
 @Options({
@@ -488,7 +490,7 @@ interface Relations {
 export default class Home extends Vue {
     rns: string = '';
     ethAddress: string = '';
-    rss3?: IRSS3;
+    rss3?: RSS3DetailPersona;
     isFollowing: boolean = false;
     isOwner: boolean = false;
     isShowingAccount: boolean = false;
@@ -529,10 +531,10 @@ export default class Home extends Vue {
         followings: [],
     };
     accounts: RSS3Account[] = [];
-    nfts: GeneralAssetWithTags[] = [];
-    gitcoins: GeneralAssetWithTags[] = [];
-    footprints: GeneralAssetWithTags[] = [];
-    contents: Content[] = [];
+    nfts: AnyObject[] = [];
+    gitcoins: AnyObject[] = [];
+    footprints: AnyObject[] = [];
+    contents: any[] = [];
     $gtag: any;
     scrollTop: number = 0;
     scrollNftsLeft: number = 0;
@@ -545,21 +547,6 @@ export default class Home extends Vue {
     isPCLayout: boolean = false;
     isOwnerValidRSS3: boolean = false;
     ownerETHAddress: string = '';
-    isContentsHaveMoreEachProvider: {
-        provider: RSS3Account;
-        more: boolean;
-        lastTS: number;
-    }[] = [
-        {
-            provider: {
-                platform: 'RSS3',
-                identity: 'Hub',
-                signature: '',
-            },
-            more: true,
-            lastTS: 0xffffffff,
-        },
-    ];
 
     async mounted() {
         this.isPCLayout = window.innerWidth >= 768;
@@ -572,6 +559,9 @@ export default class Home extends Vue {
     }
 
     async initLoad() {
+        const loginUser = RSS3.getLoginUser();
+        const pageOwner = RSS3.getPageOwner();
+        const file = await pageOwner.files.get();
         this.lastRoute = this.$route.fullPath;
         this.isShowingAccount = false;
         this.showingAccountDetails = {
@@ -584,11 +574,11 @@ export default class Home extends Vue {
         document.title = 'Web3 Pass';
 
         this.isOwnerValidRSS3 = await RSS3.reconnect();
-        this.rss3 = await RSS3.getAPIUser();
-        const owner: string = <string>this.rss3.account.address;
+        this.rss3 = RSS3.getLoginUser();
+        const owner: string = this.rss3.address;
         this.ownerETHAddress = owner;
 
-        if (!(await this.getAddress(owner))) {
+        if (!(await this.getAddress())) {
             if (this.isAccountExist) {
                 if (this.isOwnerValidRSS3) {
                     this.rns = await RNSUtils.addr2Name(owner);
@@ -615,8 +605,8 @@ export default class Home extends Vue {
 
         // Split time-consuming methods from main thread, so it won't stuck the page loading progress
         setTimeout(async () => {
-            const profile = await (<IRSS3>this.rss3).profile.get(this.ethAddress);
-            await this.checkIsFollowing();
+            const profile = pageOwner.profile;
+            this.checkIsFollowing();
 
             this.rss3Profile.avatar = profile?.avatar?.[0] || legacyConfig.defaultAvatar;
             this.rss3Profile.username = profile?.name || '';
@@ -634,13 +624,12 @@ export default class Home extends Vue {
             this.isLoadingPersona = false;
         }, 0);
 
-        const accounts = await (<IRSS3>this.rss3).accounts.get(this.ethAddress);
-        this.startLoadingAccounts(accounts);
+        const accounts = pageOwner.profile?.accounts;
+        this.startLoadingAccounts();
 
         setTimeout(async () => {
-            this.rss3Relations.followers = (await (<IRSS3>this.rss3).backlinks.get(this.ethAddress, 'following')) || [];
-            this.rss3Relations.followings =
-                (await (<IRSS3>this.rss3).links.get(this.ethAddress, 'following'))?.list || [];
+            this.rss3Relations.followers = pageOwner.followers;
+            this.rss3Relations.followings = pageOwner.followings;
         }, 0);
 
         // Load assets
@@ -648,18 +637,18 @@ export default class Home extends Vue {
 
         // Load Contents
         setTimeout(async () => {
+            const { listed, haveMore } = await utils.initContent();
+            this.contents = listed;
+            this.isContentsHaveMore = haveMore;
             await this.loadMoreContents(true);
             this.initIntersectionObserver();
         }, 0);
     }
 
-    async getAddress(owner: string) {
-        const { ethAddress, rns } = await utils.getAddress(<string>this.$route.params.address);
-        this.ethAddress = ethAddress;
-        this.rns = rns;
-        this.isOwner = ethAddress == owner;
+    async getAddress() {
+        this.isOwner = RSS3.isNowOwner();
 
-        const file = <RSS3Index>await (<IRSS3>this.rss3).files.get(this.ethAddress);
+        const file = RSS3.getPageOwner().files.get();
 
         if (!file.signature) {
             this.isAccountExist = false;
@@ -670,68 +659,59 @@ export default class Home extends Vue {
 
     async setPageTitleFavicon() {
         if (this.ethAddress) {
-            const rss3 = await RSS3.visitor();
-            const profile = await rss3.profile.get(this.ethAddress);
+            const profile = RSS3.getPageOwner().profile;
             const favicon = <HTMLLinkElement>document.getElementById('favicon');
             favicon.href = profile?.avatar?.[0] || '/favicon.ico';
             document.title = profile?.name || 'Web3 Pass';
         }
     }
 
-    startLoadingAccounts(accounts: RSS3Account[]) {
+    startLoadingAccounts() {
         this.accounts = [];
+        const pageOwner = RSS3.getPageOwner();
         setTimeout(async () => {
-            const { listed } = await utils.initAccounts(accounts);
-            this.accounts = listed;
+            const { listed } = await utils.initAccounts();
             // Push original account
-            this.accounts.unshift({
-                platform: 'EVM+',
-                identity: this.ethAddress,
-                signature: '',
-                tags: ['pass:order:-1'],
-            });
+            this.accounts = [
+                {
+                    id: RSS3Utils.id.getAccount('EVM+', pageOwner?.address),
+                },
+            ].concat(listed);
         }, 0);
     }
 
-    async ivLoadNFT(refresh: boolean): Promise<boolean> {
-        const data = await RSS3.getAssetProfile(this.ethAddress, 'NFT', refresh);
-        if (data && data.status !== false) {
-            const { listed } = await utils.initAssets(
-                await (<IRSS3>this.rss3).assets.get(this.ethAddress),
-                <GeneralAsset[]>data.assets,
-                'NFT',
-            );
-            this.nfts = listed;
+    async loadAssetDetails(assetList: AnyObject[], limit?: number) {
+        let assetDetails: AnyObject[] = [];
+        if (limit) {
+            const previewList = limit <= assetList.length ? assetList.slice(0, limit) : assetList;
+            assetDetails = await utils.loadAssets(previewList);
+        } else {
+            assetDetails = await utils.loadAssets(assetList);
+        }
+        return assetDetails;
+    }
+
+    async ivLoadNFT(refresh: boolean, assets: AnyObject[]): Promise<boolean> {
+        if (assets) {
+            this.nfts = await this.loadAssetDetails(assets);
             this.isLoadingAssets.NFT = false;
             return true;
         }
         return false;
     }
 
-    async ivLoadGitcoin(refresh: boolean): Promise<boolean> {
-        const data = await RSS3.getAssetProfile(this.ethAddress, 'Gitcoin-Donation', refresh);
-        if (data && data.status !== false) {
-            const { listed } = await utils.initAssets(
-                await (<IRSS3>this.rss3).assets.get(this.ethAddress),
-                <GeneralAsset[]>data.assets,
-                'Gitcoin-Donation',
-            );
-            this.gitcoins = listed;
+    async ivLoadGitcoin(refresh: boolean, assets: AnyObject[]): Promise<boolean> {
+        if (assets) {
+            this.gitcoins = await this.loadAssetDetails(assets);
             this.isLoadingAssets.Gitcoin = false;
             return true;
         }
         return false;
     }
 
-    async ivLoadFootprint(refresh: boolean): Promise<boolean> {
-        const data = await RSS3.getAssetProfile(this.ethAddress, 'POAP', refresh);
-        if (data && data.status !== false) {
-            const { listed } = await utils.initAssets(
-                await (<IRSS3>this.rss3).assets.get(this.ethAddress),
-                <GeneralAsset[]>data.assets,
-                'POAP',
-            );
-            this.footprints = listed;
+    async ivLoadFootprint(refresh: boolean, assets: AnyObject[]): Promise<boolean> {
+        if (assets) {
+            this.footprints = await this.loadAssetDetails(assets);
             this.isLoadingAssets.Footprint = false;
             return true;
         }
@@ -744,10 +724,11 @@ export default class Home extends Vue {
             return true;
         }
         let isFinish: boolean;
+        const allAssets = await utils.initAssets();
         const result = await Promise.all([
-            this.ivLoadNFT(refresh),
-            this.ivLoadGitcoin(refresh),
-            this.ivLoadFootprint(refresh),
+            this.ivLoadNFT(refresh, allAssets.nfts),
+            this.ivLoadGitcoin(refresh, allAssets.donations),
+            this.ivLoadFootprint(refresh, allAssets.footprints),
         ]);
         isFinish = result[0] && result[1] && result[2];
         if (isFinish) {
@@ -774,77 +755,21 @@ export default class Home extends Vue {
         }
     }
 
-    async checkSpecialPoap(res: GeneralAssetWithTags[]) {
-        if (legacyConfig.poapActivity.info.title && this.isOwner) {
-            if (res.findIndex((asset) => asset.info.title === legacyConfig.poapActivity.info.title) === -1) {
-                res.unshift({
-                    platform: 'EVM+',
-                    type: 'xDai-POAP',
-                    identity: 'Special', // Impossible value for 'Special' identification
-                    id: 'active', // status (active / pending)
-                    info: legacyConfig.poapActivity.info,
-                });
-            }
-        }
-    }
-
     async loadMoreContents(isInitLoad: boolean = false) {
         if ((!isInitLoad && this.isLoadingContents) || !this.isContentsHaveMore) {
             // Is already loading or not having more
             return;
         }
         this.isLoadingContents = true;
-        let isHavingMore: boolean = false;
-        const contentsMerge: Content[] = [];
-        for (const provider of this.isContentsHaveMoreEachProvider) {
-            if (provider.provider.platform === 'RSS3' && provider.provider.identity === 'Hub') {
-                if (provider.more) {
-                    const contents: Content[] = await ContentProviders[provider.provider.identity].get(
-                        this.ethAddress,
-                        provider.lastTS,
-                    );
-                    if (contents.length < legacyConfig.contentRequestLimit) {
-                        // No more
-                        provider.more = false;
-                    } else {
-                        isHavingMore = true;
-                    }
 
-                    for (const content of contents) {
-                        // temp. fix mirror undefined error
-                        if (content?.info?.link?.includes('//undefined.mirror.xyz/')) {
-                            content.info.link = `https://mirror.xyz/${content.identity}/${content.info.link
-                                .split('/')
-                                .pop()}`;
-                        }
+        const timestamp = [...this.contents].pop()?.item.date_created || '';
+        const { listed, haveMore } = await utils.initContent(timestamp);
 
-                        if (
-                            content.accessible !== false &&
-                            // Opt-out edited mirror contents
-                            (content.type !== 'Mirror-XYZ' ||
-                                (content.type === 'Mirror-XYZ' &&
-                                    contentsMerge.findIndex((ctx) => ctx.info.title === content.info.title) === -1))
-                        ) {
-                            contentsMerge.push(content);
-                        }
-
-                        if (provider.lastTS >= content.info.timestamp) {
-                            provider.lastTS = content.info.timestamp - 1;
-                        }
-                    }
-                }
-            }
-        }
-
-        if (!isHavingMore) {
+        if (!haveMore) {
             this.isContentsHaveMore = false;
         }
 
-        contentsMerge.sort((a, b) => {
-            return b.info.timestamp - a.info.timestamp;
-        });
-
-        this.contents.push(...contentsMerge);
+        this.contents = [...this.contents, ...listed];
 
         this.isLoadingContents = false;
     }
@@ -881,19 +806,16 @@ export default class Home extends Vue {
         if (RSS3.isValidRSS3()) {
             if (this.isFollowing) {
                 await this.unfollow();
-                this.rss3Relations.followers.splice(
-                    this.rss3Relations.followers.indexOf((<IRSS3>this.rss3).account.address),
-                    1,
-                );
+                this.rss3Relations.followers.splice(this.rss3Relations.followers.indexOf(RSS3.getAPIUser().address), 1);
             } else {
                 await this.follow();
-                this.rss3Relations.followers.push((<IRSS3>this.rss3).account.address);
+                this.rss3Relations.followers.push(RSS3.getAPIUser().address);
             }
             const followers = this.$router.getRoutes().find((r) => r.name === 'Followers')?.instances?.default;
             if (followers) {
                 (<any>followers).lastRoute = '';
             }
-            await (<IRSS3>this.rss3).files.sync();
+            await RSS3.getAPIUser().files.sync();
         } else {
             // Clear last user status
             (<HTMLLinkElement>document.getElementById('favicon')).href = '/favicon.ico';
@@ -908,16 +830,11 @@ export default class Home extends Vue {
         }
     }
 
-    async checkIsFollowing() {
-        if (!this.ethAddress) {
-            this.ethAddress = (await RNSUtils.name2Addr(this.rns)).toString();
-        }
-        const followList = await this.rss3?.links.get(this.rss3.account.address, 'following');
-        if (typeof followList === 'undefined') {
-            // No following list. Not following
-            this.isFollowing = false;
-            return false;
-        } else if (followList.list?.includes(this.ethAddress)) {
+    checkIsFollowing() {
+        const loginUser = RSS3.getLoginUser();
+        const pageOwner = RSS3.getPageOwner();
+        const followList = loginUser.followings;
+        if (followList?.includes(pageOwner.address)) {
             this.isFollowing = true;
             return true;
         } else {
@@ -927,19 +844,25 @@ export default class Home extends Vue {
     }
 
     async follow() {
-        const rss3 = await RSS3.get();
-        if (!(await this.checkIsFollowing())) {
-            this.$gtag.event('followFriend', { userid: this.rss3Profile['address'] });
-            await rss3?.link.post('following', this.ethAddress);
+        const loginUser = RSS3.getLoginUser();
+        const pageOwner = RSS3.getPageOwner();
+
+        if (!this.checkIsFollowing()) {
+            pageOwner.followers.push(loginUser.address);
+            loginUser.followings.push(pageOwner.address);
+            await loginUser.persona?.links.post('following', pageOwner.address);
         }
         this.isFollowing = true;
     }
 
     async unfollow() {
-        const rss3 = await RSS3.get();
-        if (await this.checkIsFollowing()) {
-            this.$gtag.event('unfollowFriend', { userid: this.rss3Profile['address'] });
-            await rss3?.link.delete('following', this.ethAddress);
+        const loginUser = RSS3.getLoginUser();
+        const pageOwner = RSS3.getPageOwner();
+
+        if (this.checkIsFollowing()) {
+            pageOwner.followers.splice(pageOwner.followers.indexOf(loginUser.address), 1);
+            loginUser.followings.splice(loginUser.followings.indexOf(pageOwner.address), 1);
+            await loginUser.persona?.links.delete('following', pageOwner.address);
         }
         this.isFollowing = false;
     }
@@ -1159,17 +1082,6 @@ export default class Home extends Vue {
                 displayAddress: '',
             };
             this.isContentsHaveMore = true;
-            this.isContentsHaveMoreEachProvider = [
-                {
-                    provider: {
-                        platform: 'RSS3',
-                        identity: 'Hub',
-                        signature: '',
-                    },
-                    more: true,
-                    lastTS: 0xffffffff,
-                },
-            ];
             this.nfts = [];
             this.gitcoins = [];
             this.footprints = [];
@@ -1177,9 +1089,10 @@ export default class Home extends Vue {
             await this.initLoad();
         }
         await this.setPageTitleFavicon();
+        const loginUser = RSS3.getLoginUser();
         if (this.ethAddress) {
             // Setup theme
-            await setupTheme(await (<IRSS3>this.rss3).assets.get(this.ethAddress));
+            await setupTheme((await loginUser.persona?.assets.auto.getList(loginUser.address)) || []);
         } else {
             document.body.classList.remove(...document.body.classList);
         }

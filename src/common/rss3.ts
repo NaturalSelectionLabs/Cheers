@@ -31,7 +31,7 @@ export const EMPTY_RSS3_DP: RSS3DetailPersona = {
     assets: null,
     isReady: false,
 };
-
+export type IRSS3 = RSS3;
 let RSS3PageOwner: RSS3DetailPersona = Object.create(EMPTY_RSS3_DP);
 let RSS3LoginUser: RSS3DetailPersona = Object.create(EMPTY_RSS3_DP);
 let assetsProfileCache: Map<string, IAssetProfile> = new Map();
