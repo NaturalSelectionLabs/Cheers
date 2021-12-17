@@ -524,7 +524,7 @@ export default {
             for (const asset of assets) {
                 const { type, uniqueID } = RSS3Utils.id.parseAsset(asset);
                 if (
-                    type?.includes('NFT') &&
+                    type.includes('NFT') &&
                     utils.isAssetNotHidden(asset) &&
                     uniqueID.split('.')[0] === theme.nftIdPrefix
                 ) {
