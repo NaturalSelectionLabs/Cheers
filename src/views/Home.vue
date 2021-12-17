@@ -552,19 +552,12 @@ export default class Home extends Vue {
     }
 
     async initLoad() {
-        const loginUser = RSS3.getLoginUser();
-        const pageOwner = await RSS3.setPageOwner(utils.getAddress(<string>this.$route.params.address));
-        const file = await pageOwner.files.get();
-        this.lastRoute = this.$route.fullPath;
-        this.isShowingAccount = false;
-        this.showingAccountDetails = {
-            address: pageOwner.address,
-            platform: 'EVM+',
-            isLink: false,
-        };
-        this.isLoadingPersona = true;
         (<HTMLLinkElement>document.getElementById('favicon')).href = '/favicon.ico';
         document.title = 'Web3 Pass';
+        this.isLoadingPersona = true;
+        const pageOwner = await RSS3.setPageOwner(utils.getAddress(<string>this.$route.params.address));
+        this.lastRoute = this.$route.fullPath;
+        this.isShowingAccount = false;
 
         this.rns = pageOwner.name;
         this.ethAddress = pageOwner.address;
@@ -578,33 +571,26 @@ export default class Home extends Vue {
             return;
         }
 
-        // Split time-consuming methods from main thread, so it won't stuck the page loading progress
-        setTimeout(async () => {
-            const profile = pageOwner.profile;
-            this.checkIsFollowing();
+        const profile = pageOwner.profile;
 
-            this.rss3Profile.avatar = profile?.avatar?.[0] || legacyConfig.defaultAvatar;
-            this.rss3Profile.username = profile?.name || '';
-            this.rss3Profile.address = this.ethAddress;
-
-            if (profile?.bio) {
-                // Profile
-                const { extracted, fieldsMatch } = utils.extractEmbedFields(profile?.bio || '', ['SITE']);
-                this.rss3Profile.bio = extracted;
-                this.rss3Profile.displayAddress = fieldsMatch?.['SITE'] || '';
-            } else {
-                this.rss3Profile.bio = '';
-            }
-
-            this.isLoadingPersona = false;
-        }, 0);
+        this.rss3Profile.avatar = profile?.avatar?.[0] || legacyConfig.defaultAvatar;
+        this.rss3Profile.username = profile?.name || '';
+        this.rss3Profile.address = this.ethAddress;
+        if (profile?.bio) {
+            // Profile
+            const { extracted, fieldsMatch } = utils.extractEmbedFields(profile?.bio || '', ['SITE']);
+            this.rss3Profile.bio = extracted;
+            this.rss3Profile.displayAddress = fieldsMatch?.['SITE'] || '';
+        } else {
+            this.rss3Profile.bio = '';
+        }
 
         this.startLoadingAccounts();
 
-        setTimeout(async () => {
-            this.rss3Relations.followers = pageOwner.followers;
-            this.rss3Relations.followings = pageOwner.followings;
-        }, 0);
+        this.rss3Relations.followers = pageOwner.followers;
+        this.rss3Relations.followings = pageOwner.followings;
+
+        this.isLoadingPersona = false;
 
         // Load assets
         this.startLoadingAssets(true);
@@ -619,6 +605,11 @@ export default class Home extends Vue {
             await this.loadMoreContents(true);
             this.initIntersectionObserver();
         }, 0);
+
+        if (RSS3.isValidRSS3()) {
+            await RSS3.ensureLoginUser();
+            this.checkIsFollowing();
+        }
     }
 
     startLoadingAccounts() {
