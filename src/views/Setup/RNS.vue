@@ -141,7 +141,7 @@ export default class RNS extends Vue {
     }
 
     async refreshAccount() {
-        if (!(await RSS3.reconnect())) {
+        if (!RSS3.isValidRSS3()) {
             sessionStorage.setItem('redirectFrom', this.$route.fullPath);
             await this.$router.push('/');
         } else {

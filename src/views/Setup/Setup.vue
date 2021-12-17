@@ -212,8 +212,7 @@ import Input from '@/components/Input/Input.vue';
 import Modal from '@/components/Common/Modal.vue';
 import Loading from '@/components/Loading/Loading.vue';
 import LoadingContainer from '@/components/Loading/LoadingContainer.vue';
-import { RSS3Account, RSS3Asset, RSS3Profile } from 'rss3-next/types/rss3';
-import RSS3, { IRSS3 } from '@/common/rss3';
+import RSS3 from '@/common/rss3';
 import config from '@/config';
 import setupTheme from '@/common/theme';
 
@@ -268,7 +267,6 @@ export default class Setup extends Vue {
     nfts: GeneralAssetWithTags[] = [];
     gitcoins: GeneralAssetWithTags[] = [];
     footprints: GeneralAssetWithTags[] = [];
-    rss3: IRSS3 | null = null;
     isLoading: Boolean = true;
     isLoadingAssets: {
         NFT: boolean;
@@ -289,7 +287,7 @@ export default class Setup extends Vue {
     firstLoad: boolean = true;
 
     async initLoad() {
-        if (!(await RSS3.reconnect())) {
+        if (!RSS3.isValidRSS3()) {
             if (config.subDomain.isSubDomainMode) {
                 // redirect back to root domain
                 window.location.host = config.subDomain.rootDomain;
@@ -297,8 +295,6 @@ export default class Setup extends Vue {
                 sessionStorage.setItem('redirectFrom', this.$route.fullPath);
                 await this.$router.push('/');
             }
-        } else {
-            this.rss3 = await RSS3.get();
         }
         // Trigger force refresh
         // await RSS3.getAssetProfile((<IRSS3>this.rss3).account.address, true);
