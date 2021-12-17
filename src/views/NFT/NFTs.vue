@@ -3,7 +3,7 @@
         <div class="m-auto pb-32 pt-8 px-4 max-w-screen-lg">
             <Header :ethAddress="ethAddress" :rns="rns" :rss3Profile="rss3Profile" title="NFTs" theme="nft" />
             <div class="grid gap-6 grid-cols-2 justify-items-center sm:grid-cols-3">
-                <div class="relative w-full" v-for="item in nfts" :key="item.platform + item.identity + item.id">
+                <div class="relative w-full" v-for="item in nfts" :key="item.id">
                     <NFTItem
                         class="cursor-pointer"
                         size="auto"
@@ -14,14 +14,7 @@
                             item.detail.animation_original_url
                         "
                         :poster-url="item.detail.image_preview_url"
-                        @click="
-                            toSingleNFTPage(
-                                item.id.split('-')[0],
-                                item.id.split('-')[1],
-                                item.id.split('-')[3].replaceAll('.', '-'),
-                                item.id.split('-')[2].replaceAll('.', '-'),
-                            )
-                        "
+                        @click="toSingleNFTPage(item.id)"
                     />
                     <NFTBadges
                         class="absolute right-2.5 top-2.5"
@@ -53,6 +46,7 @@ import Button from '@/components/Button/Button.vue';
 import NFTItem from '@/components/NFT/NFTItem.vue';
 import NFTBadges from '@/components/NFT/NFTBadges.vue';
 import RSS3 from '@/common/rss3';
+import { utils as RSS3Utils } from 'rss3';
 import config from '@/config';
 import { debounce } from 'lodash';
 import utils from '@/common/utils';
@@ -92,7 +86,8 @@ export default class NFTs extends Vue {
         this.nfts = await utils.loadAssets(nfts);
     }
 
-    toSingleNFTPage(platform: string, identity: string, id: string, type: string) {
+    toSingleNFTPage(id: string) {
+        const { platform, identity, type, uniqueID } = RSS3Utils.id.parseAsset(id);
         this.$gtag.event('visitSingleNft', {
             userid: this.rns || this.ethAddress,
             platform: platform,
@@ -102,7 +97,7 @@ export default class NFTs extends Vue {
         });
         this.$router.push(
             (config.subDomain.isSubDomainMode ? '' : `/${this.rns || this.ethAddress}`) +
-                `/singlenft/${platform}/${identity}/${id}/${type}`,
+                `/singlenft/${platform}/${identity}/${uniqueID}/${type}`,
         );
     }
 

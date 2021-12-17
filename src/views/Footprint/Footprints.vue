@@ -14,7 +14,7 @@
             >
                 <FootprintCard
                     v-for="item of footprints"
-                    :key="item.detail.platform + item.detail.identity + item.detail.id"
+                    :key="item.id"
                     :imageUrl="item.detail.image_url"
                     :username="rss3Profile.name"
                     :activity="item.detail.name"
@@ -22,14 +22,7 @@
                     :end-date="item.detail.end_date"
                     :location="item.detail.city || item.detail.country || 'Metaverse'"
                     class="cursor-pointer"
-                    @click="
-                        toSingleFootprint(
-                            item.id.split('-')[0],
-                            item.id.split('-')[1],
-                            item.id.split('-')[3].replaceAll('.', '-'),
-                            item.id.split('-')[2].replaceAll('.', '-'),
-                        )
-                    "
+                    @click="toSingleFootprint(item.id)"
                 />
             </div>
             <div
@@ -58,6 +51,7 @@ import { debounce } from 'lodash';
 import utils from '@/common/utils';
 import Header from '@/components/Common/Header.vue';
 import setupTheme from '@/common/theme';
+import { utils as RSS3Utils } from 'rss3';
 
 @Options({
     name: 'Footprints',
@@ -100,10 +94,11 @@ export default class Footprints extends Vue {
         this.$router.push(`/setup/footprints`);
     }
 
-    toSingleFootprint(platform: string, identity: string, id: string, type: string) {
+    toSingleFootprint(id: string) {
+        const { platform, identity, type, uniqueID } = RSS3Utils.id.parseAsset(id);
         this.$router.push(
             (config.subDomain.isSubDomainMode ? '' : `/${this.rns || this.ethAddress}`) +
-                `/singlefootprint/${platform}/${identity}/${id}/${type}`,
+                `/singlefootprint/${platform}/${identity}/${uniqueID}/${type}`,
         );
     }
 

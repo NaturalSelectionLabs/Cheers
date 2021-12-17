@@ -10,20 +10,13 @@
             >
                 <GitcoinCard
                     v-for="item in gitcoins"
-                    :key="item.detail.platform + item.detail.identity + item.detail.id"
+                    :key="item.id"
                     :imageUrl="item.detail.grant.logo || defaultAvatar"
                     :name="item.detail.grant.title || 'Inactive Project'"
                     :contrib="item.detail.txs.length"
                     :amount="item.detail.txs"
-                    @click="
-                        toSingleGitcoin(
-                            item.id.split('-')[0],
-                            item.id.split('-')[1],
-                            item.id.split('-')[3].replaceAll('.', '-'),
-                            item.id.split('-')[2].replaceAll('.', '-'),
-                        )
-                    "
-                ></GitcoinCard>
+                    @click="toSingleGitcoin(item.id)"
+                />
             </div>
             <div
                 class="fixed bottom-2 left-0 right-0 flex gap-5 m-auto px-4 py-4 w-full max-w-md bg-btn-container"
@@ -53,6 +46,7 @@ import { debounce } from 'lodash';
 import utils from '@/common/utils';
 import Header from '@/components/Common/Header.vue';
 import setupTheme from '@/common/theme';
+import { utils as RSS3Utils } from 'rss3';
 
 @Options({
     name: 'Gitcoins',
@@ -103,10 +97,11 @@ export default class Gitcoins extends Vue {
         window.open(`https://gitcoin.co/`);
     }
 
-    toSingleGitcoin(platform: string, identity: string, id: string, type: string) {
+    toSingleGitcoin(id: string) {
+        const { platform, identity, type, uniqueID } = RSS3Utils.id.parseAsset(id);
         this.$router.push(
             (config.subDomain.isSubDomainMode ? '' : `/${this.rns || this.ethAddress}`) +
-                `/singlegitcoin/${platform}/${identity}/${id}/${type}`,
+                `/singlegitcoin/${platform}/${identity}/${uniqueID}/${type}`,
         );
     }
 
@@ -129,6 +124,7 @@ export default class Gitcoins extends Vue {
                 el.scrollTop = this.scrollTop;
             }
         } else {
+            console.log('init load');
             this.initLoad();
         }
     }

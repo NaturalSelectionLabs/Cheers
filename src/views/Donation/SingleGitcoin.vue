@@ -56,15 +56,16 @@ export default class SingleGitcoin extends Vue {
     }
 
     async loadGitcoin() {
-        const platform: string = <string>this.$route.params.platform;
-        const identity: string = <string>this.$route.params.identity;
-        const id: string = <string>this.$route.params.id;
+        const platform: string = String(this.$route.params.platform);
+        const identity: string = String(this.$route.params.identity);
+        const id: string = String(this.$route.params.id);
+        const type: string = String(this.$route.params.type);
 
         const Donation = (await utils.loadAssets([
             {
                 platform: platform,
                 identity: identity,
-                type: 'Gitcoin.Donation',
+                type: type,
                 uniqueID: id,
             },
         ])) as unknown as GitcoinResponse;

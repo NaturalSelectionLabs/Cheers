@@ -63,6 +63,7 @@ export default class SingleFootprint extends Vue {
         const platform: string = String(this.$route.params.platform);
         const identity: string = String(this.$route.params.identity);
         const id: string = String(this.$route.params.id);
+        const type: string = String(this.$route.params.type);
 
         // Setup theme
         setupTheme((await pageOwner.persona?.assets.auto.getList(pageOwner.address)) || []);
@@ -71,7 +72,7 @@ export default class SingleFootprint extends Vue {
             {
                 platform: platform,
                 identity: identity,
-                type: 'xDai.POAP',
+                type: type,
                 uniqueID: id,
             },
         ])) as unknown as POAPResponse;

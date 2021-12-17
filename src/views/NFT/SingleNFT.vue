@@ -96,8 +96,8 @@ export default class SingleNFT extends Vue {
             {
                 platform: platform,
                 identity: identity,
-                type: type.replaceAll('-', '.'),
-                uniqueID: id.replaceAll('-', '.'),
+                type: type,
+                uniqueID: id,
             },
         ])) as unknown as NFTResponse;
 
