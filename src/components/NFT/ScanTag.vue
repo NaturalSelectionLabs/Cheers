@@ -1,8 +1,8 @@
 <template>
     <div class="scan-tag">
-        <Etherscan v-if="chain === 'Ethereum'" />
-        <Bscscan v-if="chain === 'BSC'" />
-        <PolygonScan v-if="chain === 'Polygon'" />
+        <Etherscan v-if="chain === 'Ethereum.NFT'" />
+        <Bscscan v-if="chain === 'BSC.NFT'" />
+        <PolygonScan v-if="chain === 'Polygon.NFT'" />
     </div>
 </template>
 

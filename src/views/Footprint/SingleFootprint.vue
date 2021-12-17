@@ -10,7 +10,7 @@
                 list="footprints"
             />
             <section class="m-auto max-w-screen-sm">
-                <FootprintItem class="mb-4" :imageUrl="details.event.image_url" size="auto" />
+                <FootprintItem class="mb-4" :imageUrl="details.image_url" size="auto" />
                 <FootprintDetails :details="details" />
             </section>
         </div>
@@ -35,25 +35,21 @@ import setupTheme from '@/common/theme';
 export default class SingleFootprint extends Vue {
     rns: string = '';
     ethAddress: string = '';
-    rss3Profile: RSS3Profile | null = {};
-    details: { event: POAP; owner: string; tokenId: string } = {
-        event: {
-            id: 0,
-            fancy_id: '',
-            country: '',
-            city: '',
-            description: '',
-            year: 1970,
-            start_date: '',
-            end_date: '',
-            expiry_date: '',
-            name: '',
-            image_url: '',
-            event_url: '',
-            supply: 0,
-        },
-        owner: '',
-        tokenId: '',
+    rss3Profile: any = {};
+    details: POAP = {
+        id: 0,
+        fancy_id: '',
+        country: '',
+        city: '',
+        description: '',
+        year: 1970,
+        start_date: '',
+        end_date: '',
+        expiry_date: '',
+        name: '',
+        image_url: '',
+        event_url: '',
+        supply: 0,
     };
 
     async mounted() {
@@ -72,16 +68,15 @@ export default class SingleFootprint extends Vue {
         // Setup theme
         setupTheme((await pageOwner.persona?.assets.auto.getList(pageOwner.address)) || []);
 
-        const footprint = utils.loadAssets([
+        const footprint = (await utils.loadAssets([
             {
                 platform: platform,
                 identity: identity,
                 type: 'xDai.POAP',
                 uniqueID: id,
             },
-        ]) as unknown as POAPResponse;
-
-        this.details.event = footprint.detail;
+        ])) as unknown as POAPResponse;
+        this.details = footprint?.[0].detail;
     }
 }
 </script>
