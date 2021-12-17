@@ -20,7 +20,6 @@ import RSS3 from '@/common/rss3';
 import utils from '@/common/utils';
 import GitcoinDetails from '@/components/Donation/GitcoinDetails.vue';
 import { DonationInfo, GitcoinResponse, GrantInfo } from '@/common/types';
-import { RSS3Profile } from 'rss3-next/types/rss3';
 import Header from '@/components/Common/Header.vue';
 import setupTheme from '@/common/theme';
 
@@ -31,7 +30,7 @@ import setupTheme from '@/common/theme';
 export default class SingleGitcoin extends Vue {
     rns: string = '';
     ethAddress: string = '';
-    rss3Profile: RSS3Profile = {};
+    rss3Profile: any = {};
 
     grant?: GrantInfo = {
         active: true,
@@ -43,9 +42,8 @@ export default class SingleGitcoin extends Vue {
     donationInfo?: DonationInfo[] = [];
 
     async mounted() {
-        await RSS3.reconnect();
-        const { ethAddress } = await utils.getAddress();
-        const pageOwner = await RSS3.setPageOwner(ethAddress);
+        const addrOrName = utils.getAddress(<string>this.$route.params.address);
+        const pageOwner = await RSS3.setPageOwner(addrOrName);
         this.ethAddress = pageOwner.address;
         this.rns = pageOwner.name;
 
