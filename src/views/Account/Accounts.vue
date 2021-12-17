@@ -81,14 +81,11 @@ export default class Accounts extends Vue {
         const pageOwner = await RSS3.setPageOwner(addrOrName);
         this.ethAddress = pageOwner.address;
         this.rns = pageOwner.name;
-        this.isOwner = await RSS3.isNowOwner();
+        this.isOwner = RSS3.isNowOwner();
 
         if (pageOwner.profile) {
             this.rss3Profile = pageOwner.profile;
         }
-
-        // Setup theme
-        setupTheme((await pageOwner.persona?.assets.auto.getList(pageOwner.address)) || []);
 
         const { listed } = await utils.initAccounts();
         const accountDetails = listed.map((account) => RSS3Utils.id.parseAccount(account.id));

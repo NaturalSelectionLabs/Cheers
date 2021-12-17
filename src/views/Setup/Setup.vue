@@ -316,9 +316,6 @@ export default class Setup extends Vue {
             this.profile.link = fieldsMatch?.['SITE'] || '';
         }
 
-        // Setup theme
-        setupTheme((await loginUser.persona?.assets.auto.getList(loginUser.address)) || []);
-
         // Load assets
         setTimeout(this.startLoadingAssets, 0);
 

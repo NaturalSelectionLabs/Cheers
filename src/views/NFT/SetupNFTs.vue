@@ -193,9 +193,6 @@ export default class SetupNFTs extends Vue {
         const profile = loginUser.profile;
         this.avatar = profile?.avatar?.[0] || config.defaultAvatar;
 
-        // Setup theme
-        setupTheme((await loginUser.persona?.assets.auto.getList(loginUser.address)) || []);
-
         // Get NFTs
         const { nfts, hiddenNfts } = await utils.initAssets();
 

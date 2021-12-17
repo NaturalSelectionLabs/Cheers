@@ -65,9 +65,6 @@ export default class SingleFootprint extends Vue {
         const id: string = String(this.$route.params.id);
         const type: string = String(this.$route.params.type);
 
-        // Setup theme
-        setupTheme((await pageOwner.persona?.assets.auto.getList(pageOwner.address)) || []);
-
         const footprint = (await utils.loadAssets([
             {
                 platform: platform,

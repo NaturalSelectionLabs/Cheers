@@ -13,6 +13,7 @@ import Assets from 'rss3/dist/assets/index';
 import legacyConfig from '@/config';
 import Cookies from 'js-cookie';
 import utils from '@/common/utils';
+import setupTheme from '@/common/theme';
 
 export interface IAssetProfile {
     assets: GeneralAsset[];
@@ -308,6 +309,7 @@ function dispatchEvent(event: string, detail: any) {
         bubbles: true,
         composed: true,
     });
+    console.log(event, detail);
     document.dispatchEvent(evt);
 }
 
@@ -401,6 +403,7 @@ export default {
             await initUser(RSS3PageOwner);
         }
         await setPageTitleFavicon();
+        await setupTheme(); // Setup theme
         dispatchEvent(Events.pageOwnerReady, RSS3PageOwner);
         return RSS3PageOwner;
     },
@@ -412,7 +415,7 @@ export default {
         dispatchEvent(Events.pageOwnerReady, RSS3PageOwner);
         return RSS3PageOwner;
     },
-    isNowOwner: async () => {
+    isNowOwner: () => {
         // await ensureLoginUser();
         return isValidRSS3() && RSS3LoginUser.address === RSS3PageOwner.address;
     },

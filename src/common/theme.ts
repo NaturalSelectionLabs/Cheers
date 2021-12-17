@@ -1,7 +1,10 @@
 import RSS3 from '@/common/rss3';
 
-const setupTheme = (assets: RSS3AutoAsset[]) => {
+const setupTheme = async () => {
     // Setup theme
+    const pageOwner = RSS3.getPageOwner();
+    const apuUser = RSS3.getAPIUser();
+    const assets = (await apuUser.persona?.assets.auto.getList(pageOwner.address)) || [];
     const themes = RSS3.getAvailableThemes(assets);
     if (themes[0]) {
         document.body.classList.add(themes[0].class);

@@ -79,12 +79,9 @@ export default class Footprints extends Vue {
         const pageOwner = await RSS3.setPageOwner(addrOrName);
         this.ethAddress = pageOwner.address;
         this.rns = pageOwner.name;
-        this.isOwner = await RSS3.isNowOwner();
+        this.isOwner = RSS3.isNowOwner();
 
         this.rss3Profile = await pageOwner.profile;
-
-        // Setup theme
-        setupTheme((await pageOwner.persona?.assets.auto.getList(pageOwner.address)) || []);
 
         const { footprints } = await utils.initAssets();
         this.footprints = await utils.loadAssets(footprints);

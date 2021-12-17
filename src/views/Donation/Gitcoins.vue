@@ -74,15 +74,11 @@ export default class Gitcoins extends Vue {
 
         const addrOrName = utils.getAddress(<string>this.$route.params.address);
         const pageOwner = await RSS3.setPageOwner(addrOrName);
-        const loginUser = await RSS3.getLoginUser();
         this.ethAddress = pageOwner.address;
         this.rns = pageOwner.name;
-        this.isOwner = await RSS3.isNowOwner();
+        this.isOwner = RSS3.isNowOwner();
 
         this.rss3Profile = await pageOwner.profile;
-
-        // Setup theme
-        setupTheme((await pageOwner.persona?.assets.auto.getList(pageOwner.address)) || []);
 
         const { donations } = await utils.initAssets();
         this.gitcoins = await utils.loadAssets(donations);

@@ -75,12 +75,9 @@ export default class NFTs extends Vue {
         const pageOwner = await RSS3.setPageOwner(addrOrName);
         this.ethAddress = pageOwner.address;
         this.rns = pageOwner.name;
-        this.isOwner = await RSS3.isNowOwner();
+        this.isOwner = RSS3.isNowOwner();
 
-        this.rss3Profile = await pageOwner.profile;
-
-        // Setup theme
-        setupTheme((await pageOwner.persona?.assets.auto.getList(pageOwner.address)) || []);
+        this.rss3Profile = pageOwner.profile;
 
         const { nfts } = await utils.initAssets();
         this.nfts = await utils.loadAssets(nfts);

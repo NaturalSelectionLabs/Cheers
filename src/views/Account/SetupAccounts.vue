@@ -405,7 +405,7 @@ export default class SetupAccounts extends Vue {
             return;
         }
         const loginUser = await RSS3.getLoginUser();
-        const pageOwner = await RSS3.setPageOwner(loginUser.address);
+        await RSS3.setPageOwner(loginUser.address);
         if (sessionStorage.getItem('profile')) {
             const profile = JSON.parse(<string>sessionStorage.getItem('profile'));
             this.avatar = profile.avatar;
@@ -415,9 +415,6 @@ export default class SetupAccounts extends Vue {
 
         this.ethAddress = loginUser.address;
         this.rns = loginUser.name;
-
-        // Setup theme
-        setupTheme((await loginUser.persona?.assets.auto.getList(loginUser.address)) || []);
 
         const accounts = await loginUser.persona?.profile.accounts;
         if (accounts) {
