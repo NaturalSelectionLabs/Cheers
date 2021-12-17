@@ -504,7 +504,7 @@ export default {
         const availableThemes: Theme[] = [];
         for (const theme of legacyConfig.theme) {
             for (const asset of assets) {
-                const [platform, identity, type, uniqueID] = asset.split('-');
+                const { type, uniqueID } = RSS3Utils.id.parseAsset(asset);
                 if (
                     type?.includes('NFT') &&
                     utils.isAssetNotHidden(asset) &&

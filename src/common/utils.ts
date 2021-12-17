@@ -1,3 +1,8 @@
+import { utils as RSS3Utils } from 'rss3';
+import { AnyObject } from 'rss3/types/extend';
+import { formatter } from './address';
+import config from './config';
+import RSS3 from './rss3';
 import {
     CustomField_Pass,
     DonationDetailByGrant,
@@ -8,11 +13,6 @@ import {
     POAP,
     POAPResponse,
 } from './types';
-import config from './config';
-import RSS3 from './rss3';
-import { utils as RSS3Utils } from 'rss3';
-import { AnyObject } from 'rss3/types/extend';
-import { formatter } from './address';
 
 const orderPattern = new RegExp(`^${config.tags.prefix}:order:(-?\\d+)$`, 'i');
 
@@ -77,7 +77,7 @@ async function initAssets() {
 }
 
 async function loadAssets(parsedAssets: AnyObject[]) {
-    const pageOwner = RSS3.getPageOwner();
+    const pageOwner = await RSS3.getPageOwner();
 
     const assetIDList = parsedAssets.map((asset) =>
         RSS3Utils.id.getAsset(asset.platform, asset.identity, asset.type, asset.uniqueID),
@@ -347,7 +347,7 @@ async function setAssetTags(listed: RSS3GeneralAssetsList, unlisted: RSS3General
     await updateAssetTags(assets);
 }
 
-const setTaggedOrder = (tagged: TypesWithTag, order?: number): void => {
+const setTaggedOrder = (tagged: TypesWithTag, order?: number) => {
     if (!tagged.tags) {
         tagged.tags = [];
     } else {
@@ -362,18 +362,11 @@ const setTaggedOrder = (tagged: TypesWithTag, order?: number): void => {
     } else {
         tagged.tags.push(`${config.tags.prefix}:${config.tags.hiddenTag}`);
     }
+    return tagged;
 };
 const setAccountsTags = async (listed: TypesWithTag[], unlisted: TypesWithTag[]): Promise<TypesWithTag[]> => {
-    await Promise.all(
-        listed.map(async (tagged, index) => {
-            setTaggedOrder(tagged, index);
-        }),
-    );
-    await Promise.all(
-        unlisted.map(async (tagged) => {
-            setTaggedOrder(tagged);
-        }),
-    );
+    await Promise.all(listed.map((tagged, index) => setTaggedOrder(tagged, index)));
+    await Promise.all(unlisted.map((tagged) => setTaggedOrder(tagged)));
     return listed.concat(unlisted);
 };
 

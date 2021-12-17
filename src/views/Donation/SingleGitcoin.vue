@@ -19,7 +19,7 @@ import config from '@/config';
 import RSS3 from '@/common/rss3';
 import utils from '@/common/utils';
 import GitcoinDetails from '@/components/Donation/GitcoinDetails.vue';
-import { DonationInfo, GrantInfo } from '@/common/types';
+import { DonationInfo, GitcoinResponse, GrantInfo } from '@/common/types';
 import { RSS3Profile } from 'rss3-next/types/rss3';
 import Header from '@/components/Common/Header.vue';
 import setupTheme from '@/common/theme';
@@ -44,16 +44,15 @@ export default class SingleGitcoin extends Vue {
 
     async mounted() {
         await RSS3.reconnect();
-        const rss3 = await RSS3.visitor();
+        const addrOrName = <string>this.$route.params.address || '';
+        const pageOwner = await RSS3.setPageOwner(addrOrName);
+        this.ethAddress = pageOwner.address;
+        this.rns = pageOwner.name;
 
-        const { ethAddress, rns } = await utils.getAddress(<string>this.$route.params.address);
-        this.ethAddress = ethAddress;
-        this.rns = rns;
-
-        this.rss3Profile = await rss3.profile.get(this.ethAddress);
+        this.rss3Profile = await pageOwner.profile;
 
         // Setup theme
-        await setupTheme(await rss3.assets.get(this.ethAddress));
+        setupTheme((await pageOwner.persona?.assets.auto.getList(pageOwner.address)) || []);
 
         await this.loadGitcoin();
     }
@@ -63,13 +62,16 @@ export default class SingleGitcoin extends Vue {
         const identity: string = <string>this.$route.params.identity;
         const id: string = <string>this.$route.params.id;
 
-        const res = await RSS3.getGitcoinDonation(this.ethAddress, platform, identity, id);
-        if (res) {
-            this.grant = res.data.grant;
-            this.donationInfo = res.data.txs.sort((a, b) => {
-                return parseInt(b.timeStamp) - parseInt(a.timeStamp);
-            });
-        }
+        const Donation = (await utils.loadAssets([
+            {
+                platform: platform,
+                identity: identity,
+                type: 'Gitcoin.Donation',
+                uniqueID: id,
+            },
+        ])) as unknown as GitcoinResponse;
+        this.grant = Donation?.[0].detail.grant;
+        this.donationInfo = Donation?.[0].detail.txs;
     }
 
     toExternalLink(address: string) {

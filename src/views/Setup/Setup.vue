@@ -212,8 +212,7 @@ import Input from '@/components/Input/Input.vue';
 import Modal from '@/components/Common/Modal.vue';
 import Loading from '@/components/Loading/Loading.vue';
 import LoadingContainer from '@/components/Loading/LoadingContainer.vue';
-import { RSS3Account, RSS3Asset, RSS3Profile } from 'rss3-next/types/rss3';
-import RSS3, { IRSS3 } from '@/common/rss3';
+import RSS3 from '@/common/rss3';
 import config from '@/config';
 import setupTheme from '@/common/theme';
 
@@ -229,6 +228,7 @@ import RNSUtils from '@/common/rns';
 import FootprintItem from '@/components/Footprint/FootprintItem.vue';
 import EVMpAccountItem from '@/components/Account/EVMpAccountItem.vue';
 import utils from '@/common/utils';
+import { utils as RSS3Utils } from 'rss3';
 
 @Options({
     name: 'Setup',
@@ -264,11 +264,13 @@ export default class Setup extends Vue {
         bio: '',
         link: '',
     };
-    accounts: RSS3Account[] = [];
+    accounts: {
+        platform: string;
+        identity: string;
+    }[] = [];
     nfts: GeneralAssetWithTags[] = [];
     gitcoins: GeneralAssetWithTags[] = [];
     footprints: GeneralAssetWithTags[] = [];
-    rss3: IRSS3 | null = null;
     isLoading: Boolean = true;
     isLoadingAssets: {
         NFT: boolean;
@@ -289,7 +291,7 @@ export default class Setup extends Vue {
     firstLoad: boolean = true;
 
     async initLoad() {
-        if (!(await RSS3.reconnect())) {
+        if (!RSS3.isValidRSS3()) {
             if (config.subDomain.isSubDomainMode) {
                 // redirect back to root domain
                 window.location.host = config.subDomain.rootDomain;
@@ -297,14 +299,14 @@ export default class Setup extends Vue {
                 sessionStorage.setItem('redirectFrom', this.$route.fullPath);
                 await this.$router.push('/');
             }
-        } else {
-            this.rss3 = await RSS3.get();
         }
         // Trigger force refresh
         // await RSS3.getAssetProfile((<IRSS3>this.rss3).account.address, true);
         // await (<IRSS3>this.rss3).files.get((<IRSS3>this.rss3).account.address, true);
 
-        const profile = await (<IRSS3>this.rss3).profile.get();
+        const loginUser = await RSS3.getLoginUser();
+        await RSS3.setPageOwner(loginUser.address);
+        const profile = loginUser.profile;
         console.log(profile);
         this.profile.avatar = profile?.avatar?.[0] || config.defaultAvatar;
         this.profile.name = profile?.name || '';
@@ -327,7 +329,7 @@ export default class Setup extends Vue {
         }
 
         // Setup theme
-        setupTheme(await (<IRSS3>this.rss3).assets.get());
+        setupTheme((await loginUser.persona?.assets.auto.getList(loginUser.address)) || []);
 
         // this.startLoadingAssets();
         this.isLoading = false;
@@ -336,16 +338,14 @@ export default class Setup extends Vue {
     startLoadingAccounts() {
         this.accounts = [];
         setTimeout(async () => {
-            const accounts = await (<IRSS3>this.rss3).accounts.get();
-            const { listed } = await utils.initAccounts(accounts);
-            this.accounts = listed;
-            // Push original account
-            this.accounts.unshift({
-                platform: 'EVM+',
-                identity: (<IRSS3>this.rss3).account.address,
-                signature: '',
-                tags: ['pass:order:-1'],
-            });
+            const { listed } = await utils.initAccounts();
+            const accountList = listed.map((account) => RSS3Utils.id.parseAccount(account.id));
+            this.accounts = [
+                {
+                    platform: 'EVM+',
+                    identity: RSS3.getLoginUser().address,
+                },
+            ].concat(accountList);
         }, 0);
     }
 
@@ -457,15 +457,13 @@ export default class Setup extends Vue {
 
     async back() {
         // this.clearEdited();
-        this.$gtag.event('cancelEditProfile', { userid: (<IRSS3>this.rss3).account.address });
+        this.$gtag.event('cancelEditProfile', { userid: RSS3.getLoginUser().address });
         window.history.back();
     }
 
     async save() {
         this.isLoading = true;
-        if (!this.rss3) {
-            this.rss3 = await RSS3.get();
-        }
+        const loginUser = await RSS3.getLoginUser();
         if (this.profile.name.length > this.maxValueLength) {
             this.notice = `Name cannot be longer than ${this.maxValueLength} chars`;
             this.isLoading = false;
@@ -479,28 +477,24 @@ export default class Setup extends Vue {
             return;
         }
         const newProfile: RSS3Profile = {
+            avatar: [this.profile.avatar],
             name: this.profile.name,
             bio: this.profile.bio + (this.profile.link ? `<SITE#${this.profile.link}>` : ''),
         };
+
+        // Upload avatar
         const avatarUrl = await (<any>this.$refs.avatar).upload();
         if (avatarUrl) {
             newProfile.avatar = [avatarUrl];
         }
-        await (<IRSS3>this.rss3).profile.patch(newProfile);
-        try {
-            await (<IRSS3>this.rss3).files.sync();
-        } catch (e) {
-            console.log(e);
-            this.isLoading = false;
-            return;
-        }
+        await loginUser.persona?.profile.patch(newProfile);
         // this.clearEdited();
-        this.$gtag.event('finishEditProfile', { userid: (<IRSS3>this.rss3).account.address });
+        this.$gtag.event('finishEditProfile', { userid: loginUser.address });
         this.isLoading = false;
         const redirectFrom = sessionStorage.getItem('redirectFrom');
         sessionStorage.removeItem('redirectFrom');
 
-        const ethAddress = (<IRSS3>this.rss3).account.address;
+        const ethAddress = loginUser.address;
         const rns = await RNSUtils.addr2Name(ethAddress);
         if (rns && config.subDomain.isSubDomainMode) {
             window.location.href = '//' + rns + '.' + config.subDomain.rootDomain;
@@ -517,7 +511,7 @@ export default class Setup extends Vue {
     }
 
     async activated() {
-        if (this.rss3 && !this.firstLoad) {
+        if (RSS3.isValidRSS3() && !this.firstLoad) {
             this.startLoadingAccounts();
             await this.startLoadingAssets();
         }
