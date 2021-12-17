@@ -6,12 +6,13 @@
             square: isSquare,
         }"
     >
-        <img :src="src" :alt="alt" />
+        <img :src="fixedSrc" :alt="alt" />
     </div>
 </template>
 
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
+import utils from '@/common/utils';
 
 @Options({
     props: {
@@ -21,7 +22,12 @@ import { Options, Vue } from 'vue-class-component';
         isSquare: Boolean,
     },
 })
-export default class ImgHolder extends Vue {}
+export default class ImgHolder extends Vue {
+    src!: String;
+    get fixedSrc() {
+        return utils.fixURLSchemas(this.src.toString());
+    }
+}
 </script>
 
 <style scoped lang="postcss">

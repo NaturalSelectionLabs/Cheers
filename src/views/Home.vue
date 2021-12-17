@@ -490,7 +490,6 @@ interface Relations {
 export default class Home extends Vue {
     rns: string = '';
     ethAddress: string = '';
-    rss3?: RSS3DetailPersona;
     isFollowing: boolean = false;
     isOwner: boolean = false;
     isShowingAccount: boolean = false;
@@ -560,13 +559,12 @@ export default class Home extends Vue {
 
     async initLoad() {
         const loginUser = RSS3.getLoginUser();
-        // const pageOwner = RSS3.getPageOwner();
-        const pageOwner = await RSS3.setPageOwner('0xcb1DAd9bd43576Edf39768E8990FeAcf9E8BBD89');
+        const pageOwner = await RSS3.setPageOwner(utils.getAddress(<string>this.$route.params.address));
         const file = await pageOwner.files.get();
         this.lastRoute = this.$route.fullPath;
         this.isShowingAccount = false;
         this.showingAccountDetails = {
-            address: '',
+            address: pageOwner.address,
             platform: 'EVM+',
             isLink: false,
         };
@@ -574,34 +572,16 @@ export default class Home extends Vue {
         (<HTMLLinkElement>document.getElementById('favicon')).href = '/favicon.ico';
         document.title = 'Web3 Pass';
 
-        this.isOwnerValidRSS3 = await RSS3.reconnect();
-        this.rss3 = RSS3.getLoginUser();
-        const owner: string = this.rss3.address;
-        this.ownerETHAddress = owner;
+        this.rns = pageOwner.name;
+        this.ethAddress = pageOwner.address;
+        this.isOwner = RSS3.isNowOwner();
 
-        if (!(await this.getAddress())) {
-            if (this.isAccountExist) {
-                if (this.isOwnerValidRSS3) {
-                    this.rns = await RNSUtils.addr2Name(owner);
-                    this.ethAddress = owner;
-                    this.isOwner = true;
-                    if (this.rns && legacyConfig.subDomain.rootDomain) {
-                        window.location.href = '//' + this.rns + '.' + legacyConfig.subDomain.rootDomain;
-                    }
-                } else {
-                    this.isOwner = false;
-                    sessionStorage.setItem('redirectFrom', this.$route.fullPath);
-                    this.ethAddress = '';
-                    if (legacyConfig.subDomain.isSubDomainMode) {
-                        window.location.href = '//' + legacyConfig.subDomain.rootDomain;
-                    } else {
-                        await this.$router.push('/');
-                    }
-                    return;
-                }
-            } else {
-                return;
-            }
+        const apiUser = RSS3.getAPIUser().persona;
+        if ((<RSS3Index>await apiUser?.files.get(pageOwner.address)).signature) {
+            this.isAccountExist = true;
+        } else {
+            this.isAccountExist = false;
+            return;
         }
 
         // Split time-consuming methods from main thread, so it won't stuck the page loading progress
@@ -644,18 +624,6 @@ export default class Home extends Vue {
             await this.loadMoreContents(true);
             this.initIntersectionObserver();
         }, 0);
-    }
-
-    async getAddress() {
-        this.isOwner = RSS3.isNowOwner();
-
-        const file = RSS3.getPageOwner().files.get();
-
-        if (!file.signature) {
-            this.isAccountExist = false;
-        }
-
-        return true;
     }
 
     async setPageTitleFavicon() {

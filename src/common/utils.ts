@@ -1,6 +1,7 @@
 import { utils as RSS3Utils } from 'rss3';
 import { AnyObject } from 'rss3/types/extend';
 import { formatter } from './address';
+import legacyConfig from '@/config';
 import config from './config';
 import RNS from './rns';
 import RSS3 from './rss3';
@@ -381,25 +382,13 @@ const isAssetNotHidden = async (asset: RSS3AutoAsset | RSS3CustomAsset) => {
     return !!af?.hide;
 };
 
-async function getAddress() {
-    let address: string = window.location.host.split('.').slice(0, -2).join('.');
-    let ethAddress: string = '';
-    let rns: string = '';
-
-    if (address) {
-        if (/^0x[a-fA-F0-9]{40}$/.test(address)) {
-            // Should be address type
-            // Get RNS and redirect
-            ethAddress = address;
-            rns = await RNS.addr2Name(address);
-        } else {
-            // RNS
-            rns = address;
-            ethAddress = (await RNS.name2Addr(address)).toString();
-        }
+function getAddress(routerAddress: string) {
+    if (legacyConfig.subDomain.isSubDomainMode) {
+        // Is subdomain mode
+        return window.location.host.split('.').slice(0, -2).join('.');
+    } else {
+        return routerAddress;
     }
-
-    return { ethAddress, rns };
 }
 
 const utils = {
