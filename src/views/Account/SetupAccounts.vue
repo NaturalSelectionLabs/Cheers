@@ -556,6 +556,10 @@ export default class SetupAccounts extends Vue {
         this.isLoading = false;
         window.history.back(); // Back
     }
+
+    back() {
+        window.history.back();
+    }
 }
 </script>
 

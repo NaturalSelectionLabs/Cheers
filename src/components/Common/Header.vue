@@ -11,7 +11,7 @@
             :class="{ 'cursor-pointer': rns && ethAddress }"
             :is-rounded="true"
             :is-border="false"
-            :src="avatar || rss3Profile.avatar || defaultAvatar"
+            :src="avatar || rss3Profile?.avatar?.[0] || defaultAvatar"
             :alt="rss3Profile?.username || ''"
             @click="toPublicPage(rns, ethAddress)"
         />
