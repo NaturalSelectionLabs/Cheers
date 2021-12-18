@@ -377,7 +377,8 @@ export default {
     },
     ensureLoginUser,
     reloadLoginUser: async () => {
-        await initUser(RSS3LoginUser);
+        RSS3LoginUser.file = (await apiPersona().files.get(RSS3LoginUser.address, true)) as RSS3Index;
+        RSS3LoginUser.profile = RSS3LoginUser.file.profile || {};
         dispatchEvent(Events.connect, RSS3LoginUser);
         return RSS3LoginUser;
     },
@@ -417,7 +418,8 @@ export default {
         return RSS3PageOwner;
     },
     reloadPageOwner: async () => {
-        await initUser(RSS3PageOwner);
+        RSS3PageOwner.file = (await apiPersona().files.get(RSS3PageOwner.address, true)) as RSS3Index;
+        RSS3PageOwner.profile = RSS3PageOwner.file.profile || {};
         dispatchEvent(Events.pageOwnerReady, RSS3PageOwner);
         return RSS3PageOwner;
     },

@@ -511,6 +511,16 @@ export default class SetupAccounts extends Vue {
         }, 3000);
     }
 
+    back() {
+        if (window.history.state.back) {
+            window.history.back();
+        } else {
+            this.$router.push(
+                (config.subDomain.isSubDomainMode ? '' : `/${this.rns || this.ethAddress}`) + `/accounts`,
+            );
+        }
+    }
+
     async save() {
         this.isLoading = true;
         const loginUser = RSS3.getLoginUser();
@@ -554,11 +564,7 @@ export default class SetupAccounts extends Vue {
             return;
         }
         this.isLoading = false;
-        window.history.back(); // Back
-    }
-
-    back() {
-        window.history.back();
+        await this.back();
     }
 }
 </script>

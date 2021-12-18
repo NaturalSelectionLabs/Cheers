@@ -186,22 +186,23 @@ export default class EditProfile extends Vue {
             this.profile.bio = extracted;
             this.profile.link = fieldsMatch?.['SITE'] || '';
         }
-
         this.startLoadingAccounts();
     }
 
     startLoadingAccounts() {
-        this.accounts = [];
-        setTimeout(async () => {
-            const { listed } = await utils.initAccounts();
-            const accountList = listed.map((account) => RSS3Utils.id.parseAccount(account.id));
-            this.accounts = [
-                {
-                    platform: 'EVM+',
-                    identity: RSS3.getLoginUser().address,
-                },
-            ].concat(accountList);
-        }, 0);
+        if (this.ethAddress) {
+            this.accounts = [];
+            setTimeout(async () => {
+                const { listed } = await utils.initAccounts();
+                const accountList = listed.map((account) => RSS3Utils.id.parseAccount(account.id));
+                this.accounts = [
+                    {
+                        platform: 'EVM+',
+                        identity: this.ethAddress,
+                    },
+                ].concat(accountList);
+            }, 0);
+        }
     }
 
     setOversizeNotice(field: string) {
@@ -210,11 +211,18 @@ export default class EditProfile extends Vue {
         this.isShowingNotice = true;
     }
 
-    async back() {
-        // this.clearEdited();
-        this.$gtag.event('cancelEditProfile', { userid: RSS3.getLoginUser().address });
-        window.history.back();
+    back() {
+        const pageOwner = RSS3.getPageOwner();
+        const rns = pageOwner.name;
+        const ethAddress = pageOwner.address;
+
+        if (window.history.state.back) {
+            window.history.back();
+        } else {
+            this.$router.push((config.subDomain.isSubDomainMode ? '' : `/${rns || ethAddress}`) + `/nfts`);
+        }
     }
+
     async save() {
         this.isLoading = true;
         if (this.profile.name.length > this.maxValueLength) {
@@ -251,6 +259,8 @@ export default class EditProfile extends Vue {
         // this.clearEdited();
         this.$gtag.event('finishEditProfile', { userid: RSS3.getLoginUser().address });
         this.isLoading = false;
+        await RSS3.reloadLoginUser();
+        await RSS3.reloadPageOwner();
         const redirectFrom = sessionStorage.getItem('redirectFrom');
         sessionStorage.removeItem('redirectFrom');
         await this.$router.push(
@@ -286,7 +296,11 @@ export default class EditProfile extends Vue {
 
     toAccountsPage() {
         this.$gtag.event('visitAccountsPage', { userid: this.rns || this.ethAddress });
-        this.$router.push((config.subDomain.isSubDomainMode ? '' : `/${this.rns || this.ethAddress}`) + `/accounts`);
+        this.$router.push(config.subDomain.isSubDomainMode ? '' : `/${this.rns || this.ethAddress}`);
+    }
+
+    activated() {
+        this.startLoadingAccounts();
     }
 }
 </script>

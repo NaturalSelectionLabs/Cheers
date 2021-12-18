@@ -243,6 +243,18 @@ export default class SetupNFTs extends Vue {
 
     async nftMoveEnd(e: any) {}
 
+    back() {
+        const pageOwner = RSS3.getPageOwner();
+        const rns = pageOwner.name;
+        const ethAddress = pageOwner.address;
+
+        if (window.history.state.back) {
+            window.history.back();
+        } else {
+            this.$router.push((config.subDomain.isSubDomainMode ? '' : `/${rns || ethAddress}`) + `/nfts`);
+        }
+    }
+
     async save() {
         this.isLoading = true;
         const listed = this.displayedNFTs.map((nft) => nft.id);
@@ -252,11 +264,7 @@ export default class SetupNFTs extends Vue {
         }
         await utils.setAssetTags(listed, unlisted);
         this.isLoading = false;
-        window.history.back();
-    }
-
-    back() {
-        window.history.back();
+        await this.back();
     }
 }
 </script>

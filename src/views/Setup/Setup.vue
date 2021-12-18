@@ -385,10 +385,16 @@ export default class Setup extends Vue {
         }
     }
 
-    async back() {
-        // this.clearEdited();
-        this.$gtag.event('cancelEditProfile', { userid: RSS3.getLoginUser().address });
-        window.history.back();
+    back() {
+        const pageOwner = RSS3.getPageOwner();
+        const rns = pageOwner.name;
+        const ethAddress = pageOwner.address;
+
+        if (window.history.state.back) {
+            window.history.back();
+        } else {
+            this.$router.push(config.subDomain.isSubDomainMode ? '' : `/${rns || ethAddress}`);
+        }
     }
 
     async save() {
@@ -417,20 +423,26 @@ export default class Setup extends Vue {
         if (avatarUrl) {
             newProfile.avatar = [avatarUrl];
         }
-        await loginUser.persona?.profile.patch(newProfile);
+        await loginUser.persona.profile.patch(newProfile);
+        // Save
+        try {
+            await loginUser.persona.files.sync();
+        } catch (e) {
+            console.log(e);
+            this.isLoading = false;
+            return;
+        }
         // this.clearEdited();
         this.$gtag.event('finishEditProfile', { userid: loginUser.address });
         this.isLoading = false;
+        await RSS3.reloadLoginUser();
+        await RSS3.reloadPageOwner();
+        const pageOwner = RSS3.getPageOwner();
+        const rns = pageOwner.name;
+        const ethAddress = pageOwner.address;
         const redirectFrom = sessionStorage.getItem('redirectFrom');
         sessionStorage.removeItem('redirectFrom');
-
-        const ethAddress = loginUser.address;
-        const rns = await RNSUtils.addr2Name(ethAddress);
-        if (rns && config.subDomain.isSubDomainMode) {
-            window.location.href = '//' + rns + '.' + config.subDomain.rootDomain;
-        } else {
-            await this.$router.push(redirectFrom || `/${ethAddress}`);
-        }
+        await this.$router.push(config.subDomain.isSubDomainMode ? redirectFrom || '/' : `/${rns || ethAddress}`);
     }
 
     async mounted() {

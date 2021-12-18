@@ -176,6 +176,18 @@ export default class SetupGitcoins extends Vue {
         this.show.push(...this.hide.splice(0, this.hide.length));
     }
 
+    back() {
+        const pageOwner = RSS3.getPageOwner();
+        const rns = pageOwner.name;
+        const ethAddress = pageOwner.address;
+
+        if (window.history.state.back) {
+            window.history.back();
+        } else {
+            this.$router.push((config.subDomain.isSubDomainMode ? '' : `/${rns || ethAddress}`) + `/gitcoins`);
+        }
+    }
+
     async save() {
         this.isLoading = true;
         await utils.setAssetTags(
@@ -183,11 +195,7 @@ export default class SetupGitcoins extends Vue {
             this.hide.map((asset) => asset.id),
         );
         this.isLoading = false;
-        window.history.back();
-    }
-
-    back() {
-        window.history.back();
+        await this.back();
     }
 }
 </script>
