@@ -33,11 +33,11 @@ const config = {
         },
         bridge: 'https://walletconnect-relay.rss3.dev',
     },
-    contentRequestLimit: 5,
-    contents: {
-        limit: 35,
+    splitPageLimits: {
+        assets: 30,
+        contents: 35,
+        follows: 15,
     },
-    followListLimitPerPage: 15,
     recommendations: {
         endpoint: 'https://node-beta.rss3.dev',
         groupLimit: 5,

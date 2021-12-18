@@ -171,16 +171,16 @@ async function initContent(timestamp: string = '', following: boolean = false) {
             ? await pageOwner.items?.getListByPersona({
                   persona: pageOwner.address,
                   linkID: 'following',
-                  limit: config.contents.limit,
+                  limit: config.splitPageLimits.contents,
                   tsp: timestamp,
               })
             : await pageOwner.items?.getListByPersona({
                   persona: pageOwner.address,
-                  limit: config.contents.limit,
+                  limit: config.splitPageLimits.contents,
                   tsp: timestamp,
               })) || [];
 
-    const haveMore = allItems.length === config.contents.limit;
+    const haveMore = allItems.length === config.splitPageLimits.contents;
 
     profileSet.add(pageOwner.address);
     const items = allItems.filter((item) => 'target' in item && !isAsset(item.target.field));
