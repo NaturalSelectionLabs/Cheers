@@ -2,8 +2,7 @@
 import WalletConnectProvider from '@walletconnect/web3-provider';
 import { ethers } from 'ethers';
 import RSS3, { utils as RSS3Utils } from 'rss3';
-import axios from 'axios';
-import { GitcoinResponse, GeneralAsset, NFTResponse, POAPResponse } from './types';
+import { GeneralAsset } from './types';
 import config from './config';
 import rns from './rns';
 import Events from './events';
@@ -35,9 +34,9 @@ export const EMPTY_RSS3_DP: RSS3DetailPersona = {
 export type IRSS3 = RSS3;
 let RSS3PageOwner: RSS3DetailPersona = Object.create(EMPTY_RSS3_DP);
 let RSS3LoginUser: RSS3DetailPersona = Object.create(EMPTY_RSS3_DP);
-let assetsProfileCache: Map<string, IAssetProfile> = new Map();
 let walletConnectProvider: WalletConnectProvider;
 let ethersProvider: ethers.providers.Web3Provider | null;
+let isSettingPageOwner: boolean = false;
 
 export interface IAssetProfile {
     assets: GeneralAsset[];
@@ -384,29 +383,38 @@ export default {
         dispatchEvent(Events.connect, RSS3LoginUser);
         return RSS3LoginUser;
     },
-    setPageOwner: async (addrOrName: string) => {
-        let isReloadRequired = false;
-        if (addrOrName.startsWith('0x') && addrOrName.length === 42) {
-            if (RSS3PageOwner.address !== addrOrName) {
-                isReloadRequired = true;
-                RSS3PageOwner.address = addrOrName;
-                RSS3PageOwner.name = '';
+    setPageOwner: async (addrOrName: string) =>
+        new Promise(async (resolve, reject) => {
+            if (!isSettingPageOwner) {
+                isSettingPageOwner = true;
+                let isReloadRequired = false;
+                if (addrOrName.startsWith('0x') && addrOrName.length === 42) {
+                    if (RSS3PageOwner.address !== addrOrName) {
+                        isReloadRequired = true;
+                        RSS3PageOwner.address = addrOrName;
+                        RSS3PageOwner.name = '';
+                    }
+                } else {
+                    if (RSS3PageOwner.name !== addrOrName) {
+                        isReloadRequired = true;
+                        RSS3PageOwner.name = addrOrName;
+                        RSS3PageOwner.address = '';
+                    }
+                }
+                if (isReloadRequired) {
+                    await initUser(RSS3PageOwner);
+                }
+                await setPageTitleFavicon();
+                await setupTheme(); // Setup theme
+                dispatchEvent(Events.pageOwnerReady, RSS3PageOwner);
+                isSettingPageOwner = false;
+                resolve(RSS3PageOwner);
+            } else {
+                addEventListener(Events.pageOwnerReady, () => {
+                    resolve(RSS3PageOwner);
+                });
             }
-        } else {
-            if (RSS3PageOwner.name !== addrOrName) {
-                isReloadRequired = true;
-                RSS3PageOwner.name = addrOrName;
-                RSS3PageOwner.address = '';
-            }
-        }
-        if (isReloadRequired) {
-            await initUser(RSS3PageOwner);
-        }
-        await setPageTitleFavicon();
-        await setupTheme(); // Setup theme
-        dispatchEvent(Events.pageOwnerReady, RSS3PageOwner);
-        return RSS3PageOwner;
-    },
+        }),
     getPageOwner: () => {
         return RSS3PageOwner;
     },
