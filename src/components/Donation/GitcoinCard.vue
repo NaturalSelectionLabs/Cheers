@@ -38,14 +38,14 @@
                         <vue3-autocounter
                             ref="counter"
                             :startAmount="0"
-                            :endAmount="parseFloat(item.amount)"
+                            :endAmount="parseFloat(item.formatedAmount)"
                             :duration="1"
                             separator=","
-                            :decimals="item.amount.split('.')[1].length"
+                            :decimals="item.formatedAmount.split('.')[1].length"
                             :autoinit="true"
                         />
                     </div>
-                    <div>{{ item.token }}</div>
+                    <div>{{ item.symbol }}</div>
                 </div>
             </div>
         </div>
@@ -61,7 +61,7 @@ import Vue3Autocounter from 'vue3-autocounter';
     props: {
         imageUrl: String,
         name: String,
-        contrib: String,
+        contrib: Number,
         amount: Array,
     },
 })

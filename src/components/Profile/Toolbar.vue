@@ -18,7 +18,7 @@
                     ? 'bg-secondary-btn text-secondary-btn-text shadow-secondary-btn'
                     : 'bg-primary-btn text-primary-btn-text shadow-primary-btn',
             ]"
-            @click="emitAction"
+            @click="emitToggleFollow"
         >
             <span>{{ isFollowing ? 'Following' : 'Follow' }}</span>
             <i class="bx bx-sm no-underline" v-bind:class="[isFollowing ? 'bx-check' : 'bx-plus']"></i>
@@ -57,11 +57,11 @@ import Button from '@/components/Button/Button.vue';
         isFollowing: Boolean,
         isOwner: Boolean,
     },
-    emits: ['action', 'toSetupPage', 'logout'],
+    emits: ['toggleFollow', 'toSetupPage', 'logout'],
 })
 export default class Toolbar extends Vue {
-    emitAction() {
-        this.$emit('action');
+    emitToggleFollow() {
+        this.$emit('toggleFollow');
     }
 
     emitSetUp() {

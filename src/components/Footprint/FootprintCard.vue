@@ -67,14 +67,9 @@ export default class FootprintCard extends Vue {
 
     getDate(): string {
         return this.startDate
-            ? this.formatDate(<string>this.startDate) +
-                  (this.endDate && this.endDate !== <string>this.startDate
-                      ? ` ~ ${this.formatDate(<string>this.endDate)}`
-                      : '')
+            ? this.startDate +
+                  (this.endDate && this.endDate !== <string>this.startDate ? ` ~ ${<string>this.endDate}` : '')
             : 'Loading...';
-    }
-    formatDate(ts: string): string {
-        return new Date(parseInt(ts) * 1000).toLocaleDateString('en-US');
     }
     triggerClaim() {
         this.isClaiming = true;

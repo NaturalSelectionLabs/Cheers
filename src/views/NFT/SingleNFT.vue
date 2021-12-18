@@ -57,10 +57,9 @@ import NFTItem from '@/components/NFT/NFTItem.vue';
 import NFTDetail from '@/components/NFT/NFTDetails.vue';
 import NFTBadges from '@/components/NFT/NFTBadges.vue';
 import RSS3 from '@/common/rss3';
-import { NFT } from '@/common/types';
+import { NFT, NFTResponse } from '@/common/types';
 import config from '@/config';
 import utils from '@/common/utils';
-import setupTheme from '@/common/theme';
 
 @Options({
     name: 'SingleNFT',
@@ -70,7 +69,7 @@ export default class SingleNFT extends Vue {
     rns: string = '';
     ethAddress: string = '';
     private details: NFT = {
-        chain: 'Ethereum',
+        chain: 'Ethereum.NFT',
         token_id: '',
         asset_contract: {
             address: '',
@@ -79,34 +78,29 @@ export default class SingleNFT extends Vue {
     private market: string = 'opensea';
 
     async mounted() {
-        await RSS3.reconnect();
-        const rss3 = await RSS3.visitor();
+        const addrOrName = utils.getAddress(<string>this.$route.params.address);
+        const pageOwner = await RSS3.setPageOwner(addrOrName);
+        this.ethAddress = pageOwner.address;
+        this.rns = pageOwner.name;
 
-        const { ethAddress, rns } = await utils.getAddress(<string>this.$route.params.address);
-        this.ethAddress = ethAddress;
-        this.rns = rns;
+        utils.subDomainModeRedirect(this.rns);
 
         const platform: string = String(this.$route.params.platform);
         const identity: string = String(this.$route.params.identity);
         const id: string = String(this.$route.params.id);
         const type: string = String(this.$route.params.type);
+        // const id: string = String(this.$route.params.id);
 
-        // Setup theme
-        await setupTheme(await rss3.assets.get(this.ethAddress));
+        const nftData = (await utils.loadAssets([
+            {
+                platform: platform,
+                identity: identity,
+                type: type,
+                uniqueID: id,
+            },
+        ])) as unknown as NFTResponse;
 
-        const nftData = await RSS3.getAssetProfile(this.ethAddress, 'NFT');
-
-        if (nftData) {
-            const asset = nftData.assets.find(
-                (ag) => ag.platform === platform && ag.identity === identity && ag.id === id && ag.type === type,
-            );
-            if (asset) {
-                const detail = (await RSS3.getNFTDetails(this.ethAddress, platform, identity, id, type))?.data;
-                if (detail) {
-                    this.details = detail;
-                }
-            }
-        }
+        this.details = nftData?.[0].detail;
     }
 
     back() {

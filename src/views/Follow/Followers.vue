@@ -13,6 +13,21 @@
                     @click="toPublicPage(item.rns, item.address)"
                 />
             </div>
+            <IntersectionObserverContainer
+                v-if="isHavingMoreFollows"
+                :once="false"
+                :enabled="!isLoadingFollows"
+                @trigger="loadMoreFollows"
+            >
+                <Button
+                    size="sm"
+                    class="text-primary-btn-m-text bg-primary-btn-m shadow-primary-btn-m m-auto text-lg"
+                    @click="loadMoreFollows"
+                >
+                    <i v-if="isLoadingFollows" class="bx bx-loader-circle bx-spin"></i>
+                    <i v-else class="bx bx-dots-horizontal-rounded" />
+                </Button>
+            </IntersectionObserverContainer>
         </div>
     </div>
 </template>
@@ -23,88 +38,106 @@ import Button from '@/components/Button/Button.vue';
 import ImgHolder from '@/components/Common/ImgHolder.vue';
 import FollowerCard from '@/components/Follow/FollowerCard.vue';
 import RSS3, { IRSS3 } from '@/common/rss3';
-import RNSUtils from '@/common/rns';
-import config from '@/config';
+import RNS from '@/common/rns';
+import legacyConfig from '@/config';
+import config from '@/common/config';
 import { reverse, uniq } from 'lodash';
-import setupTheme from '@/common/theme';
 import utils from '@/common/utils';
 import { Profile } from '@/common/types';
-import { RSS3Profile } from 'rss3-next/types/rss3';
 import Header from '@/components/Common/Header.vue';
+import IntersectionObserverContainer from '@/components/Common/IntersectionObserverContainer.vue';
 
 @Options({
     name: 'Followers',
-    components: { ImgHolder, Button, FollowerCard, Header },
+    components: { IntersectionObserverContainer, ImgHolder, Button, FollowerCard, Header },
 })
 export default class Followers extends Vue {
-    followerList: Array<Profile> = [];
+    followerList: Profile[] = [];
     rss3Profile: RSS3Profile = {};
     rns: string = '';
     ethAddress: string = '';
     lastRoute: string = '';
     isPageActive: boolean = false;
     loadingNo: number = 0;
+    followList: string[] = [];
+    followStartIndex: number = 0;
+    isHavingMoreFollows: boolean = true;
+    isLoadingFollows: boolean = true;
 
     async initLoad() {
         this.lastRoute = this.$route.fullPath;
         this.followerList = [];
         this.loadingNo = 0;
 
-        const rss3 = await RSS3.visitor();
-        const initFollowersList = await rss3.backlinks.get(this.ethAddress, 'following');
-        const followersList = uniq(reverse(initFollowersList));
+        const addrOrName = utils.getAddress(<string>this.$route.params.address);
+        const pageOwner = await RSS3.setPageOwner(addrOrName);
 
-        if (rss3 && followersList) {
-            for (const item of followersList) {
+        this.ethAddress = pageOwner.address;
+        this.rns = pageOwner.name;
+
+        utils.subDomainModeRedirect(this.rns);
+
+        if (pageOwner.profile) {
+            this.rss3Profile = pageOwner.profile;
+        }
+
+        this.followList = reverse(uniq(pageOwner.followers));
+
+        this.isLoadingFollows = false;
+        await this.loadMoreFollows();
+    }
+
+    async loadMoreFollows() {
+        // Get profile
+        if (!this.isLoadingFollows) {
+            this.isLoadingFollows = true;
+            const apiUser = RSS3.getAPIUser().persona as IRSS3;
+
+            let endIndex = this.followStartIndex + config.splitPageLimits.follows;
+            if (endIndex > this.followList.length) {
+                endIndex = this.followList.length;
+                this.isHavingMoreFollows = false;
+            }
+
+            const profiles = await apiUser.profile.getList(this.followList.slice(this.followStartIndex, endIndex));
+
+            for (const profile of profiles) {
+                const { extracted } = utils.extractEmbedFields(profile.bio || '', []);
                 this.followerList.push({
-                    avatar: config.defaultAvatar,
-                    username: '',
-                    bio: '',
-                    address: item,
-                    displayAddress: this.filter(item),
+                    avatar: profile.avatar?.[0] || config.undefinedImageAlt,
+                    username: profile.name || '',
+                    bio: extracted,
+                    address: profile.persona,
+                    displayAddress: this.filter(profile.persona),
                     rns: '',
                 });
             }
-            setTimeout(() => {
-                this.loadDetails(rss3);
-            }, 0);
+            this.followStartIndex = endIndex;
+            this.startLoadRNS();
+            this.isLoadingFollows = false;
         }
-
-        // Setup theme
-        setupTheme(await rss3.assets.get(this.ethAddress));
     }
 
-    async loadDetails(rss3: IRSS3) {
+    startLoadRNS() {
+        setTimeout(() => {
+            this.loadRNS();
+        }, 0);
+    }
+
+    async loadRNS() {
         const startNo = this.loadingNo;
         const endNo = this.followerList.length;
         for (let i = startNo; i < endNo; i++) {
             if (this.isPageActive) {
                 const item = this.followerList[i];
                 try {
-                    const profile = (await rss3.profile.get(item.address)) || {};
-                    item.avatar = profile.avatar?.[0] || config.defaultAvatar;
-                    item.username = profile.name || '';
-                    item.bio = profile.bio || '';
-                    item.rns = await RNSUtils.addr2Name(item.address);
+                    item.rns = await RNS.addr2Name(item.address);
                 } catch (e) {
                     console.log(item, e);
                 }
                 this.loadingNo = i;
             }
         }
-    }
-
-    async setProfile() {
-        const rss3 = await RSS3.visitor();
-        this.rss3Profile = await rss3.profile.get(this.ethAddress);
-    }
-
-    async setPageTitleFavicon() {
-        const rss3 = await RSS3.visitor();
-        const profile = await rss3.profile.get(this.ethAddress);
-        const favicon = <HTMLLinkElement>document.getElementById('favicon');
-        favicon.href = profile?.avatar?.[0] || '/favicon.ico';
-        document.title = profile?.name || 'Web3 Pass';
     }
 
     filter(address: string) {
@@ -114,17 +147,11 @@ export default class Followers extends Vue {
     async activated() {
         this.isPageActive = true;
 
-        const { ethAddress, rns } = await utils.getAddress(<string>this.$route.params.address);
-        this.ethAddress = ethAddress;
-        this.rns = rns;
-
         setTimeout(async () => {
-            await this.setPageTitleFavicon();
             if (this.lastRoute !== this.$route.fullPath) {
-                await this.setProfile();
                 await this.initLoad();
             } else if (this.loadingNo < this.followerList.length) {
-                await this.loadDetails(await RSS3.visitor());
+                await this.loadRNS();
             }
         }, 0);
     }
@@ -135,9 +162,9 @@ export default class Followers extends Vue {
 
     async toPublicPage(rns: string, ethAddress: string) {
         if (rns) {
-            window.location.href = `//${rns}.${config.subDomain.rootDomain}`;
+            window.location.href = `//${rns}.${legacyConfig.subDomain.rootDomain}`;
         } else {
-            window.location.href = `//${config.subDomain.rootDomain}/${ethAddress}`;
+            window.location.href = `//${legacyConfig.subDomain.rootDomain}/${ethAddress}`;
         }
     }
 }

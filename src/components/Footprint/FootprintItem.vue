@@ -8,13 +8,14 @@
             'w-full aspect-w-1 aspect-h-1 rounded': size === 'auto',
         }"
         :style="{
-            backgroundImage: `url(${imageUrl})`,
+            backgroundImage: `url(${imageUrl || config.undefinedImageAlt})`,
         }"
     />
 </template>
 
 <script lang="ts">
 import { Vue, Options } from 'vue-class-component';
+import config from '@/common/config';
 
 @Options({
     props: {
@@ -25,6 +26,7 @@ import { Vue, Options } from 'vue-class-component';
 export default class FootprintItem extends Vue {
     size!: String;
     imageUrl!: String;
+    config = config;
 }
 </script>
 

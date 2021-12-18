@@ -9,3 +9,4 @@ logs
 storage
 .env
 .cache
+yarn.lock

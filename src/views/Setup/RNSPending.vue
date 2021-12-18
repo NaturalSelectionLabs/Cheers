@@ -13,7 +13,7 @@
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
 import Loading from '@/components/Loading/Loading.vue';
-import RSS3, { IRSS3 } from '@/common/rss3';
+import RSS3 from '@/common/rss3';
 import RNSUtils from '@/common/rns';
 import config from '@/config';
 
@@ -22,19 +22,18 @@ import config from '@/config';
     components: { Loading },
 })
 export default class RNSPending extends Vue {
-    rss3: IRSS3 | null = null;
     rns: string = '';
     loadingIntervalID: ReturnType<typeof setTimeout> | null = null;
     $gtag: any;
 
     async mounted() {
-        if (!(await RSS3.reconnect())) {
+        if (!RSS3.isValidRSS3()) {
             sessionStorage.setItem('redirectFrom', this.$route.fullPath);
             await this.$router.push('/');
         } else {
-            this.rss3 = await RSS3.get();
+            const loginUser = RSS3.getLoginUser();
             this.loadingIntervalID = setInterval(async () => {
-                const address = (<IRSS3>this.rss3).account.address;
+                const address = loginUser.address;
                 const rns = await RNSUtils.addr2Name(address);
                 if (rns !== '') {
                     // Already setup RNS
@@ -42,15 +41,15 @@ export default class RNSPending extends Vue {
                         clearInterval(this.loadingIntervalID);
                         this.loadingIntervalID = null;
                     }
-                    const profile = await (<IRSS3>this.rss3).profile.get();
+                    const profile = loginUser.profile;
                     if (!(profile?.name || profile?.bio || profile?.avatar)) {
                         // Setup Profile
-                        await (<IRSS3>this.rss3).files.sync();
-                        this.$gtag.event('sign_up', { userid: (<IRSS3>this.rss3).account.address });
+                        await loginUser.persona?.files.sync();
+                        this.$gtag.event('sign_up', { userid: loginUser.address });
                         await this.$router.push('/setup');
                     } else {
                         // Login
-                        this.$gtag.event('login', { userid: (<IRSS3>this.rss3).account.address });
+                        this.$gtag.event('login', { userid: loginUser.address });
                         const redirectFrom = sessionStorage.getItem('redirectFrom');
                         sessionStorage.removeItem('redirectFrom');
                         if (rns) {

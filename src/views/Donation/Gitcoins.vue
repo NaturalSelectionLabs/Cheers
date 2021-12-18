@@ -10,13 +10,13 @@
             >
                 <GitcoinCard
                     v-for="item in gitcoins"
-                    :key="item.platform + item.identity + item.id"
-                    :imageUrl="item.info.image_preview_url || defaultAvatar"
-                    :name="item.info.title || 'Inactive Project'"
-                    :contrib="item.info.total_contribs"
-                    :amount="item.info.token_contribs"
-                    @click="toSingleGitcoin(item.platform, item.identity, item.id, item.type)"
-                ></GitcoinCard>
+                    :key="item.id"
+                    :imageUrl="item.detail.grant.logo || undefinedImageAlt"
+                    :name="item.detail.grant.title || 'Inactive Project'"
+                    :contrib="item.detail.txs.length"
+                    :amount="item.detail.txs"
+                    @click="toSingleGitcoin(item.id)"
+                />
             </div>
             <div
                 class="fixed bottom-2 left-0 right-0 flex gap-5 m-auto px-4 py-4 w-full max-w-md bg-btn-container"
@@ -39,15 +39,14 @@ import { Options, Vue } from 'vue-class-component';
 import Button from '@/components/Button/Button.vue';
 import GitcoinTitle from '@/components/Donation/GitcoinTitle.vue';
 import GitcoinCard from '@/components/Donation/GitcoinCard.vue';
-import config from '@/config';
+import legacyConfig from '@/config';
+import config from '@/common/config';
 import RSS3 from '@/common/rss3';
-import { GeneralAssetWithTags } from '@/common/types';
+import { DetailedDonation } from '@/common/types';
 import { debounce } from 'lodash';
 import utils from '@/common/utils';
-import { RSS3Profile } from 'rss3-next/types/rss3';
 import Header from '@/components/Common/Header.vue';
-import setupTheme from '@/common/theme';
-
+import { utils as RSS3Utils } from 'rss3';
 @Options({
     name: 'Gitcoins',
     components: { Button, GitcoinTitle, GitcoinCard, Header },
@@ -57,11 +56,14 @@ export default class Gitcoins extends Vue {
     ethAddress: string = '';
     grants: number = 0;
     contribs: number = 0;
-    gitcoins: GeneralAssetWithTags[] = [];
+    gitcoins: DetailedDonation[] = [];
     isOwner: boolean = false;
-    rss3Profile: RSS3Profile = {};
+    rss3Profile: any = {};
     scrollTop: number = 0;
     lastRoute: string = '';
+    $gtag: any;
+
+    undefinedImageAlt = config.undefinedImageAlt;
 
     async mounted() {
         this.mountScrollEvent();
@@ -72,29 +74,21 @@ export default class Gitcoins extends Vue {
         this.contribs = 0;
         this.gitcoins = [];
 
-        await RSS3.reconnect();
-        const rss3 = await RSS3.visitor();
-        const owner: string = <string>rss3.account.address;
+        const addrOrName = utils.getAddress(<string>this.$route.params.address);
+        const pageOwner = await RSS3.setPageOwner(addrOrName);
+        this.ethAddress = pageOwner.address;
+        this.rns = pageOwner.name;
+        this.isOwner = RSS3.isNowOwner();
 
-        const { ethAddress, rns } = await utils.getAddress(<string>this.$route.params.address);
-        this.ethAddress = ethAddress;
-        this.rns = rns;
-        this.isOwner = ethAddress == owner;
+        utils.subDomainModeRedirect(this.rns);
 
-        this.rss3Profile = await rss3.profile.get(this.ethAddress);
+        this.rss3Profile = await pageOwner.profile;
 
-        // Setup theme
-        setupTheme(await rss3.assets.get(this.ethAddress));
-
-        const gitcoinsData = await RSS3.getAssetProfile(this.ethAddress, 'Gitcoin-Donation');
-        if (gitcoinsData) {
-            const { listed } = await utils.initAssets(
-                await rss3.assets.get(this.ethAddress),
-                gitcoinsData.assets,
-                'Gitcoin-Donation',
-            );
-            this.gitcoins = listed;
-            this.grants = this.gitcoins.length;
+        const { donations } = await utils.initAssets();
+        this.gitcoins = await utils.loadAssets(donations);
+        this.grants = this.gitcoins.length;
+        for (const grant of this.gitcoins) {
+            this.contribs += grant.detail.txs.length;
         }
     }
 
@@ -106,10 +100,18 @@ export default class Gitcoins extends Vue {
         window.open(`https://gitcoin.co/`);
     }
 
-    toSingleGitcoin(platform: string, identity: string, id: string, type: string) {
+    toSingleGitcoin(id: string) {
+        const { platform, identity, type, uniqueID } = RSS3Utils.id.parseAsset(id);
+        this.$gtag.event('visitSingleGitcoin', {
+            userid: this.rns || this.ethAddress,
+            platform,
+            identity,
+            uniqueID,
+            type,
+        });
         this.$router.push(
-            (config.subDomain.isSubDomainMode ? '' : `/${this.rns || this.ethAddress}`) +
-                `/singlegitcoin/${platform}/${identity}/${id}/${type}`,
+            (legacyConfig.subDomain.isSubDomainMode ? '' : `/${this.rns || this.ethAddress}`) +
+                `/singlegitcoin/${platform}/${identity}/${uniqueID}/${type}`,
         );
     }
 
@@ -132,6 +134,7 @@ export default class Gitcoins extends Vue {
                 el.scrollTop = this.scrollTop;
             }
         } else {
+            console.log('init load');
             this.initLoad();
         }
     }
