@@ -251,14 +251,14 @@
                         }"
                     >
                         <div v-if="contents.length > 0" class="divide-content-divider divide-y-xs">
-                            <div v-for="element in contents" :key="element.item.id">
+                            <div v-for="element in contents" :key="element.id">
                                 <ContentCard
-                                    v-if="element.item.id.includes('auto')"
-                                    :timestamp="new Date(element.item.date_updated).valueOf()"
-                                    :content="element.item.summary"
-                                    :title="element.item.title"
-                                    :provider="element.item.target.field.split('-')[2]"
-                                    @click="toContentLink(element.item)"
+                                    v-if="element.id.includes('auto')"
+                                    :timestamp="new Date(element.date_updated).valueOf()"
+                                    :content="element.summary"
+                                    :title="element.title"
+                                    :provider="element.target.field.split('-')[2]"
+                                    @click="toContentLink(element)"
                                 />
                             </div>
                             <IntersectionObserverContainer
@@ -530,6 +530,7 @@ export default class Home extends Vue {
     gitcoins: AnyObject[] = [];
     footprints: AnyObject[] = [];
     contents: any[] = [];
+    contentTimestamp: string = '';
     $gtag: any;
     scrollTop: number = 0;
     scrollNftsLeft: number = 0;
@@ -601,12 +602,11 @@ export default class Home extends Vue {
 
         // Load Contents
         setTimeout(async () => {
-            const { listed, haveMore } = await utils.initContent();
+            const { listed, haveMore, timestamp } = await utils.initContent();
             this.contents = listed;
-            console.log(listed);
+            this.contentTimestamp = timestamp;
             this.isContentsHaveMore = haveMore;
             this.isLoadingContents = false;
-            await this.loadMoreContents(true);
         }, 0);
 
         if (RSS3.isValidRSS3()) {
@@ -706,20 +706,14 @@ export default class Home extends Vue {
     }
 
     async loadMoreContents(isInitLoad: boolean = false) {
-        // if ((!isInitLoad && this.isLoadingContents) || !this.isContentsHaveMore) {
-        //     // Is already loading or not having more
-        //     return;
-        // }
         this.isLoadingContents = true;
 
-        const timestamp = [...this.contents].pop()?.item.date_created || '';
-        const { listed, haveMore } = await utils.initContent(timestamp);
-
-        if (!haveMore) {
-            this.isContentsHaveMore = false;
+        if (this.isContentsHaveMore) {
+            const { listed, haveMore, timestamp } = await utils.initContent(this.contentTimestamp);
+            this.contents = [...this.contents, ...listed];
+            this.contentTimestamp = timestamp;
+            this.isContentsHaveMore = haveMore;
         }
-
-        this.contents = [...this.contents, ...listed];
 
         this.isLoadingContents = false;
     }
@@ -1016,6 +1010,7 @@ export default class Home extends Vue {
             await this.initLoad(); // TODO temporary measure
         } else {
             this.contents = [];
+            this.contentTimestamp = '';
             this.isFollowing = false;
             this.isOwner = false;
             this.isLoadingContents = true;

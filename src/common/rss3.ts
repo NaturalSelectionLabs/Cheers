@@ -1,18 +1,17 @@
 /* eslint-disable import/no-anonymous-default-export */
+import setupTheme from '@/common/theme';
+import utils from '@/common/utils';
+import legacyConfig from '@/config';
 import WalletConnectProvider from '@walletconnect/web3-provider';
 import { ethers } from 'ethers';
-import RSS3, { utils as RSS3Utils } from 'rss3';
-import { GeneralAsset } from './types';
-import config from './config';
-import rns from './rns';
-import Events from './events';
-import Items from 'rss3/dist/items/index';
-import Assets from 'rss3/dist/assets/index';
-
-import legacyConfig from '@/config';
 import Cookies from 'js-cookie';
-import utils from '@/common/utils';
-import setupTheme from '@/common/theme';
+import RSS3, { utils as RSS3Utils } from 'rss3';
+import Assets from 'rss3/dist/assets/index';
+import Items from 'rss3/dist/items/index';
+import config from './config';
+import Events from './events';
+import rns from './rns';
+import { GeneralAsset } from './types';
 
 export interface IAssetProfile {
     assets: GeneralAsset[];
@@ -384,7 +383,7 @@ export default {
         return RSS3LoginUser;
     },
     setPageOwner: async (addrOrName: string) =>
-        new Promise(async (resolve, reject) => {
+        new Promise<RSS3DetailPersona>(async (resolve, reject) => {
             if (!isSettingPageOwner) {
                 isSettingPageOwner = true;
                 let isReloadRequired = false;

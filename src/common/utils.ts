@@ -1,21 +1,9 @@
+import legacyConfig from '@/config';
 import { utils as RSS3Utils } from 'rss3';
 import { AnyObject } from 'rss3/types/extend';
-import { formatter } from './address';
-import legacyConfig from '@/config';
 import config from './config';
-import RNS from './rns';
 import RSS3, { IRSS3 } from './rss3';
-import {
-    CustomField_Pass,
-    DonationDetailByGrant,
-    GeneralAsset,
-    GitcoinResponse,
-    ItemDetails,
-    NFT,
-    NFTResponse,
-    POAP,
-    POAPResponse,
-} from './types';
+import { CustomField_Pass, GeneralAsset, GitcoinResponse, NFTResponse, POAPResponse } from './types';
 
 const orderPattern = new RegExp(`^${config.tags.prefix}:order:(-?\\d+)$`, 'i');
 const hiddenTag = `${config.tags.prefix}:${config.tags.hiddenTag}`;
@@ -181,113 +169,36 @@ function isAsset(field: string | undefined): boolean {
     return !!(field && condition.find((item) => field.includes(item)));
 }
 
-async function initContent(timestamp: string = '', following: boolean = false) {
-    const assetSet = new Set<string>();
-    const profileSet = new Set<string>();
-    const apiUser = await RSS3.getAPIUser();
+async function initContent(timestamp: string = '') {
     const pageOwner = await RSS3.getPageOwner();
 
-    const allItems =
-        (following
-            ? await pageOwner.items?.getListByPersona({
-                  persona: pageOwner.address,
-                  linkID: 'following',
-                  limit: config.splitPageLimits.contents,
-                  tsp: timestamp,
-              })
-            : await pageOwner.items?.getListByPersona({
-                  persona: pageOwner.address,
-                  limit: config.splitPageLimits.contents,
-                  tsp: timestamp,
-              })) || [];
+    let autoItems =
+        (await pageOwner.items?.getListByPersona({
+            persona: pageOwner.address,
+            limit: config.splitPageLimits.contents,
+            tsp: timestamp,
+            fieldLike: '%items-auto%',
+        })) || [];
 
-    const haveMore = allItems.length === config.splitPageLimits.contents;
+    let MirrorItems =
+        (await pageOwner.items?.getListByPersona({
+            persona: pageOwner.address,
+            limit: config.splitPageLimits.contents,
+            tsp: timestamp,
+            fieldLike: '%Mirror.XYZ%',
+        })) || [];
 
-    profileSet.add(pageOwner.address);
-    const items = allItems.filter((item) => 'target' in item && !isAsset(item.target.field));
-    items.forEach((item) => {
-        // if ('target' in item) {
-        //     // Is auto item
-        //     if (isAsset(item.target.field)) {
-        //         assetSet.add(item.target.field.substring(7, item.target.field.length));
-        //     }
-        // }
-        profileSet.add(item.id.split('-')[0]);
-    });
+    let haveMore = autoItems.length + MirrorItems.length >= config.splitPageLimits.contents;
 
-    // const details = assetSet.size !== 0 ? await getAssetsTillSuccess(assetSet) : [];
-
-    const profiles =
-        profileSet.size !== 0 ? (await apiUser.persona?.profile.getList(Array.from(profileSet))) || [] : [];
-
-    const listed: ItemDetails[] = [];
-
-    items.forEach((item) => {
-        const profile = profiles.find((element: any) => element.persona === item.id.split('-')[0]);
-        let ItemDetails: ItemDetails = {
-            item: item,
-            avatar: profile?.avatar?.[0] || config.undefinedImageAlt,
-            name: profile?.name || formatter(profile?.persona) || '',
-        };
-
-        // if ('target' in item) {
-        //     // Is auto item
-        //     if (isAsset(item.target.field)) {
-        //         let assetDetails: {
-        //             name?: string;
-        //             description?: string | null;
-        //             image_url?: string | null;
-        //         } = {
-        //             image_url: config.undefinedImageAlt,
-        //         };
-
-        //         const asset = details.find(
-        //             (asset) => asset.id === item.target?.field.substring(7, item.target.field.length),
-        //         );
-
-        //         if (asset) {
-        //             if (item.target.field.includes('Gitcoin')) {
-        //                 // handle Gitcoin record
-        //                 let DonationDetails = asset.detail as DonationDetailByGrant;
-        //                 assetDetails = {
-        //                     name: DonationDetails.grant.title,
-        //                     description: DonationDetails.grant.description,
-        //                     image_url: DonationDetails.grant.logo,
-        //                 };
-        //             } else if (item.target.field.includes('NFT')) {
-        //                 // handle NFT
-        //                 let NFTDetails = asset.detail as NFT;
-        //                 assetDetails = {
-        //                     name: NFTDetails.name,
-        //                     description: NFTDetails.description,
-        //                     image_url:
-        //                         NFTDetails.image_preview_url ||
-        //                         NFTDetails.image_url ||
-        //                         NFTDetails.image_thumbnail_url ||
-        //                         NFTDetails.animation_url ||
-        //                         NFTDetails.animation_original_url,
-        //                 };
-        //             } else {
-        //                 // handle POAP
-        //                 let POAPDetails = asset.detail as POAP;
-        //                 assetDetails = {
-        //                     name: POAPDetails.name,
-        //                     description: POAPDetails.description,
-        //                     image_url: POAPDetails.image_url,
-        //                 };
-        //             }
-        //         }
-
-        //         ItemDetails.details = assetDetails;
-        //     }
-        // }
-
-        listed.push(ItemDetails);
-    });
+    let items = autoItems
+        .concat(MirrorItems)
+        .sort((a, b) => new Date(b.date_updated).valueOf() - new Date(a.date_updated).valueOf())
+        .slice(0, 35);
 
     return {
-        listed: listed,
+        listed: items,
         haveMore: haveMore,
+        timestamp: items.pop()?.date_created || '',
     };
 }
 
