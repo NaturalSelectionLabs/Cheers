@@ -215,7 +215,6 @@ import LoadingContainer from '@/components/Loading/LoadingContainer.vue';
 import RSS3 from '@/common/rss3';
 import { utils as RSS3Utils } from 'rss3';
 import config from '@/config';
-import setupTheme from '@/common/theme';
 
 import NFTIcon from '@/components/Icons/NFTIcon.vue';
 import GitcoinIcon from '@/components/Icons/GitcoinIcon.vue';

@@ -53,7 +53,7 @@
                             :is-loading-persona="isLoadingPersona"
                             @to-setup-page="toSetupPage"
                             @logout="logout"
-                            @action="action"
+                            @toggleFollow="toggleFollow"
                         />
                     </template>
                 </Profile>
@@ -430,7 +430,7 @@ import BarCard from '@/components/Card/BarCard.vue';
 import Profile from '@/components/Profile/Profile.vue';
 import AccountItem from '@/components/Account/AccountItem.vue';
 import NFTItem from '@/components/NFT/NFTItem.vue';
-import RSS3 from '@/common/rss3';
+import RSS3, { IRSS3 } from '@/common/rss3';
 import { utils as RSS3Utils } from 'rss3';
 import Modal from '@/components/Common/Modal.vue';
 import RNSUtils from '@/common/rns';
@@ -559,26 +559,40 @@ export default class Home extends Vue {
     }
 
     async initLoad() {
+        this.lastRoute = this.$route.fullPath;
+
         (<HTMLLinkElement>document.getElementById('favicon')).href = '/favicon.ico';
         document.title = 'Web3 Pass';
+
         this.isLoadingPersona = true;
-        const pageOwner = await RSS3.setPageOwner(utils.getAddress(<string>this.$route.params.address));
-        this.lastRoute = this.$route.fullPath;
+        const aon = utils.getAddress(<string>this.$route.params.address);
+        console.log(aon);
+        const pageOwner = await RSS3.setPageOwner(aon);
         this.isShowingAccount = false;
 
         this.rns = pageOwner.name;
         this.ethAddress = pageOwner.address;
-        this.isOwner = RSS3.isNowOwner();
 
         utils.subDomainModeRedirect(this.rns);
 
-        const apiUser = RSS3.getAPIUser().persona;
-        if ((<RSS3Index>await apiUser?.files.get(pageOwner.address)).signature) {
+        if (pageOwner.file?.signature) {
             this.isAccountExist = true;
         } else {
             this.isAccountExist = false;
             return;
         }
+
+        await this.updateUserInfo();
+
+        if (RSS3.isValidRSS3()) {
+            await RSS3.ensureLoginUser();
+            this.checkIsFollowing();
+            this.isOwner = RSS3.isNowOwner();
+        }
+    }
+
+    async updateUserInfo() {
+        const pageOwner = RSS3.getPageOwner();
 
         const profile = pageOwner.profile;
 
@@ -602,7 +616,7 @@ export default class Home extends Vue {
         this.isLoadingPersona = false;
 
         // Load assets
-        this.startLoadingAssets(true);
+        await this.startLoadingAssets(true);
 
         // Load Contents
         setTimeout(async () => {
@@ -612,11 +626,6 @@ export default class Home extends Vue {
             this.isContentsHaveMore = haveMore;
             this.isLoadingContents = false;
         }, 0);
-
-        if (RSS3.isValidRSS3()) {
-            await RSS3.ensureLoginUser();
-            this.checkIsFollowing();
-        }
     }
 
     startLoadingAccounts() {
@@ -709,7 +718,7 @@ export default class Home extends Vue {
         }
     }
 
-    async loadMoreContents(isInitLoad: boolean = false) {
+    async loadMoreContents() {
         this.isLoadingContents = true;
 
         if (this.isContentsHaveMore) {
@@ -722,20 +731,21 @@ export default class Home extends Vue {
         this.isLoadingContents = false;
     }
 
-    async action() {
+    async toggleFollow() {
         if (RSS3.isValidRSS3()) {
             if (this.isFollowing) {
                 await this.unfollow();
-                this.rss3Relations.followers.splice(this.rss3Relations.followers.indexOf(RSS3.getAPIUser().address), 1);
             } else {
                 await this.follow();
-                this.rss3Relations.followers.push(RSS3.getAPIUser().address);
             }
+            // Trigger force refresh
             const followers = this.$router.getRoutes().find((r) => r.name === 'Followers')?.instances?.default;
             if (followers) {
                 (<any>followers).lastRoute = '';
             }
-            await RSS3.getAPIUser().files.sync();
+            // Save and sync
+            const loginUserPersona = RSS3.getLoginUser().persona as IRSS3;
+            await loginUserPersona.files.sync();
         } else {
             // Clear last user status
             (<HTMLLinkElement>document.getElementById('favicon')).href = '/favicon.ico';
@@ -1011,7 +1021,7 @@ export default class Home extends Vue {
             //     this.startLoadingAccounts(await (<IRSS3>this.rss3).accounts.get(this.ethAddress));
             //     await this.startLoadingAssets(false);
             // }
-            await this.initLoad(); // TODO temporary measure
+            await this.updateUserInfo();
         } else {
             this.contents = [];
             this.contentTimestamp = '';

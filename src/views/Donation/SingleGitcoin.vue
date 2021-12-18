@@ -21,7 +21,6 @@ import utils from '@/common/utils';
 import GitcoinDetails from '@/components/Donation/GitcoinDetails.vue';
 import { DonationInfo, GitcoinResponse, GrantInfo } from '@/common/types';
 import Header from '@/components/Common/Header.vue';
-import setupTheme from '@/common/theme';
 
 @Options({
     name: 'SingleGitcoin',

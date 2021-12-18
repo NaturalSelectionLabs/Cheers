@@ -60,7 +60,6 @@ import RSS3 from '@/common/rss3';
 import { NFT, NFTResponse } from '@/common/types';
 import config from '@/config';
 import utils from '@/common/utils';
-import setupTheme from '@/common/theme';
 
 @Options({
     name: 'SingleNFT',

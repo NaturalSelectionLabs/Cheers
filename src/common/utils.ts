@@ -3,7 +3,7 @@ import { utils as RSS3Utils } from 'rss3';
 import { AnyObject } from 'rss3/types/extend';
 import config from './config';
 import RSS3, { IRSS3 } from './rss3';
-import { CustomField_Pass, GeneralAsset, GitcoinResponse, NFTResponse, POAPResponse } from './types';
+import { CustomField_PassAssets, GeneralAsset, GitcoinResponse, NFTResponse, POAPResponse } from './types';
 
 const orderPattern = new RegExp(`^${config.tags.prefix}:order:(-?\\d+)$`, 'i');
 const hiddenTag = `${config.tags.prefix}:${config.tags.hiddenTag}`;
@@ -32,11 +32,12 @@ function sortByOrderTag<T extends TypesWithTag>(taggeds: T[]): T[] {
 
 async function initAssets() {
     const pageOwner = RSS3.getPageOwner();
+    const apiUserPersona = RSS3.getAPIUser().persona as IRSS3;
 
-    let assetList = await pageOwner.assets?.auto.getList(pageOwner.address);
+    let assetList = await apiUserPersona.assets.auto.getList(pageOwner.address);
 
     let taggedList = <{ id: string; hide?: boolean; order?: number }[]>[];
-    const passTags = (await pageOwner.files.get(pageOwner.address))._pass?.assets;
+    const passTags = pageOwner.file?.['_pass']?.assets;
     taggedList = passTags ? passTags : [];
 
     const hiddenList = taggedList
@@ -113,11 +114,11 @@ async function loadAssets(parsedAssets: GeneralAsset[]) {
 }
 
 async function getAssetsTillSuccess(assetSet: Set<string>, delay: number = 1500, count: number = 5) {
-    const pageOwner = RSS3.getPageOwner();
+    const apiUserPersona = RSS3.getAPIUser().persona as IRSS3;
     return new Promise<(NFTResponse | GitcoinResponse | POAPResponse)[]>(async (resolve, reject) => {
         const tryReq = async () => {
             try {
-                const details = (await pageOwner.assets?.getDetails({
+                const details = (await apiUserPersona.assets.getDetails({
                     assets: Array.from(assetSet),
                     full: true,
                 })) as (NFTResponse | GitcoinResponse | POAPResponse)[];
@@ -171,9 +172,10 @@ function isAsset(field: string | undefined): boolean {
 
 async function initContent(timestamp: string = '') {
     const pageOwner = await RSS3.getPageOwner();
+    const apiUserPersona = RSS3.getAPIUser().persona as IRSS3;
 
     let autoItems =
-        (await pageOwner.items?.getListByPersona({
+        (await apiUserPersona.items.getListByPersona({
             persona: pageOwner.address,
             limit: config.splitPageLimits.contents,
             tsp: timestamp,
@@ -181,7 +183,7 @@ async function initContent(timestamp: string = '') {
         })) || [];
 
     let MirrorItems =
-        (await pageOwner.items?.getListByPersona({
+        (await apiUserPersona.items.getListByPersona({
             persona: pageOwner.address,
             limit: config.splitPageLimits.contents,
             tsp: timestamp,
@@ -231,10 +233,10 @@ function fixURLSchemas(url: string) {
     return fixedUrl;
 }
 
-async function updateAssetTags(assetFields: CustomField_Pass[]) {
+async function updateAssetTags(assetFields: CustomField_PassAssets[]) {
     const loginUser = await RSS3.getLoginUser();
-    if (loginUser.persona) {
-        const personaFile = await loginUser.persona.files.get();
+    if (loginUser.file) {
+        const personaFile = loginUser.file;
         // Init base structure
         if (!personaFile['_pass']) {
             personaFile['_pass'] = {
@@ -243,7 +245,7 @@ async function updateAssetTags(assetFields: CustomField_Pass[]) {
         } else if (!personaFile['_pass'].assets) {
             personaFile['_pass'].assets = [];
         }
-        const assets: CustomField_Pass[] = personaFile['_pass'].assets;
+        const assets: CustomField_PassAssets[] = personaFile['_pass'].assets;
         await Promise.all(
             assetFields.map((afo) => {
                 // Asset Field Object (afo)
@@ -268,10 +270,10 @@ async function updateAssetTags(assetFields: CustomField_Pass[]) {
 }
 
 async function setAssetTags(listed: RSS3AutoAsset[], unlisted: RSS3AutoAsset[]) {
-    const assets: CustomField_Pass[] = [];
+    const assets: CustomField_PassAssets[] = [];
     await Promise.all(
         listed.map(async (asset, index) => {
-            const afo: CustomField_Pass = {
+            const afo: CustomField_PassAssets = {
                 id: asset,
                 order: index,
             };
@@ -280,7 +282,7 @@ async function setAssetTags(listed: RSS3AutoAsset[], unlisted: RSS3AutoAsset[]) 
     );
     await Promise.all(
         unlisted.map(async (asset) => {
-            const afo: CustomField_Pass = {
+            const afo: CustomField_PassAssets = {
                 id: asset,
                 hide: true,
             };
@@ -312,14 +314,14 @@ const setAccountsTags = async (listed: TypesWithTag[], unlisted: TypesWithTag[])
     return listed.concat(unlisted);
 };
 
-const isAssetNotHidden = async (asset: RSS3AutoAsset | RSS3CustomAsset) => {
-    const pageOwner = await RSS3.getPageOwner();
-    const apiUser = await RSS3.getAPIUser();
-    const personaFile = await apiUser.persona?.files.get(pageOwner.address);
+const isAssetNotHidden = async (asset: RSS3AutoAsset | RSS3CustomAsset, _passAssetsField: CustomField_PassAssets[]) => {
     // Init base structure
-    const assets: CustomField_Pass[] = personaFile?.['_pass']?.assets;
-    const af = assets?.find((oaf) => oaf.id === asset);
-    return !!af?.hide;
+    if (!_passAssetsField.length) {
+        return true;
+    } else {
+        const af = _passAssetsField.find((oaf) => oaf.id === asset);
+        return !!af?.hide;
+    }
 };
 
 function getAddress(routerAddress: string) {

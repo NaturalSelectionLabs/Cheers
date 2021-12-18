@@ -153,7 +153,6 @@ import draggable from 'vuedraggable';
 import LoadingContainer from '@/components/Loading/LoadingContainer.vue';
 import { DetailedNFT } from '@/common/types';
 import Header from '@/components/Common/Header.vue';
-import setupTheme from '@/common/theme';
 import utils from '@/common/utils';
 
 @Options({

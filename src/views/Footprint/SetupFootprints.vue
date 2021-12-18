@@ -135,7 +135,6 @@ import LoadingContainer from '@/components/Loading/LoadingContainer.vue';
 import FootprintItem from '@/components/Footprint/FootprintItem.vue';
 import utils from '@/common/utils';
 import Header from '@/components/Common/Header.vue';
-import setupTheme from '@/common/theme';
 
 @Options({
     name: 'SetupFootprints',

@@ -6,12 +6,10 @@ import WalletConnectProvider from '@walletconnect/web3-provider';
 import { ethers } from 'ethers';
 import Cookies from 'js-cookie';
 import RSS3, { utils as RSS3Utils } from 'rss3';
-import Assets from 'rss3/dist/assets/index';
-import Items from 'rss3/dist/items/index';
 import config from './config';
 import Events from './events';
 import rns from './rns';
-import { GeneralAsset } from './types';
+import { CustomField_PassAssets, GeneralAsset } from './types';
 
 export interface IAssetProfile {
     assets: GeneralAsset[];
@@ -19,15 +17,13 @@ export interface IAssetProfile {
 }
 
 export const EMPTY_RSS3_DP: RSS3DetailPersona = {
-    files: null,
+    file: null,
     persona: null,
     address: '',
     name: '',
     profile: null,
     followers: [],
     followings: [],
-    items: null,
-    assets: null,
     isReady: false,
 };
 export type IRSS3 = RSS3;
@@ -43,15 +39,13 @@ export interface IAssetProfile {
 }
 
 export interface RSS3DetailPersona {
-    files: any;
+    file: RSS3Index | null;
     persona: RSS3 | null;
     address: string;
     name: string;
     profile: RSS3Profile | null;
     followers: string[];
     followings: string[];
-    items: Items | null;
-    assets: Assets | null;
     isReady: boolean;
 }
 
@@ -268,12 +262,10 @@ async function initUser(user: RSS3DetailPersona, skipSignSync: boolean = false) 
         user.name = await rns.addr2Name(user.address);
     }
     const RSS3APIPersona = apiPersona();
+    user.file = await RSS3APIPersona.files.get(user.address);
     user.profile = await RSS3APIPersona.profile.get(user.address);
     user.followers = await RSS3APIPersona.backlinks.getList(user.address, 'following');
     user.followings = await RSS3APIPersona.links.getList(user.address, 'following');
-    user.items = await RSS3APIPersona.items;
-    user.assets = await RSS3APIPersona.assets;
-    user.files = await RSS3APIPersona.files;
     user.isReady = true;
     console.log(RSS3APIPersona);
 }
@@ -365,7 +357,9 @@ export default {
     },
     reconnect: async () => {
         const res = await reconnect();
-        dispatchEvent(Events.connect, RSS3LoginUser);
+        if (res) {
+            dispatchEvent(Events.connect, RSS3LoginUser);
+        }
         return res;
     },
     getAPIUser: (): RSS3DetailPersona => {
@@ -444,7 +438,7 @@ export default {
         }
         return '';
     },
-    getAvailableThemes(assets: RSS3AutoAsset[]) {
+    getAvailableThemes(assets: RSS3AutoAsset[], _passAssetsField: CustomField_PassAssets[]) {
         // ${platform}-${identity}-${type}-${uniqueID}
         const availableThemes: Theme[] = [];
         for (const theme of legacyConfig.theme) {
@@ -452,7 +446,7 @@ export default {
                 const { type, uniqueID } = RSS3Utils.id.parseAsset(asset);
                 if (
                     type.includes('NFT') &&
-                    utils.isAssetNotHidden(asset) &&
+                    utils.isAssetNotHidden(asset, _passAssetsField) &&
                     uniqueID.split('.')[0] === theme.nftIdPrefix
                 ) {
                     availableThemes.push(theme);

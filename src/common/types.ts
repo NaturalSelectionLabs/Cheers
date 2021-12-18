@@ -145,7 +145,7 @@ export interface Profile {
     displayAddress?: string;
 }
 
-export interface CustomField_Pass {
+export interface CustomField_PassAssets {
     id: string;
     hide?: boolean;
     order?: number;

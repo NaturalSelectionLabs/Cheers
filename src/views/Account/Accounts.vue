@@ -57,7 +57,6 @@ import { utils as RSS3Utils } from 'rss3';
 import ContentProviders from '@/common/content-providers';
 import utils from '@/common/utils';
 import Header from '@/components/Common/Header.vue';
-import setupTheme from '@/common/theme';
 import { DetailedAccount } from '@/common/types';
 
 @Options({

@@ -338,7 +338,6 @@ import draggable from 'vuedraggable';
 import Input from '@/components/Input/Input.vue';
 import EVMpAccountItem from '@/components/Account/EVMpAccountItem.vue';
 import Header from '@/components/Common/Header.vue';
-import setupTheme from '@/common/theme';
 import utils from '@/common/utils';
 
 @Options({

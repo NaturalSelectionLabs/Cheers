@@ -125,7 +125,6 @@ import LinkButton from '@/components/Button/LinkButton.vue';
 import RNSUtils from '@/common/rns';
 import BarCard from '@/components/Card/BarCard.vue';
 import utils from '@/common/utils';
-import setupTheme from '@/common/theme';
 
 @Options({
     name: 'EditProfile',

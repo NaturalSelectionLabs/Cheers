@@ -135,7 +135,6 @@ import LoadingContainer from '@/components/Loading/LoadingContainer.vue';
 import GitcoinItem from '@/components/Donation/GitcoinItem.vue';
 import utils from '@/common/utils';
 import Header from '@/components/Common/Header.vue';
-import setupTheme from '@/common/theme';
 
 @Options({
     name: 'SetupGitcoins',

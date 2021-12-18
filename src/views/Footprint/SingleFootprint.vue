@@ -26,7 +26,6 @@ import RSS3 from '@/common/rss3';
 import utils from '@/common/utils';
 import FootprintDetails from '@/components/Footprint/FootprintDetails.vue';
 import Header from '@/components/Common/Header.vue';
-import setupTheme from '@/common/theme';
 
 @Options({
     name: 'SingleFootprint',
