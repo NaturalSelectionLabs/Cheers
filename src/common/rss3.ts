@@ -262,7 +262,7 @@ async function initUser(user: RSS3DetailPersona, skipSignSync: boolean = false) 
         user.name = await rns.addr2Name(user.address);
     }
     const RSS3APIPersona = apiPersona();
-    user.file = await RSS3APIPersona.files.get(user.address);
+    user.file = (await RSS3APIPersona.files.get(user.address)) as RSS3Index;
     user.profile = await RSS3APIPersona.profile.get(user.address);
     user.followers = await RSS3APIPersona.backlinks.getList(user.address, 'following');
     user.followings = await RSS3APIPersona.links.getList(user.address, 'following');
