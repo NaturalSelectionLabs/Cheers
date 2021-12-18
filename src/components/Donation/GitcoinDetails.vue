@@ -22,9 +22,13 @@
                     <i class="bx bx-link align-middle" />
                     {{ details.reference_url }}
                 </p>
-                <span v-if="grantsUrl">-</span>
+                <span
+                    v-if="grantsUrl && grantsUrl !== details.reference_url"
+                    class="px-1 text-sm font-semibold leading-tight"
+                    >|</span
+                >
                 <p class="text-sm cursor-pointer truncate" @click="toExternalLink(grantsUrl)">
-                    <i class="bx bx-link align-middle" />
+                    <!-- <i class="bx bx-link align-middle" /> -->
                     {{ grantsUrl }}
                 </p>
             </div>
