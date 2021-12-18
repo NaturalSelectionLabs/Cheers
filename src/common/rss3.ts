@@ -256,23 +256,23 @@ async function reconnect() {
 async function initUser(user: RSS3DetailPersona | RSS3FullPersona, skipSignSync: boolean = false) {
     user.isReady = false;
     const RSS3APIPersona = apiPersona();
+    if ('persona' in user && !user.address) {
+        // Fix address
+        user.address = user.persona.account.address;
+    }
     if (user.name && !user.address) {
         user.address = await rns.name2Addr(user.name);
     }
     if (user.address && !user.name) {
         user.name = await rns.addr2Name(user.address);
     }
+    user.file = (await RSS3APIPersona.files.get(user.address)) as RSS3Index;
     if ('persona' in user) {
-        if (!user.address) {
-            user.address = user.persona.account.address;
-        }
-        user.file = (await user.persona.files.get(user.address)) as RSS3Index;
+        // Sync persona
         user.persona.files.set(user.file);
         if (!skipSignSync) {
             await user.persona.files.sync();
         }
-    } else {
-        user.file = (await RSS3APIPersona.files.get(user.address)) as RSS3Index;
     }
     user.profile = user.file.profile || {};
     user.followers = await RSS3APIPersona.backlinks.getList(user.address, 'following');
@@ -281,7 +281,7 @@ async function initUser(user: RSS3DetailPersona | RSS3FullPersona, skipSignSync:
 }
 
 function apiPersona(): RSS3 {
-    return RSS3LoginUser.persona || RSS3APIUser.persona;
+    return RSS3APIUser.persona;
 }
 
 function isValidRSS3() {
@@ -367,10 +367,10 @@ export default {
         }
         return res;
     },
-    getAPIUser: (): RSS3DetailPersona => {
-        const user = Object.create(EMPTY_RSS3_DP);
-        user.persona = apiPersona();
-        return user;
+    getAPIUser: (): RSS3SDKPersona => {
+        return {
+            persona: apiPersona(),
+        };
     },
     getLoginUser: () => {
         return RSS3LoginUser;
