@@ -261,7 +261,11 @@
                                     @click="toContentLink(element.item)"
                                 />
                             </div>
-                            <div>
+                            <IntersectionObserverContainer
+                                :once="false"
+                                :enabled="!isLoadingContents"
+                                @trigger="loadMoreContents"
+                            >
                                 <Button
                                     size="sm"
                                     class="w-full h-6 text-content-btn-s-text bg-content-btn-s shadow-content-btn-s"
@@ -272,7 +276,7 @@
                                     <i v-if="isLoadingContents" class="bx bx-loader-circle bx-spin"></i>
                                     <i v-else class="bx bx-dots-horizontal-rounded" />
                                 </Button>
-                            </div>
+                            </IntersectionObserverContainer>
                         </div>
                         <div v-else class="mt-4 text-center text-content-title">
                             {{ isLoadingContents ? 'Loading...' : "Haven't found anything yet..." }}
@@ -446,6 +450,7 @@ import Toolbar from '@/components/Profile/Toolbar.vue';
 import FootprintItem from '@/components/Footprint/FootprintItem.vue';
 import EVMpAccountItem from '@/components/Account/EVMpAccountItem.vue';
 import { AnyObject } from 'rss3/types/extend';
+import IntersectionObserverContainer from '@/components/Common/IntersectionObserverContainer.vue';
 
 interface Relations {
     followers: string[];
@@ -455,6 +460,7 @@ interface Relations {
 @Options({
     name: 'Home',
     components: {
+        IntersectionObserverContainer,
         EVMpAccountItem,
         FootprintItem,
         Button,
@@ -601,7 +607,6 @@ export default class Home extends Vue {
             this.isContentsHaveMore = haveMore;
             this.isLoadingContents = false;
             await this.loadMoreContents(true);
-            this.initIntersectionObserver();
         }, 0);
 
         if (RSS3.isValidRSS3()) {
@@ -717,34 +722,6 @@ export default class Home extends Vue {
         this.contents = [...this.contents, ...listed];
 
         this.isLoadingContents = false;
-    }
-
-    initIntersectionObserver() {
-        // Check if running in browser
-        const runningOnBrowser = typeof window !== 'undefined';
-        // Match spiders
-        const isBot =
-            (runningOnBrowser && !('onscroll' in window)) ||
-            (typeof navigator !== 'undefined' &&
-                /(gle|ing|ro|msn)bot|crawl|spider|yand|duckgo/i.test(navigator.userAgent));
-        // Check if browser supports IntersectionObserver API
-        const supportsIntersectionObserver = runningOnBrowser && 'IntersectionObserver' in window;
-
-        const loadMoreButton = document.getElementById('contents-load-more-button');
-        if (runningOnBrowser && !isBot && supportsIntersectionObserver && loadMoreButton) {
-            const observer = new IntersectionObserver(
-                async (entries) => {
-                    if (entries[0].isIntersecting) {
-                        await this.loadMoreContents();
-                        if (!this.isContentsHaveMore) {
-                            observer.disconnect();
-                        }
-                    }
-                },
-                { threshold: 0 },
-            );
-            observer.observe(loadMoreButton);
-        }
     }
 
     async action() {
