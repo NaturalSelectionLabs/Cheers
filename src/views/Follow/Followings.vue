@@ -71,7 +71,6 @@ export default class Followings extends Vue {
 
         const addrOrName = utils.getAddress(<string>this.$route.params.address);
         const pageOwner = await RSS3.setPageOwner(addrOrName);
-        const apiUser = RSS3.getAPIUser().persona as IRSS3;
 
         this.ethAddress = pageOwner.address;
         this.rns = pageOwner.name;
