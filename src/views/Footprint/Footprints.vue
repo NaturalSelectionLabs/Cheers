@@ -83,7 +83,7 @@ export default class Footprints extends Vue {
     scrollTop: number = 0;
     lastRoute: string = '';
     assetList: GeneralAsset[] = [];
-    assetsIndex: number = 0;
+    assetsStartIndex: number = 0;
     isLoadingAssets: boolean = true;
     isHavingMoreAssets: boolean = true;
     $gtag: any;
@@ -115,16 +115,16 @@ export default class Footprints extends Vue {
     async loadMoreAssets() {
         if (!this.isLoadingAssets) {
             this.isLoadingAssets = true;
-            let endIndex = this.assetsIndex + config.splitPageLimits.assets;
+            let endIndex = this.assetsStartIndex + config.splitPageLimits.assets;
             if (endIndex >= this.assetList.length) {
                 // Not having more assets
                 endIndex = this.assetList.length;
                 this.isHavingMoreAssets = false;
             }
             this.footprints = this.footprints.concat(
-                await utils.loadAssets(this.assetList.slice(this.assetsIndex, endIndex)),
+                await utils.loadAssets(this.assetList.slice(this.assetsStartIndex, endIndex)),
             );
-            this.assetsIndex = endIndex;
+            this.assetsStartIndex = endIndex;
             this.isLoadingAssets = false;
         }
     }
