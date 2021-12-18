@@ -410,7 +410,7 @@ export default {
                 isSettingPageOwner = false;
                 resolve(RSS3PageOwner);
             } else {
-                addEventListener(Events.pageOwnerReady, () => {
+                document.addEventListener(Events.pageOwnerReady, () => {
                     resolve(RSS3PageOwner);
                 });
             }
