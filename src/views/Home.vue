@@ -257,7 +257,11 @@
                                     :timestamp="new Date(element.date_updated).valueOf()"
                                     :content="element.summary"
                                     :title="element.title"
-                                    :provider="element.target.field.split('-')[2]"
+                                    :provider="
+                                        element.target.field.includes('Mirror.XYZ')
+                                            ? 'Mirror-XYZ'
+                                            : element.target.field.split('-')[2]
+                                    "
                                     @click="toContentLink(element)"
                                 />
                             </div>
