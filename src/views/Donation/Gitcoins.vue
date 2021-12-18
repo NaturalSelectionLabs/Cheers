@@ -11,7 +11,7 @@
                 <GitcoinCard
                     v-for="item in gitcoins"
                     :key="item.id"
-                    :imageUrl="item.detail.grant.logo || defaultAvatar"
+                    :imageUrl="item.detail.grant.logo || undefinedImageAlt"
                     :name="item.detail.grant.title || 'Inactive Project'"
                     :contrib="item.detail.txs.length"
                     :amount="item.detail.txs"
@@ -39,14 +39,13 @@ import { Options, Vue } from 'vue-class-component';
 import Button from '@/components/Button/Button.vue';
 import GitcoinTitle from '@/components/Donation/GitcoinTitle.vue';
 import GitcoinCard from '@/components/Donation/GitcoinCard.vue';
-import config from '@/config';
+import legacyConfig from '@/config';
+import config from '@/common/config';
 import RSS3 from '@/common/rss3';
-import { DetailedFootprint, GeneralAssetWithTags } from '@/common/types';
+import { DetailedDonation } from '@/common/types';
 import { debounce } from 'lodash';
 import utils from '@/common/utils';
 import Header from '@/components/Common/Header.vue';
-import setupTheme from '@/common/theme';
-import { AnyObject } from 'rss3/types/extend';
 import { utils as RSS3Utils } from 'rss3';
 @Options({
     name: 'Gitcoins',
@@ -57,12 +56,15 @@ export default class Gitcoins extends Vue {
     ethAddress: string = '';
     grants: number = 0;
     contribs: number = 0;
-    gitcoins: DetailedFootprint[] = [];
+    gitcoins: DetailedDonation[] = [];
     isOwner: boolean = false;
     rss3Profile: any = {};
     scrollTop: number = 0;
     lastRoute: string = '';
     $gtag: any;
+
+    undefinedImageAlt = config.undefinedImageAlt;
+
     async mounted() {
         this.mountScrollEvent();
     }
@@ -108,7 +110,7 @@ export default class Gitcoins extends Vue {
             type,
         });
         this.$router.push(
-            (config.subDomain.isSubDomainMode ? '' : `/${this.rns || this.ethAddress}`) +
+            (legacyConfig.subDomain.isSubDomainMode ? '' : `/${this.rns || this.ethAddress}`) +
                 `/singlegitcoin/${platform}/${identity}/${uniqueID}/${type}`,
         );
     }

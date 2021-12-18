@@ -434,7 +434,7 @@ import utils from '@/common/utils';
 import config from '@/common/config';
 import legacyConfig from '@/config';
 import GitcoinItem from '@/components/Donation/GitcoinItem.vue';
-import { Profile as ProfileInfo } from '@/common/types';
+import { Profile as ProfileInfo, GeneralAsset } from '@/common/types';
 
 import NFTIcon from '@/components/Icons/NFTIcon.vue';
 import GitcoinIcon from '@/components/Icons/GitcoinIcon.vue';
@@ -630,8 +630,8 @@ export default class Home extends Vue {
         }, 0);
     }
 
-    async loadAssetDetails(assetList: AnyObject[], limit?: number) {
-        let assetDetails: AnyObject[] = [];
+    async loadAssetDetails(assetList: GeneralAsset[], limit?: number) {
+        let assetDetails: AnyObject[] = []; // todo: fix this
         if (limit) {
             const previewList = limit <= assetList.length ? assetList.slice(0, limit) : assetList;
             assetDetails = await utils.loadAssets(previewList);
@@ -641,7 +641,7 @@ export default class Home extends Vue {
         return assetDetails;
     }
 
-    async ivLoadNFT(refresh: boolean, assets: AnyObject[]): Promise<boolean> {
+    async ivLoadNFT(refresh: boolean, assets: GeneralAsset[]): Promise<boolean> {
         if (assets) {
             this.nfts = await this.loadAssetDetails(assets);
             this.isLoadingAssets.NFT = false;
@@ -650,7 +650,7 @@ export default class Home extends Vue {
         return false;
     }
 
-    async ivLoadGitcoin(refresh: boolean, assets: AnyObject[]): Promise<boolean> {
+    async ivLoadGitcoin(refresh: boolean, assets: GeneralAsset[]): Promise<boolean> {
         if (assets) {
             this.gitcoins = await this.loadAssetDetails(assets);
             this.isLoadingAssets.Gitcoin = false;
@@ -659,7 +659,7 @@ export default class Home extends Vue {
         return false;
     }
 
-    async ivLoadFootprint(refresh: boolean, assets: AnyObject[]): Promise<boolean> {
+    async ivLoadFootprint(refresh: boolean, assets: GeneralAsset[]): Promise<boolean> {
         if (assets) {
             this.footprints = await this.loadAssetDetails(assets);
             this.isLoadingAssets.Footprint = false;

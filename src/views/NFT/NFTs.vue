@@ -7,13 +7,9 @@
                     <NFTItem
                         class="cursor-pointer"
                         size="auto"
-                        :imageUrl="
-                            item.detail.image_preview_url ||
-                            item.detail.image_url ||
-                            item.detail.animation_url ||
-                            item.detail.animation_original_url
-                        "
+                        :imageUrl="item.detail.image_url"
                         :poster-url="item.detail.image_preview_url"
+                        :is-showing-details="false"
                         @click="toSingleNFTPage(item.id)"
                     />
                     <NFTBadges
@@ -24,6 +20,21 @@
                     />
                 </div>
             </div>
+            <IntersectionObserverContainer
+                v-if="isHavingMoreAssets"
+                :once="false"
+                :enabled="!isLoadingAssets"
+                @trigger="loadMoreAssets"
+            >
+                <Button
+                    size="sm"
+                    class="m-auto text-nft-btn-m-text text-lg bg-nft-btn-m shadow-nft-btn-m"
+                    @click="loadMoreAssets"
+                >
+                    <i v-if="isLoadingAssets" class="bx bx-loader-circle bx-spin"></i>
+                    <i v-else class="bx bx-dots-horizontal-rounded" />
+                </Button>
+            </IntersectionObserverContainer>
             <div
                 class="fixed z-50 bottom-2 left-0 right-0 flex gap-5 m-auto px-4 py-4 w-full max-w-md bg-btn-container"
                 v-if="isOwner"
@@ -47,16 +58,17 @@ import NFTItem from '@/components/NFT/NFTItem.vue';
 import NFTBadges from '@/components/NFT/NFTBadges.vue';
 import RSS3 from '@/common/rss3';
 import { utils as RSS3Utils } from 'rss3';
-import config from '@/config';
+import legacyConfig from '@/config';
+import config from '@/common/config';
 import { debounce } from 'lodash';
 import utils from '@/common/utils';
 import Header from '@/components/Common/Header.vue';
-import setupTheme from '@/common/theme';
-import { DetailedNFT } from '@/common/types';
+import { DetailedNFT, GeneralAsset } from '@/common/types';
+import IntersectionObserverContainer from '@/components/Common/IntersectionObserverContainer.vue';
 
 @Options({
     name: 'NFTs',
-    components: { Button, NFTItem, NFTBadges, Header },
+    components: { IntersectionObserverContainer, Button, NFTItem, NFTBadges, Header },
 })
 export default class NFTs extends Vue {
     rns: string = '';
@@ -67,6 +79,10 @@ export default class NFTs extends Vue {
     $gtag: any;
     scrollTop: number = 0;
     lastRoute: string = '';
+    assetList: GeneralAsset[] = [];
+    assetsIndex: number = 0;
+    isLoadingAssets: boolean = true;
+    isHavingMoreAssets: boolean = true;
 
     async initLoad() {
         this.lastRoute = this.$route.fullPath;
@@ -82,7 +98,24 @@ export default class NFTs extends Vue {
         this.rss3Profile = pageOwner.profile;
 
         const { nfts } = await utils.initAssets();
-        this.nfts = await utils.loadAssets(nfts);
+        this.assetList = nfts;
+        this.isLoadingAssets = false;
+        await this.loadMoreAssets();
+    }
+
+    async loadMoreAssets() {
+        if (!this.isLoadingAssets) {
+            this.isLoadingAssets = true;
+            let endIndex = this.assetsIndex + config.splitPageLimits.assets;
+            if (endIndex >= this.assetList.length) {
+                // Not having more assets
+                endIndex = this.assetList.length;
+                this.isHavingMoreAssets = false;
+            }
+            this.nfts = this.nfts.concat(await utils.loadAssets(this.assetList.slice(this.assetsIndex, endIndex)));
+            this.assetsIndex = endIndex;
+            this.isLoadingAssets = false;
+        }
     }
 
     toSingleNFTPage(id: string) {
@@ -95,7 +128,7 @@ export default class NFTs extends Vue {
             type,
         });
         this.$router.push(
-            (config.subDomain.isSubDomainMode ? '' : `/${this.rns || this.ethAddress}`) +
+            (legacyConfig.subDomain.isSubDomainMode ? '' : `/${this.rns || this.ethAddress}`) +
                 `/singlenft/${platform}/${identity}/${uniqueID}/${type}`,
         );
     }

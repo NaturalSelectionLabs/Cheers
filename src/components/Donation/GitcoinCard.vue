@@ -61,7 +61,7 @@ import Vue3Autocounter from 'vue3-autocounter';
     props: {
         imageUrl: String,
         name: String,
-        contrib: String,
+        contrib: Number,
         amount: Array,
     },
 })

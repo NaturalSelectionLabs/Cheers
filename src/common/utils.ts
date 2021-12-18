@@ -8,6 +8,7 @@ import RSS3, { IRSS3 } from './rss3';
 import {
     CustomField_Pass,
     DonationDetailByGrant,
+    GeneralAsset,
     GitcoinResponse,
     ItemDetails,
     NFT,
@@ -89,18 +90,38 @@ async function initAssets() {
     };
 }
 
-async function loadAssets(parsedAssets: AnyObject[]) {
+async function loadAssets(parsedAssets: GeneralAsset[]) {
+    if (!parsedAssets.length) {
+        return [];
+    }
+
     const apiUser = (await RSS3.getAPIUser().persona) as IRSS3;
 
     const assetIDList = parsedAssets.map((asset) =>
         RSS3Utils.id.getAsset(asset.platform, asset.identity, asset.type, asset.uniqueID),
     );
-    return assetIDList.length !== 0
-        ? (await apiUser.assets.getDetails({
-              assets: assetIDList,
-              full: true,
-          })) || []
-        : [];
+
+    const res: AnyObject[] = []; // todo: fix this
+    let startIndex = 0;
+    let isHaveMore = true;
+
+    while (isHaveMore) {
+        let endIndex = startIndex + config.splitPageLimits.assets;
+        if (endIndex >= assetIDList.length) {
+            endIndex = assetIDList.length;
+            isHaveMore = false;
+        }
+        const asset = await await apiUser.assets.getDetails({
+            assets: assetIDList.slice(startIndex, endIndex),
+            full: true,
+        });
+        if (asset.length) {
+            res.push(...asset);
+        }
+        startIndex = endIndex;
+    }
+
+    return res;
 }
 
 async function getAssetsTillSuccess(assetSet: Set<string>, delay: number = 1500, count: number = 5) {
