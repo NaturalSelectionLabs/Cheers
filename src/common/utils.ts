@@ -174,33 +174,20 @@ async function initContent(timestamp: string = '') {
     const pageOwner = await RSS3.getPageOwner();
     const apiUserPersona = RSS3.getAPIUser().persona as IRSS3;
 
-    let autoItems =
+    let allItems =
         (await apiUserPersona.items.getListByPersona({
             persona: pageOwner.address,
             limit: config.splitPageLimits.contents,
             tsp: timestamp,
-            fieldLike: '%items-auto%',
+            fieldLike: '%(Twitter|Misskey|Mirror)%',
         })) || [];
 
-    let MirrorItems =
-        (await apiUserPersona.items.getListByPersona({
-            persona: pageOwner.address,
-            limit: config.splitPageLimits.contents,
-            tsp: timestamp,
-            fieldLike: '%Mirror.XYZ%',
-        })) || [];
-
-    let haveMore = autoItems.length + MirrorItems.length >= config.splitPageLimits.contents;
-
-    let items = autoItems
-        .concat(MirrorItems)
-        .sort((a, b) => new Date(b.date_updated).valueOf() - new Date(a.date_updated).valueOf())
-        .slice(0, 35);
+    let haveMore = allItems.length === config.splitPageLimits.contents;
 
     return {
-        listed: items,
+        listed: allItems,
         haveMore: haveMore,
-        timestamp: items.pop()?.date_created || '',
+        timestamp: allItems[allItems.length - 1].date_created || '',
     };
 }
 
