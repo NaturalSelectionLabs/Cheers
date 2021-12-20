@@ -65,7 +65,7 @@
                     </template>
                 </BarCard>
 
-                <div class="fixed left-0 right-0 flex gap-5 m-auto px-4 py-4 w-full max-w-md">
+                <div class="fixed bottom-4 left-0 right-0 flex gap-5 m-auto px-4 py-4 w-full max-w-md">
                     <Button
                         size="lg"
                         class="flex-1 text-secondary-btn-text text-lg bg-secondary-btn shadow-secondary-btn"
