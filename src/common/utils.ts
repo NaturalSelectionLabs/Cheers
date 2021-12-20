@@ -36,9 +36,8 @@ async function initAssets() {
 
     let assetList = await apiUserPersona.assets.auto.getList(pageOwner.address);
 
-    let taggedList = <{ id: string; hide?: boolean; order?: number }[]>[];
     const passTags = pageOwner.file?.['_pass']?.assets;
-    taggedList = passTags ? passTags : [];
+    const taggedList: CustomField_PassAssets[] = passTags || [];
 
     const hiddenList = taggedList
         .filter((asset: any) => asset.hasOwnProperty('hide'))
