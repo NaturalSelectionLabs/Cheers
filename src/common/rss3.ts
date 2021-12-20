@@ -9,6 +9,7 @@ import RSS3, { utils as RSS3Utils } from 'rss3';
 import config from './config';
 import Events from './events';
 import rns from './rns';
+import AsyncLock from 'async-lock';
 import { CustomField_PassAssets, GeneralAsset } from './types';
 
 export interface IAssetProfile {
@@ -42,7 +43,7 @@ export const EMPTY_RSS3_DP: RSS3DetailPersona = {
     isReady: false,
 };
 export type IRSS3 = RSS3;
-let RSS3PageOwner: RSS3DetailPersona = Object.create(EMPTY_RSS3_DP);
+const RSS3PageOwner: RSS3DetailPersona = Object.create(EMPTY_RSS3_DP);
 let RSS3LoginUser: RSS3FullPersona = Object.create(EMPTY_RSS3_DP);
 const RSS3APIUser: RSS3SDKPersona = {
     persona: new RSS3({
@@ -51,6 +52,7 @@ const RSS3APIUser: RSS3SDKPersona = {
 };
 let walletConnectProvider: WalletConnectProvider;
 let ethersProvider: ethers.providers.Web3Provider | null;
+const lock = new AsyncLock();
 let isSettingPageOwner: boolean = false;
 
 export interface IAssetProfile {
@@ -254,30 +256,32 @@ async function reconnect() {
 }
 
 async function initUser(user: RSS3DetailPersona | RSS3FullPersona, skipSignSync: boolean = false) {
-    user.isReady = false;
     const RSS3APIPersona = apiPersona();
-    if ('persona' in user && !user.address) {
-        // Fix address
-        user.address = user.persona.account.address;
-    }
-    if (user.name && !user.address) {
-        user.address = await rns.name2Addr(user.name);
-    }
-    if (user.address && !user.name) {
-        user.name = await rns.addr2Name(user.address);
-    }
-    user.file = (await RSS3APIPersona.files.get(user.address)) as RSS3Index;
-    if ('persona' in user) {
-        // Sync persona
-        user.persona.files.set(user.file);
-        if (!skipSignSync) {
-            await user.persona.files.sync();
+    user.isReady = false;
+    await lock.acquire('InitializingUser', async () => {
+        if ('persona' in user && !user.address) {
+            // Fix address
+            user.address = user.persona.account.address;
         }
-    }
-    user.profile = user.file.profile || {};
-    user.followers = await RSS3APIPersona.backlinks.getList(user.address, 'following');
-    user.followings = await RSS3APIPersona.links.getList(user.address, 'following');
-    user.isReady = true;
+        if (user.name && !user.address) {
+            user.address = await rns.name2Addr(user.name);
+        }
+        if (user.address && !user.name) {
+            user.name = await rns.addr2Name(user.address);
+        }
+        user.file = (await RSS3APIPersona.files.get(user.address)) as RSS3Index;
+        if ('persona' in user) {
+            // Sync persona
+            user.persona.files.set(user.file);
+            if (!skipSignSync) {
+                await user.persona.files.sync();
+            }
+        }
+        user.profile = user.file.profile || {};
+        user.followers = await RSS3APIPersona.backlinks.getList(user.address, 'following');
+        user.followings = await RSS3APIPersona.links.getList(user.address, 'following');
+        user.isReady = true;
+    });
 }
 
 function apiPersona(): RSS3 {
