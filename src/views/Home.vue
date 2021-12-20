@@ -253,7 +253,6 @@
                         <div v-if="contents.length > 0" class="divide-content-divider divide-y-xs">
                             <div v-for="element in contents" :key="element.id">
                                 <ContentCard
-                                    v-if="element.id.includes('auto')"
                                     :timestamp="new Date(element.date_updated).valueOf()"
                                     :content="element.summary"
                                     :title="element.title"
@@ -435,7 +434,6 @@ import { utils as RSS3Utils } from 'rss3';
 import Modal from '@/components/Common/Modal.vue';
 import RNSUtils from '@/common/rns';
 import utils from '@/common/utils';
-import config from '@/common/config';
 import legacyConfig from '@/config';
 import GitcoinItem from '@/components/Donation/GitcoinItem.vue';
 import { Profile as ProfileInfo, GeneralAsset } from '@/common/types';
@@ -896,13 +894,16 @@ export default class Home extends Vue {
 
     toContentLink(content: any) {
         const [type, mode, platform, user] = content.target.field.split('-');
-        let link = '';
+        let link;
         if (platform === 'Twitter') {
             link = `https://twitter.com/${user}/status/${content.target.action.payload}`;
         } else if (platform === 'Misskey') {
             const [username, instance] = user.split('@');
             link = `https://${instance}/notes/${content.target.action.payload}`;
+        } else if (user === 'Mirror.XYZ') {
+            link = content.target.action.payload;
         }
+
         if (link) {
             window.open(link, '_blank');
         }
