@@ -44,7 +44,7 @@ export const EMPTY_RSS3_DP: RSS3DetailPersona = {
 export type IRSS3 = RSS3;
 let RSS3PageOwner: RSS3DetailPersona = Object.create(EMPTY_RSS3_DP);
 let RSS3LoginUser: RSS3FullPersona = Object.create(EMPTY_RSS3_DP);
-let RSS3APIUser: RSS3SDKPersona = {
+const RSS3APIUser: RSS3SDKPersona = {
     persona: new RSS3({
         endpoint: config.hubEndpoint,
     }),
