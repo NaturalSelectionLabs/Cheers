@@ -15,7 +15,6 @@ export default {
         'a34494c90ca24f30b003a41b5a4c7752',
         'bad1e9a0ade24a0da20859746c54ad32',
     ],
-    hubEndpoint: 'https://node-beta.rss3.dev',
     defaultAvatar: 'https://infura-ipfs.io/ipfs/QmcK8FSTtLQVydLEDKLv1hEacLxZgi7j2i4mkQQMyKxv6k',
     hideUnlistedAsstes: false,
     tags: {
