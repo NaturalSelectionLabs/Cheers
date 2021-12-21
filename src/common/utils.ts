@@ -186,7 +186,7 @@ async function initContent(timestamp: string = '') {
     return {
         listed: allItems,
         haveMore: haveMore,
-        timestamp: allItems.length ? allItems[allItems.length - 1].date_created || '' : '',
+        timestamp: allItems[allItems.length - 1]?.date_created || '',
     };
 }
 
