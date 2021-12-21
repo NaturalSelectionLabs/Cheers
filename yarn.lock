@@ -7932,10 +7932,10 @@ rlp@^2.0.0, rlp@^2.2.3, rlp@^2.2.4:
   dependencies:
     bn.js "^4.11.1"
 
-rss3@0.8.8:
-  version "0.8.8"
-  resolved "https://registry.yarnpkg.com/rss3/-/rss3-0.8.8.tgz#7950e5bb144be8437bd6770254f5a56c60c1090f"
-  integrity sha512-jeuBXlexfjWr+dmmrF/f41c44MZJ2UfH72HWdk6ADuYHMOqndM0c8EVGbsF9QSDq0AXH+jmCh64wvr8bJ0GoHQ==
+rss3@0.8.9:
+  version "0.8.9"
+  resolved "https://registry.yarnpkg.com/rss3/-/rss3-0.8.9.tgz#a3a9718248f5a9c621983ada2db9666045e586dc"
+  integrity sha512-5MFRjn1ybSual0Fr601AXjJ02GVxhFjDk5Bm7OgpPx8qbloLcdpSnhF9GJ/2qwk/1i6sOuivBOpTseUJBxb32g==
   dependencies:
     async-lock "1.3.0"
     axios "0.21.1"
