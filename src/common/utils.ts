@@ -178,7 +178,7 @@ async function initContent(timestamp: string = '') {
             persona: pageOwner.address,
             limit: config.splitPageLimits.contents,
             tsp: timestamp,
-            fieldLike: '%(Twitter|Misskey|Mirror)%',
+            fieldLike: 'Twitter,Misskey,Mirror.XYZ',
         })) || [];
 
     let haveMore = allItems.length === config.splitPageLimits.contents;
@@ -186,7 +186,7 @@ async function initContent(timestamp: string = '') {
     return {
         listed: allItems,
         haveMore: haveMore,
-        timestamp: allItems[allItems.length - 1].date_created || '',
+        timestamp: allItems.length ? allItems[allItems.length - 1].date_created || '' : '',
     };
 }
 
