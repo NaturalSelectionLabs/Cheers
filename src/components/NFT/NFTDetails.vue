@@ -59,7 +59,7 @@ export default class NFTDetail extends Vue {
         switch (this.market) {
             case 'opensea':
                 switch (this.chain) {
-                    case 'Polygon':
+                    case 'Polygon.NFT':
                         window.open(`https://opensea.io/assets/matic/${address}/${tokenId}`);
                         break;
                     default:
@@ -75,13 +75,13 @@ export default class NFTDetail extends Vue {
 
     toScan(address: string, tokenId: string) {
         switch (this.chain) {
-            case 'BSC':
+            case 'BSC.NFT':
                 window.open(`https://bscscan.com/token/${address}?a=${tokenId}`);
                 break;
-            case 'Ethereum':
+            case 'Ethereum.NFT':
                 window.open(`https://etherscan.io/token/${address}?a=${tokenId}`);
                 break;
-            case 'Polygon':
+            case 'Polygon.NFT':
                 window.open(`https://polygonscan.com/token/${address}?a=${tokenId}`);
                 break;
         }
