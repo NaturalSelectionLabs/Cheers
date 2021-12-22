@@ -57,7 +57,7 @@ export default class Index extends Vue {
     $gtag: any;
 
     async mounted() {
-        if (RSS3.getLoginUser().persona || (await RSS3.reconnect())) {
+        if (RSS3.isValidRSS3()) {
             this.rss3 = RSS3.getLoginUser();
             await this.initRedirect();
         }
@@ -73,23 +73,24 @@ export default class Index extends Vue {
         this.isLoading = true;
         let profile: RSS3Profile | null = null;
         let address: string = '';
+        await RSS3.ensureLoginUser();
+        const loginUser = RSS3.getLoginUser();
         try {
-            const RSS3LoginUser = RSS3.getLoginUser();
-            profile = RSS3LoginUser.profile;
-            address = RSS3LoginUser.address;
+            profile = loginUser.profile;
+            address = loginUser.address;
             console.log(profile);
         } catch (e) {
             console.log(e);
         }
         this.$gtag.config(address);
 
-        const rns = await RNSUtils.addr2Name(address);
+        const rns = loginUser.name;
         // Check if setup RNS
-        if (rns === '' && (await this.isPassEnough())) {
+        if (!(await RNSUtils.addr2Name(loginUser.address, true)) && (await this.isPassEnough())) {
             // Setup RNS
             this.$gtag.event('rns', { userid: address });
             await this.$router.push('/rns');
-        } else if (!(profile?.name || profile?.bio || profile?.avatar)) {
+        } else if (!loginUser.file?.signature) {
             // Setup Profile
             this.$gtag.event('sign_up', { userid: address });
             await this.$router.push('/setup');
