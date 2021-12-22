@@ -36,13 +36,12 @@
             camera-controls
             loading="eager"
         />
-        <img v-else :src="mainUrl" class="nft-item" :class="variableNFTClass" :onerror="defaultAvatar" />
+        <img v-else :src="mainUrl" class="nft-item" :class="variableNFTClass" @error="replaceByDefault" />
     </div>
 </template>
 
 <script lang="ts">
 import { Vue, Options } from 'vue-class-component';
-import legacyConfig from '@/config';
 import config from '@/common/config';
 
 @Options({
@@ -59,12 +58,11 @@ export default class NFTItem extends Vue {
     posterUrl!: String;
     isShowingDetails!: boolean;
     subUrl: string | undefined;
-    defaultAvatar = legacyConfig.defaultAvatar;
+
     get mainUrl() {
         return this.handleIPFS(
-            this.isShowingDetails
-                ? this.imageUrl || this.posterUrl || config.undefinedImageAlt
-                : this.posterUrl || this.imageUrl || config.undefinedImageAlt,
+            (this.isShowingDetails ? this.imageUrl || this.posterUrl : this.posterUrl || this.imageUrl) ||
+                config.undefinedImageAlt,
         );
     }
 
@@ -111,6 +109,10 @@ export default class NFTItem extends Vue {
             !this.isShowingDetails ? 'object-cover' : 'object-contain',
             this.size === 'sm' ? 'rounded-sm' : 'rounded',
         ];
+    }
+
+    replaceByDefault(e) {
+        e.target.src = config.undefinedImageAlt;
     }
 }
 </script>
