@@ -93,7 +93,7 @@ export default class Accounts extends Vue {
         this.accounts = [
             {
                 platform: 'EVM+',
-                identity: RSS3.getLoginUser().address,
+                identity: RSS3.getPageOwner().address,
             },
         ].concat(accountDetails);
     }
