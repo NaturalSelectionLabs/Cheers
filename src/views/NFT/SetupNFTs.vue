@@ -187,6 +187,7 @@ export default class SetupNFTs extends Vue {
     }
 
     async mounted() {
+        await utils.tryEnsureOrRedirect(this.$route, this.$router);
         const loginUser = await RSS3.getLoginUser();
         await RSS3.setPageOwner(loginUser.address);
         const profile = loginUser.profile;

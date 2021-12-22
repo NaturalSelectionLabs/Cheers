@@ -4,6 +4,7 @@ import { AnyObject } from 'rss3/types/extend';
 import config from './config';
 import RSS3, { IRSS3 } from './rss3';
 import { CustomField_PassAssets, GeneralAsset, GitcoinResponse, NFTResponse, POAPResponse } from './types';
+import { RouteLocationNormalizedLoaded, Router } from 'vue-router';
 
 const orderPattern = new RegExp(`^${config.tags.prefix}:order:(-?\\d+)$`, 'i');
 const hiddenTag = `${config.tags.prefix}:${config.tags.hiddenTag}`;
@@ -335,6 +336,21 @@ const subDomainModeRedirect = (rns: string) => {
     }
 };
 
+const tryEnsureOrRedirect = async (route: RouteLocationNormalizedLoaded, router: Router) => {
+    if (RSS3.isValidRSS3() || (await RSS3.reconnect())) {
+        await RSS3.ensureLoginUser();
+    } else {
+        // Redirect
+        if (legacyConfig.subDomain.isSubDomainMode) {
+            // redirect back to root domain
+            window.location.host = legacyConfig.subDomain.rootDomain;
+        } else {
+            sessionStorage.setItem('redirectFrom', route.fullPath);
+            await router.push('/');
+        }
+    }
+};
+
 const utils = {
     sortByOrderTag,
     initAssets,
@@ -348,6 +364,7 @@ const utils = {
     isAssetNotHidden,
     getAddress,
     subDomainModeRedirect,
+    tryEnsureOrRedirect,
 };
 
 export default utils;

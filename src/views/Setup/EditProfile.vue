@@ -166,10 +166,7 @@ export default class EditProfile extends Vue {
     }[] = [];
 
     async mounted() {
-        if (!RSS3.isValidRSS3()) {
-            sessionStorage.setItem('redirectFrom', this.$route.fullPath);
-            await this.$router.push('/');
-        }
+        await utils.tryEnsureOrRedirect(this.$route, this.$router);
 
         const loginUser = RSS3.getLoginUser();
         await RSS3.setPageOwner(loginUser.address);

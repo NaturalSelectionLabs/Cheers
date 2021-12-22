@@ -393,16 +393,7 @@ export default class SetupAccounts extends Vue {
     parseAccount = RSS3Utils.id.parseAccount;
 
     async mounted() {
-        if (!(await RSS3.reconnect())) {
-            if (config.subDomain.isSubDomainMode) {
-                // redirect back to root domain
-                window.location.host = config.subDomain.rootDomain;
-            } else {
-                sessionStorage.setItem('redirectFrom', this.$route.fullPath);
-                await this.$router.push('/');
-            }
-            return;
-        }
+        await utils.tryEnsureOrRedirect(this.$route, this.$router);
         const loginUser = await RSS3.getLoginUser();
         await RSS3.setPageOwner(loginUser.address);
         if (sessionStorage.getItem('profile')) {

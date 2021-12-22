@@ -365,10 +365,13 @@ export default {
         dispatchEvent(Events.disconnect, RSS3LoginUser);
     },
     reconnect: async () => {
-        const res = await reconnect();
-        if (res) {
-            dispatchEvent(Events.connect, RSS3LoginUser);
-        }
+        let res = false;
+        await lock.acquire('reconnect', async () => {
+            res = await reconnect();
+            if (res) {
+                dispatchEvent(Events.connect, RSS3LoginUser);
+            }
+        });
         return res;
     },
     getAPIUser: (): RSS3SDKPersona => {

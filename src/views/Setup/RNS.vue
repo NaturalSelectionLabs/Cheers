@@ -95,6 +95,7 @@ import Loading from '@/components/Loading/Loading.vue';
 import LoadingContainer from '@/components/Loading/LoadingContainer.vue';
 import config from '@/config';
 import { routes } from '@/router';
+import utils from '@/common/utils';
 function validateNetwork(chain: number | null, cb?: (chain: number | null) => void) {
     if (config.rns.test && chain !== 0x3) {
         alert('Please switch to ropsten network.');
@@ -164,6 +165,7 @@ export default class RNS extends Vue {
     }
 
     async mounted() {
+        await utils.tryEnsureOrRedirect(this.$route, this.$router);
         await this.refreshAccount();
     }
 

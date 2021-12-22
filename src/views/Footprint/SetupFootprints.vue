@@ -157,6 +157,7 @@ export default class SetupFootprints extends Vue {
     isPCLayout: boolean = window.innerWidth > 768;
 
     async mounted() {
+        await utils.tryEnsureOrRedirect(this.$route, this.$router);
         const loginUser = await RSS3.getLoginUser();
         await RSS3.setPageOwner(loginUser.address);
         const profile = loginUser.profile;

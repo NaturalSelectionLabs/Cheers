@@ -290,15 +290,7 @@ export default class Setup extends Vue {
 
     async initLoad() {
         this.isLoading = true;
-        if (!RSS3.isValidRSS3()) {
-            if (config.subDomain.isSubDomainMode) {
-                // redirect back to root domain
-                window.location.host = config.subDomain.rootDomain;
-            } else {
-                sessionStorage.setItem('redirectFrom', this.$route.fullPath);
-                await this.$router.push('/');
-            }
-        }
+        await utils.tryEnsureOrRedirect(this.$route, this.$router);
         await RSS3.ensureLoginUser();
         const loginUser = await RSS3.getLoginUser();
         await RSS3.setPageOwner(loginUser.address);
