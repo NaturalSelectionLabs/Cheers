@@ -7,6 +7,7 @@ const koaViews = require('koa-views');
 const koaStatic = require('koa-static');
 const path = require('path');
 const axios = require('axios');
+const ethers = require('ethers');
 
 const app = new Koa();
 app.use(CORS());

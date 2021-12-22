@@ -12,10 +12,10 @@
         <div
             class="badge bg-white"
             :class="{
-                'bg-BSC': chain === 'BSC',
-                'bg-Ethereum': chain === 'Ethereum',
-                'bg-Polygon': chain === 'Polygon',
-                'bg-Ronin': chain === 'Ronin',
+                'bg-BSC': chain === 'BSC.NFT',
+                'bg-Ethereum': chain === 'Ethereum.NFT',
+                'bg-Polygon': chain === 'Polygon.NFT',
+                'bg-Ronin': chain === 'Ronin.NFT',
                 'badge-overlay': location === 'overlay',
                 'badge-header': location === 'header',
             }"

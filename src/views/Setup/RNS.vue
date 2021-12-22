@@ -86,15 +86,16 @@
 
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
-import Button from '@/components/Button.vue';
-import RSS3, { IRSS3 } from '@/common/rss3';
+import Button from '@/components/Button/Button.vue';
+import RSS3 from '@/common/rss3';
 import RNSUtils from '@/common/rns';
-import Modal from '@/components/Modal.vue';
-import Input from '@/components/Input.vue';
-import Loading from '@/components/Loading.vue';
-import LoadingContainer from '@/components/LoadingContainer.vue';
+import Modal from '@/components/Common/Modal.vue';
+import Input from '@/components/Input/Input.vue';
+import Loading from '@/components/Loading/Loading.vue';
+import LoadingContainer from '@/components/Loading/LoadingContainer.vue';
 import config from '@/config';
 import { routes } from '@/router';
+import utils from '@/common/utils';
 function validateNetwork(chain: number | null, cb?: (chain: number | null) => void) {
     if (config.rns.test && chain !== 0x3) {
         alert('Please switch to ropsten network.');
@@ -118,7 +119,6 @@ function validateNetwork(chain: number | null, cb?: (chain: number | null) => vo
     },
 })
 export default class RNS extends Vue {
-    rss3: IRSS3 | null = null;
     ethAddress: string = '';
     rns: string = '';
     notice: String = '';
@@ -142,17 +142,17 @@ export default class RNS extends Vue {
     }
 
     async refreshAccount() {
-        if (!(await RSS3.reconnect())) {
+        if (!RSS3.isValidRSS3()) {
             sessionStorage.setItem('redirectFrom', this.$route.fullPath);
             await this.$router.push('/');
         } else {
-            this.rss3 = await RSS3.get();
+            const loginUser = await RSS3.getLoginUser();
             const metamaskEthereum = (window as any).ethereum;
             // this.rss3 object exists, don't necessarily mean the account is connected
             await metamaskEthereum.request({
                 method: 'eth_requestAccounts',
             });
-            this.ethAddress = (<IRSS3>this.rss3).account.address;
+            this.ethAddress = loginUser.address;
             const chain: string | null = await metamaskEthereum.request({ method: 'eth_chainId' });
             if (validateNetwork(Number(chain))) {
                 const rns = await RNSUtils.addr2Name(this.ethAddress, true);
@@ -165,11 +165,12 @@ export default class RNS extends Vue {
     }
 
     async mounted() {
+        await utils.tryEnsureOrRedirect(this.$route, this.$router);
         await this.refreshAccount();
     }
 
     async back() {
-        this.$gtag.event('cancelSetupRNS', { userid: (<IRSS3>this.rss3).account.address });
+        this.$gtag.event('cancelSetupRNS', { userid: RSS3.getLoginUser().address });
         window.history.back();
     }
 
@@ -178,7 +179,7 @@ export default class RNS extends Vue {
     }
 
     async isPassEnough(): Promise<boolean> {
-        const passBalance = await RNSUtils.balanceOfPass3((<IRSS3>this.rss3).account.address);
+        const passBalance = await RNSUtils.balanceOfPass3(RSS3.getLoginUser().address);
         console.log('Your $PASS: ', passBalance);
         return passBalance >= 1;
     }

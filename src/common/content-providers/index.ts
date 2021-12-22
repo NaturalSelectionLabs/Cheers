@@ -1,4 +1,3 @@
-import hub from './hub';
 import misskey from './misskey';
 import twitter from './twitter';
 
@@ -20,7 +19,6 @@ export interface Content {
 }
 
 export default {
-    Hub: hub,
     Misskey: misskey,
     Twitter: twitter,
 };

@@ -1,92 +1,76 @@
-import { createRouter, createWebHistory } from 'vue-router';
-
-import Index from '@/views/Index.vue';
-/* IFTRUE_isDevelop */
-import Test from '@/views/Test.vue';
-/* FITRUE_isDevelop */
-import Home from '@/views/Home.vue';
-import Followings from '@/views/Followings.vue';
-import Followers from '@/views/Followers.vue';
-import Accounts from '@/views/Accounts.vue';
-import NFTs from '@/views/NFTs.vue';
-import Gitcoins from '@/views/Gitcoins.vue';
-import Footprints from '@/views/Footprints.vue';
-import SingleNFT from '@/views/SingleNFT.vue';
-import SingleGitcoin from '@/views/SingleGitcoin.vue';
-import SingleFootprint from '@/views/SingleFootprint.vue';
-import Setup from '@/views/Setup/Setup.vue';
-import SetupAccounts from '@/views/Setup/SetupAccounts.vue';
-import SetupNFTs from '@/views/Setup/SetupNFTs.vue';
-import SetupGitcoins from '@/views/Setup/SetupGitcoins.vue';
-import SetupFootprints from '@/views/Setup/SetupFootprints.vue';
-import RNS from '@/views/Setup/RNS.vue';
-import EditProfile from '@/views/EditProfile.vue';
-import RNSPending from '@/views/Setup/RNSPending.vue';
-
 import config from '@/config';
+import Accounts from '@/views/Account/Accounts.vue';
+import SetupAccounts from '@/views/Account/SetupAccounts.vue';
+import Gitcoins from '@/views/Donation/Gitcoins.vue';
+import SetupGitcoins from '@/views/Donation/SetupGitcoins.vue';
+import SingleGitcoin from '@/views/Donation/SingleGitcoin.vue';
+import Followers from '@/views/Follow/Followers.vue';
+import Followings from '@/views/Follow/Followings.vue';
+import Footprints from '@/views/Footprint/Footprints.vue';
+import SetupFootprints from '@/views/Footprint/SetupFootprints.vue';
+import SingleFootprint from '@/views/Footprint/SingleFootprint.vue';
+import Home from '@/views/Home.vue';
+import Index from '@/views/Index.vue';
+import NFTs from '@/views/NFT/NFTs.vue';
+import SetupNFTs from '@/views/NFT/SetupNFTs.vue';
+import SingleNFT from '@/views/NFT/SingleNFT.vue';
+import EditProfile from '@/views/Setup/EditProfile.vue';
+import RNS from '@/views/Setup/RNS.vue';
+import RNSPending from '@/views/Setup/RNSPending.vue';
+import Setup from '@/views/Setup/Setup.vue';
+import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
 
-export const routes = [
-    /* IFTRUE_isDevelop */
+const basePath = config.subDomain.isSubDomainMode ? '/' : '/:address/';
+
+export const routes: RouteRecordRaw[] = [
     {
-        path: '/test',
-        name: 'Test',
-        component: Test,
+        path: basePath,
+        name: 'Home',
+        component: Home,
     },
-    /* FITRUE_isDevelop */
-    config.subDomain.isSubDomainMode
-        ? {
-              path: '/',
-              name: 'OwnedHome',
-              component: Home,
-          }
-        : {
-              path: '/:address',
-              name: 'NamedHome',
-              component: Home,
-          },
     {
-        path: (config.subDomain.isSubDomainMode ? '' : '/:address') + '/followers',
+        path: basePath + 'followers',
         name: 'Followers',
         component: Followers,
     },
     {
-        path: (config.subDomain.isSubDomainMode ? '' : '/:address') + '/followings',
+        path: basePath + 'followings',
         name: 'Followings',
         component: Followings,
     },
     {
-        path: (config.subDomain.isSubDomainMode ? '' : '/:address') + '/accounts',
+        path: basePath + 'accounts',
         name: 'Accounts',
         component: Accounts,
     },
     {
-        path: (config.subDomain.isSubDomainMode ? '' : '/:address') + '/nfts',
+        path: basePath + 'nfts',
         name: 'NFTs',
         component: NFTs,
     },
     {
-        path: (config.subDomain.isSubDomainMode ? '' : '/:address') + '/gitcoins',
+        path: basePath + 'gitcoins',
         name: 'Gitcoins',
         component: Gitcoins,
     },
     {
-        path: (config.subDomain.isSubDomainMode ? '' : '/:address') + '/footprints',
+        path: basePath + 'footprints',
         name: 'Footprints',
         component: Footprints,
     },
     {
-        path: (config.subDomain.isSubDomainMode ? '' : '/:address') + '/singlenft/:platform/:identity/:id/:type',
+        path: basePath + 'singlenft/:platform/:identity/:id/:type',
         name: 'SingleNFT',
         component: SingleNFT,
     },
     {
-        path: (config.subDomain.isSubDomainMode ? '' : '/:address') + '/singlegitcoin/:platform/:identity/:id/:type',
+        path: basePath + 'singlegitcoin/:platform/:identity/:id/:type',
         name: 'SingleGitcoin',
         component: SingleGitcoin,
     },
 
     {
-        path: (config.subDomain.isSubDomainMode ? '' : '/:address') + '/singlefootprint/:platform/:identity/:id/:type',
+        path: basePath + 'singlefootprint/:platform/:identity/:id/:type',
         name: 'SingleFootprint',
         component: SingleFootprint,
     },

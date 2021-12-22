@@ -1,21 +1,23 @@
+import { AnyObject } from 'rss3/types/extend';
+
 interface Asset {
     chain: string;
 }
 
 export interface NFTResponse {
-    data: NFT;
+    id: string;
+    detail: NFT;
 }
 
 export interface GitcoinResponse {
-    data: {
-        grant: GrantInfo;
-        txs: DonationInfo[];
-    };
+    id: string;
+    detail: DonationDetailByGrant;
 }
 
 export interface NFT extends Asset {
     token_id: string;
     name?: string;
+    chain: 'BSC.NFT' | 'Ethereum.NFT' | 'Polygon.NFT';
     description?: string | null;
     image_url?: string | null;
     image_preview_url?: string | null;
@@ -39,6 +41,7 @@ export interface NFT extends Asset {
 }
 
 export interface GrantInfo {
+    id?: number;
     active: boolean;
     title?: string;
     slug?: string;
@@ -54,12 +57,15 @@ export interface GrantInfo {
 
 export interface DonationInfo {
     donor: string;
+    adminAddr?: string;
     tokenAddr: string;
     amount: string;
     symbol?: string;
+    decimals?: number;
     formatedAmount?: string;
     timeStamp: string;
     txHash: string;
+    approach: string;
 }
 
 export interface DonationDetailByGrant {
@@ -68,36 +74,35 @@ export interface DonationDetailByGrant {
 }
 
 export interface POAP {
-    event: {
-        id: number;
-        fancy_id: string;
-        country: string;
-        city: string;
-        description: string;
-        year: number;
-        start_date: string;
-        end_date: string;
-        expiry_date: string;
-        name: string;
-        image_url: string;
-        event_url: string;
-        supply: number;
-    };
-    owner: string;
-    tokenId: string;
+    id: number;
+    fancy_id: string;
+    country: string;
+    city: string;
+    description: string;
+    year: number;
+    start_date: string;
+    end_date: string;
+    expiry_date: string;
+    name: string;
+    image_url: string;
+    event_url: string;
+    supply: number;
 }
 
 export interface POAPResponse {
-    data: POAP;
+    id: string;
+    detail: POAP;
 }
 
 // used in api response
 export interface GeneralAsset {
     platform: string;
     identity: string;
-    id: string; // contractAddress-id or admin_address
+    uniqueID: string; // contractAddress-id or admin_address
     type: string;
-    info: {
+    hide?: boolean;
+    order?: number;
+    info?: {
         collection?: string;
         collection_icon?: string;
         image_preview_url?: string | null;
@@ -105,7 +110,7 @@ export interface GeneralAsset {
         animation_original_url?: string | null;
         title?: string;
         total_contribs?: number;
-        token_contribs: {
+        token_contribs?: {
             token: string;
             amount: string;
         }[];
@@ -119,3 +124,48 @@ export interface GeneralAsset {
 export interface GeneralAssetWithTags extends GeneralAsset {
     tags?: string[];
 }
+
+export interface ItemDetails {
+    name: string | undefined;
+    avatar: string;
+    item: RSS3CustomItem | RSS3AutoItem;
+    details?: {
+        name?: string;
+        description?: string | null;
+        image_url?: string | null;
+    };
+}
+
+export interface Profile {
+    avatar: string;
+    username: string;
+    address: string;
+    bio: string;
+    rns?: string;
+    displayAddress?: string;
+}
+
+export interface CustomField_PassAssets {
+    id: string;
+    hide?: boolean;
+    order?: number;
+}
+
+export interface DetailedAccount {
+    platform: string;
+    identity: string;
+}
+
+export type DetailedNFT = AnyObject;
+export type DetailedDonation = AnyObject;
+export type DetailedFootprint = AnyObject;
+
+// export interface DetailedNFT extends AnyObject {
+//     id: string;
+// }
+// export interface DetailedDonation extends AnyObject {
+//     id: string;
+// }
+// export interface DetailedFootprint extends AnyObject {
+//     id: string;
+// }

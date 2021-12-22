@@ -19,7 +19,7 @@
         </div>
         <div v-if="details.traits && details.traits.length > 0">
             <h3>Properties</h3>
-            <div class="traits-container">
+            <div class="traits-container mt-2">
                 <Trait
                     v-for="item in details.traits"
                     :key="item.trait_type + item.value"
@@ -55,7 +55,7 @@ export default class NFTDetail extends Vue {
     chain!: String;
     market!: String;
 
-    public toMarket(address: string, tokenId: string) {
+    toMarket(address: string, tokenId: string) {
         switch (this.market) {
             case 'opensea':
                 switch (this.chain) {
@@ -73,7 +73,7 @@ export default class NFTDetail extends Vue {
         }
     }
 
-    public toScan(address: string, tokenId: string) {
+    toScan(address: string, tokenId: string) {
         switch (this.chain) {
             case 'BSC':
                 window.open(`https://bscscan.com/token/${address}?a=${tokenId}`);
@@ -87,7 +87,7 @@ export default class NFTDetail extends Vue {
         }
     }
 
-    public getMarkdown(description: string): string {
+    getMarkdown(description: string): string {
         return marked(description);
     }
 }

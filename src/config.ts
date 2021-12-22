@@ -15,9 +15,12 @@ export default {
         'a34494c90ca24f30b003a41b5a4c7752',
         'bad1e9a0ade24a0da20859746c54ad32',
     ],
-    hubEndpoint: PAGE_ENV === 'production' ? 'https://hub.pass3.me' : 'https://hub-dev.pass3.me',
-    defaultAvatar: 'https://rss3.mypinata.cloud/ipfs/QmVFq9qimnudPcs6QkQv8ZVEsvwD3aqETHWtS5yXgdbYY5',
+    defaultAvatar: 'https://infura-ipfs.io/ipfs/QmcK8FSTtLQVydLEDKLv1hEacLxZgi7j2i4mkQQMyKxv6k',
     hideUnlistedAsstes: false,
+    tags: {
+        prefix: 'pass',
+        hiddenTag: 'hidden',
+    },
     subDomain: {
         isSubDomainMode,
         rootDomain: PAGE_ENV === 'production' ? 'rss3.bio' : currentRootDomain,
@@ -27,7 +30,7 @@ export default {
         {
             name: 'loot',
             class: 'theme-loot',
-            nftIdPrefix: '0xff9c1b15b16263c61d017ee9f65c50e4ae0113d7-',
+            nftIdPrefix: '0xff9c1b15b16263c61d017ee9f65c50e4ae0113d7',
         },
     ],
     walletConnectOptions: {
