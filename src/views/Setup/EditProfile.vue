@@ -274,16 +274,20 @@ export default class EditProfile extends Vue {
     async toSetupRNS() {
         if (!this.rns) {
             this.isLoading = true;
-            if (!(await this.isPassEnough())) {
-                this.notice =
-                    'Oops! You haven’t got any $PASS yet. Setup your RNS later in your profile when you get one!';
-                this.isLoading = false;
-                this.isShowingNotice = true;
-            } else {
-                // this.saveEdited();
-                sessionStorage.setItem('redirectFrom', this.$route.fullPath);
-                await this.$router.push('/rns');
-            }
+            // if (!(await this.isPassEnough())) {
+            //     this.notice =
+            //         'Oops! You haven’t got any $PASS yet. Setup your RNS later in your profile when you get one!';
+            //     this.isLoading = false;
+            //     this.isShowingNotice = true;
+            // } else {
+            //     // this.saveEdited();
+            //     sessionStorage.setItem('redirectFrom', this.$route.fullPath);
+            //     await this.$router.push('/rns');
+            // }
+            this.notice =
+                "Oops! We're currently updating our website. Please visit revery.so to continue claiming your RNS. Sorry for the inconvenience.";
+            this.isLoading = false;
+            this.isShowingNotice = true;
         }
     }
 
