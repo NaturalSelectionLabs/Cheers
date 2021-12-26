@@ -158,6 +158,7 @@ export default class EditProfile extends Vue {
     notice: String = '';
     isShowingNotice: Boolean = false;
     ethAddress: string = '';
+    web3name: string = '';
     rns: string = '';
     $gtag: any;
     accounts: {
@@ -172,7 +173,8 @@ export default class EditProfile extends Vue {
         const loginUser = RSS3.getLoginUser();
         await RSS3.setPageOwner(loginUser.address);
         this.ethAddress = loginUser.address;
-        this.rns = loginUser.name;
+        this.web3name = loginUser.name;
+        this.rns = await RNSUtils.addr2Name(loginUser.address, true);
 
         const profile = loginUser.profile;
 
@@ -263,7 +265,7 @@ export default class EditProfile extends Vue {
         const redirectFrom = sessionStorage.getItem('redirectFrom');
         sessionStorage.removeItem('redirectFrom');
         await this.$router.push(
-            config.subDomain.isSubDomainMode ? redirectFrom || '/' : `/${this.rns || this.ethAddress}`,
+            config.subDomain.isSubDomainMode ? redirectFrom || '/' : `/${this.web3name || this.ethAddress}`,
         );
     }
 
@@ -306,8 +308,8 @@ export default class EditProfile extends Vue {
     }
 
     toAccountsPage() {
-        this.$gtag.event('visitAccountsPage', { userid: this.rns || this.ethAddress });
-        this.$router.push(config.subDomain.isSubDomainMode ? '' : `/${this.rns || this.ethAddress}`);
+        this.$gtag.event('visitAccountsPage', { userid: this.web3name || this.ethAddress });
+        this.$router.push(config.subDomain.isSubDomainMode ? '' : `/${this.web3name || this.ethAddress}`);
     }
 
     activated() {
