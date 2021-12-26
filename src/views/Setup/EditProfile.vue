@@ -97,7 +97,7 @@
                         <Button
                             size="sm"
                             class="w-72 text-primary-btn-text bg-primary-btn shadow-primary-btn"
-                            @click="isShowingNotice = false"
+                            @click="onClickOK"
                         >
                             <span>OK</span>
                         </Button>
@@ -164,6 +164,7 @@ export default class EditProfile extends Vue {
         platform: string;
         identity: string;
     }[] = [];
+    isOKtoRevery: boolean = false;
 
     async mounted() {
         await utils.tryEnsureOrRedirect(this.$route, this.$router);
@@ -204,6 +205,7 @@ export default class EditProfile extends Vue {
 
     setOversizeNotice(field: string) {
         this.notice = `${field} cannot be longer than ${this.maxValueLength} chars`;
+        this.isOKtoRevery = false;
         this.isLoading = false;
         this.isShowingNotice = true;
     }
@@ -286,9 +288,17 @@ export default class EditProfile extends Vue {
             // }
             this.notice =
                 "Oops! We're currently updating our website. Please visit revery.so to continue claiming your RNS. Sorry for the inconvenience.";
+            this.isOKtoRevery = true;
             this.isLoading = false;
             this.isShowingNotice = true;
         }
+    }
+
+    async onClickOK() {
+        if (this.isOKtoRevery) {
+            window.open('https://revery.so/', '_blank');
+        }
+        this.isShowingNotice = false;
     }
 
     toManageAccounts() {
