@@ -1,26 +1,74 @@
 <template>
     <div class="onboarding flex items-center justify-center h-screen text-center bg-pass3gradient bg-cover bg-fixed">
-        <div class="body flex flex-col items-center justify-between px-4 h-2/3">
-            <Logo :size="200" />
-            <div class="mx-auto w-83.5 text-white text-2xl leading-17.5">
-                <Button
-                    size="lg"
-                    class="mb-9 w-full h-17.5 text-primary-btn-text bg-primary-btn rounded-3xl shadow-primary-btn"
-                    @click="walletConnect"
-                >
-                    <WalletConnect :size="40" />
-                    <span> Wallet Connect </span>
-                </Button>
-                <Button
-                    size="lg"
-                    class="w-full h-17.5 text-metamask-text bg-metamask-bg rounded-3xl shadow-metamask"
-                    v-show="isHavingMetamaskPlugin"
-                    @click="metaMask"
-                >
-                    <Metamask :size="40" />
-                    <span> Metamask </span>
-                </Button>
+        <div class="fixed top-0 flex px-14 py-2 w-full">
+            <div class="h-18 flex items-center justify-start md:h-20">
+                <!-- Site branding -->
+                <div class="flex-shrink-0 mr-4">
+                    <!-- Logo -->
+                    <router-link to="/" class="block" aria-label="RSS3">
+                        <Logo :size="35" />
+                    </router-link>
+                </div>
             </div>
+            <nav class="hidden md:flex md:flex-grow">
+                <!-- Desktop menu links -->
+                <ul class="flex flex-row flex-grow flex-wrap gap-10 items-center justify-end">
+                    <li>
+                        <a
+                            href="https://pass3.me"
+                            class="nav-item hover:text-primary-text text-white text-lg font-medium"
+                            >Twitter</a
+                        >
+                    </li>
+                    <li>
+                        <a
+                            href="https://github.com/NaturalSelectionLabs"
+                            class="nav-item hover:text-primary-text text-white text-lg font-medium"
+                            >GitHub</a
+                        >
+                    </li>
+                    <li>
+                        <a
+                            href="https://rss3.notion.site"
+                            class="nav-item hover:text-primary-text text-white text-lg font-medium"
+                            >Tutorials</a
+                        >
+                    </li>
+                </ul>
+            </nav>
+        </div>
+        <div class="body flex flex-col gap-10 items-center justify-between mt-5 px-4 h-3/4">
+            <Logo :size="200" />
+            <div class="flex flex-col gap-6 items-center mb-10">
+                <h1 class="text-5xl font-medium md:text-6xl">
+                    <span class="text-primary-text">Pass</span> is the LinkedIn of
+                    <span class="text-primary-text">Web3</span>
+                </h1>
+                <span class="w-3/4 text-lg">
+                    RSS3 Bio - You had personal websites in Web1, Twitter and Instagram Pages in Web2, and now RSS3 Bio
+                    in Web3.
+                </span>
+                <div class="mt-5 mx-auto w-68 text-white text-2xl leading-17.5">
+                    <Button
+                        size="sm"
+                        class="mb-6 w-full h-13 text-primary-btn-text bg-primary-btn shadow-primary-btn"
+                        @click="walletConnect"
+                    >
+                        <WalletConnect :size="30" />
+                        <span> Wallet Connect </span>
+                    </Button>
+                    <Button
+                        size="sm"
+                        class="w-full h-13 text-metamask-text bg-metamask-bg shadow-metamask"
+                        v-show="isHavingMetamaskPlugin"
+                        @click="metaMask"
+                    >
+                        <Metamask :size="30" />
+                        <span> Metamask </span>
+                    </Button>
+                </div>
+            </div>
+
             <LoadingContainer v-show="isLoading" />
         </div>
     </div>
@@ -37,6 +85,7 @@ import Metamask from '@/components/Icons/Metamask.vue';
 import Loading from '@/components/Loading/Loading.vue';
 import LoadingContainer from '@/components/Loading/LoadingContainer.vue';
 import Logo from '@/components/Icons/Logo.vue';
+import ShadowLogo from '@/components/Icons/ShadowLogo.vue';
 import config from '@/config';
 @Options({
     name: 'Index',
@@ -48,6 +97,7 @@ import config from '@/config';
         Loading,
         LoadingContainer,
         Logo,
+        ShadowLogo,
     },
 })
 export default class Index extends Vue {
