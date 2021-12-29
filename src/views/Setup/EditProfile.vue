@@ -169,7 +169,30 @@ export default class EditProfile extends Vue {
 
     async mounted() {
         await utils.tryEnsureOrRedirect(this.$route, this.$router);
+        this.loadUserData();
+    }
 
+    async updated() {
+        const loginUser = RSS3.getLoginUser();
+        const userChanged = this.ethAddress !== loginUser.address;
+        if (userChanged) {
+            this.clearProfileData();
+            this.loadUserData();
+        }
+    }
+
+    clearProfileData() {
+        this.profile = {
+            avatar: config.defaultAvatar,
+            name: '',
+            bio: '',
+            link: '',
+        };
+        this.ethAddress = '';
+        this.accounts = [];
+    }
+
+    async loadUserData() {
         const loginUser = RSS3.getLoginUser();
         await RSS3.setPageOwner(loginUser.address);
         this.ethAddress = loginUser.address;
