@@ -51,7 +51,7 @@
                     md:flex-row md:col-start-2 md:row-start-2 md:items-center
                 "
             >
-                <div class="scrollbar-hide flex flex-row gap-x-2 w-full whitespace-nowrap overflow-auto">
+                <div class="scrollbar-hide flex flex-row gap-x-2 max-w-full whitespace-nowrap overflow-auto">
                     <LinkButton @click="emitClickAddress">
                         <transition name="tip-fade" mode="out-in">
                             <span v-if="isShowingTooltip">Copied</span>
@@ -63,7 +63,7 @@
                     </LinkButton>
                 </div>
                 <div
-                    class="scrollbar-hide max-h-5 flex flex-1 flex-row flex-shrink items-center w-full"
+                    class="scrollbar-hide max-h-5 flex flex-1 flex-row flex-shrink items-center"
                     v-if="!isLoadingPersona"
                 >
                     <slot name="Accounts" />
