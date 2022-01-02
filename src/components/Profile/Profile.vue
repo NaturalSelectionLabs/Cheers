@@ -69,7 +69,7 @@
                     <slot name="Accounts" />
                 </div>
             </section>
-            <div class="bio col-span-full whitespace-pre-line text-lg font-normal md:order-5">
+            <div class="bio col-span-full whitespace-pre-line text-lg font-normal md:order-5 md:mt-3">
                 {{ bio }}
             </div>
             <div class="col-span-full md:col-span-1 md:col-start-4 md:row-start-1">
