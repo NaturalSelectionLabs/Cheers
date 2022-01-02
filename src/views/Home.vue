@@ -13,6 +13,7 @@
                     :followers="rss3Relations.followers.length"
                     :followings="rss3Relations.followings.length"
                     :bio="rss3Profile.bio"
+                    :website="rss3Profile.displayAddress"
                     :is-loading-persona="isLoadingPersona"
                     @click-address="clickAddress"
                 >
