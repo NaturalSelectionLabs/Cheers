@@ -1,9 +1,17 @@
 <template>
-    <div class="flex flex-col items-center p-4 bg-white bg-opacity-50 border-card rounded-xl box-border">
+    <div class="flex flex-col items-center p-4 bg-white bg-opacity-50 border-card rounded-xl box-border md:p-6">
         <div
-            class="profile-container grid gap-x-6 gap-y-2 grid-cols-3 content-center items-center w-full md:grid-cols-4"
+            class="
+                profile-container
+                grid
+                gap-x-6 gap-y-2
+                grid-cols-3
+                content-center
+                items-center
+                w-full
+                md:gap-x-0 md:grid-cols-4
+            "
         >
-            <!-- <div class="col-span-3 row-span-1 flex flex-cols items-stretch gap-x-5"> -->
             <ImgHolder
                 class="h-22 col-span-1 w-22 md:row-span-3 md:w-40 md:h-40"
                 :is-rounded="true"
@@ -11,7 +19,7 @@
                 :src="avatar"
             />
             <div
-                class="stats-container row-span-1 self-end ml-2 leading-5 md:col-start-2 md:row-start-3"
+                class="stats-container row-span-1 self-end ml-2 leading-5 md:col-start-2 md:row-start-3 md:ml-0"
                 @click="toFollowersPage"
             >
                 <div class="stats-number">
@@ -34,41 +42,39 @@
             >
             <section
                 class="
-                    scrollbar-hide
-                    flex flex-row
-                    gap-x-2
+                    flex flex-col
+                    gap-x-10 gap-y-2
                     col-span-full
                     row-start-3
                     items-start
                     justify-start
-                    whitespace-nowrap
-                    overflow-auto
                     md:flex-row md:col-start-2 md:row-start-2 md:items-center
                 "
             >
-                <LinkButton @click="emitClickAddress">
-                    <transition name="tip-fade" mode="out-in">
-                        <span v-if="isShowingTooltip">Copied</span>
-                        <span v-else>{{ rns ? rns + suffix : filter(address) }}</span>
-                    </transition>
-                </LinkButton>
-                <LinkButton @click="toExternalLink" v-if="website && !isLoadingPersona">
-                    <span><i class="bx bx-link align-bottom" />{{ fixWebsiteURI(website) }}</span>
-                </LinkButton>
+                <div class="scrollbar-hide flex flex-row gap-x-2 w-full whitespace-nowrap overflow-auto">
+                    <LinkButton @click="emitClickAddress">
+                        <transition name="tip-fade" mode="out-in">
+                            <span v-if="isShowingTooltip">Copied</span>
+                            <span v-else>{{ rns ? rns + suffix : filter(address) }}</span>
+                        </transition>
+                    </LinkButton>
+                    <LinkButton @click="toExternalLink" v-if="website && !isLoadingPersona">
+                        <span><i class="bx bx-link align-bottom" />{{ fixWebsiteURI(website) }}</span>
+                    </LinkButton>
+                </div>
+                <div
+                    class="scrollbar-hide max-h-5 flex flex-1 flex-row flex-shrink items-center w-full"
+                    v-if="!isLoadingPersona"
+                >
+                    <slot name="Accounts" />
+                </div>
             </section>
-            <div
-                class="scrollbar-hide max-h-5 flex flex-1 flex-row flex-shrink col-span-full row-start-4 items-center"
-                v-if="!isLoadingPersona"
-            >
-                <slot name="Accounts" />
-            </div>
             <div class="bio col-span-full whitespace-pre-line text-lg font-normal md:order-5">
                 {{ bio }}
             </div>
             <div class="col-span-full md:col-span-1 md:col-start-4 md:row-start-1">
                 <slot name="Toolbar" />
             </div>
-            <!-- </div> -->
         </div>
     </div>
 </template>
