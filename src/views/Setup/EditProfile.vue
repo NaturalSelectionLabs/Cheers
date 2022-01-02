@@ -97,7 +97,7 @@
                         <Button
                             size="sm"
                             class="w-72 text-primary-btn-text bg-primary-btn shadow-primary-btn"
-                            @click="onClickOK"
+                            @click="isShowingNotice = false"
                         >
                             <span>OK</span>
                         </Button>
@@ -165,7 +165,6 @@ export default class EditProfile extends Vue {
         platform: string;
         identity: string;
     }[] = [];
-    isOKtoRevery: boolean = false;
 
     async mounted() {
         await utils.tryEnsureOrRedirect(this.$route, this.$router);
@@ -207,7 +206,6 @@ export default class EditProfile extends Vue {
 
     setOversizeNotice(field: string) {
         this.notice = `${field} cannot be longer than ${this.maxValueLength} chars`;
-        this.isOKtoRevery = false;
         this.isLoading = false;
         this.isShowingNotice = true;
     }
@@ -278,29 +276,17 @@ export default class EditProfile extends Vue {
     async toSetupRNS() {
         if (!this.rns) {
             this.isLoading = true;
-            // if (!(await this.isPassEnough())) {
-            //     this.notice =
-            //         'Oops! You haven’t got any $PASS yet. Setup your RNS later in your profile when you get one!';
-            //     this.isLoading = false;
-            //     this.isShowingNotice = true;
-            // } else {
-            //     // this.saveEdited();
-            //     sessionStorage.setItem('redirectFrom', this.$route.fullPath);
-            //     await this.$router.push('/rns');
-            // }
-            this.notice =
-                "Oops! We're currently updating our website. Please visit revery.so to continue claiming your RNS. Sorry for the inconvenience.";
-            this.isOKtoRevery = true;
-            this.isLoading = false;
-            this.isShowingNotice = true;
+            if (!(await this.isPassEnough())) {
+                this.notice =
+                    'Oops! You haven’t got any $PASS yet. Setup your RNS later in your profile when you get one!';
+                this.isLoading = false;
+                this.isShowingNotice = true;
+            } else {
+                // this.saveEdited();
+                sessionStorage.setItem('redirectFrom', this.$route.fullPath);
+                await this.$router.push('/rns');
+            }
         }
-    }
-
-    async onClickOK() {
-        if (this.isOKtoRevery) {
-            window.open('https://revery.so/', '_blank');
-        }
-        this.isShowingNotice = false;
     }
 
     toManageAccounts() {

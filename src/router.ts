@@ -15,6 +15,7 @@ import NFTs from '@/views/NFT/NFTs.vue';
 import SetupNFTs from '@/views/NFT/SetupNFTs.vue';
 import SingleNFT from '@/views/NFT/SingleNFT.vue';
 import EditProfile from '@/views/Setup/EditProfile.vue';
+import RNS from '@/views/Setup/RNS.vue';
 import RNSPending from '@/views/Setup/RNSPending.vue';
 import Setup from '@/views/Setup/Setup.vue';
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
@@ -97,6 +98,11 @@ export const routes: RouteRecordRaw[] = [
         path: '/setup/Footprints',
         name: 'SetupFootprints',
         component: SetupFootprints,
+    },
+    {
+        path: '/rns',
+        name: 'RNS',
+        component: RNS,
     },
     {
         path: '/profile',
