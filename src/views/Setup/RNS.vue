@@ -157,7 +157,7 @@ export default class RNS extends Vue {
             if (validateNetwork(Number(chain))) {
                 const rns = await RNSUtils.addr2Name(this.ethAddress, true);
                 if (rns !== '') {
-                    this.rns = rns;
+                    this.rns = rns.replace('.rss3', '').toLowerCase();
                     this.isAlreadyHavingRNS = true;
                 }
             }
