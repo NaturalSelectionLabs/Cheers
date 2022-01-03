@@ -31,7 +31,7 @@
     },
     "homepage": "https://github.com/NaturalSelectionLabs/Web3Pass#readme",
     "dependencies": {
-        "@babel/runtime": "7.16.3",
+        "@babel/runtime": "7.16.7",
         "@google/model-viewer": "1.9.2",
         "@koa/cors": "3.1.0",
         "@koa/router": "10.1.1",
