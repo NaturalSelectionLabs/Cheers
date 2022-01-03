@@ -15,22 +15,22 @@
                 <ul class="flex flex-row flex-grow flex-wrap gap-10 items-center justify-end">
                     <li>
                         <a
-                            href="https://pass3.me"
-                            class="nav-item hover:text-primary-text text-white text-lg font-medium"
+                            href="https://twitter.com/rss3_"
+                            class="font-base nav-item text-primary-text hover:text-white text-lg"
                             >Twitter</a
                         >
                     </li>
                     <li>
                         <a
                             href="https://github.com/NaturalSelectionLabs"
-                            class="nav-item hover:text-primary-text text-white text-lg font-medium"
+                            class="font-base nav-item text-primary-text hover:text-white text-lg"
                             >GitHub</a
                         >
                     </li>
                     <li>
                         <a
-                            href="https://rss3.notion.site"
-                            class="nav-item hover:text-primary-text text-white text-lg font-medium"
+                            href="https://rss3.fun/"
+                            class="font-base nav-item text-primary-text hover:text-white text-lg"
                             >Tutorials</a
                         >
                     </li>
@@ -70,6 +70,30 @@
             </div>
 
             <LoadingContainer v-show="isLoading" />
+        </div>
+        <div class="fixed bottom-0 flex px-14 py-2 w-full">
+            <div class="flex items-center justify-start h-10 md:h-10">
+                <span class="text-black text-sm font-light opacity-60">©2021 Natural Selection Labs</span>
+            </div>
+            <nav class="hidden md:flex md:flex-grow">
+                <!-- Desktop menu links -->
+                <ul class="flex flex-row flex-grow flex-wrap gap-10 items-center justify-end">
+                    <li>
+                        <a
+                            href="https://rss3.io/#/privacy"
+                            class="nav-item text-black hover:text-primary-text text-sm font-light opacity-60"
+                            >Term of use</a
+                        >
+                    </li>
+                    <li>
+                        <a
+                            href="https://rss3.io/#/privacy"
+                            class="nav-item text-black hover:text-primary-text text-sm font-light opacity-60"
+                            >Privacy policy</a
+                        >
+                    </li>
+                </ul>
+            </nav>
         </div>
     </div>
 </template>
