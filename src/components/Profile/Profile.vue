@@ -1,19 +1,8 @@
 <template>
     <div class="flex flex-col items-center p-4 bg-white bg-opacity-50 border-card rounded-xl box-border md:p-6">
-        <div
-            class="
-                profile-container
-                grid
-                gap-x-6 gap-y-2
-                grid-cols-3
-                content-center
-                items-center
-                w-full
-                md:gap-x-0 md:grid-cols-4
-            "
-        >
+        <div class="grid gap-x-6 gap-y-2 grid-cols-3 content-center items-center w-full md:gap-x-0 md:grid-cols-4">
             <ImgHolder
-                class="h-22 col-span-1 w-22 md:row-span-3 md:w-40 md:h-40"
+                class="col-span-1 w-22 h-22 md:row-span-3 md:w-40 md:h-40"
                 :is-rounded="true"
                 :is-border="false"
                 :src="avatar"
