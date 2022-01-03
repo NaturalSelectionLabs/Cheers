@@ -214,6 +214,7 @@ module.exports = {
             },
             height: {
                 19: '4.875rem',
+                22: '5.25rem', //84px, profile avatar height
                 50: '12.5rem', //200px
                 72: '18rem',
                 112: '28rem',
