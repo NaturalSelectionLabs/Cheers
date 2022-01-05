@@ -207,12 +207,14 @@ module.exports = {
             },
             width: {
                 19: '4.875rem', //78px, footprint item in footprint card
+                22: '5.25rem', //84px, profile avatar width
                 27: '6.75rem', //108px, scan tag width
                 45: '11.25rem', //180px, discard & save button width,
                 50: '12.5rem', //200px
             },
             height: {
                 19: '4.875rem',
+                22: '5.25rem', //84px, profile avatar height
                 50: '12.5rem', //200px
                 72: '18rem',
                 112: '28rem',

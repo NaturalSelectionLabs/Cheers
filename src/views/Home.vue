@@ -31,7 +31,7 @@
                             v-if="isOwner"
                             size="sm"
                             shape="circle"
-                            class="inline-block mr-1 w-8 h-8 text-account-btn-s-text bg-account-btn-s shadow-account"
+                            class="inline-block mr-1 w-8 h-8 text-account-btn-s-text bg-account-btn-s"
                             @click="toManageAccounts"
                         >
                             <i class="bx bxs-pencil bx-xs" />
@@ -39,7 +39,7 @@
                         <Button
                             size="sm"
                             shape="circle"
-                            class="inline-block mr-1 w-8 h-8 text-account-btn-s-text bg-account-btn-s shadow-account"
+                            class="inline-block mr-1 w-8 h-8 text-account-btn-s-text bg-account-btn-s"
                             @click="toAccountsPage"
                         >
                             <i class="bx bx-expand-alt bx-xs" />
