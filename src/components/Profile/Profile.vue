@@ -1,45 +1,21 @@
 <template>
     <div class="flex flex-col items-center p-4 bg-white bg-opacity-50 border-card rounded-xl box-border md:p-6">
-        <div class="grid gap-x-6 gap-y-2 grid-cols-3 content-center items-center w-full md:gap-x-0 md:grid-cols-4">
-            <ImgHolder
-                class="col-span-1 w-22 h-22 md:row-span-3 md:w-40 md:h-40"
-                :is-rounded="true"
-                :is-border="false"
-                :src="avatar"
-            />
-            <div
-                class="stats-container row-span-1 self-end ml-2 leading-5 md:col-start-2 md:row-start-3 md:ml-0"
-                @click="toFollowersPage"
-            >
+        <div class="grid gap-x-6 gap-y-2 grid-cols-3 content-center items-center w-full">
+            <ImgHolder class="col-span-1 w-22 h-22" :is-rounded="true" :is-border="false" :src="avatar" />
+            <div class="stats-container row-span-1 self-end ml-2 leading-5" @click="toFollowersPage">
                 <div class="stats-number">
                     {{ followers }}
                 </div>
                 <div class="stats-type">Followers</div>
             </div>
-            <div
-                class="stats-container row-span-1 self-end leading-5 md:col-start-3 md:row-start-3"
-                @click="toFollowingsPage"
-            >
+            <div class="stats-container row-span-1 self-end leading-5" @click="toFollowingsPage">
                 <div class="stats-number">
                     {{ followings }}
                 </div>
                 <div class="stats-type">Followings</div>
             </div>
-            <span
-                class="col-span-full row-start-2 text-2xl font-semibold md:col-span-2 md:col-start-2 md:row-start-1"
-                >{{ username }}</span
-            >
-            <section
-                class="
-                    flex flex-col
-                    gap-x-10 gap-y-2
-                    col-span-full
-                    row-start-3
-                    items-start
-                    justify-start
-                    md:flex-row md:col-start-2 md:row-start-2 md:items-center
-                "
-            >
+            <span class="col-span-full row-start-2 text-2xl font-semibold">{{ username }}</span>
+            <section class="flex flex-col gap-x-10 gap-y-2 col-span-full row-start-3 items-start justify-start">
                 <div class="scrollbar-hide flex flex-row gap-x-2 max-w-full whitespace-nowrap overflow-auto">
                     <LinkButton @click="emitClickAddress">
                         <transition name="tip-fade" mode="out-in">
@@ -58,10 +34,10 @@
                     <slot name="Accounts" />
                 </div>
             </section>
-            <div class="bio col-span-full whitespace-pre-line text-lg font-normal md:order-5 md:mt-3">
+            <div class="bio col-span-full whitespace-pre-line text-lg font-normal">
                 {{ bio }}
             </div>
-            <div class="col-span-full md:col-span-1 md:col-start-4 md:row-start-1">
+            <div class="col-span-full md:col-span-2">
                 <slot name="Toolbar" />
             </div>
         </div>

@@ -1,13 +1,17 @@
 <template>
-    <div class="card bg-blur">
-        <div class="p-2 text-primary-text text-lg font-semibold">{{ title }}</div>
-        <div class="flex flex-row gap-x-2 items-start w-full">
-            <div class="card-body">
-                <div class="content-wrapper">
-                    <slot name="content" />
-                </div>
+    <div class="bg-blur flex flex-col items-start p-3 pt-0 min-h-28 border-card rounded-xl box-border">
+        <div class="flex flex-row items-center justify-between p-2 w-full text-primary-text">
+            <div class="text-lg font-semibold">{{ title }}</div>
+            <slot name="header" />
+        </div>
+        <!-- <div class="flex flex-col gap-1 p-2">
+            <slot name="details" />
+        </div> -->
+        <div class="flex flex-row gap-x-2 items-center w-full">
+            <div class="flex flex-1 p-2 pt-0 overflow-x-auto" style="scrollbar-width: thin">
+                <div class="flex flex-row items-center"><slot name="content" /></div>
             </div>
-            <div class="flex-shrink-0 pt-1">
+            <div class="flex-shrink-0">
                 <slot name="button" />
             </div>
         </div>
@@ -27,23 +31,6 @@ export default class TransBarCard extends Vue {}
 
 <style lang="postcss" scoped>
 @layer components {
-    .card {
-        @apply flex flex-col items-start px-3 h-28 border-card rounded-xl box-border;
-
-        .card-body {
-            scrollbar-width: thin;
-            @apply flex flex-1 flex-row gap-2 items-center p-2 pt-0 w-0 overflow-y-auto;
-
-            .content-wrapper {
-                @apply flex flex-1 flex-row items-center;
-            }
-
-            .button-wrapper {
-                @apply flex-shrink-0;
-            }
-        }
-    }
-
     /* slightly transparent fallback */
     .bg-blur {
         background-color: rgba(255, 255, 255, 0.6);

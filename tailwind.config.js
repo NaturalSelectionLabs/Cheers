@@ -248,7 +248,9 @@ module.exports = {
             },
         },
         minHeight: {
+            0: '0rem',
             20: '5rem', // Min height of card content
+            28: '7rem', // min height of trans bar card
         },
         maxHeight: {
             36: '9rem',

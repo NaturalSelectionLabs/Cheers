@@ -1,10 +1,13 @@
 <template>
-    <div id="main" class="h-screen text-body-text bg-body-bg overflow-y-auto">
+    <div
+        id="main"
+        class="h-screen text-body-text bg-body-bg bg-gradient-to-tr from-blue-300 to-blue-100 via-white overflow-y-auto"
+    >
         <div
             v-if="isAccountExist"
-            class="grid gap-4 grid-cols-1 m-auto pb-12 pt-8 px-4 max-w-screen-lg select-none md:grid-cols-2"
+            class="grid gap-4 grid-cols-1 m-auto pb-12 pt-8 px-4 max-w-screen-lg select-none md:grid-cols-5"
         >
-            <section class="relative md:col-span-2">
+            <section class="relative md:col-span-3">
                 <Profile
                     :avatar="rss3Profile.avatar"
                     :username="rss3Profile.username"
@@ -59,14 +62,14 @@
                 </Profile>
             </section>
 
-            <BarCard color="nft">
+            <TransBarCard title="NFT" class="md:col-span-3">
                 <template #header>
-                    <NFTIcon />
+                    <i v-if="isOwner" class="bx bxs-pencil bx-xs cursor-pointer" @click="toManageNFTs" />
                 </template>
                 <template #content>
                     <NFTItem
                         class="mr-1 cursor-pointer"
-                        v-for="item in nfts"
+                        v-for="item in nfts.slice(0, 7)"
                         :key="item.id"
                         :image-url="item.detail.animation_url || item.detail.image_preview_url || defaultAvatar"
                         :poster-url="
@@ -76,34 +79,24 @@
                             item.detail.animation_original_url ||
                             defaultAvatar
                         "
-                        size="sm"
+                        size="md"
                         @click="toSingleItemPage(item.id)"
                     />
                 </template>
-                <template #footer>
-                    <section class="flex flex-row gap-2">
-                        <Button
-                            v-if="isOwner"
-                            size="sm"
-                            class="w-8 h-8 text-nft-btn-s-text bg-nft-btn-s shadow-nft-btn-s"
-                            @click="toManageNFTs"
-                        >
-                            <i class="bx bxs-pencil bx-xs" />
-                        </Button>
-                        <Button
-                            size="sm"
-                            class="w-8 h-8 text-nft-btn-s-text bg-nft-btn-s shadow-nft-btn-s"
-                            @click="toListPage('NFT')"
-                        >
-                            <i class="bx bx-expand-alt bx-xs" />
-                        </Button>
-                    </section>
+                <template #button>
+                    <Button
+                        size="sm"
+                        class="w-8 h-8 text-secondary-btn-text bg-secondary-btn"
+                        @click="toListPage('NFT')"
+                    >
+                        <i class="bx bx-expand-alt bx-xs" />
+                    </Button>
                 </template>
-            </BarCard>
+            </TransBarCard>
 
-            <BarCard color="gitcoin">
+            <TransBarCard title="Donations" class="md:col-span-3">
                 <template #header>
-                    <GitcoinIcon :iconColor="currentTheme === 'loot' ? 'white' : 'black'" />
+                    <i v-if="isOwner" class="bx bxs-pencil bx-xs cursor-pointer" @click="toManageGitcoins" />
                 </template>
                 <template #content>
                     <GitcoinItem
@@ -115,53 +108,42 @@
                         @click="toSingleItemPage(item.id)"
                     />
                 </template>
-                <template #footer>
-                    <section class="flex flex-row gap-2">
-                        <Button
-                            v-if="isOwner"
-                            size="sm"
-                            class="w-8 h-8 text-gitcoin-btn-s-text bg-gitcoin-btn-s shadow-gitcoin-btn-s"
-                            @click="toManageGitcoins"
-                        >
-                            <i class="bx bxs-pencil bx-xs" />
-                        </Button>
-                        <Button
-                            size="sm"
-                            class="w-8 h-8 text-gitcoin-btn-s-text bg-gitcoin-btn-s shadow-gitcoin-btn-s"
-                            @click="toListPage('Gitcoin')"
-                        >
-                            <i class="bx bx-expand-alt bx-xs" />
-                        </Button>
-                    </section>
+                <template #button>
+                    <Button
+                        size="sm"
+                        class="w-8 h-8 text-secondary-btn-text bg-secondary-btn"
+                        @click="toListPage('Gitcoin')"
+                    >
+                        <i class="bx bx-expand-alt bx-xs" />
+                    </Button>
                 </template>
-            </BarCard>
+            </TransBarCard>
 
             <Card
                 title="Footprints"
-                color-title="text-footprint-title"
-                color-tips="text-footprint-title"
-                color-background="bg-footprint-bg"
-                class="w-full border-footprint-border"
+                color-title="text-content-title"
+                color-tips="text-content-title"
+                color-background="bg-white bg-opacity-50"
+                class="w-full border-footprint-border md:col-span-3"
                 :is-having-content="true"
                 :is-single-line="false"
                 id="footprint-card"
             >
-                <template #title-icon><FootprintIcon /> </template>
+                <template #title-icon><FootprintIcon /></template>
 
                 <template #header-button>
                     <section class="flex flex-row gap-2">
                         <Button
                             v-if="isOwner"
                             size="sm"
-                            class="w-8 h-8 text-footprint-btn-s-text bg-footprint-btn-s shadow-footprint-btn-s"
+                            class="w-8 h-8 text-secondary-btn-text bg-secondary-btn"
                             @click="toManageFootprints"
                         >
                             <i class="bx bxs-pencil bx-xs" />
                         </Button>
                         <Button
-                            v-if="!isPCLayout"
                             size="sm"
-                            class="w-8 h-8 text-footprint-btn-s-text bg-footprint-btn-s shadow-footprint-btn-s"
+                            class="w-8 h-8 text-secondary-btn-text bg-secondary-btn"
                             @click="toListPage('Footprint')"
                         >
                             <i class="bx bx-expand-alt bx-xs" />
@@ -169,38 +151,7 @@
                     </section>
                 </template>
                 <template #content>
-                    <div
-                        v-if="isPCLayout"
-                        class="scrollbar-hide flex flex-col px-0.5 overflow-y-auto"
-                        :class="{
-                            'h-72': isPCLayout,
-                            'justify-center': footprints.length === 0,
-                        }"
-                    >
-                        <div v-if="footprints.length > 0" class="divide-footprint-divider divide-y-xs">
-                            <FootprintCard
-                                v-for="item of footprints"
-                                :key="item.id"
-                                :imageUrl="item.detail.image_url || defaultAvatar"
-                                :username="rss3Profile.username"
-                                :activity="item.detail.name"
-                                :start-date="item.detail.start_date"
-                                :end-date="item.detail.end_date"
-                                :location="item.detail.city || item.detail.country || 'Metaverse'"
-                                class="cursor-pointer"
-                                @click="toSingleItemPage(item.id)"
-                            />
-                        </div>
-                        <div v-else>
-                            <div class="m-auto mt-4 text-center text-footprint-title">
-                                {{ isLoadingAssets.Footprint ? 'Loading...' : "Haven't found anything yet..." }}
-                            </div>
-                        </div>
-                    </div>
-                    <div
-                        v-else-if="footprints.length > 0"
-                        class="flex flex-col px-0.5 divide-footprint-divider divide-y-xs"
-                    >
+                    <div v-if="footprints.length > 0" class="flex flex-col px-0.5 divide-footprint-divider divide-y-xs">
                         <div>
                             <FootprintCard
                                 :imageUrl="footprints[0].detail.image_url"
@@ -237,7 +188,7 @@
                 color-title="text-content-title"
                 color-tips="text-content-title"
                 color-background="bg-content-bg"
-                class="w-auto border-content-border md:col-start-2 md:row-span-3 md:row-start-2"
+                class="w-auto min-h-0 border-content-border md:col-span-2 md:col-start-4 md:row-span-3 md:row-start-1"
                 :isSingleLine="false"
                 :is-having-content="true"
             >
@@ -454,6 +405,9 @@ import EVMpAccountItem from '@/components/Account/EVMpAccountItem.vue';
 import { AnyObject } from 'rss3/types/extend';
 import IntersectionObserverContainer from '@/components/Common/IntersectionObserverContainer.vue';
 
+import TransBarCard from '@/components/Card/TransBarCard.vue';
+import TransCard from '@/components/Card/TransCard.vue';
+
 interface Relations {
     followers: string[];
     followings: string[];
@@ -466,6 +420,8 @@ interface Relations {
         EVMpAccountItem,
         FootprintItem,
         Button,
+        TransBarCard,
+        TransCard,
         BarCard,
         Card,
         Profile,
