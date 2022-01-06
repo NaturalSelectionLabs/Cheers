@@ -131,7 +131,7 @@
                 </template>
             </TransBarCard>
 
-            <TransBarCard title="Footprints" class="md:col-span-3">
+            <TransBarCard title="Footprints" class="md:col-span-3" :haveContent="footprints.length > 0">
                 <template #header>
                     <i v-if="isOwner" class="bx bxs-pencil bx-xs cursor-pointer" @click="toManageFootprints" />
                 </template>
