@@ -1,5 +1,5 @@
 <template>
-    <div class="flex flex-row gap-2 justify-start p-4">
+    <div class="flex flex-row gap-2 justify-start">
         <FootprintItem
             :imageUrl="imageUrl"
             size="lg"
@@ -18,7 +18,7 @@
                 <span class="flex-1 w-0 text-body-text truncate">{{ location }}</span>
             </div>
             <div class="flex flex-row gap-2 font-medium">
-                <div class="text-footprint-title">{{ username }} attended</div>
+                <div class="text-primary-text">{{ username }} attended</div>
                 <div class="flex-1 w-0 truncate">{{ activity }}</div>
             </div>
         </section>

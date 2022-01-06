@@ -21,7 +21,7 @@
                     :start-date="item.detail.start_date"
                     :end-date="item.detail.end_date"
                     :location="item.detail.city || item.detail.country || 'Metaverse'"
-                    class="cursor-pointer"
+                    class="p-4 cursor-pointer"
                     @click="toSingleFootprint(item.id)"
                 />
             </div>

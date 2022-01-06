@@ -62,14 +62,14 @@
                 </Profile>
             </section>
 
-            <TransBarCard title="NFT" class="md:col-span-3">
+            <TransBarCard title="NFT" class="md:col-span-3" :haveContent="nfts.length > 0">
                 <template #header>
                     <i v-if="isOwner" class="bx bxs-pencil bx-xs cursor-pointer" @click="toManageNFTs" />
                 </template>
                 <template #content>
                     <NFTItem
                         class="mr-1 cursor-pointer"
-                        v-for="item in nfts.slice(0, 7)"
+                        v-for="item in nfts"
                         :key="item.id"
                         :image-url="item.detail.animation_url || item.detail.image_preview_url || defaultAvatar"
                         :poster-url="
@@ -94,14 +94,26 @@
                 </template>
             </TransBarCard>
 
-            <TransBarCard title="Donations" class="md:col-span-3">
+            <!-- Todo config timestamp -->
+            <TransBarCard title="Donations" class="md:col-span-3" :haveContent="gitcoins.length > 0">
                 <template #header>
                     <i v-if="isOwner" class="bx bxs-pencil bx-xs cursor-pointer" @click="toManageGitcoins" />
+                </template>
+                <template #details>
+                    <AssetCard
+                        v-for="item in gitcoins.slice(0, 3)"
+                        :key="item.id"
+                        :imageUrl="item.detail.grant.logo || defaultAvatar"
+                        timestamp="2021 - 03 - 19"
+                        :name="item.detail.grant.title"
+                        :username="rss3Profile.username"
+                        @click="toSingleItemPage(item.id)"
+                    />
                 </template>
                 <template #content>
                     <GitcoinItem
                         class="mr-1 cursor-pointer"
-                        v-for="item in gitcoins"
+                        v-for="item in gitcoins.slice(4)"
                         :key="item.id"
                         size="sm"
                         :imageUrl="item.detail.grant.logo || defaultAvatar"
@@ -119,75 +131,49 @@
                 </template>
             </TransBarCard>
 
-            <Card
-                title="Footprints"
-                color-title="text-content-title"
-                color-tips="text-content-title"
-                color-background="bg-white bg-opacity-50"
-                class="w-full border-footprint-border md:col-span-3"
-                :is-having-content="true"
-                :is-single-line="false"
-                id="footprint-card"
-            >
-                <template #title-icon><FootprintIcon /></template>
-
-                <template #header-button>
-                    <section class="flex flex-row gap-2">
-                        <Button
-                            v-if="isOwner"
-                            size="sm"
-                            class="w-8 h-8 text-secondary-btn-text bg-secondary-btn"
-                            @click="toManageFootprints"
-                        >
-                            <i class="bx bxs-pencil bx-xs" />
-                        </Button>
-                        <Button
-                            size="sm"
-                            class="w-8 h-8 text-secondary-btn-text bg-secondary-btn"
-                            @click="toListPage('Footprint')"
-                        >
-                            <i class="bx bx-expand-alt bx-xs" />
-                        </Button>
-                    </section>
+            <TransBarCard title="Footprints" class="md:col-span-3">
+                <template #header>
+                    <i v-if="isOwner" class="bx bxs-pencil bx-xs cursor-pointer" @click="toManageFootprints" />
+                </template>
+                <template #details>
+                    <FootprintCard
+                        v-if="footprints.length > 0"
+                        :imageUrl="footprints[0].detail.image_url"
+                        :username="rss3Profile.username"
+                        :activity="footprints[0].detail.name"
+                        :start-date="footprints[0].detail.start_date"
+                        :end-date="footprints[0].detail.end_date"
+                        :location="footprints[0].detail.city || footprints[0].detail.country || 'Metaverse'"
+                        class="py-2 cursor-pointer"
+                        @click="toSingleItemPage(footprints[0].id)"
+                    />
                 </template>
                 <template #content>
-                    <div v-if="footprints.length > 0" class="flex flex-col px-0.5 divide-footprint-divider divide-y-xs">
-                        <div>
-                            <FootprintCard
-                                :imageUrl="footprints[0].detail.image_url"
-                                :username="rss3Profile.username"
-                                :activity="footprints[0].detail.name"
-                                :start-date="footprints[0].detail.start_date"
-                                :end-date="footprints[0].detail.end_date"
-                                :location="footprints[0].detail.city || footprints[0].detail.country || 'Metaverse'"
-                                class="cursor-pointer"
-                                @click="toSingleItemPage(footprints[0].id)"
-                            />
-                        </div>
-                        <div class="inline-flex p-4 overflow-x-auto" style="scrollbar-width: thin">
-                            <FootprintItem
-                                v-for="item of footprints.slice(1)"
-                                :key="item.id"
-                                :imageUrl="item.detail.image_url"
-                                size="sm"
-                                class="flex-shrink-0 mr-2 cursor-pointer"
-                                @click="toSingleItemPage(item.id)"
-                            />
-                        </div>
-                    </div>
-                    <div v-else>
-                        <div class="m-auto mt-4 text-center text-footprint-title">
-                            {{ isLoadingAssets.Footprint ? 'Loading...' : "Haven't found anything yet..." }}
-                        </div>
-                    </div>
+                    <FootprintItem
+                        v-for="item of footprints.slice(1)"
+                        :key="item.id"
+                        :imageUrl="item.detail.image_url"
+                        size="sm"
+                        class="flex-shrink-0 mr-2 cursor-pointer"
+                        @click="toSingleItemPage(item.id)"
+                    />
                 </template>
-            </Card>
+                <template #button>
+                    <Button
+                        size="sm"
+                        class="w-8 h-8 text-secondary-btn-text bg-secondary-btn"
+                        @click="toListPage('Footprint')"
+                    >
+                        <i class="bx bx-expand-alt bx-xs" />
+                    </Button>
+                </template>
+            </TransBarCard>
 
             <Card
                 title="Content"
                 color-title="text-content-title"
                 color-tips="text-content-title"
-                color-background="bg-content-bg"
+                color-background="bg-white bg-opacity-50"
                 class="w-auto min-h-0 border-content-border md:col-span-2 md:col-start-4 md:row-span-3 md:row-start-1"
                 :isSingleLine="false"
                 :is-having-content="true"
@@ -406,7 +392,7 @@ import { AnyObject } from 'rss3/types/extend';
 import IntersectionObserverContainer from '@/components/Common/IntersectionObserverContainer.vue';
 
 import TransBarCard from '@/components/Card/TransBarCard.vue';
-import TransCard from '@/components/Card/TransCard.vue';
+import AssetCard from '@/components/Card/AssetCard.vue';
 
 interface Relations {
     followers: string[];
@@ -421,7 +407,6 @@ interface Relations {
         FootprintItem,
         Button,
         TransBarCard,
-        TransCard,
         BarCard,
         Card,
         Profile,
@@ -437,6 +422,7 @@ interface Relations {
         Logo,
         Toolbar,
         FootprintIcon,
+        AssetCard,
     },
 })
 export default class Home extends Vue {

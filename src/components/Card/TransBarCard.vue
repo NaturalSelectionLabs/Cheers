@@ -1,16 +1,17 @@
 <template>
-    <div class="bg-blur flex flex-col items-start p-3 pt-0 min-h-28 border-card rounded-xl box-border">
-        <div class="flex flex-row items-center justify-between p-2 w-full text-primary-text">
+    <div class="bg-blur flex flex-col gap-2 items-start p-3 min-h-28 border-card rounded-xl box-border">
+        <div class="flex flex-row items-center justify-between px-2 w-full text-primary-text">
             <div class="text-lg font-semibold">{{ title }}</div>
             <slot name="header" />
         </div>
-        <!-- <div class="flex flex-col gap-1 p-2">
+        <div class="flex flex-col gap-1 px-2 w-full">
             <slot name="details" />
-        </div> -->
-        <div class="flex flex-row gap-x-2 items-center w-full">
-            <div class="flex flex-1 p-2 pt-0 overflow-x-auto" style="scrollbar-width: thin">
+        </div>
+        <div class="flex flex-row gap-x-2 items-center justify-between w-full">
+            <div v-if="haveContent" class="flex flex-1 p-2 pt-0 overflow-x-auto" style="scrollbar-width: thin">
                 <div class="flex flex-row items-center"><slot name="content" /></div>
             </div>
+            <div v-else class="p-2 pt-0 text-primary-text truncate">Haven't found anything yet...</div>
             <div class="flex-shrink-0">
                 <slot name="button" />
             </div>
@@ -24,6 +25,7 @@ import { Vue, Options } from 'vue-class-component';
 @Options({
     props: {
         title: String,
+        haveContent: Boolean,
     },
 })
 export default class TransBarCard extends Vue {}
