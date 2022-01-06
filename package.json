@@ -35,7 +35,7 @@
         "@google/model-viewer": "1.9.2",
         "@koa/cors": "3.1.0",
         "@koa/router": "10.1.1",
-        "@sentry/tracing": "6.15.0",
+        "@sentry/tracing": "6.16.1",
         "@sentry/vue": "6.15.0",
         "@tailwindcss/aspect-ratio": "0.3.0",
         "@tailwindcss/line-clamp": "0.2.2",
@@ -79,7 +79,7 @@
     },
     "devDependencies": {
         "@babel/core": "7.16.0",
-        "@babel/plugin-proposal-decorators": "7.16.4",
+        "@babel/plugin-proposal-decorators": "7.16.7",
         "@babel/plugin-transform-runtime": "7.16.5",
         "@babel/preset-env": "7.16.4",
         "@babel/preset-typescript": "7.16.0",
