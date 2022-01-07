@@ -619,7 +619,16 @@ export default class Home extends Vue {
         // Load Contents
         setTimeout(async () => {
             const { listed, haveMore, timestamp } = await utils.initContent();
-            this.contents = uniqBy(listed, 'title');
+            while (listed.length > 0) {
+                if ('target' in listed[0] && listed[0].target.field.includes('Mirror.XYZ')) {
+                    if (this.contents.findIndex((item) => 'target' in item && item.title === listed[0].title) === -1) {
+                        this.contents.push(listed[0]);
+                    }
+                } else {
+                    this.contents.push(listed[0]);
+                }
+                listed.shift();
+            }
             this.contentTimestamp = timestamp;
             this.isContentsHaveMore = haveMore;
             this.isLoadingContents = false;
@@ -721,7 +730,16 @@ export default class Home extends Vue {
 
         if (this.isContentsHaveMore) {
             const { listed, haveMore, timestamp } = await utils.initContent(this.contentTimestamp);
-            this.contents = uniqBy([...this.contents, ...listed], 'title');
+            while (listed.length > 0) {
+                if ('target' in listed[0] && listed[0].target.field.includes('Mirror.XYZ')) {
+                    if (this.contents.findIndex((item) => 'target' in item && item.title === listed[0].title) === -1) {
+                        this.contents.push(listed[0]);
+                    }
+                } else {
+                    this.contents.push(listed[0]);
+                }
+                listed.shift();
+            }
             this.contentTimestamp = timestamp;
             this.isContentsHaveMore = haveMore;
         }
