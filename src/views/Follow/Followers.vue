@@ -46,6 +46,7 @@ import utils from '@/common/utils';
 import { Profile } from '@/common/types';
 import Header from '@/components/Common/Header.vue';
 import IntersectionObserverContainer from '@/components/Common/IntersectionObserverContainer.vue';
+import { formatter } from '@/common/address';
 
 @Options({
     name: 'Followers',
@@ -108,7 +109,7 @@ export default class Followers extends Vue {
                     username: profile.name || '',
                     bio: extracted,
                     address: profile.persona,
-                    displayAddress: this.filter(profile.persona),
+                    displayAddress: formatter(profile.persona),
                     rns: '',
                 });
             }
@@ -138,10 +139,6 @@ export default class Followers extends Vue {
                 this.loadingNo = i;
             }
         }
-    }
-
-    filter(address: string) {
-        return `${address.slice(0, 6)}...${address.slice(-4)}`;
     }
 
     async activated() {

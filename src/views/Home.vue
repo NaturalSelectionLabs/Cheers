@@ -932,41 +932,15 @@ export default class Home extends Vue {
                 }, 100),
             );
         }
-        // const nfts = document.getElementById('nfts-card')?.getElementsByClassName('card-content')?.[0];
-        // if (nfts) {
-        //     nfts.addEventListener(
-        //         'scroll',
-        //         debounce((ev) => {
-        //             this.scrollNftsLeft = nfts.scrollLeft;
-        //         }, 100),
-        //     );
-        // }
-        // const gitcoins = document.getElementById('gitcoins-card')?.getElementsByClassName('card-content')?.[0];
-        // if (gitcoins) {
-        //     gitcoins.addEventListener(
-        //         'scroll',
-        //         debounce((ev) => {
-        //             this.scrollGitcoinsLeft = gitcoins.scrollLeft;
-        //         }, 100),
-        //     );
-        // }
     }
 
     async activated() {
         if (this.lastRoute === this.$route.fullPath) {
             // Recover scroll position
             const el = document.getElementById('main');
-            // const nfts = document.getElementById('nfts-card')?.getElementsByClassName('card-content')?.[0];
-            // const gitcoins = document.getElementById('gitcoins-card')?.getElementsByClassName('card-content')?.[0];
             if (el) {
                 el.scrollTop = this.scrollTop;
             }
-            // if (nfts) {
-            //     nfts.scrollLeft = this.scrollNftsLeft;
-            // }
-            // if (gitcoins) {
-            //     gitcoins.scrollLeft = this.scrollGitcoinsLeft;
-            // }
 
             await this.updateUserInfo();
         } else {
