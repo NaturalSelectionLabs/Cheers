@@ -1,13 +1,21 @@
 <template>
     <div
         id="main"
-        class="h-screen text-body-text bg-body-bg bg-gradient-to-tr from-blue-300 to-blue-100 via-white overflow-y-auto"
+        class="
+            h-screen
+            text-body-text
+            bg-body-bg bg-gradient-to-tr
+            from-blue-400
+            to-blue-200
+            via-blue-100
+            overflow-y-auto
+        "
     >
         <div
             v-if="isAccountExist"
-            class="grid gap-4 grid-cols-1 m-auto pb-12 pt-8 px-4 max-w-screen-lg select-none md:grid-cols-5"
+            class="flex flex-col gap-4 m-auto pb-12 pt-8 px-4 max-w-screen-lg select-none md:flex-row"
         >
-            <section class="relative md:col-span-3">
+            <section class="flex flex-col gap-4 md:w-3/5">
                 <Profile
                     :avatar="rss3Profile.avatar"
                     :username="rss3Profile.username"
@@ -60,170 +68,173 @@
                         />
                     </template>
                 </Profile>
+
+                <TransBarCard
+                    title="NFT"
+                    :tip="isLoadingAssets.NFT ? 'Loading...' : 'Haven\'t found anything yet...'"
+                    :haveDetails="false"
+                    :haveContent="true"
+                    :haveContentInfo="nfts.length > 0"
+                >
+                    <template #header>
+                        <i v-if="isOwner" class="bx bxs-pencil bx-xs cursor-pointer" @click="toManageNFTs" />
+                    </template>
+                    <template #content>
+                        <NFTItem
+                            class="mr-1 cursor-pointer"
+                            v-for="item in nfts"
+                            :key="item.id"
+                            :image-url="item.detail.animation_url || item.detail.image_preview_url || defaultAvatar"
+                            :poster-url="
+                                item.detail.image_preview_url ||
+                                item.detail.image_url ||
+                                item.detail.animation_url ||
+                                item.detail.animation_original_url ||
+                                defaultAvatar
+                            "
+                            size="md"
+                            @click="toSingleItemPage(item.id)"
+                        />
+                    </template>
+                    <template #button>
+                        <Button
+                            size="sm"
+                            class="w-8 h-8 text-secondary-btn-text bg-secondary-btn"
+                            @click="toListPage('NFT')"
+                        >
+                            <i class="bx bx-expand-alt bx-xs" />
+                        </Button>
+                    </template>
+                </TransBarCard>
+
+                <!-- Todo config timestamp -->
+                <TransBarCard
+                    title="Donations"
+                    :tip="isLoadingAssets.Gitcoin ? 'Loading...' : 'Haven\'t found anything yet...'"
+                    :haveDetails="gitcoins.length !== 0"
+                    :haveContent="true"
+                    :haveContentInfo="gitcoins.length > 0"
+                >
+                    <template #header>
+                        <i v-if="isOwner" class="bx bxs-pencil bx-xs cursor-pointer" @click="toManageGitcoins" />
+                    </template>
+                    <template #details>
+                        <AssetCard
+                            v-for="item in gitcoins.slice(0, 3)"
+                            :key="item.id"
+                            :imageUrl="item.detail.grant.logo || defaultAvatar"
+                            timestamp="2021 - 03 - 19"
+                            :name="item.detail.grant.title"
+                            :username="rss3Profile.username"
+                            @click="toSingleItemPage(item.id)"
+                        />
+                    </template>
+                    <template #content>
+                        <GitcoinItem
+                            class="mr-1 cursor-pointer"
+                            v-for="item in gitcoins.slice(4)"
+                            :key="item.id"
+                            size="sm"
+                            :imageUrl="item.detail.grant.logo || defaultAvatar"
+                            @click="toSingleItemPage(item.id)"
+                        />
+                    </template>
+                    <template #button>
+                        <Button
+                            size="sm"
+                            class="w-8 h-8 text-secondary-btn-text bg-secondary-btn"
+                            @click="toListPage('Gitcoin')"
+                        >
+                            <i class="bx bx-expand-alt bx-xs" />
+                        </Button>
+                    </template>
+                </TransBarCard>
+
+                <TransBarCard
+                    title="Footprints"
+                    :tip="isLoadingAssets.Footprint ? 'Loading...' : 'Haven\'t found anything yet...'"
+                    :haveDetails="footprints.length !== 0"
+                    :haveContent="true"
+                    :haveContentInfo="footprints.length > 0"
+                >
+                    <template #header>
+                        <i v-if="isOwner" class="bx bxs-pencil bx-xs cursor-pointer" @click="toManageFootprints" />
+                    </template>
+                    <template #details>
+                        <FootprintCard
+                            v-if="footprints.length > 0"
+                            :imageUrl="footprints[0].detail.image_url"
+                            :username="rss3Profile.username"
+                            :activity="footprints[0].detail.name"
+                            :start-date="footprints[0].detail.start_date"
+                            :end-date="footprints[0].detail.end_date"
+                            :location="footprints[0].detail.city || footprints[0].detail.country || 'Metaverse'"
+                            class="py-2 cursor-pointer"
+                            @click="toSingleItemPage(footprints[0].id)"
+                        />
+                    </template>
+                    <template #content>
+                        <FootprintItem
+                            v-for="item of footprints.slice(1)"
+                            :key="item.id"
+                            :imageUrl="item.detail.image_url"
+                            size="sm"
+                            class="flex-shrink-0 mr-2 cursor-pointer"
+                            @click="toSingleItemPage(item.id)"
+                        />
+                    </template>
+                    <template #button>
+                        <Button
+                            size="sm"
+                            class="w-8 h-8 text-secondary-btn-text bg-secondary-btn"
+                            @click="toListPage('Footprint')"
+                        >
+                            <i class="bx bx-expand-alt bx-xs" />
+                        </Button>
+                    </template>
+                </TransBarCard>
             </section>
 
-            <TransBarCard title="NFT" class="md:col-span-3" :haveContent="nfts.length > 0">
-                <template #header>
-                    <i v-if="isOwner" class="bx bxs-pencil bx-xs cursor-pointer" @click="toManageNFTs" />
-                </template>
-                <template #content>
-                    <NFTItem
-                        class="mr-1 cursor-pointer"
-                        v-for="item in nfts"
-                        :key="item.id"
-                        :image-url="item.detail.animation_url || item.detail.image_preview_url || defaultAvatar"
-                        :poster-url="
-                            item.detail.image_preview_url ||
-                            item.detail.image_url ||
-                            item.detail.animation_url ||
-                            item.detail.animation_original_url ||
-                            defaultAvatar
-                        "
-                        size="md"
-                        @click="toSingleItemPage(item.id)"
-                    />
-                </template>
-                <template #button>
-                    <Button
-                        size="sm"
-                        class="w-8 h-8 text-secondary-btn-text bg-secondary-btn"
-                        @click="toListPage('NFT')"
-                    >
-                        <i class="bx bx-expand-alt bx-xs" />
-                    </Button>
-                </template>
-            </TransBarCard>
-
-            <!-- Todo config timestamp -->
-            <TransBarCard title="Donations" class="md:col-span-3" :haveContent="gitcoins.length > 0">
-                <template #header>
-                    <i v-if="isOwner" class="bx bxs-pencil bx-xs cursor-pointer" @click="toManageGitcoins" />
-                </template>
+            <TransBarCard title="Content" class="md:w-2/5" :haveDetails="true" :haveContent="false">
                 <template #details>
-                    <AssetCard
-                        v-for="item in gitcoins.slice(0, 3)"
-                        :key="item.id"
-                        :imageUrl="item.detail.grant.logo || defaultAvatar"
-                        timestamp="2021 - 03 - 19"
-                        :name="item.detail.grant.title"
-                        :username="rss3Profile.username"
-                        @click="toSingleItemPage(item.id)"
-                    />
-                </template>
-                <template #content>
-                    <GitcoinItem
-                        class="mr-1 cursor-pointer"
-                        v-for="item in gitcoins.slice(4)"
-                        :key="item.id"
-                        size="sm"
-                        :imageUrl="item.detail.grant.logo || defaultAvatar"
-                        @click="toSingleItemPage(item.id)"
-                    />
-                </template>
-                <template #button>
-                    <Button
-                        size="sm"
-                        class="w-8 h-8 text-secondary-btn-text bg-secondary-btn"
-                        @click="toListPage('Gitcoin')"
-                    >
-                        <i class="bx bx-expand-alt bx-xs" />
-                    </Button>
-                </template>
-            </TransBarCard>
-
-            <TransBarCard title="Footprints" class="md:col-span-3" :haveContent="footprints.length > 0">
-                <template #header>
-                    <i v-if="isOwner" class="bx bxs-pencil bx-xs cursor-pointer" @click="toManageFootprints" />
-                </template>
-                <template #details>
-                    <FootprintCard
-                        v-if="footprints.length > 0"
-                        :imageUrl="footprints[0].detail.image_url"
-                        :username="rss3Profile.username"
-                        :activity="footprints[0].detail.name"
-                        :start-date="footprints[0].detail.start_date"
-                        :end-date="footprints[0].detail.end_date"
-                        :location="footprints[0].detail.city || footprints[0].detail.country || 'Metaverse'"
-                        class="py-2 cursor-pointer"
-                        @click="toSingleItemPage(footprints[0].id)"
-                    />
-                </template>
-                <template #content>
-                    <FootprintItem
-                        v-for="item of footprints.slice(1)"
-                        :key="item.id"
-                        :imageUrl="item.detail.image_url"
-                        size="sm"
-                        class="flex-shrink-0 mr-2 cursor-pointer"
-                        @click="toSingleItemPage(item.id)"
-                    />
-                </template>
-                <template #button>
-                    <Button
-                        size="sm"
-                        class="w-8 h-8 text-secondary-btn-text bg-secondary-btn"
-                        @click="toListPage('Footprint')"
-                    >
-                        <i class="bx bx-expand-alt bx-xs" />
-                    </Button>
-                </template>
-            </TransBarCard>
-
-            <Card
-                title="Content"
-                color-title="text-content-title"
-                color-tips="text-content-title"
-                color-background="bg-white bg-opacity-50"
-                class="w-auto min-h-0 border-content-border md:col-span-2 md:col-start-4 md:row-span-3 md:row-start-1"
-                :isSingleLine="false"
-                :is-having-content="true"
-            >
-                <template #title-icon><ContentIcon /></template>
-                <template #content>
-                    <div
-                        class="scrollbar-hide flex flex-col px-0.5 overflow-y-auto md:h-112"
-                        :class="{
-                            'h-112': isPCLayout,
-                            'justify-center': contents.length === 0,
-                        }"
-                    >
-                        <div v-if="contents.length > 0" class="divide-content-divider divide-y-xs">
-                            <div v-for="element in contents" :key="element.id">
-                                <ContentCard
-                                    :timestamp="new Date(element.date_updated).valueOf()"
-                                    :content="element.summary"
-                                    :title="element.title"
-                                    :provider="
-                                        element.target.field.includes('Mirror.XYZ')
-                                            ? 'Mirror-XYZ'
-                                            : element.target.field.split('-')[2]
-                                    "
-                                    @click="toContentLink(element)"
-                                />
-                            </div>
-                            <IntersectionObserverContainer
-                                :once="false"
-                                :enabled="!isLoadingContents"
-                                @trigger="loadMoreContents"
+                    <div v-if="contents?.length > 0" class="divide-content-divider divide-y-xs">
+                        <div v-for="element in contents" :key="element.id">
+                            <ContentCard
+                                :timestamp="new Date(element.date_updated).valueOf()"
+                                :content="element.summary"
+                                :title="element.title"
+                                :provider="
+                                    element.target.field.includes('Mirror.XYZ')
+                                        ? 'Mirror-XYZ'
+                                        : element.target.field.split('-')[2]
+                                "
+                                @click="toContentLink(element)"
+                            />
+                        </div>
+                        <IntersectionObserverContainer
+                            :once="false"
+                            :enabled="!isLoadingContents"
+                            @trigger="loadMoreContents"
+                        >
+                            <Button
+                                size="sm"
+                                class="w-full h-6 text-content-btn-s-text bg-content-btn-s shadow-content-btn-s"
+                                v-show="isContentsHaveMore"
+                                @click="loadMoreContents"
+                                id="contents-load-more-button"
                             >
-                                <Button
-                                    size="sm"
-                                    class="w-full h-6 text-content-btn-s-text bg-content-btn-s shadow-content-btn-s"
-                                    v-show="isContentsHaveMore"
-                                    @click="loadMoreContents"
-                                    id="contents-load-more-button"
-                                >
-                                    <i v-if="isLoadingContents" class="bx bx-loader-circle bx-spin"></i>
-                                    <i v-else class="bx bx-dots-horizontal-rounded" />
-                                </Button>
-                            </IntersectionObserverContainer>
-                        </div>
-                        <div v-else class="mt-4 text-center text-content-title">
-                            {{ isLoadingContents ? 'Loading...' : "Haven't found anything yet..." }}
-                        </div>
+                                <i v-if="isLoadingContents" class="bx bx-loader-circle bx-spin"></i>
+                                <i v-else class="bx bx-dots-horizontal-rounded" />
+                            </Button>
+                        </IntersectionObserverContainer>
+                    </div>
+                    <div v-else class="flex flex-col justify-center h-96">
+                        <span class="w-full text-center text-primary-text">{{
+                            isLoadingContents ? 'Loading...' : "Haven't found anything yet..."
+                        }}</span>
                     </div>
                 </template>
-            </Card>
+            </TransBarCard>
 
             <div class="center fixed bottom-0 left-0 mt-2 w-full">
                 <div
@@ -477,8 +488,6 @@ export default class Home extends Vue {
     contentTimestamp: string = '';
     $gtag: any;
     scrollTop: number = 0;
-    scrollNftsLeft: number = 0;
-    scrollGitcoinsLeft: number = 0;
     lastRoute: string = '';
     defaultAvatar = legacyConfig.defaultAvatar;
     notice: string = '';
@@ -923,47 +932,42 @@ export default class Home extends Vue {
                 }, 100),
             );
         }
-        const nfts = document.getElementById('nfts-card')?.getElementsByClassName('card-content')?.[0];
-        if (nfts) {
-            nfts.addEventListener(
-                'scroll',
-                debounce((ev) => {
-                    this.scrollNftsLeft = nfts.scrollLeft;
-                }, 100),
-            );
-        }
-        const gitcoins = document.getElementById('gitcoins-card')?.getElementsByClassName('card-content')?.[0];
-        if (gitcoins) {
-            gitcoins.addEventListener(
-                'scroll',
-                debounce((ev) => {
-                    this.scrollGitcoinsLeft = gitcoins.scrollLeft;
-                }, 100),
-            );
-        }
+        // const nfts = document.getElementById('nfts-card')?.getElementsByClassName('card-content')?.[0];
+        // if (nfts) {
+        //     nfts.addEventListener(
+        //         'scroll',
+        //         debounce((ev) => {
+        //             this.scrollNftsLeft = nfts.scrollLeft;
+        //         }, 100),
+        //     );
+        // }
+        // const gitcoins = document.getElementById('gitcoins-card')?.getElementsByClassName('card-content')?.[0];
+        // if (gitcoins) {
+        //     gitcoins.addEventListener(
+        //         'scroll',
+        //         debounce((ev) => {
+        //             this.scrollGitcoinsLeft = gitcoins.scrollLeft;
+        //         }, 100),
+        //     );
+        // }
     }
 
     async activated() {
         if (this.lastRoute === this.$route.fullPath) {
             // Recover scroll position
             const el = document.getElementById('main');
-            const nfts = document.getElementById('nfts-card')?.getElementsByClassName('card-content')?.[0];
-            const gitcoins = document.getElementById('gitcoins-card')?.getElementsByClassName('card-content')?.[0];
+            // const nfts = document.getElementById('nfts-card')?.getElementsByClassName('card-content')?.[0];
+            // const gitcoins = document.getElementById('gitcoins-card')?.getElementsByClassName('card-content')?.[0];
             if (el) {
                 el.scrollTop = this.scrollTop;
             }
-            if (nfts) {
-                nfts.scrollLeft = this.scrollNftsLeft;
-            }
-            if (gitcoins) {
-                gitcoins.scrollLeft = this.scrollGitcoinsLeft;
-            }
-
-            // Reload
-            // if (this.isLoadingAssets.NFT || this.isLoadingAssets.Gitcoin || this.isOwner) {
-            //     this.startLoadingAccounts(await (<IRSS3>this.rss3).accounts.get(this.ethAddress));
-            //     await this.startLoadingAssets(false);
+            // if (nfts) {
+            //     nfts.scrollLeft = this.scrollNftsLeft;
             // }
+            // if (gitcoins) {
+            //     gitcoins.scrollLeft = this.scrollGitcoinsLeft;
+            // }
+
             await this.updateUserInfo();
         } else {
             this.contents = [];

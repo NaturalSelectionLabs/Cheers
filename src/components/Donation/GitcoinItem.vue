@@ -32,7 +32,7 @@ export default class GitcoinItem extends Vue {
 <style scoped lang="postcss">
 @layer components {
     .gitcoin-item {
-        @apply bg-white bg-cover bg-center bg-no-repeat border border-white shadow-gitcoin overflow-hidden;
+        @apply bg-white bg-cover bg-center bg-no-repeat border border-white overflow-hidden;
     }
 }
 </style>

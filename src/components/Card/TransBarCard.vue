@@ -4,14 +4,14 @@
             <div class="text-lg font-semibold">{{ title }}</div>
             <slot name="header" />
         </div>
-        <div class="flex flex-col gap-1 px-2 w-full">
+        <div class="flex flex-col gap-1 px-2 w-full" v-if="haveDetails">
             <slot name="details" />
         </div>
-        <div class="flex flex-row gap-x-2 items-center justify-between w-full">
-            <div v-if="haveContent" class="flex flex-1 p-2 pt-0 overflow-x-auto" style="scrollbar-width: thin">
+        <div class="flex flex-row gap-x-2 items-center justify-between w-full" v-if="haveContent">
+            <div v-if="haveContentInfo" class="flex flex-1 px-2 overflow-x-auto" style="scrollbar-width: thin">
                 <div class="flex flex-row items-center"><slot name="content" /></div>
             </div>
-            <div v-else class="p-2 pt-0 text-primary-text truncate">Haven't found anything yet...</div>
+            <div v-else class="px-2 text-primary-text truncate">{{ tip }}</div>
             <div class="flex-shrink-0">
                 <slot name="button" />
             </div>
@@ -25,7 +25,10 @@ import { Vue, Options } from 'vue-class-component';
 @Options({
     props: {
         title: String,
+        tip: String,
+        haveDetails: Boolean,
         haveContent: Boolean,
+        haveContentInfo: Boolean,
     },
 })
 export default class TransBarCard extends Vue {}

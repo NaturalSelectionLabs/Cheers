@@ -1,6 +1,5 @@
 <template>
     <div
-        class="shadow-nft"
         :class="{
             'w-10 h-10 rounded-sm': size === 'sm',
             'w-16 h-16 rounded': size === 'md',

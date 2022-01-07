@@ -151,7 +151,7 @@ export default class Followings extends Vue {
             if (this.lastRoute !== this.$route.fullPath) {
                 await this.initLoad();
             } else if (this.loadingNo < this.followingList.length) {
-                await this.loadDetails();
+                await this.loadRNS();
             }
         }, 0);
     }

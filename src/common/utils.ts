@@ -101,11 +101,11 @@ async function loadAssets(parsedAssets: GeneralAsset[]) {
             endIndex = assetIDList.length;
             isHaveMore = false;
         }
-        const asset = await await apiUser.assets.getDetails({
+        const asset = await apiUser.assets.getDetails({
             assets: assetIDList.slice(startIndex, endIndex),
             full: true,
         });
-        if (asset.length) {
+        if (asset?.length) {
             res.push(...asset);
         }
         startIndex = endIndex;
