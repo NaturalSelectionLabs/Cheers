@@ -265,12 +265,8 @@
                     </div>
                     <p class="mt-4 text-sm">
                         <i class="bx bx-info-circle text-primary-text" />
-                        You need to place your
-                        <span class="text-primary-text cursor-pointer" @click="copyAddressToClipboard">
-                            {{ rns ? 'BioLink' : 'Address' }}
-                            <i class="bx bx-check-circle" v-if="isAddrCopied" />
-                            <i class="bx bx-paste" v-else />
-                        </span>
+                        You need to place one of your
+                        <span class="text-primary-text"> RNS, DAS, ENS or Address </span>
                         into one of :
                         <span>{{ specifyNoSignAccount.fields.join(', ') }}</span>
                         .
@@ -358,7 +354,7 @@ import utils from '@/common/utils';
 export default class SetupAccounts extends Vue {
     avatar: string = config.defaultAvatar;
     additionalMetamaskAccounts: String[] = ['Ethereum', 'BSC'];
-    additionalNoSignAccounts: String[] = ['Misskey', 'Twitter'];
+    additionalNoSignAccounts: String[] = ['Misskey', 'Twitter', 'Jike'];
     show: RSS3Account[] = [];
     hide: RSS3Account[] = [];
     toAdd: RSS3Account[] = [];
@@ -454,9 +450,15 @@ export default class SetupAccounts extends Vue {
     async addNoSignAccountConfirm() {
         this.isShowingAddSpecifyAccountInput = false;
         this.isLoading = true;
+        const address =
+            'accountPostProcess' in ContentProviders[this.specifyNoSignAccount.platform]
+                ? ContentProviders[this.specifyNoSignAccount.platform].accountPostProcess(
+                      this.specifyNoSignAccount.account,
+                  )
+                : this.specifyNoSignAccount.account;
 
         const newAccount = {
-            id: `${this.specifyNoSignAccount.platform}-${this.specifyNoSignAccount.account}`,
+            id: `${this.specifyNoSignAccount.platform}-${address}`,
             signature: '',
         };
 
@@ -549,8 +551,9 @@ export default class SetupAccounts extends Vue {
         } catch (e) {
             console.log(e);
             this.isLoading = false;
-            this.addAccountNotice =
-                "Fail to save. Maybe you'd like to check if every third-party account (Twitter / Misskey) works fine ?";
+            this.addAccountNotice = `Fail to save. Maybe you'd like to check if every third-party account (${this.additionalNoSignAccounts.join(
+                ' / ',
+            )}) works fine ?`;
             this.isShowingAddAccountNotice = true;
             return;
         }

@@ -4,6 +4,7 @@
         <Mirror v-else-if="contentProvider === 'Mirror-XYZ'" :size="18" />
         <Misskey v-else-if="contentProvider === 'Misskey'" :size="18" />
         <Twitter v-else-if="contentProvider === 'Twitter'" :size="18" />
+        <Jike v-else-if="contentProvider === 'Jike'" :size="18" />
     </div>
 </template>
 
@@ -13,9 +14,10 @@ import Arweave from '@/components/Icons/Arweave.vue';
 import Mirror from '@/components/Icons/Mirror.vue';
 import Misskey from '@/components/Icons/Misskey.vue';
 import Twitter from '@/components/Icons/Twitter.vue';
+import Jike from '@/components/Icons/Jike.vue';
 
 @Options({
-    components: { Twitter, Misskey, Arweave, Mirror },
+    components: { Jike, Twitter, Misskey, Arweave, Mirror },
     props: {
         contentProvider: String,
     },
