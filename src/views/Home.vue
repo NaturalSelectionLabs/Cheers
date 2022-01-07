@@ -446,7 +446,7 @@ import Logo from '@/components/Icons/Logo.vue';
 
 import FootprintCard from '@/components/Footprint/FootprintCard.vue';
 import ContentCard from '@/components/Content/ContentCard.vue';
-import { debounce } from 'lodash';
+import { debounce, uniqBy } from 'lodash';
 import ContentProviders from '@/common/content-providers';
 import Toolbar from '@/components/Profile/Toolbar.vue';
 import FootprintItem from '@/components/Footprint/FootprintItem.vue';
@@ -619,7 +619,7 @@ export default class Home extends Vue {
         // Load Contents
         setTimeout(async () => {
             const { listed, haveMore, timestamp } = await utils.initContent();
-            this.contents = listed;
+            this.contents = uniqBy(listed, 'title');
             this.contentTimestamp = timestamp;
             this.isContentsHaveMore = haveMore;
             this.isLoadingContents = false;
@@ -721,7 +721,7 @@ export default class Home extends Vue {
 
         if (this.isContentsHaveMore) {
             const { listed, haveMore, timestamp } = await utils.initContent(this.contentTimestamp);
-            this.contents = [...this.contents, ...listed];
+            this.contents = uniqBy([...this.contents, ...listed], 'title');
             this.contentTimestamp = timestamp;
             this.isContentsHaveMore = haveMore;
         }
