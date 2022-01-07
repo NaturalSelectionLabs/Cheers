@@ -107,7 +107,6 @@
                     </template>
                 </TransBarCard>
 
-                <!-- Todo config timestamp -->
                 <TransBarCard
                     title="Donations"
                     :tip="isLoadingAssets.Gitcoin ? 'Loading...' : 'Haven\'t found anything yet...'"
@@ -123,7 +122,7 @@
                             v-for="item in gitcoins.slice(0, 3)"
                             :key="item.id"
                             :imageUrl="item.detail.grant.logo || defaultAvatar"
-                            timestamp="2021 - 03 - 19"
+                            :timestamp="item.detail.txs.slice(-1)[0].timeStamp"
                             :name="item.detail.grant.title"
                             :username="rss3Profile.username"
                             @click="toSingleItemPage(item.id)"

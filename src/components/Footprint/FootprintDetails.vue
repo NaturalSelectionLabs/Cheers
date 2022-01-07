@@ -65,9 +65,5 @@ export default class SingleFootprint extends Vue {
                       : '')
             : 'Loading...';
     }
-
-    formatDate(ts: string): string {
-        return new Date(parseInt(ts) * 1000).toLocaleDateString('en-US');
-    }
 }
 </script>
