@@ -918,6 +918,8 @@ export default class Home extends Vue {
         } else if (platform === 'Misskey') {
             const [username, instance] = user.split('@');
             link = `https://${instance}/notes/${content.target.action.payload}`;
+        } else if (platform === 'Jike') {
+            link = `https://m.okjike.com/originalPosts/${content.target.action.payload}`;
         } else if (user === 'Mirror.XYZ') {
             link = content.target.action.payload;
         }
