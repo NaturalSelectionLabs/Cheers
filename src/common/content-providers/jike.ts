@@ -26,7 +26,9 @@ export default {
                 //     console.log('Fetch error', e);
                 // }
                 // Since the whole code is not working, only full URL can be accepted.
-                throw new Error('Should be full URL (https://m.okjike.com/users/...)');
+                throw new Error(
+                    'Should be full (https://m.okjike.com/users/...), maybe open the current link at browser, wait for redirections and copy the final URL?',
+                );
             } else {
                 fullUrl = account;
             }
