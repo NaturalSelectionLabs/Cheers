@@ -35,7 +35,7 @@ export default {
         } else {
             uuid = account;
         }
-        return uuid.replace(/-/gi, '\\-');
+        return uuid.replace(/-/g, '\\-');
     },
     accountStyle: 'UUID or full share link',
     availableFields: ['Bio'],
