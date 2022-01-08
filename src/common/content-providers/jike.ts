@@ -27,7 +27,7 @@ export default {
                 // }
                 // Since the whole code is not working, only full URL can be accepted.
                 throw new Error(
-                    'Should be full (https://m.okjike.com/users/...), maybe open the current link at browser, wait for redirections and copy the final URL?',
+                    'Should be full (https://m.okjike.com/users/...), maybe open current link at browser, wait for redirections and copy the final URL?',
                 );
             } else {
                 fullUrl = account;
