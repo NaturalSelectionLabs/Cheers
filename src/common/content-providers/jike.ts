@@ -6,9 +6,37 @@ export default {
     getAccountLink: (account: string) => {
         return `https://m.okjike.com/users/${account}`;
     },
-    accountPostProcess: (account: string) => {
-        return account.replace(/-/gi, '\\-');
+    accountPostProcess: async (account: string) => {
+        let uuid = '';
+        if (account.startsWith('https://')) {
+            // Is link
+            let fullUrl = '';
+            const baseUrlObj = new URL(account);
+            if (baseUrlObj.host !== 'm.okjike.com') {
+                // 302 redirect
+                // try {
+                //     const res = await fetch(account, {
+                //         mode: 'no-cors',
+                //         redirect: 'manual',
+                //     });
+                //     console.log('Fetch response: ', res);
+                //     fullUrl = res.url;
+                //     console.log('Full URL:', fullUrl);
+                // } catch (e) {
+                //     console.log('Fetch error', e);
+                // }
+                // Since the whole code is not working, only full URL can be accepted.
+                throw new Error('Should be full URL (https://m.okjike.com/users/...)');
+            } else {
+                fullUrl = account;
+            }
+            const fullUrlObj = new URL(fullUrl);
+            uuid = fullUrlObj.pathname.split('/').pop() || '';
+        } else {
+            uuid = account;
+        }
+        return uuid.replace(/-/gi, '\\-');
     },
-    accountStyle: 'UUID',
+    accountStyle: 'UUID or full share link',
     availableFields: ['Bio'],
 };

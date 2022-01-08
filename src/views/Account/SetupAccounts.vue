@@ -450,12 +450,20 @@ export default class SetupAccounts extends Vue {
     async addNoSignAccountConfirm() {
         this.isShowingAddSpecifyAccountInput = false;
         this.isLoading = true;
-        const address =
-            'accountPostProcess' in ContentProviders[this.specifyNoSignAccount.platform]
-                ? ContentProviders[this.specifyNoSignAccount.platform].accountPostProcess(
-                      this.specifyNoSignAccount.account,
-                  )
-                : this.specifyNoSignAccount.account;
+        let address = '';
+        try {
+            address =
+                'accountPostProcess' in ContentProviders[this.specifyNoSignAccount.platform]
+                    ? await ContentProviders[this.specifyNoSignAccount.platform].accountPostProcess(
+                          this.specifyNoSignAccount.account,
+                      )
+                    : this.specifyNoSignAccount.account;
+        } catch (e: any) {
+            this.addAccountNotice = e.message;
+            this.isShowingAddAccountNotice = true;
+            this.isLoading = false;
+            return;
+        }
 
         const newAccount = {
             id: `${this.specifyNoSignAccount.platform}-${address}`,
