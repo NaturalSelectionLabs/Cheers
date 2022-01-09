@@ -1,13 +1,14 @@
 <template>
     <label class="avatar" :class="size">
-        <ImgHolder class="image" :src="newUrl || url" v-show="newUrl || url" :isRounded="true" alt="Avatar Upload" />
+        <ImgHolder class="image" :src="newUrl" v-show="newUrl" :isRounded="true" alt="Avatar Upload" />
         <div
             class="plus"
             :class="{
-                fill: newUrl || url,
+                fill: newUrl,
             }"
         >
-            <i class="bx bx-plus bx-sm text-white fill-current" />
+            <i class="bx bx-plus bx-sm text-primary-text fill-current" v-show="!newUrl" />
+            <i class="bx bx-pencil bx-sm text-primary-text fill-current" v-show="newUrl" />
         </div>
         <input type="file" class="hidden" accept="image/*" @change="preview" />
     </label>
@@ -51,7 +52,7 @@ export default class Avatar extends Vue {
 <style scoped lang="postcss">
 @layer components {
     .avatar {
-        @apply relative flex items-center justify-center bg-input-bg rounded-full cursor-pointer;
+        @apply relative flex items-center justify-center bg-white bg-opacity-50 rounded-full cursor-pointer;
 
         &.sm {
             @apply w-14 h-14;
@@ -71,7 +72,7 @@ export default class Avatar extends Vue {
             @apply z-0 flex items-center justify-center w-full h-full rounded-full;
 
             &.fill {
-                @apply bg-black bg-opacity-40;
+                @apply bg-white bg-opacity-40;
             }
         }
     }
