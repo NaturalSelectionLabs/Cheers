@@ -1,10 +1,10 @@
 <template>
     <label class="avatar" :class="size">
-        <ImgHolder class="image" :src="newUrl" v-show="newUrl" :isRounded="true" alt="Avatar Upload" />
+        <ImgHolder class="image" :src="newUrl || url" v-show="newUrl || url" :isRounded="true" alt="Avatar Upload" />
         <div
             class="plus"
             :class="{
-                fill: newUrl,
+                fill: newUrl || url,
             }"
         >
             <i class="bx bx-plus bx-sm text-primary-text fill-current" v-show="!newUrl" />
