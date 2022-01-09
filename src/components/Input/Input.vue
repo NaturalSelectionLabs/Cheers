@@ -61,15 +61,15 @@ export default class Input extends Vue {}
 <style scoped lang="postcss">
 @layer components {
     .wrapper {
-        @apply flex pb-3 pl-5 pr-5 pt-3 font-extralight bg-input-bg border-input border-input-border rounded-xl box-border;
+        @apply flex pb-3 pl-5 pr-5 pt-3 font-extralight bg-white bg-opacity-50 border-input border-input-border rounded-xl box-border;
     }
 
     .additional {
-        @apply flex mx-2 font-medium;
+        @apply flex mr-2 font-medium;
     }
 
     .input {
-        @apply placeholder-black placeholder-opacity-20 flex w-full font-extralight bg-input-bg border-input border-input-border outline-none resize-none;
+        @apply placeholder-black placeholder-opacity-20 flex w-full font-extralight bg-white bg-opacity-0 border-input border-input-border outline-none resize-none;
     }
     .input::placeholder {
         font-weight: 500;
