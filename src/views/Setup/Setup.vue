@@ -10,7 +10,7 @@
             overflow-y-auto
         "
     >
-        <div class="flex flex-col gap-y-4 m-auto pb-24 pt-8 px-4 max-w-md">
+        <div class="flex flex-col gap-y-4 m-auto pb-20 pt-8 px-4 max-w-md">
             <div class="mb-6 text-center">
                 <h1 class="text-primary-text text-xl font-bold">Setup</h1>
             </div>
@@ -146,22 +146,21 @@
                     gap-5
                     justify-between
                     m-auto
-                    px-4
-                    py-4
+                    p-4
                     w-full
                     max-w-md
                     bg-btn-container
                 "
             >
                 <Button
-                    size="lg"
-                    class="flex-1 text-secondary-btn-text text-lg bg-secondary-btn shadow-secondary-btn"
+                    size="sm"
+                    class="flex-1 h-9 text-secondary-btn-text text-lg bg-secondary-btn opacity-80"
                     @click="back"
                     ><span>Back</span></Button
                 >
                 <Button
-                    size="lg"
-                    class="flex-1 text-primary-btn-text text-lg bg-primary-btn shadow-primary-btn"
+                    size="sm"
+                    class="flex-1 h-9 text-primary-btn-text text-lg bg-primary-btn opacity-80"
                     @click="save"
                     ><span>Done</span></Button
                 >
