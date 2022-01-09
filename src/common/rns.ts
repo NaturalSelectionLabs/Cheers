@@ -106,8 +106,6 @@ export default {
                 } else {
                     if (domainInfo.rnsName) {
                         return domainInfo.rnsName.replace('.rss3', '');
-                    } else if (domainInfo.dasName) {
-                        return domainInfo.dasName;
                     } else if (domainInfo.ensName) {
                         return domainInfo.ensName;
                     } else {

@@ -180,7 +180,7 @@ async function initContent(timestamp: string = '') {
             persona: pageOwner.address,
             limit: config.splitPageLimits.contents,
             tsp: timestamp,
-            fieldLike: 'Twitter,Misskey,Mirror.XYZ',
+            fieldLike: 'Twitter,Misskey,Mirror.XYZ,Jike',
         })) || [];
 
     let haveMore = allItems.length === config.splitPageLimits.contents;
