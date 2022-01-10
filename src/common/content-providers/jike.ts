@@ -14,21 +14,22 @@ export default {
             const baseUrlObj = new URL(account);
             if (baseUrlObj.host !== 'm.okjike.com') {
                 // 302 redirect
-                // try {
-                //     const res = await fetch(account, {
-                //         mode: 'no-cors',
-                //         redirect: 'manual',
-                //     });
-                //     console.log('Fetch response: ', res);
-                //     fullUrl = res.url;
-                //     console.log('Full URL:', fullUrl);
-                // } catch (e) {
-                //     console.log('Fetch error', e);
-                // }
-                // Since the whole code is not working, only full URL can be accepted.
-                throw new Error(
-                    'Should be full (https://m.okjike.com/users/...), maybe open current link at browser, wait for redirections and copy the final URL?',
-                );
+                try {
+                    const res = await axios.get('https://undirect.rss3.dev', {
+                        params: {
+                            url: encodeURIComponent(account),
+                        },
+                    });
+                    fullUrl = res.data.data;
+                } catch (e) {
+                    console.log('Fetch error', e);
+                    throw new Error(
+                        'Failed to get full URL (maybe caused by server limits), try again or input full URL manually?',
+                    );
+                }
+                // throw new Error(
+                //     'Should be full (https://m.okjike.com/users/...), maybe open current link at browser, wait for redirections and copy the final URL?',
+                // );
             } else {
                 fullUrl = account;
             }
@@ -39,6 +40,6 @@ export default {
         }
         return uuid.replace(/-/g, '\\-');
     },
-    accountStyle: 'UUID or full share link',
+    accountStyle: 'UUID or share link',
     availableFields: ['Bio'],
 };
