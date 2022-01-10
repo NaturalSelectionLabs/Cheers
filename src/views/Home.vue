@@ -235,20 +235,8 @@
                 </template>
             </TransBarCard>
 
-            <div class="center fixed bottom-0 left-0 mt-2 w-full">
-                <div
-                    class="
-                        flex flex-row
-                        gap-x-2
-                        items-center
-                        justify-between
-                        m-auto
-                        px-4
-                        py-2
-                        max-w-screen-lg
-                        bg-footer-bg
-                    "
-                >
+            <div class="center fixed bottom-0 left-0 mt-2 w-full bg-footer-bg">
+                <div class="flex flex-row gap-x-2 items-center justify-between m-auto px-4 py-2 max-w-screen-lg">
                     <Logo class="cursor-pointer" :size="18" @click="toHomePage" />
                     <div class="text-right text-body-text text-xs font-normal">
                         <a href="https://rss3.io/#/privacy"> Privacy </a>
