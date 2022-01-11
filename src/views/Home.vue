@@ -15,226 +15,232 @@
             v-if="isAccountExist"
             class="flex flex-col gap-4 m-auto pb-12 pt-8 px-4 max-w-screen-lg select-none md:flex-row"
         >
-            <section class="flex flex-col gap-4 md:w-3/5">
-                <Profile
-                    :avatar="rss3Profile.avatar"
-                    :username="rss3Profile.username"
-                    :address="ethAddress"
-                    :rns="rns"
-                    :followers="rss3Relations.followers.length"
-                    :followings="rss3Relations.followings.length"
-                    :bio="rss3Profile.bio"
-                    :website="rss3Profile.displayAddress"
-                    :is-loading-persona="isLoadingPersona"
-                    @click-address="clickAddress"
-                >
-                    <template #Accounts>
-                        <div
-                            class="inline-block mr-1 cursor-pointer"
-                            v-for="item in accounts"
-                            :key="item.identity"
-                            @click="displayDialog(item.identity, item.platform)"
-                        >
-                            <EVMpAccountItem v-if="item.platform === 'EVM+'" :size="30" :address="item.identity" />
-                            <AccountItem v-else :size="30" :chain="item.platform" :address="item.identity" />
-                        </div>
-                        <Button
-                            v-if="isOwner"
-                            size="sm"
-                            shape="circle"
-                            class="inline-block mr-1 w-8 h-8 text-account-btn-s-text bg-account-btn-s"
-                            @click="toManageAccounts"
-                        >
-                            <i class="bx bxs-pencil bx-xs" />
-                        </Button>
-                        <Button
-                            size="sm"
-                            shape="circle"
-                            class="inline-block mr-1 w-8 h-8 text-account-btn-s-text bg-account-btn-s"
-                            @click="toAccountsPage"
-                        >
-                            <i class="bx bx-expand-alt bx-xs" />
-                        </Button>
-                    </template>
-
-                    <template #Toolbar>
-                        <Toolbar
-                            :isOwner="isOwner"
-                            :isFollowing="isFollowing"
-                            :is-loading-persona="isLoadingPersona"
-                            @to-setup-page="toSetupPage"
-                            @logout="logout"
-                            @toggleFollow="toggleFollow"
-                        />
-                    </template>
-                </Profile>
-
-                <TransBarCard
-                    title="NFT"
-                    :tip="isLoadingAssets.NFT ? 'Loading...' : 'Haven\'t found anything yet...'"
-                    :haveDetails="false"
-                    :haveContent="true"
-                    :haveContentInfo="nfts.length > 0"
-                >
-                    <template #header>
-                        <i v-if="isOwner" class="bx bxs-pencil bx-xs cursor-pointer" @click="toManageNFTs" />
-                    </template>
-                    <template #content>
-                        <NFTItem
-                            class="mr-1 cursor-pointer"
-                            v-for="item in nfts"
-                            :key="item.id"
-                            :image-url="item.detail.animation_url || item.detail.image_preview_url || defaultAvatar"
-                            :poster-url="
-                                item.detail.image_preview_url ||
-                                item.detail.image_url ||
-                                item.detail.animation_url ||
-                                item.detail.animation_original_url ||
-                                defaultAvatar
-                            "
-                            size="md"
-                            @click="toSingleItemPage(item.id)"
-                        />
-                    </template>
-                    <template #button>
-                        <Button
-                            size="sm"
-                            class="w-8 h-8 text-secondary-btn-text bg-secondary-btn"
-                            @click="toListPage('NFT')"
-                        >
-                            <i class="bx bx-expand-alt bx-xs" />
-                        </Button>
-                    </template>
-                </TransBarCard>
-
-                <TransBarCard
-                    title="Donations"
-                    :tip="isLoadingAssets.Gitcoin ? 'Loading...' : 'Haven\'t found anything yet...'"
-                    :haveDetails="gitcoins.length !== 0"
-                    :haveContent="true"
-                    :haveContentInfo="gitcoins.length > 0"
-                >
-                    <template #header>
-                        <i v-if="isOwner" class="bx bxs-pencil bx-xs cursor-pointer" @click="toManageGitcoins" />
-                    </template>
-                    <template #details>
-                        <AssetCard
-                            v-for="item in gitcoins.slice(0, 3)"
-                            :key="item.id"
-                            :imageUrl="item.detail.grant.logo || defaultAvatar"
-                            :timestamp="item.detail.txs.slice(-1)[0].timeStamp"
-                            :name="item.detail.grant.title"
-                            :username="rss3Profile.username"
-                            @click="toSingleItemPage(item.id)"
-                        />
-                    </template>
-                    <template #content>
-                        <GitcoinItem
-                            class="mr-1 cursor-pointer"
-                            v-for="item in gitcoins.slice(4)"
-                            :key="item.id"
-                            size="sm"
-                            :imageUrl="item.detail.grant.logo || defaultAvatar"
-                            @click="toSingleItemPage(item.id)"
-                        />
-                    </template>
-                    <template #button>
-                        <Button
-                            size="sm"
-                            class="w-8 h-8 text-secondary-btn-text bg-secondary-btn"
-                            @click="toListPage('Gitcoin')"
-                        >
-                            <i class="bx bx-expand-alt bx-xs" />
-                        </Button>
-                    </template>
-                </TransBarCard>
-
-                <TransBarCard
-                    title="Footprints"
-                    :tip="isLoadingAssets.Footprint ? 'Loading...' : 'Haven\'t found anything yet...'"
-                    :haveDetails="footprints.length !== 0"
-                    :haveContent="true"
-                    :haveContentInfo="footprints.length > 0"
-                >
-                    <template #header>
-                        <i v-if="isOwner" class="bx bxs-pencil bx-xs cursor-pointer" @click="toManageFootprints" />
-                    </template>
-                    <template #details>
-                        <FootprintCard
-                            v-if="footprints.length > 0"
-                            :imageUrl="footprints[0].detail.image_url"
-                            :username="rss3Profile.username"
-                            :activity="footprints[0].detail.name"
-                            :start-date="footprints[0].detail.start_date"
-                            :end-date="footprints[0].detail.end_date"
-                            :location="footprints[0].detail.city || footprints[0].detail.country || 'Metaverse'"
-                            class="py-2 cursor-pointer"
-                            @click="toSingleItemPage(footprints[0].id)"
-                        />
-                    </template>
-                    <template #content>
-                        <FootprintItem
-                            v-for="item of footprints.slice(1)"
-                            :key="item.id"
-                            :imageUrl="item.detail.image_url"
-                            size="sm"
-                            class="flex-shrink-0 mr-2 cursor-pointer"
-                            @click="toSingleItemPage(item.id)"
-                        />
-                    </template>
-                    <template #button>
-                        <Button
-                            size="sm"
-                            class="w-8 h-8 text-secondary-btn-text bg-secondary-btn"
-                            @click="toListPage('Footprint')"
-                        >
-                            <i class="bx bx-expand-alt bx-xs" />
-                        </Button>
-                    </template>
-                </TransBarCard>
-            </section>
-
-            <TransBarCard title="Content" class="md:w-2/5" :haveDetails="true" :haveContent="false">
-                <template #details>
-                    <div v-if="contents?.length > 0">
-                        <div v-for="element in contents" :key="element.id">
-                            <ContentCard
-                                :username="rss3Profile.username"
-                                :timestamp="new Date(element.date_updated).valueOf()"
-                                :content="element.summary"
-                                :title="element.title"
-                                :provider="
-                                    element.target.field.includes('Mirror.XYZ')
-                                        ? 'Mirror-XYZ'
-                                        : element.target.field.split('-')[2]
-                                "
-                                @click="toContentLink(element)"
-                            />
-                        </div>
-                        <IntersectionObserverContainer
-                            :once="false"
-                            :enabled="!isLoadingContents"
-                            @trigger="loadMoreContents"
-                        >
+            <section class="md:w-3/5">
+                <div class="affix-container sticky flex flex-col gap-4">
+                    <Profile
+                        :avatar="rss3Profile.avatar"
+                        :username="rss3Profile.username"
+                        :address="ethAddress"
+                        :rns="rns"
+                        :followers="rss3Relations.followers.length"
+                        :followings="rss3Relations.followings.length"
+                        :bio="rss3Profile.bio"
+                        :website="rss3Profile.displayAddress"
+                        :is-loading-persona="isLoadingPersona"
+                        @click-address="clickAddress"
+                    >
+                        <template #Accounts>
+                            <div
+                                class="inline-block mr-1 cursor-pointer"
+                                v-for="item in accounts"
+                                :key="item.identity"
+                                @click="displayDialog(item.identity, item.platform)"
+                            >
+                                <EVMpAccountItem v-if="item.platform === 'EVM+'" :size="30" :address="item.identity" />
+                                <AccountItem v-else :size="30" :chain="item.platform" :address="item.identity" />
+                            </div>
+                            <Button
+                                v-if="isOwner"
+                                size="sm"
+                                shape="circle"
+                                class="inline-block mr-1 w-8 h-8 text-account-btn-s-text bg-account-btn-s"
+                                @click="toManageAccounts"
+                            >
+                                <i class="bx bxs-pencil bx-xs" />
+                            </Button>
                             <Button
                                 size="sm"
-                                class="w-full h-6 text-content-btn-s-text bg-content-btn-s shadow-content-btn-s"
-                                v-show="isContentsHaveMore"
-                                @click="loadMoreContents"
-                                id="contents-load-more-button"
+                                shape="circle"
+                                class="inline-block mr-1 w-8 h-8 text-account-btn-s-text bg-account-btn-s"
+                                @click="toAccountsPage"
                             >
-                                <i v-if="isLoadingContents" class="bx bx-loader-circle bx-spin"></i>
-                                <i v-else class="bx bx-dots-horizontal-rounded" />
+                                <i class="bx bx-expand-alt bx-xs" />
                             </Button>
-                        </IntersectionObserverContainer>
-                    </div>
-                    <div v-else class="flex flex-col justify-center h-96">
-                        <span class="w-full text-center text-primary-text">{{
-                            isLoadingContents ? 'Loading...' : "Haven't found anything yet..."
-                        }}</span>
-                    </div>
-                </template>
-            </TransBarCard>
+                        </template>
+
+                        <template #Toolbar>
+                            <Toolbar
+                                :isOwner="isOwner"
+                                :isFollowing="isFollowing"
+                                :is-loading-persona="isLoadingPersona"
+                                @to-setup-page="toSetupPage"
+                                @logout="logout"
+                                @toggleFollow="toggleFollow"
+                            />
+                        </template>
+                    </Profile>
+
+                    <TransBarCard
+                        title="NFT"
+                        :tip="isLoadingAssets.NFT ? 'Loading...' : 'Haven\'t found anything yet...'"
+                        :haveDetails="false"
+                        :haveContent="true"
+                        :haveContentInfo="nfts.length > 0"
+                    >
+                        <template #header>
+                            <i v-if="isOwner" class="bx bxs-pencil bx-xs cursor-pointer" @click="toManageNFTs" />
+                        </template>
+                        <template #content>
+                            <NFTItem
+                                class="mr-1 cursor-pointer"
+                                v-for="item in nfts"
+                                :key="item.id"
+                                :image-url="item.detail.animation_url || item.detail.image_preview_url || defaultAvatar"
+                                :poster-url="
+                                    item.detail.image_preview_url ||
+                                    item.detail.image_url ||
+                                    item.detail.animation_url ||
+                                    item.detail.animation_original_url ||
+                                    defaultAvatar
+                                "
+                                size="md"
+                                @click="toSingleItemPage(item.id)"
+                            />
+                        </template>
+                        <template #button>
+                            <Button
+                                size="sm"
+                                class="w-8 h-8 text-secondary-btn-text bg-secondary-btn"
+                                @click="toListPage('NFT')"
+                            >
+                                <i class="bx bx-expand-alt bx-xs" />
+                            </Button>
+                        </template>
+                    </TransBarCard>
+
+                    <TransBarCard
+                        title="Donations"
+                        :tip="isLoadingAssets.Gitcoin ? 'Loading...' : 'Haven\'t found anything yet...'"
+                        :haveDetails="gitcoins.length !== 0"
+                        :haveContent="true"
+                        :haveContentInfo="gitcoins.length > 0"
+                    >
+                        <template #header>
+                            <i v-if="isOwner" class="bx bxs-pencil bx-xs cursor-pointer" @click="toManageGitcoins" />
+                        </template>
+                        <template #details>
+                            <AssetCard
+                                v-for="item in gitcoins.slice(0, 3)"
+                                :key="item.id"
+                                :imageUrl="item.detail.grant.logo || defaultAvatar"
+                                :timestamp="item.detail.txs.slice(-1)[0].timeStamp"
+                                :name="item.detail.grant.title"
+                                :username="rss3Profile.username"
+                                @click="toSingleItemPage(item.id)"
+                            />
+                        </template>
+                        <template #content>
+                            <GitcoinItem
+                                class="mr-1 cursor-pointer"
+                                v-for="item in gitcoins.slice(4)"
+                                :key="item.id"
+                                size="sm"
+                                :imageUrl="item.detail.grant.logo || defaultAvatar"
+                                @click="toSingleItemPage(item.id)"
+                            />
+                        </template>
+                        <template #button>
+                            <Button
+                                size="sm"
+                                class="w-8 h-8 text-secondary-btn-text bg-secondary-btn"
+                                @click="toListPage('Gitcoin')"
+                            >
+                                <i class="bx bx-expand-alt bx-xs" />
+                            </Button>
+                        </template>
+                    </TransBarCard>
+
+                    <TransBarCard
+                        title="Footprints"
+                        :tip="isLoadingAssets.Footprint ? 'Loading...' : 'Haven\'t found anything yet...'"
+                        :haveDetails="footprints.length !== 0"
+                        :haveContent="true"
+                        :haveContentInfo="footprints.length > 0"
+                    >
+                        <template #header>
+                            <i v-if="isOwner" class="bx bxs-pencil bx-xs cursor-pointer" @click="toManageFootprints" />
+                        </template>
+                        <template #details>
+                            <FootprintCard
+                                v-if="footprints.length > 0"
+                                :imageUrl="footprints[0].detail.image_url"
+                                :username="rss3Profile.username"
+                                :activity="footprints[0].detail.name"
+                                :start-date="footprints[0].detail.start_date"
+                                :end-date="footprints[0].detail.end_date"
+                                :location="footprints[0].detail.city || footprints[0].detail.country || 'Metaverse'"
+                                class="py-2 cursor-pointer"
+                                @click="toSingleItemPage(footprints[0].id)"
+                            />
+                        </template>
+                        <template #content>
+                            <FootprintItem
+                                v-for="item of footprints.slice(1)"
+                                :key="item.id"
+                                :imageUrl="item.detail.image_url"
+                                size="sm"
+                                class="flex-shrink-0 mr-2 cursor-pointer"
+                                @click="toSingleItemPage(item.id)"
+                            />
+                        </template>
+                        <template #button>
+                            <Button
+                                size="sm"
+                                class="w-8 h-8 text-secondary-btn-text bg-secondary-btn"
+                                @click="toListPage('Footprint')"
+                            >
+                                <i class="bx bx-expand-alt bx-xs" />
+                            </Button>
+                        </template>
+                    </TransBarCard>
+                </div>
+            </section>
+
+            <section class="md:w-2/5">
+                <div class="affix-container sticky">
+                    <TransBarCard title="Content" :haveDetails="true" :haveContent="false">
+                        <template #details>
+                            <div v-if="contents?.length > 0">
+                                <div v-for="element in contents" :key="element.id">
+                                    <ContentCard
+                                        :username="rss3Profile.username"
+                                        :timestamp="new Date(element.date_updated).valueOf()"
+                                        :content="element.summary"
+                                        :title="element.title"
+                                        :provider="
+                                            element.target.field.includes('Mirror.XYZ')
+                                                ? 'Mirror-XYZ'
+                                                : element.target.field.split('-')[2]
+                                        "
+                                        @click="toContentLink(element)"
+                                    />
+                                </div>
+                                <IntersectionObserverContainer
+                                    :once="false"
+                                    :enabled="!isLoadingContents"
+                                    @trigger="loadMoreContents"
+                                >
+                                    <Button
+                                        size="sm"
+                                        class="w-full h-6 text-content-btn-s-text bg-content-btn-s shadow-content-btn-s"
+                                        v-show="isContentsHaveMore"
+                                        @click="loadMoreContents"
+                                        id="contents-load-more-button"
+                                    >
+                                        <i v-if="isLoadingContents" class="bx bx-loader-circle bx-spin"></i>
+                                        <i v-else class="bx bx-dots-horizontal-rounded" />
+                                    </Button>
+                                </IntersectionObserverContainer>
+                            </div>
+                            <div v-else class="flex flex-col justify-center h-96">
+                                <span class="w-full text-center text-primary-text">{{
+                                    isLoadingContents ? 'Loading...' : "Haven't found anything yet..."
+                                }}</span>
+                            </div>
+                        </template>
+                    </TransBarCard>
+                </div>
+            </section>
 
             <div class="center fixed bottom-0 left-0 mt-2 w-full bg-footer-bg">
                 <div class="flex flex-row gap-x-2 items-center justify-between m-auto px-4 py-2 max-w-screen-lg">
@@ -485,6 +491,8 @@ export default class Home extends Vue {
     isOwnerValidRSS3: boolean = false;
     ownerETHAddress: string = '';
 
+    isLastScrollingDown: boolean = false;
+
     async mounted() {
         this.isPCLayout = window.innerWidth >= 768;
         window.onresize = () => {
@@ -562,6 +570,7 @@ export default class Home extends Vue {
             this.contentTimestamp = timestamp;
             this.isContentsHaveMore = haveMore;
             this.isLoadingContents = false;
+            this.affixEvent(true);
         }, 0);
     }
 
@@ -911,14 +920,12 @@ export default class Home extends Vue {
     }
 
     mountScrollEvent() {
-        const el = document.getElementById('main');
+        const el = this.$el;
         if (el) {
-            el.addEventListener(
-                'scroll',
-                debounce((ev) => {
-                    this.scrollTop = el.scrollTop;
-                }, 100),
-            );
+            el.addEventListener('scroll', (ev) => {
+                this.affixEvent(el.scrollTop > this.scrollTop);
+                this.scrollTop = el.scrollTop;
+            });
         }
     }
 
@@ -957,6 +964,25 @@ export default class Home extends Vue {
         if (this.loadingAssetsIntervalID) {
             clearInterval(this.loadingAssetsIntervalID);
             this.loadingAssetsIntervalID = null;
+        }
+    }
+
+    affixEvent(isScrollDown: boolean) {
+        if (window.innerWidth > 768) {
+            // Enable
+            const containers = document.querySelectorAll('.affix-container');
+            if (isScrollDown) {
+                if (!this.isLastScrollingDown) {
+                    containers.forEach((container) => {
+                        if (window.innerHeight < container.clientHeight) {
+                            container.style.top = `${window.innerHeight - container.clientHeight - 50}px`;
+                        } else {
+                            container.style.top = '32px';
+                        }
+                    });
+                }
+            } // else TODO
+            this.isLastScrollingDown = isScrollDown;
         }
     }
 }
