@@ -154,6 +154,7 @@ import LoadingContainer from '@/components/Loading/LoadingContainer.vue';
 import { DetailedNFT } from '@/common/types';
 import Header from '@/components/Common/Header.vue';
 import utils from '@/common/utils';
+import { uniq } from 'lodash';
 
 @Options({
     name: 'SetupNFTs',
@@ -209,6 +210,7 @@ export default class SetupNFTs extends Vue {
             }
         });
         this.collections.push('Others');
+        this.collections = uniq(this.collections);
         this.collections.forEach((collection) => {
             this.hiddenList[collection] = hiddenNFTs.filter((nft) => nft.detail.collection?.name === collection);
         });
