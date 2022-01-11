@@ -63,20 +63,29 @@ async function initAssets() {
     const parsedAssets = orderedAssetList?.map((asset) => RSS3Utils.id.parseAsset(asset));
 
     const nfts = parsedAssets?.filter((asset) => asset.type.split('.')[1] === 'NFT');
+    const nftsWithClassName = nfts.map((nft) => {
+        return {
+            ...nft,
+            class: validTaggedList.find(
+                (asset) => asset.id === RSS3Utils.id.getAsset(nft.platform, nft.identity, nft.type, nft.uniqueID),
+            )?.class,
+        };
+    });
     const donations = parsedAssets?.filter((asset) => asset.type.split('.')[1] === 'Donation');
     const footprints = parsedAssets?.filter((asset) => asset.type.split('.')[1] === 'POAP');
 
-    const hidenNfts = parsedHidden?.filter((asset) => asset.type.split('.')[1] === 'NFT');
+    const hiddenNfts = parsedHidden?.filter((asset) => asset.type.split('.')[1] === 'NFT');
     const hiddenDonations = parsedHidden?.filter((asset) => asset.type.split('.')[1] === 'Donation');
     const hiddenFootprints = parsedHidden?.filter((asset) => asset.type.split('.')[1] === 'POAP');
 
     return {
-        nfts: nfts || [],
-        donations: donations || [],
-        footprints: footprints || [],
-        hiddenNfts: hidenNfts || [],
-        hiddenDonations: hiddenDonations || [],
-        hiddenFootprints: hiddenFootprints || [],
+        nfts,
+        nftsWithClassName,
+        donations,
+        footprints,
+        hiddenNfts,
+        hiddenDonations,
+        hiddenFootprints,
     };
 }
 
@@ -361,6 +370,7 @@ const utils = {
     initContent,
     fixURLSchemas,
     setAssetTags,
+    updateAssetTags,
     setAccountsTags,
     isAssetNotHidden,
     getAddress,

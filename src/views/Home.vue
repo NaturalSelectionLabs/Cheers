@@ -398,6 +398,7 @@ import IntersectionObserverContainer from '@/components/Common/IntersectionObser
 
 import TransBarCard from '@/components/Card/TransBarCard.vue';
 import AssetCard from '@/components/Card/AssetCard.vue';
+import config from '@/common/config';
 
 interface Relations {
     followers: string[];
@@ -968,7 +969,7 @@ export default class Home extends Vue {
     }
 
     affixEvent(isScrollDown: boolean) {
-        if (window.innerWidth > 768) {
+        if (window.innerWidth > config.ui.md) {
             // Enable
             const containers = document.querySelectorAll('.affix-container');
             if (isScrollDown) {
