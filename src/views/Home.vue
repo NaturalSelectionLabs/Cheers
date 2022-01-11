@@ -250,35 +250,39 @@
                             'justify-center': contents.length === 0,
                         }"
                     >
-                        <div v-if="contents.length > 0" class="divide-content-divider divide-y-xs">
-                            <div v-for="element in contents" :key="element.id">
-                                <ContentCard
-                                    :timestamp="new Date(element.date_updated).valueOf()"
-                                    :content="element.summary"
-                                    :title="element.title"
-                                    :provider="
-                                        element.target.field.includes('Mirror.XYZ')
-                                            ? 'Mirror-XYZ'
-                                            : element.target.field.split('-')[2]
-                                    "
-                                    @click="toContentLink(element)"
-                                />
+                        <div v-if="contents.length > 0">
+                            <div class="divide-content-divider divide-y-xs">
+                                <div v-for="element in contents" :key="element.id">
+                                    <ContentCard
+                                        :timestamp="new Date(element.date_updated).valueOf()"
+                                        :content="element.summary"
+                                        :title="element.title"
+                                        :provider="
+                                            element.target.field.includes('Mirror.XYZ')
+                                                ? 'Mirror-XYZ'
+                                                : element.target.field.split('-')[2]
+                                        "
+                                        @click="toContentLink(element)"
+                                    />
+                                </div>
                             </div>
                             <IntersectionObserverContainer
                                 :once="false"
                                 :enabled="!isLoadingContents"
                                 @trigger="loadMoreContents"
                             >
-                                <Button
-                                    size="sm"
-                                    class="w-full h-6 text-content-btn-s-text bg-content-btn-s shadow-content-btn-s"
-                                    v-show="isContentsHaveMore"
-                                    @click="loadMoreContents"
-                                    id="contents-load-more-button"
-                                >
-                                    <i v-if="isLoadingContents" class="bx bx-loader-circle bx-spin"></i>
-                                    <i v-else class="bx bx-dots-horizontal-rounded" />
-                                </Button>
+                                <div class="p-3">
+                                    <Button
+                                        size="sm"
+                                        class="w-full h-6 text-content-btn-s-text bg-content-btn-s shadow-content-btn-s"
+                                        v-show="isContentsHaveMore"
+                                        @click="loadMoreContents"
+                                        id="contents-load-more-button"
+                                    >
+                                        <i v-if="isLoadingContents" class="bx bx-loader-circle bx-spin"></i>
+                                        <i v-else class="bx bx-dots-horizontal-rounded" />
+                                    </Button>
+                                </div>
                             </IntersectionObserverContainer>
                         </div>
                         <div v-else class="mt-4 text-center text-content-title">
