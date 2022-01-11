@@ -196,9 +196,10 @@
 
             <TransBarCard title="Content" class="md:w-2/5" :haveDetails="true" :haveContent="false">
                 <template #details>
-                    <div v-if="contents?.length > 0" class="divide-content-divider divide-y-xs">
+                    <div v-if="contents?.length > 0">
                         <div v-for="element in contents" :key="element.id">
                             <ContentCard
+                                :username="rss3Profile.username"
                                 :timestamp="new Date(element.date_updated).valueOf()"
                                 :content="element.summary"
                                 :title="element.title"

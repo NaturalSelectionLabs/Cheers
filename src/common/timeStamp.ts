@@ -11,10 +11,8 @@ export const timeDifferent = (timeStamp: number): string => {
         return diffMinutes + ' minutes ago';
     } else if (diffDays === 0) {
         return diffHours + ' hours ago';
-    } else if (diffDays > 99 || diffHours == 0) {
-        return diffDays + ' days ago';
     } else {
-        return diffDays + ' days ' + diffHours + ' hours ago';
+        return diffDays + ' days ago';
     }
 };
 
