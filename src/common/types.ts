@@ -149,6 +149,7 @@ export interface CustomField_PassAssets {
     id: string;
     hide?: boolean;
     order?: number;
+    class?: string;
 }
 
 export interface DetailedAccount {

@@ -1,10 +1,10 @@
 <template>
-    <div class="bg-blur flex flex-col gap-2 items-start p-3 min-h-28 border-card rounded-xl box-border">
-        <div class="flex flex-row items-center justify-between px-2 w-full text-primary-text">
+    <div class="bg-blur flex flex-col gap-2 items-start p-3 border-card rounded box-border">
+        <div v-if="title" class="flex flex-row items-center justify-between px-2 w-full text-primary-text">
             <div class="text-lg font-semibold">{{ title }}</div>
             <slot name="header" />
         </div>
-        <div class="flex flex-col gap-1 px-2 w-full" v-if="haveDetails">
+        <div class="flex flex-col gap-1 px-2 w-full h-full" v-if="haveDetails">
             <slot name="details" />
         </div>
         <div class="flex flex-row gap-x-2 items-center justify-between w-full" v-if="haveContent">
