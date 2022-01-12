@@ -204,6 +204,13 @@ export default class SetupNFTs extends Vue {
         );
         this.hiddenList = await utils.loadAssets(hiddenNfts);
         this.allClasses = Object.keys(this.classifiedList);
+
+        // Activate default class
+        const sessionSpecifiedClassName = sessionStorage.getItem('NFTEditDefaultExpandClassName');
+        if (sessionSpecifiedClassName) {
+            sessionStorage.removeItem('NFTEditDefaultExpandClassName');
+            this.activatedClassName = sessionSpecifiedClassName;
+        }
     }
 
     setActiveClass(className: string) {
