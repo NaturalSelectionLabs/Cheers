@@ -13,7 +13,7 @@
         <div class="m-auto pb-32 pt-8 px-4 max-w-screen-lg h-full">
             <Header title="Manage Footprints" theme="footprint" :avatar="avatar" />
             <div class="flex flex-col gap-4 pb-8 h-full md:flex-row">
-                <section class="h-1/2 md:w-1/2 md:h-full">
+                <section class="h-1/2 md:w-3/5 md:h-full">
                     <TransBarCard title="Listed" class="h-full" :have-details="true">
                         <template #details>
                             <draggable
@@ -35,7 +35,7 @@
                         </template>
                     </TransBarCard>
                 </section>
-                <section class="h-1/2 md:w-1/2 md:h-full">
+                <section class="h-1/2 md:w-2/5 md:h-full">
                     <TransBarCard title="Unlisted" class="h-full" :have-details="true">
                         <template #details>
                             <draggable
