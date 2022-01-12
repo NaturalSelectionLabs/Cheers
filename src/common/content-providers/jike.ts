@@ -7,11 +7,13 @@ export default {
         return `https://m.okjike.com/users/${account}`;
     },
     accountPostProcess: async (account: string) => {
+        const throwErrpr = (msg) => {
+            throw new Error(msg);
+        };
         let uuid = '';
-        if (account.startsWith('https://')) {
-            // Is link
-            let fullUrl = '';
+        try {
             const baseUrlObj = new URL(account);
+            let fullUrl = '';
             if (baseUrlObj.host !== 'm.okjike.com') {
                 // 302 redirect
                 try {
@@ -23,19 +25,18 @@ export default {
                     fullUrl = res.data.data;
                 } catch (e) {
                     console.log('Fetch error', e);
-                    throw new Error(
+                    throwErrpr(
                         'Failed to get full URL (maybe caused by server limits), try again or input full URL manually?',
                     );
                 }
-                // throw new Error(
-                //     'Should be full (https://m.okjike.com/users/...), maybe open current link at browser, wait for redirections and copy the final URL?',
-                // );
             } else {
                 fullUrl = account;
             }
+            console.log(fullUrl);
             const fullUrlObj = new URL(fullUrl);
             uuid = fullUrlObj.pathname.split('/').pop() || '';
-        } else {
+        } catch (e) {
+            // is not URL
             uuid = account;
         }
         return uuid.replace(/-/g, '\\-');
