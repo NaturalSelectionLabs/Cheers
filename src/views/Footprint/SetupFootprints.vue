@@ -1,108 +1,63 @@
 <template>
-    <div class="h-screen text-body-text bg-body-bg overflow-y-auto">
-        <div class="m-auto pb-32 pt-8 px-4 max-w-screen-lg">
+    <div
+        class="
+            h-screen
+            text-body-text
+            bg-body-bg bg-gradient-to-tr
+            from-blue-400
+            to-blue-200
+            via-blue-100
+            overflow-y-auto
+        "
+    >
+        <div class="m-auto pb-32 pt-8 px-4 max-w-screen-lg h-full">
             <Header title="Manage Footprints" theme="footprint" :avatar="avatar" />
-            <section class="grid gap-4 grid-cols-1 md:grid-cols-2">
-                <Card
-                    title="Listed"
-                    color-title="text-footprint-title"
-                    color-tips="text-footprint-title"
-                    color-background="bg-footprint-bg"
-                    class="w-full"
-                    :is-having-content="true"
-                    tips="Drag to reorder"
-                >
-                    <template #content>
-                        <draggable
-                            class="min-h-20 md:h-screen-60 md:overflow-y-auto"
-                            :list="show"
-                            group="footprints"
-                            data-type="displayed"
-                            item-key="displayed"
-                            :animation="200"
-                        >
-                            <template #item="{ element }">
-                                <FootprintItem
-                                    class="inline-flex mx-0.5"
-                                    style="cursor: grab"
-                                    size="md"
-                                    :imageUrl="element.detail.image_url"
-                                />
-                            </template>
-                        </draggable>
-                    </template>
-                    <template #footer-button>
-                        <Button
-                            size="sm"
-                            class="text-footprint-btn-s-text text-xs bg-footprint-btn-s shadow-footprint-btn-s"
-                            :class="{
-                                'bg-gray-100 cursor-not-allowed': show.length === 0,
-                            }"
-                            :disabled="show.length === 0"
-                            @click="hideAll"
-                        >
-                            <span>Hide All</span>
-                        </Button>
-                    </template>
-                </Card>
-                <Card
-                    title="Unlisted"
-                    color-title="text-footprint-title"
-                    color-tips="text-footprint-title"
-                    color-background="bg-card-hide"
-                    class="w-full"
-                    :is-having-content="true"
-                    tips="Drag here to hide"
-                >
-                    <template #header-button>
-                        <Button
-                            size="sm"
-                            class="text-footprint-btn-s-text text-xs bg-footprint-btn-s shadow-footprint-btn-s"
-                            :class="{
-                                'bg-gray-100 cursor-not-allowed': hide.length === 0,
-                            }"
-                            v-if="!isPCLayout"
-                            :disabled="hide.length === 0"
-                            @click="showAll"
-                        >
-                            <span>Show All</span>
-                        </Button>
-                    </template>
-                    <template #content>
-                        <draggable
-                            class="min-h-20 md:h-screen-60 md:overflow-y-auto"
-                            :list="hide"
-                            group="footprints"
-                            data-type="displayed"
-                            item-key="displayed"
-                            :animation="200"
-                        >
-                            <template #item="{ element }">
-                                <FootprintItem
-                                    class="inline-flex mx-0.5"
-                                    style="cursor: grab"
-                                    size="md"
-                                    :imageUrl="element.detail.image_url"
-                                />
-                            </template>
-                        </draggable>
-                    </template>
-                    <template #footer-button>
-                        <Button
-                            size="sm"
-                            class="text-footprint-btn-s-text text-xs bg-footprint-btn-s shadow-footprint-btn-s"
-                            :class="{
-                                'bg-gray-100 cursor-not-allowed': hide.length === 0,
-                            }"
-                            v-if="isPCLayout"
-                            :disabled="hide.length === 0"
-                            @click="showAll"
-                        >
-                            <span>Show All</span>
-                        </Button>
-                    </template>
-                </Card>
-            </section>
+            <div class="flex flex-col gap-4 pb-8 h-full md:flex-row">
+                <section class="h-1/2 md:w-1/2 md:h-full">
+                    <TransBarCard title="Listed" class="h-full" :have-details="true">
+                        <template #details>
+                            <draggable
+                                class="h-full min-h-20 overflow-y-auto"
+                                :list="show"
+                                group="footprints"
+                                item-key="id"
+                                :animation="200"
+                            >
+                                <template #item="{ element }">
+                                    <FootprintItem
+                                        class="inline-flex mx-0.5"
+                                        style="cursor: grab"
+                                        size="md"
+                                        :imageUrl="element.detail.image_url"
+                                    />
+                                </template>
+                            </draggable>
+                        </template>
+                    </TransBarCard>
+                </section>
+                <section class="h-1/2 md:w-1/2 md:h-full">
+                    <TransBarCard title="Unlisted" class="h-full" :have-details="true">
+                        <template #details>
+                            <draggable
+                                class="h-full min-h-20 overflow-y-auto"
+                                :list="hide"
+                                group="footprints"
+                                item-key="id"
+                                :animation="200"
+                            >
+                                <template #item="{ element }">
+                                    <FootprintItem
+                                        class="inline-flex mx-0.5"
+                                        style="cursor: grab"
+                                        size="md"
+                                        :imageUrl="element.detail.image_url"
+                                    />
+                                </template>
+                            </draggable>
+                        </template>
+                    </TransBarCard>
+                </section>
+            </div>
             <div class="fixed bottom-0 left-0 right-0 flex gap-5 m-auto px-4 py-4 w-full max-w-md bg-btn-container">
                 <Button
                     size="lg"
@@ -135,10 +90,12 @@ import LoadingContainer from '@/components/Loading/LoadingContainer.vue';
 import FootprintItem from '@/components/Footprint/FootprintItem.vue';
 import utils from '@/common/utils';
 import Header from '@/components/Common/Header.vue';
+import TransBarCard from '@/components/Card/TransBarCard.vue';
 
 @Options({
     name: 'SetupFootprints',
     components: {
+        TransBarCard,
         FootprintItem,
         LoadingContainer,
         Button,
