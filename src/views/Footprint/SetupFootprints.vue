@@ -84,13 +84,14 @@ import Button from '@/components/Button/Button.vue';
 import Card from '@/components/Card/Card.vue';
 import draggable from 'vuedraggable';
 import RSS3 from '@/common/rss3';
-import config from '@/config';
+import legacyConfig from '@/config';
 import { DetailedFootprint } from '@/common/types';
 import LoadingContainer from '@/components/Loading/LoadingContainer.vue';
 import FootprintItem from '@/components/Footprint/FootprintItem.vue';
 import utils from '@/common/utils';
 import Header from '@/components/Common/Header.vue';
 import TransBarCard from '@/components/Card/TransBarCard.vue';
+import config from '@/common/config';
 
 @Options({
     name: 'SetupFootprints',
@@ -105,26 +106,28 @@ import TransBarCard from '@/components/Card/TransBarCard.vue';
     },
 })
 export default class SetupFootprints extends Vue {
-    avatar: string = config.defaultAvatar;
+    avatar: string = legacyConfig.defaultAvatar;
     isLoading: Boolean = false;
 
     show: DetailedFootprint[] = [];
     hide: DetailedFootprint[] = [];
 
-    isPCLayout: boolean = window.innerWidth > 768;
+    isPCLayout: boolean = window.innerWidth > config.ui.md;
 
     async mounted() {
+        this.isLoading = true;
         await utils.tryEnsureOrRedirect(this.$route, this.$router);
         const loginUser = await RSS3.getLoginUser();
         await RSS3.setPageOwner(loginUser.address);
         const profile = loginUser.profile;
-        this.avatar = profile?.avatar?.[0] || config.defaultAvatar;
+        this.avatar = profile?.avatar?.[0] || legacyConfig.defaultAvatar;
 
         // Get NFTs
         const { footprints, hiddenFootprints } = await utils.initAssets();
 
         this.show = await utils.loadAssets(footprints);
         this.hide = await utils.loadAssets(hiddenFootprints);
+        this.isLoading = false;
     }
 
     hideAll() {
@@ -142,7 +145,7 @@ export default class SetupFootprints extends Vue {
         if (window.history.state.back) {
             window.history.back();
         } else {
-            this.$router.push((config.subDomain.isSubDomainMode ? '' : `/${rns || ethAddress}`) + `/footprints`);
+            this.$router.push((legacyConfig.subDomain.isSubDomainMode ? '' : `/${rns || ethAddress}`) + `/footprints`);
         }
     }
 

@@ -178,6 +178,7 @@ export default class SetupNFTs extends Vue {
     hiddenList: DetailedNFT[] = [];
 
     async mounted() {
+        this.isLoading = true;
         await utils.tryEnsureOrRedirect(this.$route, this.$router);
         const loginUser = await RSS3.getLoginUser();
         await RSS3.setPageOwner(loginUser.address);
@@ -211,6 +212,7 @@ export default class SetupNFTs extends Vue {
             sessionStorage.removeItem('NFTEditDefaultExpandClassName');
             this.activatedClassName = sessionSpecifiedClassName;
         }
+        this.isLoading = false;
     }
 
     setActiveClass(className: string) {
