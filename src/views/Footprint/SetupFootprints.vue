@@ -130,13 +130,6 @@ export default class SetupFootprints extends Vue {
         this.isLoading = false;
     }
 
-    hideAll() {
-        this.hide.push(...this.show.splice(0, this.show.length));
-    }
-    showAll() {
-        this.show.push(...this.hide.splice(0, this.hide.length));
-    }
-
     back() {
         const pageOwner = RSS3.getPageOwner();
         const rns = pageOwner.name;
