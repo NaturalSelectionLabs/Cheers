@@ -1,52 +1,16 @@
 <template>
-    <div
-        class="
-            flex flex-row
-            items-center
-            justify-start
-            w-full
-            text-body-text
-            bg-body-bg
-            border-card
-            rounded-2xl
-            shadow-gitcoin
-            cursor-pointer
-        "
-    >
+    <div class="flex flex-row items-center justify-start w-full text-body-text border-card rounded-2xl cursor-pointer">
         <div
             class="flex-shrink m-0.5 w-32 h-32 bg-cover bg-center bg-no-repeat rounded-2xl"
             :style="{ backgroundImage: `url(${imageUrl})` }"
-        ></div>
-        <div class="flex-1 px-8 w-45">
-            <p class="mb-2 w-full text-lg font-semibold truncate">{{ name }}</p>
-            <div class="flex flex-row gap-x-6 w-full overflow-y-auto">
-                <div>
-                    <div class="font-medium">
-                        <vue3-autocounter
-                            ref="counter"
-                            :startAmount="0"
-                            :endAmount="parseInt(contrib)"
-                            :duration="1"
-                            separator=","
-                            :autoinit="true"
-                        />
-                    </div>
-                    <div>Contrib</div>
-                </div>
-                <div v-for="(item, index) in amount" :key="index.toString()">
-                    <div class="font-medium">
-                        <vue3-autocounter
-                            ref="counter"
-                            :startAmount="0"
-                            :endAmount="parseFloat(item.formatedAmount)"
-                            :duration="1"
-                            separator=","
-                            :decimals="item.formatedAmount.split('.')[1].length"
-                            :autoinit="true"
-                        />
-                    </div>
-                    <div>{{ item.symbol }}</div>
-                </div>
+        />
+        <div class="flex-1 px-8 w-0 font-semibold">
+            <p>{{ 'May, 03, 2021' }}</p>
+            <div class="line-clamp-3">
+                <span class="text-primary-text">{{ username + ' contributed ' }}</span>
+                {{ amount.formatedAmount + ' ' + amount.symbol }}
+                <span class="text-primary-text">to</span>
+                <div>{{ title }}</div>
             </div>
         </div>
     </div>
@@ -60,8 +24,8 @@ import Vue3Autocounter from 'vue3-autocounter';
     components: { Vue3Autocounter },
     props: {
         imageUrl: String,
-        name: String,
-        contrib: Number,
+        title: String,
+        username: String,
         amount: Array,
     },
 })

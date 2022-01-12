@@ -1,35 +1,30 @@
 <template>
-    <div id="main" class="h-screen bg-gitcoin-bg overflow-y-auto">
+    <div id="main" class="h-screen bg-gradient-to-tr from-blue-400 to-blue-200 via-blue-100 overflow-y-auto">
         <div class="m-auto pb-32 pt-8 px-4 max-w-screen-lg">
             <Header :ethAddress="ethAddress" :rns="rns" :rss3Profile="rss3Profile" title="Donations" theme="gitcoin" />
-            <GitcoinTitle class="mb-6" :grants="grants" :contributions="contribs" />
-            <div
-                class="grid gap-6 grid-cols-1 sm:grid-cols-2"
-                :class="{ 'pb-16': isOwner }"
-                v-show="gitcoins.length !== 0"
+            <TransBarCard
+                :title="rss3Profile.name ? rss3Profile.name + `'s Donations` : 'Donations'"
+                :haveDetails="true"
+                :haveContent="false"
+                :haveContentInfo="false"
             >
-                <GitcoinCard
-                    v-for="item in gitcoins"
-                    :key="item.id"
-                    :imageUrl="item.detail.grant.logo || undefinedImageAlt"
-                    :name="item.detail.grant.title || 'Inactive Project'"
-                    :contrib="item.detail.txs.length"
-                    :amount="item.detail.txs"
-                    @click="toSingleGitcoin(item.id)"
-                />
-            </div>
-            <div
-                class="fixed bottom-2 left-0 right-0 flex gap-5 m-auto px-4 py-4 w-full max-w-md bg-btn-container"
-                v-if="isOwner"
-            >
-                <Button
-                    size="lg"
-                    class="m-auto text-gitcoin-btn-m-text text-lg bg-gitcoin-btn-m shadow-gitcoin-btn-m"
-                    @click="toSetupGitcoins"
-                >
-                    <span>Manage Donations</span>
-                </Button>
-            </div>
+                <template #header>
+                    <i v-if="isOwner" class="bx bxs-pencil bx-xs cursor-pointer" @click="toSetupGitcoins" />
+                </template>
+                <template #details>
+                    <div class="grid gap-6 grid-cols-1 sm:grid-cols-2" v-show="gitcoins.length !== 0">
+                        <GitcoinCard
+                            v-for="item in gitcoins"
+                            :key="item.id"
+                            :imageUrl="item.detail.grant.logo || undefinedImageAlt"
+                            :username="rss3Profile.name"
+                            :title="item.detail.grant.title || 'Inactive Project'"
+                            :amount="item.detail.txs.slice(-1)[0]"
+                            @click="toSingleGitcoin(item.id)"
+                        />
+                    </div>
+                </template>
+            </TransBarCard>
         </div>
     </div>
 </template>
@@ -37,7 +32,6 @@
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
 import Button from '@/components/Button/Button.vue';
-import GitcoinTitle from '@/components/Donation/GitcoinTitle.vue';
 import GitcoinCard from '@/components/Donation/GitcoinCard.vue';
 import legacyConfig from '@/config';
 import config from '@/common/config';
@@ -47,9 +41,12 @@ import { debounce } from 'lodash';
 import utils from '@/common/utils';
 import Header from '@/components/Common/Header.vue';
 import { utils as RSS3Utils } from 'rss3';
+import TransBarCard from '@/components/Card/TransBarCard.vue';
+import { formatter } from '@/common/address';
+
 @Options({
     name: 'Gitcoins',
-    components: { Button, GitcoinTitle, GitcoinCard, Header },
+    components: { Button, GitcoinCard, Header, TransBarCard },
 })
 export default class Gitcoins extends Vue {
     rns: string = '';
@@ -82,7 +79,11 @@ export default class Gitcoins extends Vue {
 
         utils.subDomainModeRedirect(this.rns);
 
-        this.rss3Profile = await pageOwner.profile;
+        this.rss3Profile = pageOwner.profile;
+
+        if (!this.rss3Profile.name) {
+            this.rss3Profile.name = formatter(this.ethAddress);
+        }
 
         const { donations } = await utils.initAssets();
         this.gitcoins = await utils.loadAssets(donations);

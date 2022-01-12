@@ -1,5 +1,5 @@
 <template>
-    <div id="main" class="h-screen bg-footprint-bg overflow-y-auto">
+    <div id="main" class="h-screen bg-gradient-to-tr from-blue-400 to-blue-200 via-blue-100 overflow-y-auto">
         <div class="m-auto pb-32 pt-8 px-4 max-w-screen-lg">
             <Header
                 :ethAddress="ethAddress"
@@ -8,50 +8,48 @@
                 title="Footprints"
                 theme="footprint"
             />
-            <div
-                class="grid grid-cols-1 divide-footprint-divider divide-y-xs sm:grid-cols-2"
-                :class="{ 'pb-16': isOwner }"
+            <TransBarCard
+                :title="rss3Profile.name ? rss3Profile.name + `'s Footprints` : 'Footprints'"
+                :haveDetails="true"
+                :haveContent="false"
+                :haveContentInfo="false"
             >
-                <FootprintCard
-                    v-for="item of footprints"
-                    :key="item.id"
-                    :imageUrl="item.detail.image_url"
-                    :username="rss3Profile.name"
-                    :activity="item.detail.name"
-                    :start-date="item.detail.start_date"
-                    :end-date="item.detail.end_date"
-                    :location="item.detail.city || item.detail.country || 'Metaverse'"
-                    class="p-4 cursor-pointer"
-                    @click="toSingleFootprint(item.id)"
-                />
-            </div>
-            <IntersectionObserverContainer
-                v-if="isHavingMoreAssets"
-                :once="false"
-                :enabled="!isLoadingAssets"
-                @trigger="loadMoreAssets"
-            >
-                <Button
-                    size="sm"
-                    class="m-auto text-footprint-btn-m-text text-lg bg-footprint-btn-m shadow-footprint-btn-m"
-                    @click="loadMoreAssets"
-                >
-                    <i v-if="isLoadingAssets" class="bx bx-loader-circle bx-spin"></i>
-                    <i v-else class="bx bx-dots-horizontal-rounded" />
-                </Button>
-            </IntersectionObserverContainer>
-            <div
-                class="fixed bottom-2 left-0 right-0 flex gap-5 m-auto px-4 py-4 w-full max-w-md bg-btn-container"
-                v-if="isOwner"
-            >
-                <Button
-                    size="lg"
-                    class="m-auto text-footprint-btn-m-text text-lg bg-footprint-btn-m shadow-footprint-btn-m"
-                    @click="toSetupFootprints"
-                >
-                    <span>Manage Footprints</span>
-                </Button>
-            </div>
+                <template #header>
+                    <i v-if="isOwner" class="bx bxs-pencil bx-xs cursor-pointer" @click="toSetupFootprints" />
+                </template>
+                <template #details>
+                    <div class="grid gap-4 grid-cols-1 sm:grid-cols-2">
+                        <FootprintCard
+                            v-for="item of footprints"
+                            :key="item.id"
+                            :imageUrl="item.detail.image_url"
+                            :username="rss3Profile.name"
+                            :activity="item.detail.name"
+                            :start-date="item.detail.start_date"
+                            :end-date="item.detail.end_date"
+                            :location="item.detail.city || item.detail.country || 'Metaverse'"
+                            size="xl"
+                            class="cursor-pointer"
+                            @click="toSingleFootprint(item.id)"
+                        />
+                    </div>
+                    <IntersectionObserverContainer
+                        v-if="isHavingMoreAssets"
+                        :once="false"
+                        :enabled="!isLoadingAssets"
+                        @trigger="loadMoreAssets"
+                    >
+                        <Button
+                            size="sm"
+                            class="m-auto text-primary-btn-text text-lg bg-primary-btn"
+                            @click="loadMoreAssets"
+                        >
+                            <i v-if="isLoadingAssets" class="bx bx-loader-circle bx-spin" />
+                            <i v-else class="bx bx-dots-horizontal-rounded" />
+                        </Button>
+                    </IntersectionObserverContainer>
+                </template>
+            </TransBarCard>
         </div>
     </div>
 </template>
@@ -69,10 +67,12 @@ import utils from '@/common/utils';
 import Header from '@/components/Common/Header.vue';
 import { DetailedFootprint, GeneralAsset } from '@/common/types';
 import IntersectionObserverContainer from '@/components/Common/IntersectionObserverContainer.vue';
+import TransBarCard from '@/components/Card/TransBarCard.vue';
+import { formatter } from '@/common/address';
 
 @Options({
     name: 'Footprints',
-    components: { IntersectionObserverContainer, FootprintCard, Button, Header },
+    components: { IntersectionObserverContainer, FootprintCard, Button, Header, TransBarCard },
 })
 export default class Footprints extends Vue {
     rns: string = '';
@@ -105,6 +105,10 @@ export default class Footprints extends Vue {
         utils.subDomainModeRedirect(this.rns);
 
         this.rss3Profile = await pageOwner.profile;
+
+        if (!this.rss3Profile.name) {
+            this.rss3Profile.name = formatter(this.ethAddress);
+        }
 
         const { footprints } = await utils.initAssets();
         this.assetList = footprints;

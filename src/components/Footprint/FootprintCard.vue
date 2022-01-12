@@ -1,25 +1,12 @@
 <template>
     <div class="flex flex-row gap-2 justify-start">
-        <FootprintItem
-            :imageUrl="imageUrl"
-            size="lg"
-            class="flex-shrink-0"
-            :class="{
-                'opacity-50 animate-bounce': special,
-            }"
-        />
-        <section class="flex flex-1 flex-col justify-around text-body-text text-sm leading-normal">
-            <div class="flex flex-row gap-2 items-center">
-                <CalendarIcon />
-                <span class="flex-1 w-0 text-body-text truncate">{{ getDate() }}</span>
-            </div>
-            <div class="flex flex-row gap-2 items-center">
-                <LocationIcon />
-                <span class="flex-1 w-0 text-body-text truncate">{{ location }}</span>
-            </div>
-            <div class="flex flex-row gap-2 font-medium">
-                <div class="text-primary-text">{{ username }} attended</div>
-                <div class="flex-1 w-0 truncate">{{ activity }}</div>
+        <FootprintItem :imageUrl="imageUrl" :size="size" />
+        <section class="flex flex-1 flex-col gap-2 justify-around w-0 text-body-text text-sm leading-normal">
+            <span class="text-body-text truncate">{{ getDate() }}</span>
+            <span class="text-body-text truncate"> <span class="text-primary-text">@ </span>{{ location }}</span>
+            <div class="line-clamp-2 font-medium">
+                <span class="text-primary-text">{{ username }} attended</span>
+                <span class="flex-1 w-0">{{ ' ' + activity }}</span>
             </div>
         </section>
         <section v-if="special" class="flex">
@@ -52,6 +39,7 @@ import Button from '@/components/Button/Button.vue';
         location: String,
         username: String,
         activity: String,
+        size: String,
         special: Boolean,
     },
     components: { Button, FootprintItem, CalendarIcon, LocationIcon },

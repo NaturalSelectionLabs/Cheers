@@ -1,52 +1,52 @@
 <template>
-    <div id="main" class="h-screen bg-nft-bg overflow-y-auto">
+    <div id="main" class="h-screen bg-gradient-to-tr from-blue-400 to-blue-200 via-blue-100 overflow-y-auto">
         <div class="m-auto pb-32 pt-8 px-4 max-w-screen-lg">
             <Header :ethAddress="ethAddress" :rns="rns" :rss3Profile="rss3Profile" title="NFTs" theme="nft" />
-            <div class="grid gap-6 grid-cols-2 justify-items-center sm:grid-cols-3">
-                <div class="relative w-full" v-for="item in nfts" :key="item.id">
-                    <NFTItem
-                        class="cursor-pointer"
-                        size="auto"
-                        :imageUrl="item.detail.image_url"
-                        :poster-url="item.detail.image_preview_url"
-                        :is-showing-details="false"
-                        @click="toSingleNFTPage(item.id)"
-                    />
-                    <NFTBadges
-                        class="absolute right-2.5 top-2.5"
-                        :chain="item.detail.chain"
-                        location="overlay"
-                        :collectionImg="item.detail.collection?.image_url"
-                    />
-                </div>
-            </div>
-            <IntersectionObserverContainer
-                v-if="isHavingMoreAssets"
-                :once="false"
-                :enabled="!isLoadingAssets"
-                @trigger="loadMoreAssets"
+            <TransBarCard
+                :title="rss3Profile.name ? rss3Profile.name + `'s Vitrine` : 'Vitrine'"
+                :haveDetails="true"
+                :haveContent="false"
+                :haveContentInfo="false"
             >
-                <Button
-                    size="sm"
-                    class="m-auto text-nft-btn-m-text text-lg bg-nft-btn-m shadow-nft-btn-m"
-                    @click="loadMoreAssets"
-                >
-                    <i v-if="isLoadingAssets" class="bx bx-loader-circle bx-spin"></i>
-                    <i v-else class="bx bx-dots-horizontal-rounded" />
-                </Button>
-            </IntersectionObserverContainer>
-            <div
-                class="fixed z-50 bottom-2 left-0 right-0 flex gap-5 m-auto px-4 py-4 w-full max-w-md bg-btn-container"
-                v-if="isOwner"
-            >
-                <Button
-                    size="lg"
-                    class="m-auto text-nft-btn-m-text text-lg bg-nft-btn-m shadow-nft-btn-m"
-                    @click="toSetupNfts"
-                >
-                    <span>Manage NFTs</span>
-                </Button>
-            </div>
+                <template #header>
+                    <i v-if="isOwner" class="bx bxs-pencil bx-xs cursor-pointer" @click="toSetupNfts" />
+                </template>
+                <template #details>
+                    <div class="grid gap-6 grid-cols-2 justify-items-center sm:grid-cols-3 md:grid-cols-4">
+                        <div class="relative w-full" v-for="item in nfts" :key="item.id">
+                            <NFTItem
+                                class="cursor-pointer"
+                                size="auto"
+                                :imageUrl="item.detail.image_url"
+                                :poster-url="item.detail.image_preview_url"
+                                :is-showing-details="false"
+                                @click="toSingleNFTPage(item.id)"
+                            />
+                            <NFTBadges
+                                class="absolute right-2.5 top-2.5"
+                                :chain="item.detail.chain"
+                                location="overlay"
+                                :collectionImg="item.detail.collection?.image_url"
+                            />
+                        </div>
+                    </div>
+                    <IntersectionObserverContainer
+                        v-if="isHavingMoreAssets"
+                        :once="false"
+                        :enabled="!isLoadingAssets"
+                        @trigger="loadMoreAssets"
+                    >
+                        <Button
+                            size="sm"
+                            class="m-auto text-primary-btn-text text-lg bg-primary-btn"
+                            @click="loadMoreAssets"
+                        >
+                            <i v-if="isLoadingAssets" class="bx bx-loader-circle bx-spin" />
+                            <i v-else class="bx bx-dots-horizontal-rounded" />
+                        </Button>
+                    </IntersectionObserverContainer>
+                </template>
+            </TransBarCard>
         </div>
     </div>
 </template>
@@ -65,10 +65,12 @@ import utils from '@/common/utils';
 import Header from '@/components/Common/Header.vue';
 import { DetailedNFT, GeneralAsset } from '@/common/types';
 import IntersectionObserverContainer from '@/components/Common/IntersectionObserverContainer.vue';
+import TransBarCard from '@/components/Card/TransBarCard.vue';
+import { formatter } from '@/common/address';
 
 @Options({
     name: 'NFTs',
-    components: { IntersectionObserverContainer, Button, NFTItem, NFTBadges, Header },
+    components: { IntersectionObserverContainer, Button, NFTItem, NFTBadges, Header, TransBarCard },
 })
 export default class NFTs extends Vue {
     rns: string = '';
@@ -96,6 +98,10 @@ export default class NFTs extends Vue {
         utils.subDomainModeRedirect(this.rns);
 
         this.rss3Profile = pageOwner.profile;
+
+        if (!this.rss3Profile.name) {
+            this.rss3Profile.name = formatter(this.ethAddress);
+        }
 
         const { nfts } = await utils.initAssets();
         this.assetList = nfts;
