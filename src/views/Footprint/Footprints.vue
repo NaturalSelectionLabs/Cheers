@@ -28,7 +28,7 @@
                             :start-date="item.detail.start_date"
                             :end-date="item.detail.end_date"
                             :location="item.detail.city || item.detail.country || 'Metaverse'"
-                            size="xl"
+                            type="details"
                             class="cursor-pointer"
                             @click="toSingleFootprint(item.id)"
                         />

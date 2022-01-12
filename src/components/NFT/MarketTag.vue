@@ -24,7 +24,7 @@ export default class MarketTag extends Vue {
 <style scoped lang="postcss">
 @layer components {
     .market-tag {
-        @apply flex items-center justify-center px-2 py-1.5 text-center leading-none bg-white bg-contain bg-center bg-no-repeat border-sm border-nft-bg rounded-sm shadow-nft bg-origin-content;
+        @apply flex items-center justify-center px-2 py-1.5 text-center leading-none bg-white bg-contain bg-center bg-no-repeat border-sm border-nft-bg rounded-sm bg-origin-content;
     }
 }
 </style>

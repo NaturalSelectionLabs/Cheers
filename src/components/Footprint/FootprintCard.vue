@@ -1,25 +1,16 @@
 <template>
     <div class="flex flex-row gap-2 justify-start">
-        <FootprintItem :imageUrl="imageUrl" :size="size" />
-        <section class="flex flex-1 flex-col gap-2 justify-around w-0 text-body-text text-sm leading-normal">
+        <FootprintItem :imageUrl="imageUrl" :size="type === 'details' ? 'xl' : 'lg'" class="flex-shrink-0" />
+        <section
+            class="flex flex-1 flex-col justify-center w-0 text-body-text text-sm leading-normal"
+            :class="{ 'md:gap-2': type === 'details' }"
+        >
             <span class="text-body-text truncate">{{ getDate() }}</span>
             <span class="text-body-text truncate"> <span class="text-primary-text">@ </span>{{ location }}</span>
             <div class="line-clamp-2 font-medium">
                 <span class="text-primary-text">{{ username }} attended</span>
                 <span class="flex-1 w-0">{{ ' ' + activity }}</span>
             </div>
-        </section>
-        <section v-if="special" class="flex">
-            <Button
-                size="lg"
-                class="m-auto text-footprint-btn-m-text text-lg bg-footprint-btn-m shadow-footprint-btn-m"
-                @click="triggerClaim"
-            >
-                <span v-if="isClaiming">
-                    <i class="bx bx-sm bx-loader-circle bx-spin" />
-                </span>
-                <span v-else>Claim it now</span>
-            </Button>
         </section>
     </div>
 </template>
@@ -39,8 +30,7 @@ import Button from '@/components/Button/Button.vue';
         location: String,
         username: String,
         activity: String,
-        size: String,
-        special: Boolean,
+        type: String,
     },
     components: { Button, FootprintItem, CalendarIcon, LocationIcon },
 })
@@ -58,10 +48,6 @@ export default class FootprintCard extends Vue {
             ? this.startDate +
                   (this.endDate && this.endDate !== <string>this.startDate ? ` ~ ${<string>this.endDate}` : '')
             : 'Loading...';
-    }
-    triggerClaim() {
-        this.isClaiming = true;
-        this.$emit('claim');
     }
 }
 </script>

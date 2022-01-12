@@ -1,5 +1,5 @@
 <template>
-    <div class="h-screen bg-nft-bg overflow-y-auto">
+    <div class="h-screen bg-gradient-to-tr from-blue-400 to-blue-200 via-blue-100 overflow-y-auto">
         <div class="m-auto pb-20 pt-8 px-4 max-w-screen-lg">
             <div class="relative pb-4">
                 <div
@@ -35,16 +35,32 @@
                     />
                 </div>
             </div>
-            <section class="m-auto max-w-screen-sm">
-                <div class="image pb-4">
-                    <NFTItem
-                        :imageUrl="details.animation_url || details.image_url"
-                        :poster-url="details.image_url"
-                        size="contain"
-                        :is-showing-details="true"
-                    />
-                </div>
-                <NFTDetail :chain="details.chain" :details="details" :market="market" />
+            <section class="m-auto max-w-screen-lg">
+                <TransBarCard
+                    :title="details.collection?.name"
+                    :haveDetails="true"
+                    :haveContent="false"
+                    :haveContentInfo="false"
+                >
+                    <template #header>
+                        <NFTBadges
+                            :chain="details.chain"
+                            location="header"
+                            :collectionImg="details.collection?.image_url"
+                        />
+                    </template>
+                    <template #details>
+                        <div class="flex flex-col gap-4 m-auto max-w-screen-sm">
+                            <NFTItem
+                                :imageUrl="details.animation_url || details.image_url"
+                                :poster-url="details.image_url"
+                                size="contain"
+                                :is-showing-details="true"
+                            />
+                            <NFTDetail :chain="details.chain" :details="details" :market="market" />
+                        </div>
+                    </template>
+                </TransBarCard>
             </section>
         </div>
     </div>
@@ -60,10 +76,11 @@ import RSS3 from '@/common/rss3';
 import { NFT, NFTResponse } from '@/common/types';
 import config from '@/config';
 import utils from '@/common/utils';
+import TransBarCard from '@/components/Card/TransBarCard.vue';
 
 @Options({
     name: 'SingleNFT',
-    components: { Button, NFTDetail, NFTItem, NFTBadges },
+    components: { Button, NFTDetail, NFTItem, NFTBadges, TransBarCard },
 })
 export default class SingleNFT extends Vue {
     rns: string = '';

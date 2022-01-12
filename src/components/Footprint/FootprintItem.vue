@@ -34,7 +34,7 @@ export default class FootprintItem extends Vue {
 <style scoped lang="postcss">
 @layer components {
     .footprint-item {
-        @apply flex-shrink-0 bg-white bg-cover bg-center bg-no-repeat border border-white rounded-full filter;
+        @apply bg-white bg-cover bg-center bg-no-repeat border border-white rounded-full filter;
     }
 }
 </style>

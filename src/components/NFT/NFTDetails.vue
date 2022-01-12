@@ -25,7 +25,7 @@
                     :key="item.trait_type + item.value"
                     :traitType="item.trait_type"
                     :traitValue="item.value"
-                ></Trait>
+                />
             </div>
         </div>
         <div v-if="details.collection?.description">
