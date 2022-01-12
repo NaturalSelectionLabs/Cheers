@@ -40,7 +40,7 @@
                             'h-full': className === activatedClassName,
                         }"
                         @add="dragHandler(className)"
-                        :haveDetails="true"
+                        :have-details="true"
                     >
                         <template #details>
                             <draggable
@@ -65,7 +65,7 @@
                             </draggable>
                         </template>
                     </TransBarCard>
-                    <TransBarCard v-else :title="activatedClassName" class="h-full" :haveDetails="true">
+                    <TransBarCard v-else :title="activatedClassName" class="h-full" :have-details="true">
                         <template #details>
                             <draggable
                                 class="h-full overflow-y-auto"
@@ -87,7 +87,7 @@
                     </TransBarCard>
                 </section>
                 <section class="h-1/2 md:w-2/5 md:h-full">
-                    <TransBarCard title="Unlisted" class="h-full" :haveDetails="true">
+                    <TransBarCard title="Unlisted" class="h-full" :have-details="true">
                         <template #details>
                             <draggable
                                 class="h-full min-h-20"
