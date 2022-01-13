@@ -1,5 +1,5 @@
 <template>
-    <div class="h-screen bg-footprint-bg overflow-y-auto">
+    <div class="h-screen bg-gradient-to-tr from-blue-400 to-blue-200 via-blue-100 overflow-y-auto">
         <div class="m-auto pb-20 pt-8 px-4 max-w-screen-lg">
             <Header
                 :ethAddress="ethAddress"
@@ -9,10 +9,12 @@
                 theme="footprint"
                 list="footprints"
             />
-            <section class="m-auto max-w-screen-sm">
-                <FootprintItem class="mb-4" :imageUrl="details.image_url" size="auto" />
-                <FootprintDetails :details="details" />
-            </section>
+            <div class="py-12 bg-white bg-opacity-50 rounded-xl">
+                <section class="m-auto px-4 max-w-screen-sm">
+                    <FootprintItem class="mb-4" :imageUrl="details.image_url" size="auto" />
+                    <FootprintDetails :details="details" />
+                </section>
+            </div>
         </div>
     </div>
 </template>
@@ -66,10 +68,6 @@ export default class SingleFootprint extends Vue {
         const id: string = String(this.$route.params.id);
         const type: string = String(this.$route.params.type);
 
-        // const footprint = (await pageOwner.assets?.getDetails({
-        //       assets: [id],
-        //       full: true,
-        //   })) as unknown as POAPResponse;
         const footprint = (await utils.loadAssets([
             {
                 platform: platform,
