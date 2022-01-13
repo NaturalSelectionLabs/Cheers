@@ -250,35 +250,39 @@
                             'justify-center': contents.length === 0,
                         }"
                     >
-                        <div v-if="contents.length > 0" class="divide-content-divider divide-y-xs">
-                            <div v-for="element in contents" :key="element.id">
-                                <ContentCard
-                                    :timestamp="new Date(element.date_updated).valueOf()"
-                                    :content="element.summary"
-                                    :title="element.title"
-                                    :provider="
-                                        element.target.field.includes('Mirror.XYZ')
-                                            ? 'Mirror-XYZ'
-                                            : element.target.field.split('-')[2]
-                                    "
-                                    @click="toContentLink(element)"
-                                />
+                        <div v-if="contents.length > 0">
+                            <div class="divide-content-divider divide-y-xs">
+                                <div v-for="element in contents" :key="element.id">
+                                    <ContentCard
+                                        :timestamp="new Date(element.date_updated).valueOf()"
+                                        :content="element.summary"
+                                        :title="element.title"
+                                        :provider="
+                                            element.target.field.includes('Mirror.XYZ')
+                                                ? 'Mirror-XYZ'
+                                                : element.target.field.split('-')[2]
+                                        "
+                                        @click="toContentLink(element)"
+                                    />
+                                </div>
                             </div>
                             <IntersectionObserverContainer
                                 :once="false"
                                 :enabled="!isLoadingContents"
                                 @trigger="loadMoreContents"
                             >
-                                <Button
-                                    size="sm"
-                                    class="w-full h-6 text-content-btn-s-text bg-content-btn-s shadow-content-btn-s"
-                                    v-show="isContentsHaveMore"
-                                    @click="loadMoreContents"
-                                    id="contents-load-more-button"
-                                >
-                                    <i v-if="isLoadingContents" class="bx bx-loader-circle bx-spin"></i>
-                                    <i v-else class="bx bx-dots-horizontal-rounded" />
-                                </Button>
+                                <div class="p-3">
+                                    <Button
+                                        size="sm"
+                                        class="w-full h-6 text-content-btn-s-text bg-content-btn-s shadow-content-btn-s"
+                                        v-show="isContentsHaveMore"
+                                        @click="loadMoreContents"
+                                        id="contents-load-more-button"
+                                    >
+                                        <i v-if="isLoadingContents" class="bx bx-loader-circle bx-spin"></i>
+                                        <i v-else class="bx bx-dots-horizontal-rounded" />
+                                    </Button>
+                                </div>
                             </IntersectionObserverContainer>
                         </div>
                         <div v-else class="mt-4 text-center text-content-title">
@@ -446,7 +450,7 @@ import Logo from '@/components/Icons/Logo.vue';
 
 import FootprintCard from '@/components/Footprint/FootprintCard.vue';
 import ContentCard from '@/components/Content/ContentCard.vue';
-import { debounce } from 'lodash';
+import { debounce, uniqBy } from 'lodash';
 import ContentProviders from '@/common/content-providers';
 import Toolbar from '@/components/Profile/Toolbar.vue';
 import FootprintItem from '@/components/Footprint/FootprintItem.vue';
@@ -619,7 +623,16 @@ export default class Home extends Vue {
         // Load Contents
         setTimeout(async () => {
             const { listed, haveMore, timestamp } = await utils.initContent();
-            this.contents = listed;
+            while (listed.length > 0) {
+                if ('target' in listed[0] && listed[0].target.field.includes('Mirror.XYZ')) {
+                    if (this.contents.findIndex((item) => 'target' in item && item.title === listed[0].title) === -1) {
+                        this.contents.push(listed[0]);
+                    }
+                } else {
+                    this.contents.push(listed[0]);
+                }
+                listed.shift();
+            }
             this.contentTimestamp = timestamp;
             this.isContentsHaveMore = haveMore;
             this.isLoadingContents = false;
@@ -721,7 +734,16 @@ export default class Home extends Vue {
 
         if (this.isContentsHaveMore) {
             const { listed, haveMore, timestamp } = await utils.initContent(this.contentTimestamp);
-            this.contents = [...this.contents, ...listed];
+            while (listed.length > 0) {
+                if ('target' in listed[0] && listed[0].target.field.includes('Mirror.XYZ')) {
+                    if (this.contents.findIndex((item) => 'target' in item && item.title === listed[0].title) === -1) {
+                        this.contents.push(listed[0]);
+                    }
+                } else {
+                    this.contents.push(listed[0]);
+                }
+                listed.shift();
+            }
             this.contentTimestamp = timestamp;
             this.isContentsHaveMore = haveMore;
         }
@@ -900,6 +922,8 @@ export default class Home extends Vue {
         } else if (platform === 'Misskey') {
             const [username, instance] = user.split('@');
             link = `https://${instance}/notes/${content.target.action.payload}`;
+        } else if (platform === 'Jike') {
+            link = `https://m.okjike.com/originalPosts/${content.target.action.payload}`;
         } else if (user === 'Mirror.XYZ') {
             link = content.target.action.payload;
         }
