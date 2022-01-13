@@ -256,6 +256,7 @@
                             @click="
                                 () => {
                                     addAccountNotice = specifyNoSignAccount.notice;
+                                    isNoticeErrorReport = false;
                                     isShowingAddAccountNotice = true;
                                 }
                             "
@@ -305,7 +306,7 @@
 
             <Modal v-if="isShowingAddAccountNotice">
                 <template #header>
-                    <h1>Oops!</h1>
+                    <h1>{{ isNoticeErrorReport ? 'Oops!' : 'Tips' }}</h1>
                 </template>
                 <template #body>
                     <p class="mt-1 p-4 whitespace-pre-line">
@@ -372,6 +373,7 @@ export default class SetupAccounts extends Vue {
     toDelete: RSS3Account[] = [];
     isLoading: Boolean = false;
     isShowingAddAccountNotice: Boolean = false;
+    isNoticeErrorReport: Boolean = true;
     addAccountNotice: String = '';
     isShowingAddSpecifyAccountInput: Boolean = false;
     rns: string = '';
@@ -426,6 +428,7 @@ export default class SetupAccounts extends Vue {
         if (!(window as any).ethereum) {
             this.addAccountNotice =
                 'Adding accounts are now only supported with MetaMask browser extension enabled. (PC recommended)';
+            this.isNoticeErrorReport = true;
             this.isShowingAddAccountNotice = true;
             return;
         }
@@ -437,6 +440,7 @@ export default class SetupAccounts extends Vue {
             const hideIndex = this.hide.findIndex((account) => account.id === newAccount.id);
             if (equalDefaultAccount || showIndex !== -1 || hideIndex !== -1) {
                 this.addAccountNotice = 'Account already exist';
+                this.isNoticeErrorReport = true;
                 this.isShowingAddAccountNotice = true;
             } else {
                 this.show.push(newAccount);
@@ -444,6 +448,7 @@ export default class SetupAccounts extends Vue {
             }
         } else {
             this.addAccountNotice = newAccount.signature || '';
+            this.isNoticeErrorReport = true;
             this.isShowingAddAccountNotice = true;
         }
         this.mode = 'normal';
@@ -481,6 +486,7 @@ export default class SetupAccounts extends Vue {
                     : this.specifyNoSignAccount.account;
         } catch (e: any) {
             this.addAccountNotice = e.message;
+            this.isNoticeErrorReport = true;
             this.isShowingAddAccountNotice = true;
             this.isLoading = false;
             return;
@@ -496,6 +502,7 @@ export default class SetupAccounts extends Vue {
 
         if (showIndex !== -1 || hideIndex !== -1) {
             this.addAccountNotice = 'Account already exist';
+            this.isNoticeErrorReport = true;
             this.isShowingAddAccountNotice = true;
         } else {
             this.show.push(newAccount);
@@ -583,6 +590,7 @@ export default class SetupAccounts extends Vue {
             this.addAccountNotice = `Fail to save. Maybe you'd like to check if every third-party account (${this.additionalNoSignAccounts.join(
                 ' / ',
             )}) works fine ?`;
+            this.isNoticeErrorReport = true;
             this.isShowingAddAccountNotice = true;
             return;
         }
