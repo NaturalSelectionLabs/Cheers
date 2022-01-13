@@ -279,7 +279,9 @@
                         <i class="bx bx-info-circle text-primary-text" />
                         You need to place one of your
                         <span class="text-primary-text"> RNS, DAS, ENS or Address </span>
-                        into one of :
+                        into one of those fields of your
+                        <span class="text-primary-text"> {{ specifyNoSignAccount.platform }} </span>
+                        account :
                         <span>{{ specifyNoSignAccount.fields.join(', ') }}</span>
                         .
                     </p>
