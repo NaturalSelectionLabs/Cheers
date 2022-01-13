@@ -42,5 +42,6 @@ export default {
         return uuid.replace(/-/g, '\\-');
     },
     accountStyle: 'UUID or share link',
+    notice: 'What is "share link": \n1. Click the share button at the right corner of your personal page\'s top bar.\n2. Click Copy Link button and paste it into the input box below.',
     availableFields: ['Bio'],
 };

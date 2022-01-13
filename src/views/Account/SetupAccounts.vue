@@ -251,6 +251,17 @@
                         Input
                         <span class="text-primary-text">{{ specifyNoSignAccount.platform }}</span>
                         account:
+                        <span
+                            v-if="specifyNoSignAccount.notice"
+                            @click="
+                                () => {
+                                    addAccountNotice = specifyNoSignAccount.notice;
+                                    isShowingAddAccountNotice = true;
+                                }
+                            "
+                        >
+                            <i class="bx bx-help-circle text-xl opacity-40 cursor-pointer" />
+                        </span>
                     </p>
                     <div class="flex">
                         <Input
@@ -297,7 +308,7 @@
                     <h1>Oops!</h1>
                 </template>
                 <template #body>
-                    <p class="mt-1 p-4">
+                    <p class="mt-1 p-4 whitespace-pre-line">
                         {{ addAccountNotice }}
                     </p>
                 </template>
@@ -377,6 +388,7 @@ export default class SetupAccounts extends Vue {
         fields: string[];
         prefix: string;
         suffix: string;
+        notice?: string;
     } = {
         platform: '',
         style: '',
@@ -443,11 +455,20 @@ export default class SetupAccounts extends Vue {
         this.specifyNoSignAccount.fields = ContentProviders[platform].availableFields;
         this.specifyNoSignAccount.prefix = ContentProviders[platform].prefix || '';
         this.specifyNoSignAccount.suffix = ContentProviders[platform].suffix || '';
+        if ('notice' in ContentProviders[platform]) {
+            this.specifyNoSignAccount.notice = ContentProviders[platform].notice;
+        } else {
+            this.specifyNoSignAccount.notice = '';
+        }
 
         this.isShowingAddSpecifyAccountInput = true;
     }
 
     async addNoSignAccountConfirm() {
+        if (this.specifyNoSignAccount.account === '') {
+            // Empty
+            return;
+        }
         this.isShowingAddSpecifyAccountInput = false;
         this.isLoading = true;
         let address = '';
