@@ -64,10 +64,9 @@ export default class Index extends Vue {
     }
 
     async isPassEnough(): Promise<boolean> {
-        // remove RNS setup
-        // const passBalance = await RNSUtils.balanceOfPass3(RSS3.getLoginUser().address);
-        // console.log('Your $PASS: ', passBalance);
-        return false;
+        const passBalance = await RNSUtils.balanceOfPass3(RSS3.getLoginUser().address);
+        console.log('Your $PASS: ', passBalance);
+        return passBalance >= 1;
     }
 
     async initRedirect() {
