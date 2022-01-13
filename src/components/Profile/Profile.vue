@@ -1,5 +1,5 @@
 <template>
-    <div class="flex flex-col items-center p-4 bg-white bg-opacity-50 border-card rounded-xl box-border md:p-6">
+    <div class="flex flex-col items-center p-4 bg-white bg-opacity-50 border-card rounded box-border md:p-6">
         <div class="grid gap-x-6 gap-y-2 grid-cols-3 content-center items-center w-full">
             <ImgHolder class="col-span-1 w-22 h-22" :is-rounded="true" :is-border="false" :src="avatar" />
             <div class="stats-container row-span-1 self-end ml-2 leading-5" @click="toFollowersPage">

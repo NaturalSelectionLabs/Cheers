@@ -22,6 +22,9 @@ const config = {
         prefix: 'pass',
         hiddenTag: 'hidden',
     },
+    ui: {
+        md: 768, // px
+    },
     productsList,
     subDomain: {
         preferSubDomainMode: true,

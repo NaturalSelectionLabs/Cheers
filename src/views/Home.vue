@@ -71,19 +71,25 @@
                     </Profile>
 
                     <TransBarCard
-                        title="NFT"
+                        v-for="className in allClasses"
+                        :key="className"
+                        :title="className"
                         :tip="isLoadingAssets.NFT ? 'Loading...' : 'Haven\'t found anything yet...'"
                         :haveDetails="false"
                         :haveContent="true"
-                        :haveContentInfo="nfts.length > 0"
+                        :haveContentInfo="classifiedList[className].length > 0"
                     >
                         <template #header>
-                            <i v-if="isOwner" class="bx bxs-pencil bx-xs cursor-pointer" @click="toManageNFTs" />
+                            <i
+                                v-if="isOwner"
+                                class="bx bxs-pencil bx-xs cursor-pointer"
+                                @click="toManageNFTs(className)"
+                            />
                         </template>
                         <template #content>
                             <NFTItem
                                 class="mr-1 cursor-pointer"
-                                v-for="item in nfts"
+                                v-for="item in classifiedList[className]"
                                 :key="item.id"
                                 :image-url="item.detail.animation_url || item.detail.image_preview_url || defaultAvatar"
                                 :poster-url="
@@ -379,7 +385,7 @@ import RNSUtils from '@/common/rns';
 import utils from '@/common/utils';
 import legacyConfig from '@/config';
 import GitcoinItem from '@/components/Donation/GitcoinItem.vue';
-import { Profile as ProfileInfo, GeneralAsset } from '@/common/types';
+import { Profile as ProfileInfo, GeneralAsset, DetailedNFT } from '@/common/types';
 
 import NFTIcon from '@/components/Icons/NFTIcon.vue';
 import GitcoinIcon from '@/components/Icons/GitcoinIcon.vue';
@@ -399,6 +405,7 @@ import IntersectionObserverContainer from '@/components/Common/IntersectionObser
 
 import TransBarCard from '@/components/Card/TransBarCard.vue';
 import AssetCard from '@/components/Card/AssetCard.vue';
+import config from '@/common/config';
 
 interface Relations {
     followers: string[];
@@ -476,7 +483,7 @@ export default class Home extends Vue {
         followings: [],
     };
     accounts: AnyObject[] = [];
-    nfts: AnyObject[] = [];
+    // nfts: AnyObject[] = [];
     gitcoins: AnyObject[] = [];
     footprints: AnyObject[] = [];
     contents: any[] = [];
@@ -493,6 +500,16 @@ export default class Home extends Vue {
     ownerETHAddress: string = '';
 
     isLastScrollingDown: boolean = false;
+
+    classifiedList: {
+        [className: string]: DetailedNFT[];
+    } = {
+        Vitrine: [],
+        // Games: [],
+        // Awards: [],
+        // Organizations: [],
+    };
+    allClasses: string[] = Object.keys(this.classifiedList);
 
     async mounted() {
         this.isPCLayout = window.innerWidth >= 768;
@@ -602,12 +619,46 @@ export default class Home extends Vue {
     }
 
     async ivLoadNFT(refresh: boolean, assets: GeneralAsset[]): Promise<boolean> {
-        if (assets) {
-            this.nfts = await this.loadAssetDetails(assets);
-            this.isLoadingAssets.NFT = false;
-            return true;
-        }
-        return false;
+        // Get NFTs
+
+        const { nftsWithClassName } = await utils.initAssets();
+
+        const displayedNFTsDetail = await utils.loadAssets(nftsWithClassName);
+
+        const classifiedList: {
+            [className: string]: DetailedNFT[];
+        } = {
+            Vitrine: [],
+            Games: [],
+            Awards: [],
+            Organizations: [],
+        };
+
+        await Promise.all(
+            nftsWithClassName.map((nft) => {
+                const className = nft.class || 'Vitrine';
+                if (!(className in classifiedList)) {
+                    classifiedList[className] = [];
+                }
+                classifiedList[className].push(
+                    displayedNFTsDetail.find(
+                        (dNFT) => dNFT.id === RSS3Utils.id.getAsset(nft.platform, nft.identity, nft.type, nft.uniqueID),
+                    ) || {},
+                );
+            }),
+        );
+        await Promise.all(
+            Object.keys(classifiedList).map((listName) => {
+                if (classifiedList[listName].length === 0) {
+                    delete classifiedList[listName];
+                }
+            }),
+        );
+        this.classifiedList = classifiedList;
+        this.allClasses = Object.keys(this.classifiedList);
+
+        this.isLoadingAssets.NFT = false;
+        return true;
     }
 
     async ivLoadGitcoin(refresh: boolean, assets: GeneralAsset[]): Promise<boolean> {
@@ -747,12 +798,13 @@ export default class Home extends Vue {
     toManageAccounts() {
         this.$router.push('/setup/accounts');
     }
-    toManageNFTs() {
+    toManageNFTs(className: string) {
         // this.saveEdited();
         if (this.isLoadingAssets.NFT) {
             this.notice = 'NFTs still loading... Maybe check back later?';
             this.isShowingNotice = true;
         } else {
+            sessionStorage.setItem('NFTEditDefaultExpandClassName', className);
             this.$router.push('/setup/nfts');
         }
     }
@@ -953,7 +1005,13 @@ export default class Home extends Vue {
                 displayAddress: '',
             };
             this.isContentsHaveMore = true;
-            this.nfts = [];
+            // this.nfts = [];
+            this.classifiedList = {
+                Vitrine: [],
+                // Games: [],
+                // Awards: [],
+                // Organizations: [],
+            };
             this.gitcoins = [];
             this.footprints = [];
 
@@ -969,7 +1027,7 @@ export default class Home extends Vue {
     }
 
     affixEvent(isScrollDown: boolean) {
-        if (window.innerWidth > 768) {
+        if (window.innerWidth > config.ui.md) {
             // Enable
             const containers = document.querySelectorAll('.affix-container');
             if (isScrollDown) {
