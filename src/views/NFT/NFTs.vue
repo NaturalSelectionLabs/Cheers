@@ -162,7 +162,7 @@ export default class NFTs extends Vue {
         const { nftsWithClassName } = await utils.initAssets();
         this.assetList =
             filter(nftsWithClassName, (element) => {
-                return element.class === this.title;
+                return (element.class || 'Vitrine') === this.title;
             }) || [];
         this.isLoadingAssets = false;
         this.nfts = [];
