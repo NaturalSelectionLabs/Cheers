@@ -79,97 +79,116 @@
                             </template>
                         </Profile>
 
-                        <TransBarCard
-                            v-for="className in allClasses"
-                            :key="className"
-                            :title="className"
-                            :tip="isLoadingAssets.NFT ? 'Loading...' : 'Haven\'t found anything yet...'"
-                            :haveDetails="false"
-                            :haveContent="true"
-                            :haveContentInfo="classifiedList[className].length > 0"
-                        >
-                            <template #header>
-                                <i
-                                    v-if="isOwner"
-                                    class="bx bxs-pencil bx-xs cursor-pointer"
-                                    @click="toManageNFTs(className)"
-                                />
-                            </template>
-                            <template #content>
-                                <NFTItem
-                                    class="mr-1 cursor-pointer"
-                                    v-for="item in classifiedList[className]"
-                                    :key="item.id"
-                                    :image-url="
-                                        item.detail.animation_url || item.detail.image_preview_url || defaultAvatar
-                                    "
-                                    :poster-url="
-                                        item.detail.image_preview_url ||
-                                        item.detail.image_url ||
-                                        item.detail.animation_url ||
-                                        item.detail.animation_original_url ||
-                                        defaultAvatar
-                                    "
-                                    size="md"
-                                    @click="toSingleItemPage(item.id)"
-                                />
-                            </template>
-                            <template #button>
-                                <Button
-                                    size="sm"
-                                    class="w-8 h-8 text-secondary-btn-text bg-secondary-btn"
-                                    @click="toListPage(`nfts/${className}`)"
-                                >
-                                    <i class="bx bx-expand-alt bx-xs" />
-                                </Button>
-                            </template>
-                        </TransBarCard>
+                        <template v-for="className in allClasses" :key="className">
+                            <TransBarCard
+                                v-if="className === 'Vitrine'"
+                                :title="className"
+                                :tip="isLoadingAssets.NFT ? 'Loading...' : 'Haven\'t found anything yet...'"
+                                :haveDetails="false"
+                                :haveContent="true"
+                                :haveContentInfo="classifiedList[className].length > 0"
+                            >
+                                <template #header>
+                                    <i
+                                        v-if="isOwner"
+                                        class="bx bxs-pencil bx-xs cursor-pointer"
+                                        @click="toManageNFTs(className)"
+                                    />
+                                </template>
+                                <template #content>
+                                    <NFTItem
+                                        class="mr-1 cursor-pointer"
+                                        v-for="item in classifiedList[className]"
+                                        :key="item.id"
+                                        :image-url="
+                                            item.detail.animation_url || item.detail.image_preview_url || defaultAvatar
+                                        "
+                                        :poster-url="
+                                            item.detail.image_preview_url ||
+                                            item.detail.image_url ||
+                                            item.detail.animation_url ||
+                                            item.detail.animation_original_url ||
+                                            defaultAvatar
+                                        "
+                                        size="md"
+                                        @click="toSingleItemPage(item.id)"
+                                    />
+                                </template>
+                                <template #button>
+                                    <Button
+                                        size="sm"
+                                        class="w-8 h-8 text-secondary-btn-text bg-secondary-btn"
+                                        @click="toListPage(`nfts/${className}`)"
+                                    >
+                                        <i class="bx bx-expand-alt bx-xs" />
+                                    </Button>
+                                </template>
+                            </TransBarCard>
 
-                        <TransBarCard
-                            title="Donations"
-                            :tip="isLoadingAssets.Gitcoin ? 'Loading...' : 'Haven\'t found anything yet...'"
-                            :haveDetails="gitcoins.length !== 0"
-                            :haveContent="true"
-                            :haveContentInfo="gitcoins.length > 0"
-                        >
-                            <template #header>
-                                <i
-                                    v-if="isOwner"
-                                    class="bx bxs-pencil bx-xs cursor-pointer"
-                                    @click="toManageGitcoins"
-                                />
-                            </template>
-                            <template #details>
-                                <AssetCard
-                                    v-for="item in gitcoins.slice(0, 3)"
-                                    :key="item.id"
-                                    :imageUrl="item.detail.grant.logo || defaultAvatar"
-                                    :timestamp="item.detail.txs.slice(-1)[0].timeStamp"
-                                    :name="item.detail.grant.title"
-                                    :username="rss3Profile.username"
-                                    @click="toSingleItemPage(item.id)"
-                                />
-                            </template>
-                            <template #content>
-                                <GitcoinItem
-                                    class="mr-1 cursor-pointer"
-                                    v-for="item in gitcoins.slice(4)"
-                                    :key="item.id"
-                                    size="sm"
-                                    :imageUrl="item.detail.grant.logo || defaultAvatar"
-                                    @click="toSingleItemPage(item.id)"
-                                />
-                            </template>
-                            <template #button>
-                                <Button
-                                    size="sm"
-                                    class="w-8 h-8 text-secondary-btn-text bg-secondary-btn"
-                                    @click="toListPage('Gitcoins')"
-                                >
-                                    <i class="bx bx-expand-alt bx-xs" />
-                                </Button>
-                            </template>
-                        </TransBarCard>
+                            <TransBarCard
+                                v-else
+                                :title="className"
+                                :tip="isLoadingAssets.NFT ? 'Loading...' : 'Haven\'t found anything yet...'"
+                                :haveDetails="classifiedList[className].length > 0"
+                                :haveContent="true"
+                                :haveContentInfo="classifiedList[className].length > 0"
+                            >
+                                <template #header>
+                                    <i
+                                        v-if="isOwner"
+                                        class="bx bxs-pencil bx-xs cursor-pointer"
+                                        @click="toManageNFTs(className)"
+                                    />
+                                </template>
+                                <template #details>
+                                    <AssetCard
+                                        v-for="item in classifiedList[className].slice(0, 3)"
+                                        :key="item.id"
+                                        :image-url="
+                                            item.detail.animation_url || item.detail.image_preview_url || defaultAvatar
+                                        "
+                                        :timestamp="
+                                            item.detail.asset_contract.created_date
+                                                ? Date.parse(item.detail.asset_contract.created_date) / 1000
+                                                : undefined
+                                        "
+                                        size="sm"
+                                        :type="className"
+                                        :name="item.detail.name"
+                                        :username="rss3Profile.username"
+                                        @click="toSingleItemPage(item.id)"
+                                    />
+                                </template>
+                                <template #content>
+                                    <NFTItem
+                                        class="mr-1 cursor-pointer"
+                                        v-for="item in classifiedList[className].slice(4)"
+                                        :key="item.id"
+                                        :image-url="
+                                            item.detail.animation_url || item.detail.image_preview_url || defaultAvatar
+                                        "
+                                        :poster-url="
+                                            item.detail.image_preview_url ||
+                                            item.detail.image_url ||
+                                            item.detail.animation_url ||
+                                            item.detail.animation_original_url ||
+                                            defaultAvatar
+                                        "
+                                        size="md"
+                                        @click="toSingleItemPage(item.id)"
+                                    />
+                                </template>
+                                <template #button>
+                                    <Button
+                                        size="sm"
+                                        class="w-8 h-8 text-secondary-btn-text bg-secondary-btn"
+                                        @click="toListPage(`nfts/${className}`)"
+                                    >
+                                        <i class="bx bx-expand-alt bx-xs" />
+                                    </Button>
+                                </template>
+                            </TransBarCard>
+                        </template>
 
                         <TransBarCard
                             title="Footprints"
@@ -213,6 +232,41 @@
                                     size="sm"
                                     class="w-8 h-8 text-secondary-btn-text bg-secondary-btn"
                                     @click="toListPage('Footprints')"
+                                >
+                                    <i class="bx bx-expand-alt bx-xs" />
+                                </Button>
+                            </template>
+                        </TransBarCard>
+
+                        <TransBarCard
+                            title="Donations"
+                            :tip="isLoadingAssets.Gitcoin ? 'Loading...' : 'Haven\'t found anything yet...'"
+                            :haveDetails="false"
+                            :haveContent="true"
+                            :haveContentInfo="gitcoins.length > 0"
+                        >
+                            <template #header>
+                                <i
+                                    v-if="isOwner"
+                                    class="bx bxs-pencil bx-xs cursor-pointer"
+                                    @click="toManageGitcoins"
+                                />
+                            </template>
+                            <template #content>
+                                <GitcoinItem
+                                    class="mr-1 cursor-pointer"
+                                    v-for="item in gitcoins"
+                                    :key="item.id"
+                                    size="sm"
+                                    :imageUrl="item.detail.grant.logo || defaultAvatar"
+                                    @click="toSingleItemPage(item.id)"
+                                />
+                            </template>
+                            <template #button>
+                                <Button
+                                    size="sm"
+                                    class="w-8 h-8 text-secondary-btn-text bg-secondary-btn"
+                                    @click="toListPage('Gitcoins')"
                                 >
                                     <i class="bx bx-expand-alt bx-xs" />
                                 </Button>
@@ -692,6 +746,8 @@ export default class Home extends Vue {
         );
         this.classifiedList = classifiedList;
         this.allClasses = Object.keys(this.classifiedList);
+
+        console.log(this.classifiedList);
 
         this.isLoadingAssets.NFT = false;
         return true;

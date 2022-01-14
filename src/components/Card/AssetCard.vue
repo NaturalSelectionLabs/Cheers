@@ -1,10 +1,10 @@
 <template>
-    <div class="flex flex-row gap-2 items-center justify-start w-full">
-        <NFTItem class="flex-shrink-0 mr-1 cursor-pointer" :image-url="imageUrl || defaultAvatar" size="sm" />
+    <div class="flex flex-row gap-2 items-center justify-start w-full cursor-pointer">
+        <NFTItem class="flex-shrink-0 mr-1 cursor-pointer" :image-url="imageUrl || defaultAvatar" :size="size" />
         <div class="flex flex-1 flex-col gap-0.5 w-0 text-sm">
             <span>{{ date }}</span>
             <span class="truncate">
-                <span class="text-primary-text">{{ username }} participated in</span> {{ name }}
+                <span class="text-primary-text">{{ username + getTitle(type) }}</span> {{ name }}
             </span>
         </div>
     </div>
@@ -21,6 +21,7 @@ import { formatDate } from '@/common/timeStamp';
         timestamp: String,
         username: String,
         name: String,
+        size: String,
         type: String,
     },
     components: {
@@ -32,7 +33,16 @@ export default class AssetCard extends Vue {
     date: string = '';
 
     mounted() {
-        this.date = formatDate(this.timestamp);
+        this.date = this.timestamp ? formatDate(this.timestamp) : 'After the birth of the universe';
+    }
+
+    getTitle(type: string) {
+        const title = new Map([
+            ['Games', ' got one'],
+            ['Awards', ' obtained'],
+            ['Organizations', ' participated in'],
+        ]);
+        return type ? title.get(type) : 'attended';
     }
 }
 </script>

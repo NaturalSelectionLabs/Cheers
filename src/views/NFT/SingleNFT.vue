@@ -2,33 +2,31 @@
     <div class="h-screen bg-gradient-to-tr from-blue-400 to-blue-200 via-blue-100 overflow-y-auto">
         <div class="m-auto pb-20 pt-8 px-4 max-w-screen-lg">
             <Header :ethAddress="ethAddress" :rns="rns" :rss3Profile="rss3Profile" />
-            <section class="m-auto max-w-screen-lg">
-                <TransBarCard
-                    :title="details.collection?.name"
-                    :haveDetails="true"
-                    :haveContent="false"
-                    :haveContentInfo="false"
-                >
-                    <template #header>
-                        <NFTBadges
-                            :chain="details.chain"
-                            location="header"
-                            :collectionImg="details.collection?.image_url"
+            <TransBarCard
+                :title="details.collection?.name"
+                :haveDetails="true"
+                :haveContent="false"
+                :haveContentInfo="false"
+            >
+                <template #header>
+                    <NFTBadges
+                        :chain="details.chain"
+                        location="header"
+                        :collectionImg="details.collection?.image_url"
+                    />
+                </template>
+                <template #details>
+                    <div class="flex flex-col gap-4 m-auto py-4 w-full max-w-screen-sm">
+                        <NFTItem
+                            :imageUrl="details.animation_url || details.image_url"
+                            :poster-url="details.image_url"
+                            size="contain"
+                            :is-showing-details="true"
                         />
-                    </template>
-                    <template #details>
-                        <div class="flex flex-col gap-4 m-auto max-w-screen-sm">
-                            <NFTItem
-                                :imageUrl="details.animation_url || details.image_url"
-                                :poster-url="details.image_url"
-                                size="contain"
-                                :is-showing-details="true"
-                            />
-                            <NFTDetail :chain="details.chain" :details="details" :market="market" />
-                        </div>
-                    </template>
-                </TransBarCard>
-            </section>
+                        <NFTDetail :chain="details.chain" :details="details" :market="market" />
+                    </div>
+                </template>
+            </TransBarCard>
         </div>
     </div>
 </template>

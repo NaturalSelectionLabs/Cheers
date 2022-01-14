@@ -3,6 +3,7 @@
         :class="{
             'w-10 h-10 rounded-sm': size === 'sm',
             'w-16 h-16 rounded': size === 'md',
+            'w-22 h-22 md:w-28 md:h-28 rounded': size === 'xl',
             'w-full aspect-w-1 aspect-h-1 rounded':
                 size === 'auto' ||
                 (viewType === 'model' && isShowingDetails) ||
