@@ -148,6 +148,7 @@ export default class NFTs extends Vue {
     }
 
     toSetupNfts() {
+        sessionStorage.setItem('NFTEditDefaultExpandClassName', this.title);
         this.$router.push(`/setup/nfts`);
     }
 
