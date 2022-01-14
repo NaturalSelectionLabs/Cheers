@@ -3,6 +3,7 @@
         <div class="m-auto pb-32 pt-8 px-4 max-w-screen-lg">
             <Header :ethAddress="ethAddress" :rns="rns" :rss3Profile="rss3Profile" />
             <TransBarCard
+                v-if="title === 'Vitrine'"
                 :title="rss3Profile.name ? rss3Profile.name + `'s ${title}` : title"
                 :haveDetails="true"
                 :haveContent="false"
@@ -12,13 +13,19 @@
                     <i v-if="isOwner" class="bx bxs-pencil bx-xs cursor-pointer" @click="toSetupNfts" />
                 </template>
                 <template #details>
-                    <div class="grid gap-6 grid-cols-2 justify-items-center sm:grid-cols-3 md:grid-cols-4">
+                    <div class="grid gap-3 grid-cols-2 justify-items-center sm:grid-cols-3 md:grid-cols-4">
                         <div class="relative w-full" v-for="item in nfts" :key="item.id">
                             <NFTItem
                                 class="cursor-pointer"
                                 size="auto"
-                                :imageUrl="item.detail.image_url"
-                                :poster-url="item.detail.image_preview_url"
+                                :image-url="item.detail.animation_url || item.detail.image_preview_url || defaultAvatar"
+                                :poster-url="
+                                    item.detail.image_preview_url ||
+                                    item.detail.image_url ||
+                                    item.detail.animation_url ||
+                                    item.detail.animation_original_url ||
+                                    defaultAvatar
+                                "
                                 :is-showing-details="false"
                                 @click="toSingleNFTPage(item.id)"
                             />
@@ -29,6 +36,51 @@
                                 :collectionImg="item.detail.collection?.image_url"
                             />
                         </div>
+                    </div>
+                    <IntersectionObserverContainer
+                        v-if="isHavingMoreAssets"
+                        :once="false"
+                        :enabled="!isLoadingAssets"
+                        @trigger="loadMoreAssets"
+                    >
+                        <Button
+                            size="sm"
+                            class="m-auto text-primary-btn-text text-lg bg-primary-btn"
+                            @click="loadMoreAssets"
+                        >
+                            <i v-if="isLoadingAssets" class="bx bx-loader-circle bx-spin" />
+                            <i v-else class="bx bx-dots-horizontal-rounded" />
+                        </Button>
+                    </IntersectionObserverContainer>
+                </template>
+            </TransBarCard>
+            <TransBarCard
+                v-else
+                :title="rss3Profile.name ? rss3Profile.name + `'s ${title}` : title"
+                :haveDetails="true"
+                :haveContent="false"
+                :haveContentInfo="false"
+            >
+                <template #header>
+                    <i v-if="isOwner" class="bx bxs-pencil bx-xs cursor-pointer" @click="toSetupNfts" />
+                </template>
+                <template #details>
+                    <div class="grid gap-3 grid-cols-1 justify-items-center md:grid-cols-2">
+                        <AssetCard
+                            v-for="item in nfts"
+                            :key="item.id"
+                            :image-url="item.detail.animation_url || item.detail.image_preview_url || defaultAvatar"
+                            :timestamp="
+                                item.detail.asset_contract.created_date
+                                    ? Date.parse(item.detail.asset_contract.created_date) / 1000
+                                    : undefined
+                            "
+                            size="xl"
+                            :type="title"
+                            :name="item.detail.name"
+                            :username="rss3Profile.name"
+                            @click="toSingleItemPage(item.id)"
+                        />
                     </div>
                     <IntersectionObserverContainer
                         v-if="isHavingMoreAssets"
@@ -67,10 +119,11 @@ import { DetailedNFT, GeneralAsset } from '@/common/types';
 import IntersectionObserverContainer from '@/components/Common/IntersectionObserverContainer.vue';
 import TransBarCard from '@/components/Card/TransBarCard.vue';
 import { formatter } from '@/common/address';
+import AssetCard from '@/components/Card/AssetCard.vue';
 
 @Options({
     name: 'NFTs',
-    components: { IntersectionObserverContainer, Button, NFTItem, NFTBadges, Header, TransBarCard },
+    components: { IntersectionObserverContainer, Button, NFTItem, NFTBadges, Header, TransBarCard, AssetCard },
 })
 export default class NFTs extends Vue {
     title: string = '';
