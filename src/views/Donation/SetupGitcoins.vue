@@ -10,14 +10,15 @@
             overflow-y-auto
         "
     >
-        <div class="m-auto pb-32 pt-8 px-4 max-w-screen-lg h-full">
+        <div class="flex flex-col m-auto pt-8 px-4 max-w-screen-lg h-full">
             <Header title="Manage Donations" :avatar="avatar" />
-            <div class="flex flex-col gap-4 pb-8 h-full md:flex-row">
-                <section class="h-1/2 md:w-3/5 md:h-full">
+
+            <div class="flex flex-col flex-grow gap-4 pb-8 h-0 md:flex-row">
+                <section class="flex flex-col gap-4 h-1/2 md:w-3/5 md:h-full md:overflow-y-auto">
                     <TransBarCard title="Listed" class="h-full" :have-details="true">
                         <template #details>
                             <draggable
-                                class="h-full min-h-20 overflow-y-auto"
+                                class="flex-grow h-0 overflow-y-auto"
                                 :list="show"
                                 group="gitcoins"
                                 item-key="id"
@@ -35,11 +36,11 @@
                         </template>
                     </TransBarCard>
                 </section>
-                <section class="h-1/2 md:w-2/5 md:h-full">
-                    <TransBarCard title="Unlisted" class="h-full" :have-details="true">
+                <section class="flex flex-col gap-4 h-1/2 md:w-2/5 md:h-full">
+                    <TransBarCard title="Unlisted" class="h-full" :is-secondary="true" :have-details="true">
                         <template #details>
                             <draggable
-                                class="h-full min-h-20 overflow-y-auto"
+                                class="flex-grow h-0 overflow-y-auto"
                                 :list="hide"
                                 group="gitcoins"
                                 item-key="id"
@@ -56,21 +57,23 @@
                             </draggable>
                         </template>
                     </TransBarCard>
+                    <div class="flex flex-row-reverse gap-5 m-auto px-4 py-2 w-full md:flex-col">
+                        <Button
+                            size="lg"
+                            class="flex-1 text-primary-btn-text text-lg bg-primary-btn shadow-primary-btn"
+                            @click="save"
+                        >
+                            <span>Save</span>
+                        </Button>
+                        <Button
+                            size="lg"
+                            class="flex-1 text-secondary-btn-text text-lg bg-secondary-btn shadow-secondary-btn"
+                            @click="back"
+                        >
+                            <span>Discard</span>
+                        </Button>
+                    </div>
                 </section>
-            </div>
-            <div class="fixed bottom-0 left-0 right-0 flex gap-5 m-auto px-4 py-4 w-full max-w-md bg-btn-container">
-                <Button
-                    size="lg"
-                    class="flex-1 text-secondary-btn-text text-lg bg-secondary-btn shadow-secondary-btn"
-                    @click="back"
-                    ><span>Discard</span></Button
-                >
-                <Button
-                    size="lg"
-                    class="flex-1 text-primary-btn-text text-lg bg-primary-btn shadow-primary-btn"
-                    @click="save"
-                    ><span>Save</span></Button
-                >
             </div>
 
             <LoadingContainer v-show="isLoading" />

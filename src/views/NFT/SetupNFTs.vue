@@ -10,11 +10,11 @@
             overflow-y-auto
         "
     >
-        <div class="m-auto pb-32 pt-8 px-4 max-w-screen-lg h-full">
+        <div class="flex flex-col m-auto pt-8 px-4 max-w-screen-lg h-full">
             <Header title="Manage NFTs" :avatar="avatar" />
 
-            <div class="flex flex-col gap-4 pb-8 h-full md:flex-row">
-                <section class="flex flex-col gap-4 h-1/2 overflow-y-auto md:w-3/5 md:h-full">
+            <div class="flex flex-col flex-grow gap-4 pb-8 h-0 md:flex-row">
+                <section class="flex flex-col gap-4 h-1/2 md:w-3/5 md:overflow-y-auto">
                     <div v-if="!isPCLayout">
                         <TransBarCard :have-details="true">
                             <template #details>
@@ -36,19 +36,12 @@
                         v-for="className in allClasses"
                         :key="className"
                         :title="className"
-                        :class="{
-                            'h-full': className === activatedClassName,
-                        }"
                         @add="dragHandler(className)"
                         :have-details="true"
                     >
                         <template #details>
                             <draggable
-                                :class="
-                                    className === activatedClassName
-                                        ? 'min-h-16 h-full overflow-y-auto'
-                                        : 'h-16 overflow-hidden'
-                                "
+                                class="min-h-16 h-full"
                                 :list="classifiedList[className]"
                                 group="nfts"
                                 item-key="id"
@@ -68,7 +61,7 @@
                     <TransBarCard v-else :title="activatedClassName" class="h-full" :have-details="true">
                         <template #details>
                             <draggable
-                                class="h-full overflow-y-auto"
+                                class="flex-grow h-0 overflow-y-auto"
                                 :list="classifiedList[activatedClassName]"
                                 group="nfts"
                                 item-key="id"
@@ -86,11 +79,11 @@
                         </template>
                     </TransBarCard>
                 </section>
-                <section class="h-1/2 md:w-2/5 md:h-full">
-                    <TransBarCard title="Unlisted" class="h-full" :have-details="true">
+                <section class="flex flex-col gap-4 h-1/2 md:w-2/5 md:h-full">
+                    <TransBarCard title="Unlisted" class="h-full" :is-secondary="true" :have-details="true">
                         <template #details>
                             <draggable
-                                class="h-full min-h-20"
+                                class="flex-grow h-0 overflow-y-auto"
                                 :list="hiddenList"
                                 group="nfts"
                                 item-key="id"
@@ -107,22 +100,23 @@
                             </draggable>
                         </template>
                     </TransBarCard>
+                    <div class="flex flex-row-reverse gap-5 m-auto px-4 py-2 w-full md:flex-col">
+                        <Button
+                            size="lg"
+                            class="flex-1 text-primary-btn-text text-lg bg-primary-btn shadow-primary-btn"
+                            @click="save"
+                        >
+                            <span>Save</span>
+                        </Button>
+                        <Button
+                            size="lg"
+                            class="flex-1 text-secondary-btn-text text-lg bg-secondary-btn shadow-secondary-btn"
+                            @click="back"
+                        >
+                            <span>Discard</span>
+                        </Button>
+                    </div>
                 </section>
-            </div>
-            <div class="fixed bottom-0 left-0 right-0 flex gap-5 m-auto px-4 py-4 w-full max-w-md bg-btn-container">
-                <Button
-                    size="lg"
-                    class="flex-1 text-secondary-btn-text text-lg bg-secondary-btn shadow-secondary-btn"
-                    @click="back"
-                    ><span>Discard</span></Button
-                >
-                <Button
-                    size="lg"
-                    class="flex-1 text-primary-btn-text text-lg bg-primary-btn shadow-primary-btn"
-                    @click="save"
-                >
-                    <span>Save</span>
-                </Button>
             </div>
 
             <LoadingContainer v-show="isLoading" />
@@ -231,7 +225,7 @@ export default class SetupNFTs extends Vue {
         if (window.history.state.back) {
             window.history.back();
         } else {
-            this.$router.push((legacyConfig.subDomain.isSubDomainMode ? '' : `/${rns || ethAddress}`) + `/nfts`);
+            this.$router.push((legacyConfig.subDomain.isSubDomainMode ? '' : `/${rns || ethAddress}`) + `/`);
         }
     }
 
