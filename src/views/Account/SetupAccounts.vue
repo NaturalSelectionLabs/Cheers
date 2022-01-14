@@ -213,6 +213,18 @@
                         Input
                         <span class="text-primary-text">{{ specifyNoSignAccount.platform }}</span>
                         account:
+                        <span
+                            v-if="specifyNoSignAccount.notice"
+                            @click="
+                                () => {
+                                    addAccountNotice = specifyNoSignAccount.notice;
+                                    isNoticeErrorReport = false;
+                                    isShowingAddAccountNotice = true;
+                                }
+                            "
+                        >
+                            <i class="bx bx-help-circle text-xl opacity-40 cursor-pointer" />
+                        </span>
                     </p>
                     <div class="flex">
                         <Input
@@ -227,13 +239,11 @@
                     </div>
                     <p class="mt-4 text-sm">
                         <i class="bx bx-info-circle text-primary-text" />
-                        You need to place your
-                        <span class="text-primary-text cursor-pointer" @click="copyAddressToClipboard">
-                            {{ rns ? 'BioLink' : 'Address' }}
-                            <i class="bx bx-check-circle" v-if="isAddrCopied" />
-                            <i class="bx bx-paste" v-else />
-                        </span>
-                        into one of :
+                        You need to place one of your
+                        <span class="text-primary-text"> RNS, DAS, ENS or Address </span>
+                        into one of those fields of your
+                        <span class="text-primary-text"> {{ specifyNoSignAccount.platform }} </span>
+                        account :
                         <span>{{ specifyNoSignAccount.fields.join(', ') }}</span>
                         .
                     </p>
@@ -260,10 +270,10 @@
 
             <Modal v-if="isShowingAddAccountNotice">
                 <template #header>
-                    <h1>Oops!</h1>
+                    <h1>{{ isNoticeErrorReport ? 'Oops!' : 'Tips' }}</h1>
                 </template>
                 <template #body>
-                    <p class="mt-1 p-4">
+                    <p class="mt-1 p-4 whitespace-pre-line">
                         {{ addAccountNotice }}
                     </p>
                 </template>
@@ -322,13 +332,14 @@ import TransBarCard from '@/components/Card/TransBarCard.vue';
 export default class SetupAccounts extends Vue {
     avatar: string = config.defaultAvatar;
     additionalMetamaskAccounts: String[] = ['Ethereum', 'BSC'];
-    additionalNoSignAccounts: String[] = ['Misskey', 'Twitter'];
+    additionalNoSignAccounts: String[] = ['Misskey', 'Twitter', 'Jike'];
     show: RSS3Account[] = [];
     hide: RSS3Account[] = [];
     toAdd: RSS3Account[] = [];
     toDelete: RSS3Account[] = [];
     isLoading: Boolean = false;
     isShowingAddAccountNotice: Boolean = false;
+    isNoticeErrorReport: Boolean = true;
     addAccountNotice: String = '';
     isShowingAddSpecifyAccountInput: Boolean = false;
     rns: string = '';
@@ -345,6 +356,7 @@ export default class SetupAccounts extends Vue {
         fields: string[];
         prefix: string;
         suffix: string;
+        notice?: string;
     } = {
         platform: '',
         style: '',
@@ -382,6 +394,7 @@ export default class SetupAccounts extends Vue {
         if (!(window as any).ethereum) {
             this.addAccountNotice =
                 'Adding accounts are now only supported with MetaMask browser extension enabled. (PC recommended)';
+            this.isNoticeErrorReport = true;
             this.isShowingAddAccountNotice = true;
             return;
         }
@@ -393,6 +406,7 @@ export default class SetupAccounts extends Vue {
             const hideIndex = this.hide.findIndex((account) => account.id === newAccount.id);
             if (equalDefaultAccount || showIndex !== -1 || hideIndex !== -1) {
                 this.addAccountNotice = 'Account already exist';
+                this.isNoticeErrorReport = true;
                 this.isShowingAddAccountNotice = true;
             } else {
                 this.show.push(newAccount);
@@ -400,6 +414,7 @@ export default class SetupAccounts extends Vue {
             }
         } else {
             this.addAccountNotice = newAccount.signature || '';
+            this.isNoticeErrorReport = true;
             this.isShowingAddAccountNotice = true;
         }
         this.mode = 'normal';
@@ -411,16 +426,40 @@ export default class SetupAccounts extends Vue {
         this.specifyNoSignAccount.fields = ContentProviders[platform].availableFields;
         this.specifyNoSignAccount.prefix = ContentProviders[platform].prefix || '';
         this.specifyNoSignAccount.suffix = ContentProviders[platform].suffix || '';
+        if ('notice' in ContentProviders[platform]) {
+            this.specifyNoSignAccount.notice = ContentProviders[platform].notice;
+        } else {
+            this.specifyNoSignAccount.notice = '';
+        }
 
         this.isShowingAddSpecifyAccountInput = true;
     }
 
     async addNoSignAccountConfirm() {
+        if (this.specifyNoSignAccount.account === '') {
+            // Empty
+            return;
+        }
         this.isShowingAddSpecifyAccountInput = false;
         this.isLoading = true;
+        let address = '';
+        try {
+            address =
+                'accountPostProcess' in ContentProviders[this.specifyNoSignAccount.platform]
+                    ? await ContentProviders[this.specifyNoSignAccount.platform].accountPostProcess(
+                          this.specifyNoSignAccount.account,
+                      )
+                    : this.specifyNoSignAccount.account;
+        } catch (e: any) {
+            this.addAccountNotice = e.message;
+            this.isNoticeErrorReport = true;
+            this.isShowingAddAccountNotice = true;
+            this.isLoading = false;
+            return;
+        }
 
         const newAccount = {
-            id: `${this.specifyNoSignAccount.platform}-${this.specifyNoSignAccount.account}`,
+            id: `${this.specifyNoSignAccount.platform}-${address}`,
             signature: '',
         };
 
@@ -429,6 +468,7 @@ export default class SetupAccounts extends Vue {
 
         if (showIndex !== -1 || hideIndex !== -1) {
             this.addAccountNotice = 'Account already exist';
+            this.isNoticeErrorReport = true;
             this.isShowingAddAccountNotice = true;
         } else {
             this.show.push(newAccount);
@@ -513,8 +553,10 @@ export default class SetupAccounts extends Vue {
         } catch (e) {
             console.log(e);
             this.isLoading = false;
-            this.addAccountNotice =
-                "Fail to save. Maybe you'd like to check if every third-party account (Twitter / Misskey) works fine ?";
+            this.addAccountNotice = `Fail to save. Maybe you'd like to check if every third-party account (${this.additionalNoSignAccounts.join(
+                ' / ',
+            )}) works fine ?`;
+            this.isNoticeErrorReport = true;
             this.isShowingAddAccountNotice = true;
             return;
         }
