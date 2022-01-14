@@ -48,7 +48,7 @@
             </TransBarCard>
 
             <TransBarCard
-                title="NFT"
+                title="Vitrine"
                 :tip="isLoadingAssets.NFT ? 'Loading...' : 'Haven\'t found anything yet...'"
                 :haveDetails="false"
                 :haveContent="true"
