@@ -12,9 +12,7 @@
     >
         <div class="m-auto pb-20 px-4 py-9 max-w-screen-lg">
             <div class="flex items-center justify-between mb-10 w-full text-center">
-                <Button size="sm" class="w-10 h-10 text-secondary-btn-text bg-secondary-btn" @click="back">
-                    <i class="bx bx-chevron-left bx-sm"></i>
-                </Button>
+                <i class="bx bx-chevron-left bx-sm w-10 h-10 text-secondary-btn-text cursor-pointer" @click="back"></i>
                 <div class="flex flex-grow justify-center mr-10">
                     <h1 class="text-primary-text text-2xl font-bold">Edit Profile</h1>
                 </div>
