@@ -1,33 +1,44 @@
 <template>
-    <div class="h-screen bg-body-bg overflow-y-auto">
-        <div class="m-auto pb-20 pt-8 px-4 max-w-screen-lg">
-            <Header :ethAddress="ethAddress" :rns="rns" :rss3Profile="rss3Profile" title="Followers" />
-            <div class="flex flex-col gap-y-4 m-auto max-w-md">
-                <FollowerCard
-                    class="w-auto cursor-pointer"
-                    v-for="item in followerList"
-                    :key="item.address"
-                    :avatar="item.avatar"
-                    :name="item.username"
-                    :address="item.rns || item.displayAddress"
-                    @click="toPublicPage(item.rns, item.address)"
-                />
-            </div>
-            <IntersectionObserverContainer
-                v-if="isHavingMoreFollows"
-                :once="false"
-                :enabled="!isLoadingFollows"
-                @trigger="loadMoreFollows"
-            >
-                <Button
-                    size="sm"
-                    class="text-primary-btn-m-text bg-primary-btn-m shadow-primary-btn-m m-auto text-lg"
-                    @click="loadMoreFollows"
+    <div class="h-screen bg-gradient-to-tr from-blue-400 to-blue-200 via-blue-100">
+        <div class="h-full overflow-y-auto">
+            <div class="m-auto pb-20 pt-8 px-4 max-w-screen-lg">
+                <Header :ethAddress="ethAddress" :rns="rns" :rss3Profile="rss3Profile" title="Followers" />
+                <TransBarCard
+                    :title="(rss3Profile.name ? rss3Profile.name + `'s ` : '') + 'Followers'"
+                    :have-details="true"
                 >
-                    <i v-if="isLoadingFollows" class="bx bx-loader-circle bx-spin"></i>
-                    <i v-else class="bx bx-dots-horizontal-rounded" />
-                </Button>
-            </IntersectionObserverContainer>
+                    <template #details>
+                        <div class="flex flex-col gap-y-4 m-auto mt-2 w-full md:mt-4">
+                            <FollowCard
+                                class="w-auto cursor-pointer"
+                                v-for="item in followRenderList"
+                                :key="item.address"
+                                :avatar="item.avatar"
+                                :name="item.username"
+                                :bio="item.bio"
+                                :rns="item.rns"
+                                :address="item.address"
+                                @click="toPublicPage(item.rns, item.address)"
+                            />
+                        </div>
+                        <IntersectionObserverContainer
+                            v-if="isHavingMoreFollows"
+                            :once="false"
+                            :enabled="!isLoadingFollows"
+                            @trigger="loadMoreFollows"
+                        >
+                            <Button
+                                size="sm"
+                                class="w-full h-6 text-content-btn-s-text bg-content-btn-s shadow-content-btn-s"
+                                @click="loadMoreFollows"
+                            >
+                                <i v-if="isLoadingFollows" class="bx bx-loader-circle bx-spin"></i>
+                                <i v-else class="bx bx-dots-horizontal-rounded" />
+                            </Button>
+                        </IntersectionObserverContainer>
+                    </template>
+                </TransBarCard>
+            </div>
         </div>
     </div>
 </template>
@@ -36,7 +47,7 @@
 import { Options, Vue } from 'vue-class-component';
 import Button from '@/components/Button/Button.vue';
 import ImgHolder from '@/components/Common/ImgHolder.vue';
-import FollowerCard from '@/components/Follow/FollowerCard.vue';
+import FollowCard from '@/components/Follow/FollowCard.vue';
 import RSS3, { IRSS3 } from '@/common/rss3';
 import RNS from '@/common/rns';
 import legacyConfig from '@/config';
@@ -46,14 +57,14 @@ import utils from '@/common/utils';
 import { Profile } from '@/common/types';
 import Header from '@/components/Common/Header.vue';
 import IntersectionObserverContainer from '@/components/Common/IntersectionObserverContainer.vue';
-import { formatter } from '@/common/address';
+import TransBarCard from '@/components/Card/TransBarCard.vue';
 
 @Options({
     name: 'Followers',
-    components: { IntersectionObserverContainer, ImgHolder, Button, FollowerCard, Header },
+    components: { TransBarCard, IntersectionObserverContainer, ImgHolder, Button, FollowCard, Header },
 })
 export default class Followers extends Vue {
-    followerList: Profile[] = [];
+    followRenderList: Profile[] = [];
     rss3Profile: RSS3Profile = {};
     rns: string = '';
     ethAddress: string = '';
@@ -67,7 +78,7 @@ export default class Followers extends Vue {
 
     async initLoad() {
         this.lastRoute = this.$route.fullPath;
-        this.followerList = [];
+        this.followRenderList = [];
         this.loadingNo = 0;
 
         const addrOrName = utils.getAddress(<string>this.$route.params.address);
@@ -104,12 +115,11 @@ export default class Followers extends Vue {
 
             for (const profile of profiles) {
                 const { extracted } = utils.extractEmbedFields(profile.bio || '', []);
-                this.followerList.push({
+                this.followRenderList.push({
                     avatar: profile.avatar?.[0] || config.undefinedImageAlt,
                     username: profile.name || '',
                     bio: extracted,
                     address: profile.persona,
-                    displayAddress: formatter(profile.persona),
                     rns: '',
                 });
             }
@@ -127,10 +137,10 @@ export default class Followers extends Vue {
 
     async loadRNS() {
         const startNo = this.loadingNo;
-        const endNo = this.followerList.length;
+        const endNo = this.followRenderList.length;
         for (let i = startNo; i < endNo; i++) {
             if (this.isPageActive) {
-                const item = this.followerList[i];
+                const item = this.followRenderList[i];
                 try {
                     item.rns = await RNS.addr2Name(item.address);
                 } catch (e) {
@@ -147,7 +157,7 @@ export default class Followers extends Vue {
         setTimeout(async () => {
             if (this.lastRoute !== this.$route.fullPath) {
                 await this.initLoad();
-            } else if (this.loadingNo < this.followerList.length) {
+            } else if (this.loadingNo < this.followRenderList.length) {
                 await this.loadRNS();
             }
         }, 0);
@@ -159,7 +169,7 @@ export default class Followers extends Vue {
 
     async toPublicPage(rns: string, ethAddress: string) {
         if (rns) {
-            window.location.href = `//${rns}.${legacyConfig.subDomain.rootDomain}`;
+            window.location.href = `//${rns.replace(/\.rss3$/, '')}.${legacyConfig.subDomain.rootDomain}`;
         } else {
             window.location.href = `//${legacyConfig.subDomain.rootDomain}/${ethAddress}`;
         }
