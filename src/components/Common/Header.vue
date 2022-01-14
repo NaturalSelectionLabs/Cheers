@@ -8,9 +8,6 @@
         >
             <i class="bx bx-chevron-left bx-sm" />
         </div>
-        <div class="text-center text-primary-text text-xl font-bold" v-if="title">
-            {{ title }}
-        </div>
         <ImgHolder
             class="inline-flex my-auto w-10 h-10"
             :class="{ 'cursor-pointer': rns && ethAddress }"
