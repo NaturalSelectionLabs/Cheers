@@ -17,6 +17,7 @@
                             v-for="item in gitcoins"
                             :key="item.id"
                             :imageUrl="item.detail.grant.logo || undefinedImageAlt"
+                            :timestamp="item.detail.txs.slice(-1)[0].timeStamp"
                             :username="rss3Profile.name"
                             :title="item.detail.grant.title || 'Inactive Project'"
                             :amount="item.detail.txs.slice(-1)[0]"
