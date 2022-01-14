@@ -11,7 +11,7 @@
         "
     >
         <div class="m-auto pb-32 pt-8 px-4 max-w-screen-lg h-full">
-            <Header title="Manage NFTs" theme="nft" :avatar="avatar" />
+            <Header title="Manage NFTs" :avatar="avatar" />
 
             <div class="flex flex-col gap-4 pb-8 h-full md:flex-row">
                 <section class="flex flex-col gap-4 h-1/2 overflow-y-auto md:w-3/5 md:h-full">

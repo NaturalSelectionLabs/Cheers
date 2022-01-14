@@ -1,9 +1,14 @@
 <template>
     <div class="flex items-center justify-between pb-4">
-        <Button size="sm" class="w-10 h-10 text-secondary-btn-text bg-secondary-btn shadow-secondary-btn" @click="back">
+        <Logo v-if="displayLogo" class="w-10 h-10 cursor-pointer" />
+        <div
+            v-else
+            class="flex items-center justify-center w-10 h-10 text-secondary-btn-text cursor-pointer"
+            @click="back"
+        >
             <i class="bx bx-chevron-left bx-sm" />
-        </Button>
-        <div class="text-center font-bold" :class="getTitleStyle()" v-if="title">
+        </div>
+        <div class="text-center text-primary-text text-xl font-bold" v-if="title">
             {{ title }}
         </div>
         <ImgHolder
@@ -22,36 +27,27 @@
 import { Options, Vue } from 'vue-class-component';
 import Button from '@/components/Button/Button.vue';
 import ImgHolder from '@/components/Common/ImgHolder.vue';
-import RSSS3 from 'rss3';
 import config from '@/config';
 import { AnyObject } from 'rss3/types/extend';
-
-const TitleColor = new Map([
-    ['primary', 'text-primary-text'],
-    ['account', 'text-account-title'],
-    ['nft', 'text-nft-title'],
-    ['gitcoin', 'text-gitcoin-title'],
-    ['footprint', 'text-footprint-title'],
-]);
+import Logo from '@/components/Icons/Logo.vue';
 
 @Options({
     name: 'Header',
-    components: { ImgHolder, Button },
+    components: { ImgHolder, Button, Logo },
     props: {
         avatar: String,
         rss3Profile: Object,
         title: String,
-        theme: String,
         ethAddress: String,
         rns: String,
         list: String,
+        displayLogo: Boolean,
     },
 })
 export default class Header extends Vue {
     avatar!: string;
     rss3Profile!: AnyObject;
     title!: string;
-    theme!: string;
     ethAddress!: string;
     rns!: string;
     list!: string;
@@ -79,13 +75,6 @@ export default class Header extends Vue {
                 this.$router.push(`/${rns || ethAddress}`);
             }
         }
-    }
-
-    getTitleStyle() {
-        let style = '';
-        style += TitleColor.get(this.theme) + ' ';
-        style += this.title.includes('Manage') ? 'text-xl' : 'text-2xl';
-        return style;
     }
 }
 </script>

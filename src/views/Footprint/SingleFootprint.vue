@@ -6,7 +6,6 @@
                 :rns="rns"
                 :rss3Profile="rss3Profile"
                 title="Footprint"
-                theme="footprint"
                 list="footprints"
             />
             <div class="py-12 bg-white bg-opacity-50 rounded-xl">

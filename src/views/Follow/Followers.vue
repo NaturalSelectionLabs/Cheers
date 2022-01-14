@@ -1,7 +1,7 @@
 <template>
     <div class="h-screen bg-body-bg overflow-y-auto">
         <div class="m-auto pb-20 pt-8 px-4 max-w-screen-lg">
-            <Header :ethAddress="ethAddress" :rns="rns" :rss3Profile="rss3Profile" title="Followers" theme="primary" />
+            <Header :ethAddress="ethAddress" :rns="rns" :rss3Profile="rss3Profile" title="Followers" />
             <div class="flex flex-col gap-y-4 m-auto max-w-md">
                 <FollowerCard
                     class="w-auto cursor-pointer"

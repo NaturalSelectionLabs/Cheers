@@ -1,7 +1,7 @@
 <template>
     <div class="h-screen text-body-text bg-body-bg overflow-y-auto">
         <div class="m-auto pb-32 pt-8 px-4 max-w-screen-lg">
-            <Header title="Manage Accounts" theme="account" :avatar="avatar" />
+            <Header title="Manage Accounts" :avatar="avatar" />
             <section class="grid gap-4 grid-cols-1 md:grid-cols-2">
                 <Card
                     title="Default"
