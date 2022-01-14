@@ -1,5 +1,5 @@
 <template>
-    <div class="flex flex-row gap-2 justify-start">
+    <div class="flex flex-row gap-2 justify-start cursor-pointer">
         <FootprintItem :imageUrl="imageUrl" :size="type === 'details' ? 'xl' : 'lg'" class="flex-shrink-0" />
         <section
             class="flex flex-1 flex-col justify-center w-0 text-body-text text-sm leading-normal"

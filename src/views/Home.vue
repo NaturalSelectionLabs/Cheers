@@ -176,7 +176,6 @@
                                 :end-date="footprints[0].detail.end_date"
                                 :location="footprints[0].detail.city || footprints[0].detail.country || 'Metaverse'"
                                 type="brief"
-                                class="py-2 cursor-pointer"
                                 @click="toSingleItemPage(footprints[0].id)"
                             />
                         </template>
@@ -208,8 +207,10 @@
                     <TransBarCard title="Content" :haveDetails="true" :haveContent="false">
                         <template #details>
                             <div v-if="contents?.length > 0">
-                                <div v-for="element in contents" :key="element.id">
+                                <div class="flex flex-col gap-4">
                                     <ContentCard
+                                        v-for="element in contents"
+                                        :key="element.id"
                                         :username="rss3Profile.username"
                                         :timestamp="new Date(element.date_updated).valueOf()"
                                         :content="element.summary"

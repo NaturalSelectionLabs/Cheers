@@ -21,6 +21,7 @@ import { formatDate } from '@/common/timeStamp';
         timestamp: String,
         username: String,
         name: String,
+        type: String,
     },
     components: {
         NFTItem,
