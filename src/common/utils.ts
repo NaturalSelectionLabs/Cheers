@@ -337,7 +337,7 @@ const subDomainModeRedirect = (rns: string) => {
             // Redirect
             const oldUrlPattern = new RegExp(`${legacyConfig.subDomain.rootDomain}/.+?/`);
             window.location.href = window.location.href = (window.location.href + '/') // Add trailing slash for pattern (rss3.test/candinya)
-                .replace(oldUrlPattern, `${rns.replace(/\.rss3$/, '')}.${legacyConfig.subDomain.rootDomain}/`)
+                .replace(oldUrlPattern, `${rns}.${legacyConfig.subDomain.rootDomain}/`)
                 .replace(
                     /\/$/, // Remove ending slash (if any) for format consistency
                     '',

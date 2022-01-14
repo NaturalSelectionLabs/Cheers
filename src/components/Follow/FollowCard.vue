@@ -12,7 +12,7 @@
         <div class="flex flex-1 flex-col w-0">
             <div class="flex flex-row">
                 <div class="text-sm font-semibold truncate md:text-2xl">
-                    {{ $props.name || $props.rns || formatter($props.address) }}
+                    {{ $props.name || rnsWithSuffix || formatter($props.address) }}
                 </div>
                 <span
                     class="
@@ -26,7 +26,7 @@
                         md:ml-3 md:px-3 md:py-1 md:text-xl
                     "
                 >
-                    {{ $props.rns ? $props.rns : formatter($props.address) }}
+                    {{ $props.rns ? rnsWithSuffix : formatter($props.address) }}
                 </span>
             </div>
             <div class="flex">
@@ -42,6 +42,7 @@
 import { Options, Vue } from 'vue-class-component';
 import utils from '@/common/utils';
 import { formatter } from '@/common/address';
+import config from '@/common/config';
 
 @Options({
     props: {
@@ -55,9 +56,14 @@ import { formatter } from '@/common/address';
 export default class FollowCard extends Vue {
     avatar!: string;
     name!: string;
+    rns!: string;
 
     get fixedUrl() {
         return utils.fixURLSchemas(this.avatar);
+    }
+
+    get rnsWithSuffix() {
+        return this.rns.includes('.') ? this.rns : `${this.rns}${this.rns ? config.rns.suffix : ''}`;
     }
 
     formatter = formatter;

@@ -169,7 +169,7 @@ export default class Followings extends Vue {
 
     async toPublicPage(rns: string, ethAddress: string) {
         if (rns) {
-            window.location.href = `//${rns.replace(/\.rss3$/, '')}.${legacyConfig.subDomain.rootDomain}`;
+            window.location.href = `//${rns}.${legacyConfig.subDomain.rootDomain}`;
         } else {
             window.location.href = `//${legacyConfig.subDomain.rootDomain}/${ethAddress}`;
         }
