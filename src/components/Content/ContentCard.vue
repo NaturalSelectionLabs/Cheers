@@ -1,5 +1,5 @@
 <template>
-    <div class="p-2 w-full text-body-text bg-transparent border-card rounded cursor-pointer">
+    <div class="w-full text-body-text bg-transparent border-card rounded cursor-pointer">
         <section class="flex flex-row flex-wrap gap-x-1 items-center justify-start pb-1 font-light">
             <span class="text-primary-text font-medium">{{ username + ' posted on ' }}</span>
             <ContentBadge :contentProvider="provider" />

@@ -11,340 +11,376 @@
             overflow-y-auto
         "
     >
-        <div
-            v-if="isAccountExist"
-            class="flex flex-col gap-4 m-auto pb-12 pt-8 px-4 max-w-screen-lg select-none md:flex-row"
-        >
-            <section class="md:w-3/5">
-                <div class="affix-container sticky flex flex-col gap-4">
-                    <Profile
-                        :avatar="rss3Profile.avatar"
-                        :username="rss3Profile.username"
-                        :address="ethAddress"
-                        :rns="rns"
-                        :followers="rss3Relations.followers.length"
-                        :followings="rss3Relations.followings.length"
-                        :bio="rss3Profile.bio"
-                        :website="rss3Profile.displayAddress"
-                        :is-loading-persona="isLoadingPersona"
-                        @click-address="clickAddress"
-                    >
-                        <template #Accounts>
-                            <div
-                                class="inline-block mr-1 cursor-pointer"
-                                v-for="item in accounts"
-                                :key="item.identity"
-                                @click="displayDialog(item.identity, item.platform)"
-                            >
-                                <EVMpAccountItem v-if="item.platform === 'EVM+'" :size="30" :address="item.identity" />
-                                <AccountItem v-else :size="30" :chain="item.platform" :address="item.identity" />
-                            </div>
-                            <Button
-                                v-if="isOwner"
-                                size="sm"
-                                shape="circle"
-                                class="inline-block mr-1 w-8 h-8 text-account-btn-s-text bg-account-btn-s"
-                                @click="toManageAccounts"
-                            >
-                                <i class="bx bxs-pencil bx-xs" />
-                            </Button>
-                            <Button
-                                size="sm"
-                                shape="circle"
-                                class="inline-block mr-1 w-8 h-8 text-account-btn-s-text bg-account-btn-s"
-                                @click="toAccountsPage"
-                            >
-                                <i class="bx bx-expand-alt bx-xs" />
-                            </Button>
-                        </template>
-
-                        <template #Toolbar>
-                            <Toolbar
-                                :isOwner="isOwner"
-                                :isFollowing="isFollowing"
-                                :is-loading-persona="isLoadingPersona"
-                                @to-setup-page="toSetupPage"
-                                @logout="logout"
-                                @toggleFollow="toggleFollow"
-                            />
-                        </template>
-                    </Profile>
-
-                    <TransBarCard
-                        v-for="className in allClasses"
-                        :key="className"
-                        :title="className"
-                        :tip="isLoadingAssets.NFT ? 'Loading...' : 'Haven\'t found anything yet...'"
-                        :haveDetails="false"
-                        :haveContent="true"
-                        :haveContentInfo="classifiedList[className].length > 0"
-                    >
-                        <template #header>
-                            <i
-                                v-if="isOwner"
-                                class="bx bxs-pencil bx-xs cursor-pointer"
-                                @click="toManageNFTs(className)"
-                            />
-                        </template>
-                        <template #content>
-                            <NFTItem
-                                class="mr-1 cursor-pointer"
-                                v-for="item in classifiedList[className]"
-                                :key="item.id"
-                                :image-url="item.detail.animation_url || item.detail.image_preview_url || defaultAvatar"
-                                :poster-url="
-                                    item.detail.image_preview_url ||
-                                    item.detail.image_url ||
-                                    item.detail.animation_url ||
-                                    item.detail.animation_original_url ||
-                                    defaultAvatar
-                                "
-                                size="md"
-                                @click="toSingleItemPage(item.id)"
-                            />
-                        </template>
-                        <template #button>
-                            <Button
-                                size="sm"
-                                class="w-8 h-8 text-secondary-btn-text bg-secondary-btn"
-                                @click="toListPage('NFT')"
-                            >
-                                <i class="bx bx-expand-alt bx-xs" />
-                            </Button>
-                        </template>
-                    </TransBarCard>
-
-                    <TransBarCard
-                        title="Donations"
-                        :tip="isLoadingAssets.Gitcoin ? 'Loading...' : 'Haven\'t found anything yet...'"
-                        :haveDetails="gitcoins.length !== 0"
-                        :haveContent="true"
-                        :haveContentInfo="gitcoins.length > 0"
-                    >
-                        <template #header>
-                            <i v-if="isOwner" class="bx bxs-pencil bx-xs cursor-pointer" @click="toManageGitcoins" />
-                        </template>
-                        <template #details>
-                            <AssetCard
-                                v-for="item in gitcoins.slice(0, 3)"
-                                :key="item.id"
-                                :imageUrl="item.detail.grant.logo || defaultAvatar"
-                                :timestamp="item.detail.txs.slice(-1)[0].timeStamp"
-                                :name="item.detail.grant.title"
-                                :username="rss3Profile.username"
-                                @click="toSingleItemPage(item.id)"
-                            />
-                        </template>
-                        <template #content>
-                            <GitcoinItem
-                                class="mr-1 cursor-pointer"
-                                v-for="item in gitcoins.slice(4)"
-                                :key="item.id"
-                                size="sm"
-                                :imageUrl="item.detail.grant.logo || defaultAvatar"
-                                @click="toSingleItemPage(item.id)"
-                            />
-                        </template>
-                        <template #button>
-                            <Button
-                                size="sm"
-                                class="w-8 h-8 text-secondary-btn-text bg-secondary-btn"
-                                @click="toListPage('Gitcoin')"
-                            >
-                                <i class="bx bx-expand-alt bx-xs" />
-                            </Button>
-                        </template>
-                    </TransBarCard>
-
-                    <TransBarCard
-                        title="Footprints"
-                        :tip="isLoadingAssets.Footprint ? 'Loading...' : 'Haven\'t found anything yet...'"
-                        :haveDetails="footprints.length !== 0"
-                        :haveContent="true"
-                        :haveContentInfo="footprints.length > 0"
-                    >
-                        <template #header>
-                            <i v-if="isOwner" class="bx bxs-pencil bx-xs cursor-pointer" @click="toManageFootprints" />
-                        </template>
-                        <template #details>
-                            <FootprintCard
-                                v-if="footprints.length > 0"
-                                :imageUrl="footprints[0].detail.image_url"
-                                :username="rss3Profile.username"
-                                :activity="footprints[0].detail.name"
-                                :start-date="footprints[0].detail.start_date"
-                                :end-date="footprints[0].detail.end_date"
-                                :location="footprints[0].detail.city || footprints[0].detail.country || 'Metaverse'"
-                                class="py-2 cursor-pointer"
-                                @click="toSingleItemPage(footprints[0].id)"
-                            />
-                        </template>
-                        <template #content>
-                            <FootprintItem
-                                v-for="item of footprints.slice(1)"
-                                :key="item.id"
-                                :imageUrl="item.detail.image_url"
-                                size="sm"
-                                class="flex-shrink-0 mr-2 cursor-pointer"
-                                @click="toSingleItemPage(item.id)"
-                            />
-                        </template>
-                        <template #button>
-                            <Button
-                                size="sm"
-                                class="w-8 h-8 text-secondary-btn-text bg-secondary-btn"
-                                @click="toListPage('Footprint')"
-                            >
-                                <i class="bx bx-expand-alt bx-xs" />
-                            </Button>
-                        </template>
-                    </TransBarCard>
-                </div>
-            </section>
-
-            <section class="md:w-2/5">
-                <div class="affix-container sticky">
-                    <TransBarCard title="Content" :haveDetails="true" :haveContent="false">
-                        <template #details>
-                            <div v-if="contents?.length > 0">
-                                <div v-for="element in contents" :key="element.id">
-                                    <ContentCard
-                                        :username="rss3Profile.username"
-                                        :timestamp="new Date(element.date_updated).valueOf()"
-                                        :content="element.summary"
-                                        :title="element.title"
-                                        :provider="
-                                            element.target.field.includes('Mirror.XYZ')
-                                                ? 'Mirror-XYZ'
-                                                : element.target.field.split('-')[2]
-                                        "
-                                        @click="toContentLink(element)"
-                                    />
-                                </div>
-                                <IntersectionObserverContainer
-                                    :once="false"
-                                    :enabled="!isLoadingContents"
-                                    @trigger="loadMoreContents"
+        <div v-if="isAccountExist" class="m-auto pb-12 pt-8 px-4 max-w-screen-lg">
+            <Header
+                :ethAddress="ethAddress"
+                :rns="rns"
+                :avatar="rss3Profile.avatar"
+                :rss3Profile="rss3Profile"
+                :displayLogo="true"
+            />
+            <div class="flex flex-col gap-4 md:flex-row">
+                <section class="md:w-3/5">
+                    <div class="affix-container sticky flex flex-col gap-4">
+                        <Profile
+                            :avatar="rss3Profile.avatar"
+                            :username="rss3Profile.username"
+                            :address="ethAddress"
+                            :rns="rns"
+                            :followers="rss3Relations.followers.length"
+                            :followings="rss3Relations.followings.length"
+                            :bio="rss3Profile.bio"
+                            :website="rss3Profile.displayAddress"
+                            :is-loading-persona="isLoadingPersona"
+                            @click-address="clickAddress"
+                        >
+                            <template #Accounts>
+                                <div
+                                    class="inline-block mr-1 cursor-pointer"
+                                    v-for="item in accounts"
+                                    :key="item.identity"
+                                    @click="displayDialog(item.identity, item.platform)"
                                 >
-                                    <Button
-                                        size="sm"
-                                        class="w-full h-6 text-content-btn-s-text bg-content-btn-s shadow-content-btn-s"
-                                        v-show="isContentsHaveMore"
-                                        @click="loadMoreContents"
-                                        id="contents-load-more-button"
-                                    >
-                                        <i v-if="isLoadingContents" class="bx bx-loader-circle bx-spin"></i>
-                                        <i v-else class="bx bx-dots-horizontal-rounded" />
-                                    </Button>
-                                </IntersectionObserverContainer>
-                            </div>
-                            <div v-else class="flex flex-col justify-center h-96">
-                                <span class="w-full text-center text-primary-text">{{
-                                    isLoadingContents ? 'Loading...' : "Haven't found anything yet..."
-                                }}</span>
-                            </div>
-                        </template>
-                    </TransBarCard>
-                </div>
-            </section>
+                                    <EVMpAccountItem
+                                        v-if="item.platform === 'EVM+'"
+                                        :size="30"
+                                        :address="item.identity"
+                                    />
+                                    <AccountItem v-else :size="30" :chain="item.platform" :address="item.identity" />
+                                </div>
+                                <Button
+                                    v-if="isOwner"
+                                    size="sm"
+                                    shape="circle"
+                                    class="inline-block mr-1 w-8 h-8 text-account-btn-s-text bg-account-btn-s"
+                                    @click="toManageAccounts"
+                                >
+                                    <i class="bx bxs-pencil bx-xs" />
+                                </Button>
+                                <Button
+                                    size="sm"
+                                    shape="circle"
+                                    class="inline-block mr-1 w-8 h-8 text-account-btn-s-text bg-account-btn-s"
+                                    @click="toAccountsPage"
+                                >
+                                    <i class="bx bx-expand-alt bx-xs" />
+                                </Button>
+                            </template>
 
-            <div class="center fixed bottom-0 left-0 mt-2 w-full bg-footer-bg">
-                <div class="flex flex-row gap-x-2 items-center justify-between m-auto px-4 py-2 max-w-screen-lg">
-                    <Logo class="cursor-pointer" :size="18" @click="toHomePage" />
-                    <div class="text-right text-body-text text-xs font-normal">
-                        <a href="https://rss3.io/#/privacy"> Privacy </a>
-                        |
-                        <span>
-                            Made with 🌀 by
-                            <a
-                                href="https://rss3.io"
-                                class="
-                                    text-body-text
-                                    no-underline
-                                    visited:no-underline
-                                    active:no-underline
-                                    text-xs
-                                    font-normal
-                                "
-                                >RSS3</a
-                            >
-                        </span>
+                            <template #Toolbar>
+                                <Toolbar
+                                    :isOwner="isOwner"
+                                    :isFollowing="isFollowing"
+                                    :is-loading-persona="isLoadingPersona"
+                                    @to-setup-page="toSetupPage"
+                                    @logout="logout"
+                                    @toggleFollow="toggleFollow"
+                                />
+                            </template>
+                        </Profile>
+
+                        <TransBarCard
+                            v-for="className in allClasses"
+                            :key="className"
+                            :title="className"
+                            :tip="isLoadingAssets.NFT ? 'Loading...' : 'Haven\'t found anything yet...'"
+                            :haveDetails="false"
+                            :haveContent="true"
+                            :haveContentInfo="classifiedList[className].length > 0"
+                        >
+                            <template #header>
+                                <i
+                                    v-if="isOwner"
+                                    class="bx bxs-pencil bx-xs cursor-pointer"
+                                    @click="toManageNFTs(className)"
+                                />
+                            </template>
+                            <template #content>
+                                <NFTItem
+                                    class="mr-1 cursor-pointer"
+                                    v-for="item in classifiedList[className]"
+                                    :key="item.id"
+                                    :image-url="
+                                        item.detail.animation_url || item.detail.image_preview_url || defaultAvatar
+                                    "
+                                    :poster-url="
+                                        item.detail.image_preview_url ||
+                                        item.detail.image_url ||
+                                        item.detail.animation_url ||
+                                        item.detail.animation_original_url ||
+                                        defaultAvatar
+                                    "
+                                    size="md"
+                                    @click="toSingleItemPage(item.id)"
+                                />
+                            </template>
+                            <template #button>
+                                <Button
+                                    size="sm"
+                                    class="w-8 h-8 text-secondary-btn-text bg-secondary-btn"
+                                    @click="toListPage(`nfts/${className}`)"
+                                >
+                                    <i class="bx bx-expand-alt bx-xs" />
+                                </Button>
+                            </template>
+                        </TransBarCard>
+
+                        <TransBarCard
+                            title="Donations"
+                            :tip="isLoadingAssets.Gitcoin ? 'Loading...' : 'Haven\'t found anything yet...'"
+                            :haveDetails="gitcoins.length !== 0"
+                            :haveContent="true"
+                            :haveContentInfo="gitcoins.length > 0"
+                        >
+                            <template #header>
+                                <i
+                                    v-if="isOwner"
+                                    class="bx bxs-pencil bx-xs cursor-pointer"
+                                    @click="toManageGitcoins"
+                                />
+                            </template>
+                            <template #details>
+                                <AssetCard
+                                    v-for="item in gitcoins.slice(0, 3)"
+                                    :key="item.id"
+                                    :imageUrl="item.detail.grant.logo || defaultAvatar"
+                                    :timestamp="item.detail.txs.slice(-1)[0].timeStamp"
+                                    :name="item.detail.grant.title"
+                                    :username="rss3Profile.username"
+                                    @click="toSingleItemPage(item.id)"
+                                />
+                            </template>
+                            <template #content>
+                                <GitcoinItem
+                                    class="mr-1 cursor-pointer"
+                                    v-for="item in gitcoins.slice(4)"
+                                    :key="item.id"
+                                    size="sm"
+                                    :imageUrl="item.detail.grant.logo || defaultAvatar"
+                                    @click="toSingleItemPage(item.id)"
+                                />
+                            </template>
+                            <template #button>
+                                <Button
+                                    size="sm"
+                                    class="w-8 h-8 text-secondary-btn-text bg-secondary-btn"
+                                    @click="toListPage('Gitcoins')"
+                                >
+                                    <i class="bx bx-expand-alt bx-xs" />
+                                </Button>
+                            </template>
+                        </TransBarCard>
+
+                        <TransBarCard
+                            title="Footprints"
+                            :tip="isLoadingAssets.Footprint ? 'Loading...' : 'Haven\'t found anything yet...'"
+                            :haveDetails="footprints.length !== 0"
+                            :haveContent="true"
+                            :haveContentInfo="footprints.length > 0"
+                        >
+                            <template #header>
+                                <i
+                                    v-if="isOwner"
+                                    class="bx bxs-pencil bx-xs cursor-pointer"
+                                    @click="toManageFootprints"
+                                />
+                            </template>
+                            <template #details>
+                                <FootprintCard
+                                    v-if="footprints.length > 0"
+                                    :imageUrl="footprints[0].detail.image_url"
+                                    :username="rss3Profile.username"
+                                    :activity="footprints[0].detail.name"
+                                    :start-date="footprints[0].detail.start_date"
+                                    :end-date="footprints[0].detail.end_date"
+                                    :location="footprints[0].detail.city || footprints[0].detail.country || 'Metaverse'"
+                                    type="brief"
+                                    @click="toSingleItemPage(footprints[0].id)"
+                                />
+                            </template>
+                            <template #content>
+                                <FootprintItem
+                                    v-for="item of footprints.slice(1)"
+                                    :key="item.id"
+                                    :imageUrl="item.detail.image_url"
+                                    size="sm"
+                                    class="flex-shrink-0 mr-2 cursor-pointer"
+                                    @click="toSingleItemPage(item.id)"
+                                />
+                            </template>
+                            <template #button>
+                                <Button
+                                    size="sm"
+                                    class="w-8 h-8 text-secondary-btn-text bg-secondary-btn"
+                                    @click="toListPage('Footprints')"
+                                >
+                                    <i class="bx bx-expand-alt bx-xs" />
+                                </Button>
+                            </template>
+                        </TransBarCard>
+                    </div>
+                </section>
+
+                <section class="md:w-2/5">
+                    <div class="affix-container sticky">
+                        <TransBarCard title="Content" :haveDetails="true" :haveContent="false">
+                            <template #details>
+                                <div v-if="contents?.length > 0">
+                                    <div class="flex flex-col gap-4">
+                                        <ContentCard
+                                            v-for="element in contents"
+                                            :key="element.id"
+                                            :username="rss3Profile.username"
+                                            :timestamp="new Date(element.date_updated).valueOf()"
+                                            :content="element.summary"
+                                            :title="element.title"
+                                            :provider="
+                                                element.target.field.includes('Mirror.XYZ')
+                                                    ? 'Mirror-XYZ'
+                                                    : element.target.field.split('-')[2]
+                                            "
+                                            @click="toContentLink(element)"
+                                        />
+                                    </div>
+                                    <IntersectionObserverContainer
+                                        :once="false"
+                                        :enabled="!isLoadingContents"
+                                        @trigger="loadMoreContents"
+                                    >
+                                        <Button
+                                            size="sm"
+                                            class="
+                                                w-full
+                                                h-6
+                                                text-content-btn-s-text
+                                                bg-content-btn-s
+                                                shadow-content-btn-s
+                                            "
+                                            v-show="isContentsHaveMore"
+                                            @click="loadMoreContents"
+                                            id="contents-load-more-button"
+                                        >
+                                            <i v-if="isLoadingContents" class="bx bx-loader-circle bx-spin"></i>
+                                            <i v-else class="bx bx-dots-horizontal-rounded" />
+                                        </Button>
+                                    </IntersectionObserverContainer>
+                                </div>
+                                <div v-else class="flex flex-col justify-center h-96">
+                                    <span class="w-full text-center text-primary-text">{{
+                                        isLoadingContents ? 'Loading...' : "Haven't found anything yet..."
+                                    }}</span>
+                                </div>
+                            </template>
+                        </TransBarCard>
+                    </div>
+                </section>
+
+                <div class="center fixed bottom-0 left-0 mt-2 w-full bg-footer-bg">
+                    <div class="flex flex-row gap-x-2 items-center justify-between m-auto px-4 py-2 max-w-screen-lg">
+                        <Logo class="cursor-pointer" :size="18" @click="toHomePage" />
+                        <div class="text-right text-body-text text-xs font-normal">
+                            <a href="https://rss3.io/#/privacy"> Privacy </a>
+                            |
+                            <span>
+                                Made with 🌀 by
+                                <a
+                                    href="https://rss3.io"
+                                    class="
+                                        text-body-text
+                                        no-underline
+                                        visited:no-underline
+                                        active:no-underline
+                                        text-xs
+                                        font-normal
+                                    "
+                                    >RSS3</a
+                                >
+                            </span>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <Modal v-show="isShowingAccount">
-                <template #header>
-                    <Button
-                        size="sm"
-                        class="absolute left-4 w-10 h-10 text-secondary-btn-text bg-secondary-btn shadow-secondary-btn"
-                        @click="closeDialog"
-                    >
-                        <i class="bx bx-chevron-left bx-sm"></i>
-                    </Button>
-                </template>
-                <template #body>
-                    <div class="flex flex-col gap-y-4 items-center">
-                        <EVMpAccountItem
-                            class="m-auto mt-4"
-                            v-if="showingAccountDetails.platform === 'EVM+'"
-                            :size="90"
-                            :address="showingAccountDetails.address"
-                        />
-                        <AccountItem
-                            class="m-auto mt-4"
-                            v-else
-                            :size="90"
-                            :chain="showingAccountDetails.platform"
-                            :address="showingAccountDetails.address"
-                        />
-                        <span class="address mt-4 text-center break-all text-xl font-semibold">
-                            {{ showingAccountDetails.address }}
-                        </span>
+                <Modal v-show="isShowingAccount">
+                    <template #header>
                         <Button
                             size="sm"
                             class="
-                                text-md
-                                m-auto
-                                mt-4
-                                w-1/4
-                                text-account-btn-m-text
-                                bg-account-btn-m
-                                shadow-account-btn-m
+                                absolute
+                                left-4
+                                w-10
+                                h-10
+                                text-secondary-btn-text
+                                bg-secondary-btn
+                                shadow-secondary-btn
                             "
-                            @click="
-                                showingAccountDetails.isLink
-                                    ? toExternalLink(showingAccountDetails.link)
-                                    : copyToClipboard(showingAccountDetails.address)
-                            "
+                            @click="closeDialog"
                         >
-                            {{ showingAccountDetails.isLink ? 'Go' : 'Copy' }}
+                            <i class="bx bx-chevron-left bx-sm"></i>
                         </Button>
-                    </div>
-                </template>
-            </Modal>
+                    </template>
+                    <template #body>
+                        <div class="flex flex-col gap-y-4 items-center">
+                            <EVMpAccountItem
+                                class="m-auto mt-4"
+                                v-if="showingAccountDetails.platform === 'EVM+'"
+                                :size="90"
+                                :address="showingAccountDetails.address"
+                            />
+                            <AccountItem
+                                class="m-auto mt-4"
+                                v-else
+                                :size="90"
+                                :chain="showingAccountDetails.platform"
+                                :address="showingAccountDetails.address"
+                            />
+                            <span class="address mt-4 text-center break-all text-xl font-semibold">
+                                {{ showingAccountDetails.address }}
+                            </span>
+                            <Button
+                                size="sm"
+                                class="
+                                    text-md
+                                    m-auto
+                                    mt-4
+                                    w-1/4
+                                    text-account-btn-m-text
+                                    bg-account-btn-m
+                                    shadow-account-btn-m
+                                "
+                                @click="
+                                    showingAccountDetails.isLink
+                                        ? toExternalLink(showingAccountDetails.link)
+                                        : copyToClipboard(showingAccountDetails.address)
+                                "
+                            >
+                                {{ showingAccountDetails.isLink ? 'Go' : 'Copy' }}
+                            </Button>
+                        </div>
+                    </template>
+                </Modal>
 
-            <Modal v-if="isShowingNotice">
-                <template #header>
-                    <h1>Oops!</h1>
-                </template>
-                <template #body>
-                    <p class="mt-1 p-4">
-                        {{ notice }}
-                    </p>
-                </template>
-                <template #footer>
-                    <div class="flex flex-row gap-5">
-                        <Button
-                            size="sm"
-                            class="w-72 text-primary-btn-text bg-primary-btn shadow-primary-btn"
-                            @click="isShowingNotice = false"
-                        >
-                            OK
-                        </Button>
-                    </div>
-                </template>
-            </Modal>
+                <Modal v-if="isShowingNotice">
+                    <template #header>
+                        <h1>Oops!</h1>
+                    </template>
+                    <template #body>
+                        <p class="mt-1 p-4">
+                            {{ notice }}
+                        </p>
+                    </template>
+                    <template #footer>
+                        <div class="flex flex-row gap-5">
+                            <Button
+                                size="sm"
+                                class="w-72 text-primary-btn-text bg-primary-btn shadow-primary-btn"
+                                @click="isShowingNotice = false"
+                            >
+                                OK
+                            </Button>
+                        </div>
+                    </template>
+                </Modal>
+            </div>
         </div>
         <div
             v-else
@@ -394,7 +430,6 @@ import Logo from '@/components/Icons/Logo.vue';
 
 import FootprintCard from '@/components/Footprint/FootprintCard.vue';
 import ContentCard from '@/components/Content/ContentCard.vue';
-import { debounce } from 'lodash';
 import ContentProviders from '@/common/content-providers';
 import Toolbar from '@/components/Profile/Toolbar.vue';
 import FootprintItem from '@/components/Footprint/FootprintItem.vue';
@@ -405,6 +440,7 @@ import IntersectionObserverContainer from '@/components/Common/IntersectionObser
 import TransBarCard from '@/components/Card/TransBarCard.vue';
 import AssetCard from '@/components/Card/AssetCard.vue';
 import config from '@/common/config';
+import Header from '@/components/Common/Header.vue';
 
 interface Relations {
     followers: string[];
@@ -435,6 +471,7 @@ interface Relations {
         Toolbar,
         FootprintIcon,
         AssetCard,
+        Header,
     },
 })
 export default class Home extends Vue {
@@ -835,7 +872,7 @@ export default class Home extends Vue {
         this.$gtag.event(`visit${type}Page`, { userid: this.rns || this.ethAddress });
         this.$router.push(
             (legacyConfig.subDomain.isSubDomainMode ? '' : `/${this.rns || this.ethAddress}`) +
-                `/${type.toLowerCase()}s`,
+                `/${type.toLowerCase()}`,
         );
     }
 

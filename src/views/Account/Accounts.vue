@@ -1,7 +1,7 @@
 <template>
     <div class="h-screen bg-account-bg overflow-y-auto">
         <div class="m-auto pb-32 pt-8 px-4 max-w-screen-lg">
-            <Header :ethAddress="ethAddress" :rns="rns" :rss3Profile="rss3Profile" title="Accounts" theme="account" />
+            <Header :ethAddress="ethAddress" :rns="rns" :rss3Profile="rss3Profile" title="Accounts" />
             <div class="m-auto max-w-md">
                 <div class="flex flex-col gap-y-4">
                     <div

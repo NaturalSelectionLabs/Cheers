@@ -17,20 +17,17 @@
             <h2 class="break-words text-xl font-semibold">
                 {{ details.title || 'Inactive Project' }}
             </h2>
-            <div class="inline-flex text-gitcoin-title leading-normal space-x-1">
+            <div class="flex flex-row flex-wrap text-primary-text leading-normal space-x-1">
                 <p class="text-sm cursor-pointer truncate" @click="toExternalLink(details.reference_url)">
                     <i class="bx bx-link align-middle" />
                     {{ details.reference_url }}
                 </p>
-                <span
-                    v-if="grantsUrl && grantsUrl !== details.reference_url"
-                    class="px-1 text-sm font-semibold leading-tight"
-                    >|</span
-                >
-                <p class="text-sm cursor-pointer truncate" @click="toExternalLink(grantsUrl)">
-                    <!-- <i class="bx bx-link align-middle" /> -->
-                    {{ grantsUrl }}
-                </p>
+                <template v-if="grantsUrl && grantsUrl !== details.reference_url">
+                    <span class="px-1 text-sm font-semibold leading-tight">|</span>
+                    <p class="text-sm cursor-pointer truncate" @click="toExternalLink(grantsUrl)">
+                        {{ grantsUrl }}
+                    </p>
+                </template>
             </div>
         </div>
         <div class="w-full">
@@ -41,7 +38,7 @@
         </div>
         <div>
             <h2 class="text-xl font-semibold">Contributions</h2>
-            <h1 class="text-gitcoin-title text-2xl font-semibold">
+            <h1 class="text-primary-text text-2xl font-semibold">
                 <vue3-autocounter
                     ref="counter"
                     :startAmount="0"
@@ -57,7 +54,7 @@
                 <div
                     class="flex flex-1 flex-row items-center justify-between px-4 py-2 text-black bg-body-bg rounded-xl"
                 >
-                    <div class="flex-shrink pr-2 text-gitcoin-title">
+                    <div class="flex-shrink pr-2 text-primary-text">
                         <vue3-autocounter
                             ref="counter"
                             :startAmount="0"
@@ -69,15 +66,11 @@
                             :autoinit="true"
                         />
                     </div>
-                    <div class="flex-1 w-0 text-right text-gitcoin-title truncate">
+                    <div class="flex-1 w-0 text-right text-primary-text truncate">
                         {{ timeDifferent(item.timeStamp) }}
                     </div>
                 </div>
-                <Button
-                    size="sm"
-                    class="ml-1 w-9 h-9 text-gitcoin-btn-m-text bg-gitcoin-btn-m shadow-gitcoin-btn-m"
-                    @click="toScanTx(item)"
-                >
+                <Button size="sm" class="ml-1 w-9 h-9 text-secondary-btn-text bg-secondary-btn" @click="toScanTx(item)">
                     <i class="bx bx-link-external bx-xs" />
                 </Button>
             </div>

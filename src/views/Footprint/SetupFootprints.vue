@@ -11,7 +11,7 @@
         "
     >
         <div class="m-auto pb-32 pt-8 px-4 max-w-screen-lg h-full">
-            <Header title="Manage Footprints" theme="footprint" :avatar="avatar" />
+            <Header title="Manage Footprints" :avatar="avatar" />
             <div class="flex flex-col gap-4 pb-8 h-full md:flex-row">
                 <section class="h-1/2 md:w-3/5 md:h-full">
                     <TransBarCard title="Listed" class="h-full" :have-details="true">

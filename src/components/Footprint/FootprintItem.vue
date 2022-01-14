@@ -5,6 +5,7 @@
             'w-10 h-10 rounded-sm': size === 'sm',
             'w-17.5 h-17.5 rounded': size === 'md',
             'w-19 h-19 rounded': size === 'lg',
+            'w-24 h-24 md:w-28 md:h-28 rounded': size === 'xl',
             'w-full aspect-w-1 aspect-h-1 rounded': size === 'auto',
         }"
         :style="{
