@@ -107,7 +107,7 @@
                             <Button
                                 size="sm"
                                 class="w-8 h-8 text-secondary-btn-text bg-secondary-btn"
-                                @click="toListPage('NFT')"
+                                @click="toListPage(`nfts/${className}`)"
                             >
                                 <i class="bx bx-expand-alt bx-xs" />
                             </Button>
@@ -149,7 +149,7 @@
                             <Button
                                 size="sm"
                                 class="w-8 h-8 text-secondary-btn-text bg-secondary-btn"
-                                @click="toListPage('Gitcoin')"
+                                @click="toListPage('Gitcoins')"
                             >
                                 <i class="bx bx-expand-alt bx-xs" />
                             </Button>
@@ -193,7 +193,7 @@
                             <Button
                                 size="sm"
                                 class="w-8 h-8 text-secondary-btn-text bg-secondary-btn"
-                                @click="toListPage('Footprint')"
+                                @click="toListPage('Footprints')"
                             >
                                 <i class="bx bx-expand-alt bx-xs" />
                             </Button>
@@ -837,7 +837,7 @@ export default class Home extends Vue {
         this.$gtag.event(`visit${type}Page`, { userid: this.rns || this.ethAddress });
         this.$router.push(
             (legacyConfig.subDomain.isSubDomainMode ? '' : `/${this.rns || this.ethAddress}`) +
-                `/${type.toLowerCase()}s`,
+                `/${type.toLowerCase()}`,
         );
     }
 

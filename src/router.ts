@@ -44,7 +44,7 @@ export const routes: RouteRecordRaw[] = [
         component: Accounts,
     },
     {
-        path: basePath + 'nfts',
+        path: basePath + '/nfts/:type',
         name: 'NFTs',
         component: NFTs,
     },

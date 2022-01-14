@@ -3,7 +3,7 @@
         <div class="m-auto pb-32 pt-8 px-4 max-w-screen-lg">
             <Header :ethAddress="ethAddress" :rns="rns" :rss3Profile="rss3Profile" title="NFTs" theme="nft" />
             <TransBarCard
-                :title="rss3Profile.name ? rss3Profile.name + `'s Vitrine` : 'Vitrine'"
+                :title="rss3Profile.name ? rss3Profile.name + `'s ${title}` : title"
                 :haveDetails="true"
                 :haveContent="false"
                 :haveContentInfo="false"
@@ -60,7 +60,7 @@ import RSS3 from '@/common/rss3';
 import { utils as RSS3Utils } from 'rss3';
 import legacyConfig from '@/config';
 import config from '@/common/config';
-import { debounce } from 'lodash';
+import { debounce, filter } from 'lodash';
 import utils from '@/common/utils';
 import Header from '@/components/Common/Header.vue';
 import { DetailedNFT, GeneralAsset } from '@/common/types';
@@ -73,6 +73,7 @@ import { formatter } from '@/common/address';
     components: { IntersectionObserverContainer, Button, NFTItem, NFTBadges, Header, TransBarCard },
 })
 export default class NFTs extends Vue {
+    title: string = '';
     rns: string = '';
     ethAddress: string = '';
     isOwner: boolean = false;
@@ -88,6 +89,8 @@ export default class NFTs extends Vue {
 
     async initLoad() {
         this.lastRoute = this.$route.fullPath;
+        let type = String(this.$route.params.type);
+        this.title = type.replace(type[0], type[0].toUpperCase());
 
         const addrOrName = utils.getAddress(<string>this.$route.params.address);
         const pageOwner = await RSS3.setPageOwner(addrOrName);
@@ -103,9 +106,14 @@ export default class NFTs extends Vue {
             this.rss3Profile.name = formatter(this.ethAddress);
         }
 
-        const { nfts } = await utils.initAssets();
-        this.assetList = nfts;
+        const { nftsWithClassName } = await utils.initAssets();
+        this.assetList =
+            filter(nftsWithClassName, (element) => {
+                return element.class === this.title;
+            }) || [];
         this.isLoadingAssets = false;
+        this.nfts = [];
+        this.assetsStartIndex = 0;
         await this.loadMoreAssets();
     }
 
