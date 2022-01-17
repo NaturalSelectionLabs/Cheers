@@ -34,7 +34,7 @@
                     <slot name="Accounts" />
                 </div>
             </section>
-            <div class="bio col-span-full whitespace-pre-line text-lg font-normal">
+            <div class="bio col-span-full whitespace-pre-line font-normal">
                 {{ bio }}
             </div>
             <div class="col-span-full md:col-span-2">
