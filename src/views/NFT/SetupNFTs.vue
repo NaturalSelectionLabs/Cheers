@@ -14,7 +14,7 @@
             <Header title="Manage NFTs" :avatar="avatar" />
 
             <div class="flex flex-col flex-grow gap-4 pb-8 h-0 md:flex-row">
-                <section class="flex flex-col gap-4 h-1/2 md:w-3/5 md:overflow-y-auto">
+                <section class="flex flex-col gap-4 h-1/2 md:w-3/5 md:h-full md:overflow-y-auto">
                     <div v-if="!isPCLayout">
                         <TransBarCard :have-details="true">
                             <template #details>
