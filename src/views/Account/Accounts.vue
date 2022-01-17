@@ -1,49 +1,72 @@
 <template>
-    <div class="h-screen bg-account-bg overflow-y-auto">
+    <div class="h-screen bg-gradient-to-tr from-blue-400 to-blue-200 via-blue-100 overflow-y-auto">
         <div class="m-auto pb-32 pt-8 px-4 max-w-screen-lg">
-            <Header :ethAddress="ethAddress" :rns="rns" :rss3Profile="rss3Profile" title="Accounts" />
-            <div class="m-auto max-w-md">
-                <div class="flex flex-col gap-y-4">
-                    <div
-                        class="grid grid-cols-6 items-center justify-items-center"
-                        v-for="item in accounts"
-                        :key="item.platform + item.identity"
-                    >
-                        <EVMpAccountItem v-if="item.platform === 'EVM+'" :size="70" :address="item.identity" />
-                        <AccountItem v-else :size="70" :chain="item.platform" :address="item.identity" />
-                        <span class="col-span-3 text-account-title text-xl font-semibold sm:text-2xl">{{
-                            getDisplayAddress(item)
-                        }}</span>
-                        <Button
-                            size="sm"
-                            class="w-10 h-10 text-account-btn-m-text bg-account-btn-m shadow-account-btn-m"
-                            @click="copyToClipboard(item.identity)"
-                        >
-                            <i class="bx bxs-copy bx-sm"></i>
-                        </Button>
-                        <Button
-                            size="sm"
-                            class="w-10 h-10 text-account-btn-m-text bg-account-btn-m shadow-account-btn-m"
-                            @click="toExternalLink(item.identity, item.platform)"
-                        >
-                            <i class="bx bx-link-external bx-sm"></i>
-                        </Button>
-                    </div>
-                </div>
-            </div>
-            <div
-                class="fixed bottom-2 left-0 right-0 flex gap-5 m-auto px-4 py-4 w-full max-w-md bg-btn-container"
-                v-if="isOwner"
+            <Header :ethAddress="ethAddress" :rns="rns" :rss3Profile="rss3Profile" />
+            <TransBarCard
+                :title="rss3Profile.name ? rss3Profile.name + `'s Accounts` : 'Accounts'"
+                :haveDetails="true"
+                :haveContent="false"
+                :haveContentInfo="false"
             >
-                <Button
-                    size="lg"
-                    class="m-auto text-account-btn-m-text text-lg bg-account-btn-m shadow-account-btn-m"
-                    @click="toSetupAccounts"
-                >
-                    <span>Manage Accounts</span>
-                </Button>
-            </div>
+                <template #header>
+                    <i v-if="isOwner" class="bx bxs-pencil bx-xs cursor-pointer" @click="toSetupAccounts" />
+                </template>
+                <template #details>
+                    <div
+                        class="
+                            grid
+                            gap-4
+                            grid-cols-1
+                            items-center
+                            justify-between
+                            py-4
+                            w-full
+                            md:grid-cols-2 md:justify-start
+                        "
+                    >
+                        <div
+                            class="flex flex-row gap-4 items-center justify-between w-full cursor-pointer md:max-w-xs"
+                            v-for="item in accounts"
+                            :key="item.platform + item.identity"
+                            @click="displayDialog(item.identity, item.platform)"
+                        >
+                            <EVMpAccountItem v-if="item.platform === 'EVM+'" :size="70" :address="item.identity" />
+                            <AccountItem v-else :size="70" :chain="item.platform" :address="item.identity" />
+                            <span class="text-lg font-semibold truncate">{{ getDisplayAddress(item) }}</span>
+                            <section class="flex flex-row flex-shrink-0 gap-4">
+                                <i
+                                    class="
+                                        bx
+                                        bxs-copy
+                                        bx-sm
+                                        text-primary-text
+                                        opacity-70
+                                        transform
+                                        active:-translate-y-px
+                                    "
+                                    @click.stop="copyToClipboard(item.identity)"
+                                />
+                                <i
+                                    class="
+                                        bx bx-link-external bx-sm
+                                        text-primary-text
+                                        opacity-70
+                                        transform
+                                        active:-translate-y-px
+                                    "
+                                    @click.stop="toExternalLink(item.identity, item.platform)"
+                                />
+                            </section>
+                        </div>
+                    </div>
+                </template>
+            </TransBarCard>
         </div>
+        <AccountModal
+            :isShowingAccount="isShowingAccount"
+            :showingAccountDetails="showingAccountDetails"
+            @closeDialog="closeAccountDialog"
+        />
     </div>
 </template>
 
@@ -57,11 +80,14 @@ import { utils as RSS3Utils } from 'rss3';
 import ContentProviders from '@/common/content-providers';
 import utils from '@/common/utils';
 import Header from '@/components/Common/Header.vue';
+import TransBarCard from '@/components/Card/TransBarCard.vue';
+import AccountModal from '@/components/Account/AccountModal.vue';
 import { DetailedAccount } from '@/common/types';
+import { formatter } from '@/common/address';
 
 @Options({
     name: 'Accounts',
-    components: { EVMpAccountItem, Button, AccountItem, Header },
+    components: { EVMpAccountItem, Button, AccountItem, Header, TransBarCard, AccountModal },
 })
 export default class Accounts extends Vue {
     rns: string = '';
@@ -70,6 +96,17 @@ export default class Accounts extends Vue {
     accounts: DetailedAccount[] = [];
     lastRoute: string = '';
     rss3Profile: RSS3Profile = {};
+    isShowingAccount: boolean = false;
+    showingAccountDetails: {
+        address: string;
+        platform: string;
+        isLink: boolean;
+        link?: string;
+    } = {
+        address: '',
+        platform: 'EVM+',
+        isLink: false,
+    };
 
     async mounted() {
         await this.initLoad();
@@ -98,18 +135,32 @@ export default class Accounts extends Vue {
         ].concat(accountDetails);
     }
 
+    displayDialog(address: string, platform: string) {
+        if (ContentProviders[platform]) {
+            this.showingAccountDetails = {
+                address:
+                    (ContentProviders[platform].prefix || '') + address + (ContentProviders[platform].suffix || ''),
+                platform,
+                isLink: true,
+                link: ContentProviders[platform].getAccountLink(address),
+            };
+        } else {
+            this.showingAccountDetails = {
+                address,
+                platform,
+                isLink: false,
+            };
+        }
+
+        this.isShowingAccount = true;
+    }
+
     getDisplayAddress(account: DetailedAccount) {
         if (account.platform === 'Misskey' && account.identity.length <= 14) {
             return account.identity;
         } else {
-            return this.filter(account.identity);
+            return formatter(account.identity);
         }
-    }
-    /**
-     * filter
-     */
-    filter(address: string) {
-        return address.length > 14 ? `${address.slice(0, 6)}....${address.slice(-4)}` : address;
     }
 
     copyToClipboard(address: string) {
@@ -128,11 +179,20 @@ export default class Accounts extends Vue {
             case 'EVM+':
                 window.open(`https://etherscan.io/address/${address}`);
                 break;
+            case 'Jike':
+                window.open(ContentProviders[platform].getAccountLink(address));
+                break;
             case 'Misskey':
+                window.open(ContentProviders[platform].getAccountLink(address));
+                break;
             case 'Twitter':
                 window.open(ContentProviders[platform].getAccountLink(address));
                 break;
         }
+    }
+
+    closeAccountDialog() {
+        this.isShowingAccount = false;
     }
 
     toSetupAccounts() {

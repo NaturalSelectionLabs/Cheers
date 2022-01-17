@@ -354,64 +354,11 @@
                     </div>
                 </div>
 
-                <Modal v-show="isShowingAccount">
-                    <template #header>
-                        <Button
-                            size="sm"
-                            class="
-                                absolute
-                                left-4
-                                w-10
-                                h-10
-                                text-secondary-btn-text
-                                bg-secondary-btn
-                                shadow-secondary-btn
-                            "
-                            @click="closeDialog"
-                        >
-                            <i class="bx bx-chevron-left bx-sm"></i>
-                        </Button>
-                    </template>
-                    <template #body>
-                        <div class="flex flex-col gap-y-4 items-center">
-                            <EVMpAccountItem
-                                class="m-auto mt-4"
-                                v-if="showingAccountDetails.platform === 'EVM+'"
-                                :size="90"
-                                :address="showingAccountDetails.address"
-                            />
-                            <AccountItem
-                                class="m-auto mt-4"
-                                v-else
-                                :size="90"
-                                :chain="showingAccountDetails.platform"
-                                :address="showingAccountDetails.address"
-                            />
-                            <span class="address mt-4 text-center break-all text-xl font-semibold">
-                                {{ showingAccountDetails.address }}
-                            </span>
-                            <Button
-                                size="sm"
-                                class="
-                                    text-md
-                                    m-auto
-                                    mt-4
-                                    w-1/4
-                                    text-account-btn-m-text
-                                    bg-account-btn-m
-                                    shadow-account-btn-m
-                                "
-                                @click="
-                                    showingAccountDetails.isLink
-                                        ? toExternalLink(showingAccountDetails.link)
-                                        : copyToClipboard(showingAccountDetails.address)
-                                "
-                            >
-                                {{ showingAccountDetails.isLink ? 'Go' : 'Copy' }}
-                            </Button>
-                        </div>
-                    </template>
-                </Modal>
+                <AccountModal
+                    :isShowingAccount="isShowingAccount"
+                    :showingAccountDetails="showingAccountDetails"
+                    @closeDialog="closeAccountDialog"
+                />
 
                 <Modal v-if="isShowingNotice">
                     <template #header>
@@ -495,6 +442,7 @@ import TransBarCard from '@/components/Card/TransBarCard.vue';
 import AssetCard from '@/components/Card/AssetCard.vue';
 import config from '@/common/config';
 import Header from '@/components/Common/Header.vue';
+import AccountModal from '@/components/Account/AccountModal.vue';
 
 interface Relations {
     followers: string[];
@@ -526,6 +474,7 @@ interface Relations {
         FootprintIcon,
         AssetCard,
         Header,
+        AccountModal,
     },
 })
 export default class Home extends Vue {
@@ -1040,7 +989,7 @@ export default class Home extends Vue {
         this.isShowingAccount = true;
     }
 
-    closeDialog() {
+    closeAccountDialog() {
         this.isShowingAccount = false;
     }
 
