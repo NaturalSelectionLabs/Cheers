@@ -1,11 +1,9 @@
 <template>
-    <div class="badge bg-white">
-        <Arweave v-if="contentProvider === 'Arweave'" :size="18" />
-        <Mirror v-else-if="contentProvider === 'Mirror-XYZ'" :size="18" />
-        <Misskey v-else-if="contentProvider === 'Misskey'" :size="18" />
-        <Twitter v-else-if="contentProvider === 'Twitter'" :size="18" />
-        <Jike v-else-if="contentProvider === 'Jike'" :size="18" />
-    </div>
+    <Arweave v-if="contentProvider === 'Arweave'" :size="18" />
+    <Mirror v-else-if="contentProvider === 'Mirror-XYZ'" :size="18" />
+    <Misskey v-else-if="contentProvider === 'Misskey'" :size="18" />
+    <Twitter v-else-if="contentProvider === 'Twitter'" :size="18" />
+    <Jike v-else-if="contentProvider === 'Jike'" :size="18" />
 </template>
 
 <script lang="ts">
@@ -27,10 +25,4 @@ export default class NFTBadges extends Vue {
 }
 </script>
 
-<style scoped lang="postcss">
-@layer components {
-    .badge {
-        @apply flex items-center justify-center p-1 w-6 h-6 bg-item-bg bg-cover bg-center bg-no-repeat border-sm border-item-border rounded-full shadow-content-item;
-    }
-}
-</style>
+<style scoped lang="postcss"></style>

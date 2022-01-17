@@ -1,5 +1,5 @@
 <template>
-    <svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg :width="size" :height="size" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
         <ellipse cx="99.5" cy="100" rx="99.5" ry="100" fill="#FFE411" />
         <path
             fill-rule="evenodd"

@@ -19,7 +19,7 @@ export default class LinkButton extends Vue {
 <style scoped lang="postcss">
 @layer components {
     .link-btn {
-        @apply flex flex-row gap-2 items-center justify-center pb-1.5 pt-1 px-3 text-center text-primary-text text-lg font-medium leading-none bg-primary-link border-link border-primary-link-border rounded-sm focus:outline-none;
+        @apply flex flex-row gap-2 items-center justify-center pb-1 pt-1 px-3 text-center text-primary-text text-base font-light leading-none bg-primary-link border-link border-primary-link-border rounded-sm focus:outline-none;
     }
 }
 </style>

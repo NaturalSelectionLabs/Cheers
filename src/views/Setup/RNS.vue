@@ -1,86 +1,91 @@
 <template>
-    <div class="rns">
-        <div class="page">
-            <h1 class="title">Claim your RNS</h1>
-            <div class="input-rns">
-                <span class="notice" :class="{ error: isErrorNotice, show: notice !== '' }">
-                    <i class="bx" :class="{ 'bxs-x-circle': isErrorNotice }" />
-                    <span>
-                        {{ notice }}
+    <div class="h-screen text-body-text bg-body-bg bg-gradient-to-tr from-blue-400 to-blue-200 via-blue-100">
+        <div class="flex items-center justify-center mx-auto w-full max-w-md h-full text-center">
+            <div class="flex flex-col justify-between w-full h-2/3">
+                <h1 class="text-primary-text text-6xl font-bold">Claim your RNS</h1>
+                <div class="input-rns">
+                    <span
+                        class="flex mb-2 px-2 w-full text-left text-lg font-normal opacity-0"
+                        :class="{ 'text-error': isErrorNotice, 'opacity-100': notice !== '' }"
+                    >
+                        <i class="bx mr-2 text-xl" :class="{ 'bxs-x-circle': isErrorNotice }" />
+                        <span>
+                            {{ notice }}
+                        </span>
                     </span>
-                </span>
-                <Input
-                    class="input"
-                    :is-single-line="true"
-                    placeholder="Enter an RNS"
-                    :is-error="notice !== ''"
-                    v-model="rns"
-                    @keyup.enter.native="verifyRNS"
-                    :is-disabled="isWithoutMetamask || isAlreadyHavingRNS"
-                    :suffix="rnsSuffix"
-                />
-                <span class="about">
-                    <i class="bx bx-info-circle" />
-                    <span> An RNS is a unique domain for a Web 3 Pass by RSS3 </span>
-                </span>
-                <span class="about">
-                    <i class="bx bx-info-circle" />
-                    <span> You can also set it up later in your profile </span>
-                </span>
-            </div>
-            <div class="nav">
-                <div class="flex gap-5 m-auto px-4 py-4 w-full">
-                    <Button
-                        size="lg"
-                        class="flex-1 text-secondary-btn-text text-lg bg-secondary-btn shadow-secondary-btn"
-                        @click="skip"
-                        >Skip</Button
-                    >
-                    <Button
-                        size="lg"
-                        class="flex-1 text-primary-btn-text text-lg bg-primary-btn shadow-primary-btn"
-                        @click="verifyRNS"
-                        >Go</Button
-                    >
+                    <Input
+                        class="mb-4 w-full text-xl"
+                        :is-single-line="true"
+                        placeholder="Enter an RNS"
+                        :is-error="notice !== ''"
+                        v-model="rns"
+                        @keyup.enter.native="verifyRNS"
+                        :is-disabled="isWithoutMetamask || isAlreadyHavingRNS"
+                        :suffix="rnsSuffix"
+                    />
+                    <span class="flex px-2 w-full text-left">
+                        <i class="bx bx-info-circle mr-2 text-gray-400 text-lg" />
+                        <span class="text-primary-text"> An RNS is a unique domain for a Web 3 Pass by RSS3 </span>
+                    </span>
+                    <span class="flex px-2 w-full text-left">
+                        <i class="bx bx-info-circle mr-2 text-gray-400 text-lg" />
+                        <span class="text-primary-text"> You can also set it up later in your profile </span>
+                    </span>
+                </div>
+                <div>
+                    <div class="flex gap-5 m-auto px-4 py-4 w-full">
+                        <Button
+                            size="lg"
+                            class="flex-1 text-secondary-btn-text text-lg bg-secondary-btn shadow-secondary-btn"
+                            @click="skip"
+                            >Skip</Button
+                        >
+                        <Button
+                            size="lg"
+                            class="flex-1 text-primary-btn-text text-lg bg-primary-btn shadow-primary-btn"
+                            @click="verifyRNS"
+                            >Go</Button
+                        >
+                    </div>
                 </div>
             </div>
-        </div>
-        <LoadingContainer v-show="isLoading" />
+            <LoadingContainer v-show="isLoading" />
 
-        <Modal v-if="isShowingConfirm">
-            <template #header>
-                <h1>Confirm your RNS</h1>
-            </template>
-            <template #body>
-                <p class="mt-6">
-                    Your
-                    <span class="text-primary-text">RNS</span>
-                    will be
-                </p>
-                <h2 class="my-6 px-4 py-2 text-primary-text text-4xl select-all overflow-y-auto">
-                    {{ rns }}
-                </h2>
-                <p>is that right?</p>
-            </template>
-            <template #footer>
-                <div class="flex flex-row gap-5">
-                    <Button
-                        size="sm"
-                        class="w-32 text-secondary-btn-text bg-secondary-btn shadow-secondary-btn"
-                        @click="isShowingConfirm = false"
-                    >
-                        No
-                    </Button>
-                    <Button
-                        size="sm"
-                        class="w-32 text-primary-btn-text bg-primary-btn shadow-primary-btn"
-                        @click="confirm"
-                    >
-                        Yes
-                    </Button>
-                </div>
-            </template>
-        </Modal>
+            <Modal v-if="isShowingConfirm">
+                <template #header>
+                    <h1>Confirm your RNS</h1>
+                </template>
+                <template #body>
+                    <p class="mt-6">
+                        Your
+                        <span class="text-primary-text">RNS</span>
+                        will be
+                    </p>
+                    <h2 class="my-6 px-4 py-2 text-primary-text text-4xl select-all overflow-y-auto">
+                        {{ rns }}
+                    </h2>
+                    <p>is that right?</p>
+                </template>
+                <template #footer>
+                    <div class="flex flex-row gap-5">
+                        <Button
+                            size="sm"
+                            class="w-32 text-secondary-btn-text bg-secondary-btn shadow-secondary-btn"
+                            @click="isShowingConfirm = false"
+                        >
+                            No
+                        </Button>
+                        <Button
+                            size="sm"
+                            class="w-32 text-primary-btn-text bg-primary-btn shadow-primary-btn"
+                            @click="confirm"
+                        >
+                            Yes
+                        </Button>
+                    </div>
+                </template>
+            </Modal>
+        </div>
     </div>
 </template>
 
@@ -96,18 +101,6 @@ import LoadingContainer from '@/components/Loading/LoadingContainer.vue';
 import config from '@/config';
 import { routes } from '@/router';
 import utils from '@/common/utils';
-function validateNetwork(chain: number | null, cb?: (chain: number | null) => void) {
-    if (config.rns.test && chain !== 0x3) {
-        alert('Please switch to ropsten network.');
-        cb ? cb(chain) : '';
-        return false;
-    } else if (!config.rns.test && chain !== 0x1) {
-        alert('Please switch to mainnet network.');
-        cb ? cb(chain) : '';
-        return false;
-    }
-    return true;
-}
 @Options({
     name: 'RNS',
     components: {
@@ -129,6 +122,25 @@ export default class RNS extends Vue {
     isAlreadyHavingRNS: boolean = false;
     rnsSuffix: string = '.' + config.subDomain.rootDomain;
     $gtag: any;
+
+    async validateNetwork(chain: number | null) {
+        try {
+            if (config.rns.test && chain !== 0x3) {
+                await (window as any).ethereum.request({
+                    method: 'wallet_switchEthereumChain',
+                    params: [{ chainId: '0x3' }],
+                });
+            } else if (!config.rns.test && chain !== 0x1) {
+                await (window as any).ethereum.request({
+                    method: 'wallet_switchEthereumChain',
+                    params: [{ chainId: '0x1' }],
+                });
+            }
+            return true;
+        } catch (e) {
+            return false;
+        }
+    }
 
     async skipRedirect() {
         // Login
@@ -154,7 +166,7 @@ export default class RNS extends Vue {
             });
             this.ethAddress = loginUser.address;
             const chain: string | null = await metamaskEthereum.request({ method: 'eth_chainId' });
-            if (validateNetwork(Number(chain))) {
+            if (await this.validateNetwork(Number(chain))) {
                 const rns = await RNSUtils.addr2Name(this.ethAddress, true);
                 if (rns !== '') {
                     this.rns = rns.replace('.rss3', '').toLowerCase();
@@ -231,47 +243,4 @@ export default class RNS extends Vue {
 }
 </script>
 
-<style lang="postcss" scoped>
-@layer components {
-    .rns {
-        @apply flex items-center justify-center mx-auto w-full max-w-md h-full text-center;
-
-        .page {
-            @apply flex flex-col justify-between w-full h-2/3;
-
-            .title {
-                @apply text-primary-text text-6xl font-bold;
-            }
-
-            .input-rns {
-                .notice {
-                    @apply flex mb-2 px-2 w-full text-left text-lg font-normal opacity-0;
-                    > i {
-                        @apply mr-2 text-xl;
-                    }
-                    &.error {
-                        @apply text-error;
-                    }
-                    &.show {
-                        @apply opacity-100;
-                    }
-                }
-
-                .input {
-                    @apply mb-4 w-full text-xl;
-                }
-
-                .about {
-                    @apply flex px-2 w-full text-left;
-                    > i {
-                        @apply mr-2 text-gray-400 text-lg;
-                    }
-                    > span {
-                        @apply text-primary-text;
-                    }
-                }
-            }
-        }
-    }
-}
-</style>
+<style lang="postcss" scoped></style>

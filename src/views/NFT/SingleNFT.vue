@@ -1,58 +1,38 @@
 <template>
-    <div class="h-screen bg-nft-bg overflow-y-auto">
+    <div class="h-screen bg-gradient-to-tr from-blue-400 to-blue-200 via-blue-100 overflow-y-auto">
         <div class="m-auto pb-20 pt-8 px-4 max-w-screen-lg">
-            <div class="relative pb-4">
-                <div
-                    class="
-                        absolute
-                        z-0
-                        top-0
-                        flex
-                        items-center
-                        justify-center
-                        px-16
-                        w-full
-                        h-10
-                        text-center text-nft-title text-xl
-                        font-bold
-                    "
-                >
-                    {{ details.collection?.name }}
-                </div>
-                <div class="flex items-center justify-between">
-                    <Button
-                        size="sm"
-                        class="w-10 h-10 text-secondary-btn-text bg-secondary-btn shadow-secondary-btn"
-                        @click="back"
-                    >
-                        <i class="bx bx-chevron-left bx-sm"></i>
-                    </Button>
+            <Header :ethAddress="ethAddress" :rns="rns" :rss3Profile="rss3Profile" />
+            <TransBarCard
+                :title="details.collection?.name"
+                :haveDetails="true"
+                :haveContent="false"
+                :haveContentInfo="false"
+            >
+                <template #header>
                     <NFTBadges
-                        class="absolute z-50 right-0"
                         :chain="details.chain"
                         location="header"
                         :collectionImg="details.collection?.image_url"
                     />
-                </div>
-            </div>
-            <section class="m-auto max-w-screen-sm">
-                <div class="image pb-4">
-                    <NFTItem
-                        :imageUrl="details.animation_url || details.image_url"
-                        :poster-url="details.image_url"
-                        size="contain"
-                        :is-showing-details="true"
-                    />
-                </div>
-                <NFTDetail :chain="details.chain" :details="details" :market="market" />
-            </section>
+                </template>
+                <template #details>
+                    <div class="flex flex-col gap-4 m-auto py-4 w-full max-w-screen-sm">
+                        <NFTItem
+                            :imageUrl="details.animation_url || details.image_url"
+                            :poster-url="details.image_url"
+                            size="contain"
+                            :is-showing-details="true"
+                        />
+                        <NFTDetail :chain="details.chain" :details="details" :market="market" />
+                    </div>
+                </template>
+            </TransBarCard>
         </div>
     </div>
 </template>
 
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
-import Button from '@/components/Button/Button.vue';
 import NFTItem from '@/components/NFT/NFTItem.vue';
 import NFTDetail from '@/components/NFT/NFTDetails.vue';
 import NFTBadges from '@/components/NFT/NFTBadges.vue';
@@ -60,14 +40,17 @@ import RSS3 from '@/common/rss3';
 import { NFT, NFTResponse } from '@/common/types';
 import config from '@/config';
 import utils from '@/common/utils';
+import TransBarCard from '@/components/Card/TransBarCard.vue';
+import Header from '@/components/Common/Header.vue';
 
 @Options({
     name: 'SingleNFT',
-    components: { Button, NFTDetail, NFTItem, NFTBadges },
+    components: { NFTDetail, NFTItem, NFTBadges, TransBarCard, Header },
 })
 export default class SingleNFT extends Vue {
     rns: string = '';
     ethAddress: string = '';
+    rss3Profile: any = {};
     private details: NFT = {
         chain: 'Ethereum.NFT',
         token_id: '',
@@ -85,11 +68,12 @@ export default class SingleNFT extends Vue {
 
         utils.subDomainModeRedirect(this.rns);
 
+        this.rss3Profile = pageOwner.profile;
+
         const platform: string = String(this.$route.params.platform);
         const identity: string = String(this.$route.params.identity);
         const id: string = String(this.$route.params.id);
         const type: string = String(this.$route.params.type);
-        // const id: string = String(this.$route.params.id);
 
         const nftData = (await utils.loadAssets([
             {

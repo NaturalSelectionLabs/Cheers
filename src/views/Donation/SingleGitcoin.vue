@@ -1,11 +1,13 @@
 <template>
-    <div class="h-screen bg-gitcoin-bg overflow-y-auto">
+    <div class="h-screen bg-gradient-to-tr from-blue-400 to-blue-200 via-blue-100 overflow-y-auto">
         <div class="m-auto pb-20 pt-8 px-4 max-w-screen-lg">
             <Header :ethAddress="ethAddress" :rns="rns" :rss3Profile="rss3Profile" list="gitcoins" />
-            <section class="flex flex-col gap-y-8 m-auto max-w-screen-sm">
-                <GitcoinItem :imageUrl="grant.logo" size="contain" />
-                <GitcoinDetails :details="grant" :donationInfo="donationInfo" />
-            </section>
+            <div class="py-12 bg-white bg-opacity-50 rounded-xl">
+                <section class="flex flex-col gap-y-8 m-auto max-w-screen-sm">
+                    <GitcoinItem :imageUrl="grant.logo" size="contain" />
+                    <GitcoinDetails :details="grant" :donationInfo="donationInfo" />
+                </section>
+            </div>
         </div>
     </div>
 </template>

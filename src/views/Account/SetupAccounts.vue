@@ -1,133 +1,170 @@
 <template>
-    <div class="h-screen text-body-text bg-body-bg overflow-y-auto">
-        <div class="m-auto pb-32 pt-8 px-4 max-w-screen-lg">
-            <Header title="Manage Accounts" theme="account" :avatar="avatar" />
-            <section class="grid gap-4 grid-cols-1 md:grid-cols-2">
-                <Card
-                    title="Default"
-                    color-title="text-account-title"
-                    color-tips="text-account-title"
-                    color-background="bg-body-bg"
-                    class="w-full border-account-border"
-                    :is-having-content="true"
-                >
-                    <template #content>
-                        <div class="relative">
-                            <EVMpAccountItem
-                                class="shadow-account-sm inline-flex m-0.5 rounded-full"
-                                :size="64"
-                                chain="Ethereum"
-                                :address="ethAddress"
-                                :enable-tooltip="true"
-                            />
-                        </div>
-                    </template>
-                </Card>
-                <Card
-                    title="Listed"
-                    color-title="text-account-title"
-                    color-tips="text-account-title"
-                    :color-background="mode === 'normal' ? 'bg-account-bg' : 'bg-card-overlay'"
-                    class="mb-4 w-full border-account-border md:col-start-1"
-                    :is-having-content="true"
-                    :tips="mode !== 'delete' ? 'Drag here to show and reorder' : 'Delete unwanted accounts'"
-                >
-                    <template #header-button>
-                        <div class="flex flex-row gap-2">
-                            <Button
-                                v-if="mode === 'delete'"
-                                size="sm"
-                                class="w-8 h-8 text-account-btn-s-text bg-account-btn-s shadow-account-btn-s"
-                                @click="mode = 'normal'"
-                            >
-                                <i class="bx bx-check bx-xs" />
-                            </Button>
-                            <Button
-                                v-else
-                                size="sm"
-                                class="w-8 h-8 text-account-btn-s-text bg-account-btn-s shadow-account-btn-s"
-                                @click="mode = 'delete'"
-                            >
-                                <i class="bx bx-minus bx-xs" />
-                            </Button>
-                            <Button
-                                v-if="mode === 'add'"
-                                size="sm"
-                                class="w-8 h-8 text-account-btn-s-text bg-account-btn-s shadow-account-btn-s"
-                                @click="mode = 'normal'"
-                            >
-                                <i class="bx bx-x bx-xs" />
-                            </Button>
-                            <Button
-                                v-else
-                                size="sm"
-                                class="w-8 h-8 text-account-btn-m-text bg-account-btn-m shadow-account-btn-s"
-                                @click="mode = 'add'"
-                            >
-                                <i class="bx bx-plus bx-xs" />
-                            </Button>
-                        </div>
-                    </template>
-                    <template #content>
-                        <div v-if="mode === 'add'" class="text-center md:h-screen-30">
-                            <div>
+    <div
+        class="
+            h-screen
+            text-body-text
+            bg-body-bg bg-gradient-to-tr
+            from-blue-400
+            to-blue-200
+            via-blue-100
+            overflow-y-auto
+        "
+    >
+        <div class="flex flex-col m-auto pt-8 px-4 max-w-screen-lg h-full">
+            <Header title="Manage Accounts" :avatar="avatar" />
+
+            <div class="flex flex-col flex-grow gap-4 pb-8 h-0 md:flex-row">
+                <section class="flex flex-col gap-4 h-1/2 md:w-3/5 md:h-full md:overflow-y-auto">
+                    <TransBarCard title="Default" :have-details="true">
+                        <template #details>
+                            <div class="relative">
                                 <EVMpAccountItem
-                                    class="inline-flex m-0.5 rounded-full shadow-account cursor-pointer"
+                                    class="shadow-account-sm inline-flex m-0.5 rounded-full"
                                     :size="64"
-                                    @click="addMetamaskAccount"
+                                    chain="Ethereum"
+                                    :address="ethAddress"
+                                    :enable-tooltip="true"
                                 />
                             </div>
-                            <div>
-                                <AccountItem
-                                    v-for="platform in additionalNoSignAccounts"
-                                    :key="platform"
-                                    class="inline-flex m-0.5 rounded-full shadow-account cursor-pointer"
-                                    :size="64"
-                                    :chain="platform"
-                                    @click="addNoSignAccount(platform)"
-                                />
-                            </div>
-                        </div>
-                        <div v-else-if="mode === 'delete'" class="md:h-screen-30">
-                            <div>
-                                <div
-                                    class="inline-flex m-0.5 rounded-full shadow-account cursor-pointer"
-                                    v-for="(item, index) in show"
-                                    :key="item.id"
+                        </template>
+                    </TransBarCard>
+                    <TransBarCard
+                        title="Listed"
+                        class="h-full"
+                        :tips="mode !== 'delete' ? 'Drag here to show and reorder' : 'Delete unwanted accounts'"
+                        :have-details="true"
+                    >
+                        <template #header>
+                            <div class="flex flex-row gap-2">
+                                <Button
+                                    v-if="mode === 'delete'"
+                                    size="sm"
+                                    class="w-8 h-8 text-account-btn-s-text bg-account-btn-s shadow-account-btn-s"
+                                    @click="mode = 'normal'"
                                 >
+                                    <i class="bx bx-check bx-xs" />
+                                </Button>
+                                <Button
+                                    v-else
+                                    size="sm"
+                                    class="w-8 h-8 text-account-btn-s-text bg-account-btn-s shadow-account-btn-s"
+                                    @click="mode = 'delete'"
+                                >
+                                    <i class="bx bx-minus bx-xs" />
+                                </Button>
+                                <Button
+                                    v-if="mode === 'add'"
+                                    size="sm"
+                                    class="w-8 h-8 text-account-btn-s-text bg-account-btn-s shadow-account-btn-s"
+                                    @click="mode = 'normal'"
+                                >
+                                    <i class="bx bx-x bx-xs" />
+                                </Button>
+                                <Button
+                                    v-else
+                                    size="sm"
+                                    class="w-8 h-8 text-account-btn-m-text bg-account-btn-m shadow-account-btn-s"
+                                    @click="mode = 'add'"
+                                >
+                                    <i class="bx bx-plus bx-xs" />
+                                </Button>
+                            </div>
+                        </template>
+                        <template #details>
+                            <div v-if="mode === 'add'" class="text-center md:h-screen-30">
+                                <div>
                                     <EVMpAccountItem
-                                        v-if="parseAccount(item.id).platform === 'EVM+'"
+                                        class="inline-flex m-0.5 rounded-full shadow-account cursor-pointer"
                                         :size="64"
-                                        :address="parseAccount(item.id).identity"
-                                        :enable-tooltip="true"
-                                        :delete-mode="true"
-                                        @delete-account="deleteAccount(index)"
+                                        @click="addMetamaskAccount"
                                     />
+                                </div>
+                                <div>
                                     <AccountItem
-                                        v-else
+                                        v-for="platform in additionalNoSignAccounts"
+                                        :key="platform"
+                                        class="inline-flex m-0.5 rounded-full shadow-account cursor-pointer"
                                         :size="64"
-                                        :chain="parseAccount(item.id).platform"
-                                        :address="parseAccount(item.id).identity"
-                                        :enable-tooltip="true"
-                                        :delete-mode="true"
-                                        @delete-account="deleteAccount(index)"
+                                        :chain="platform"
+                                        @click="addNoSignAccount(platform)"
                                     />
                                 </div>
                             </div>
-                        </div>
-                        <div v-else>
+                            <div v-else-if="mode === 'delete'" class="md:h-screen-30">
+                                <div>
+                                    <div
+                                        class="inline-flex m-0.5 rounded-full shadow-account cursor-pointer"
+                                        v-for="(item, index) in show"
+                                        :key="item.id"
+                                    >
+                                        <EVMpAccountItem
+                                            v-if="parseAccount(item.id).platform === 'EVM+'"
+                                            :size="64"
+                                            :address="parseAccount(item.id).identity"
+                                            :enable-tooltip="true"
+                                            :delete-mode="true"
+                                            @delete-account="deleteAccount(index)"
+                                        />
+                                        <AccountItem
+                                            v-else
+                                            :size="64"
+                                            :chain="parseAccount(item.id).platform"
+                                            :address="parseAccount(item.id).identity"
+                                            :enable-tooltip="true"
+                                            :delete-mode="true"
+                                            @delete-account="deleteAccount(index)"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                            <div v-else class="flex flex-col h-full">
+                                <draggable
+                                    class="flex-grow h-0 overflow-y-auto"
+                                    :list="show"
+                                    group="accounts"
+                                    itemKey="chain"
+                                    :animation="200"
+                                >
+                                    <template #item="{ element }">
+                                        <div class="inline-flex m-0.5 rounded-full" style="cursor: grab">
+                                            <EVMpAccountItem
+                                                v-if="parseAccount(element.id).platform === 'EVM+'"
+                                                :size="64"
+                                                :address="parseAccount(element.id).identity"
+                                                :enable-tooltip="true"
+                                            />
+                                            <AccountItem
+                                                v-else
+                                                :size="64"
+                                                :chain="parseAccount(element.id).platform"
+                                                :address="parseAccount(element.id).identity"
+                                                :enable-tooltip="true"
+                                            />
+                                        </div>
+                                    </template>
+                                </draggable>
+                            </div>
+                        </template>
+                    </TransBarCard>
+                </section>
+                <section class="flex flex-col gap-4 h-1/2 md:w-2/5 md:h-full">
+                    <TransBarCard
+                        title="Unlisted"
+                        class="h-full"
+                        tips="Drag here to hide"
+                        :is-secondary="true"
+                        :have-details="true"
+                    >
+                        <template #details>
                             <draggable
-                                class="min-h-20 md:h-screen-30 md:overflow-y-auto"
-                                :list="show"
+                                class="flex-grow h-0 overflow-y-auto"
+                                :list="hide"
                                 group="accounts"
                                 itemKey="chain"
                                 :animation="200"
                             >
                                 <template #item="{ element }">
-                                    <div
-                                        class="inline-flex m-0.5 rounded-full shadow-account-item"
-                                        style="cursor: grab"
-                                    >
+                                    <div class="inline-flex m-0.5 rounded-full" style="cursor: grab">
                                         <EVMpAccountItem
                                             v-if="parseAccount(element.id).platform === 'EVM+'"
                                             :size="64"
@@ -144,102 +181,27 @@
                                     </div>
                                 </template>
                             </draggable>
-                        </div>
-                    </template>
-                    <template #footer-button>
+                        </template>
+                    </TransBarCard>
+                    <div class="flex flex-row-reverse gap-5 m-auto px-4 py-2 w-full md:flex-col">
                         <Button
-                            size="sm"
-                            class="text-account-btn-s-text text-xs bg-account-btn-s shadow-account-btn-s"
-                            :class="{
-                                'bg-btn-disabled cursor-not-allowed text-opacity-20': show.length === 0,
-                            }"
-                            :disabled="show.length === 0"
-                            @click="hideAll"
+                            size="lg"
+                            class="flex-1 text-primary-btn-text text-lg bg-primary-btn shadow-primary-btn"
+                            @click="save"
                         >
-                            <span>Hide All</span>
+                            <span>Save</span>
                         </Button>
-                    </template>
-                </Card>
-                <Card
-                    title="Unlisted"
-                    color-title="text-account-title"
-                    color-tips="text-account-title"
-                    color-background="bg-card-hide"
-                    class="mb-4 w-full border-account-border md:col-start-2 md:row-span-2 md:row-start-1"
-                    :is-having-content="true"
-                    tips="Drag here to hide"
-                >
-                    <template #header-button>
                         <Button
-                            size="sm"
-                            class="text-account-btn-s-text text-xs bg-account-btn-s shadow-account-btn-s"
-                            :class="{
-                                'bg-btn-disabled cursor-not-allowed text-opacity-20': hide.length === 0,
-                            }"
-                            v-if="!isPCLayout"
-                            :disabled="hide.length === 0"
-                            @click="showAll"
+                            size="lg"
+                            class="flex-1 text-secondary-btn-text text-lg bg-secondary-btn shadow-secondary-btn"
+                            @click="back"
                         >
-                            <span>Show All</span>
+                            <span>Discard</span>
                         </Button>
-                    </template>
-                    <template #content>
-                        <draggable
-                            class="min-h-20 md:h-screen-60 md:overflow-y-auto"
-                            :list="hide"
-                            group="accounts"
-                            itemKey="chain"
-                            :animation="200"
-                        >
-                            <template #item="{ element }">
-                                <div class="inline-flex m-0.5 rounded-full" style="cursor: grab">
-                                    <EVMpAccountItem
-                                        v-if="parseAccount(element.id).platform === 'EVM+'"
-                                        :size="64"
-                                        :address="parseAccount(element.id).identity"
-                                        :enable-tooltip="true"
-                                    />
-                                    <AccountItem
-                                        v-else
-                                        :size="64"
-                                        :chain="parseAccount(element.id).platform"
-                                        :address="parseAccount(element.id).identity"
-                                        :enable-tooltip="true"
-                                    />
-                                </div>
-                            </template>
-                        </draggable>
-                    </template>
-                    <template #footer-button>
-                        <Button
-                            size="sm"
-                            class="text-account-btn-s-text text-xs bg-account-btn-s shadow-account-btn-s"
-                            :class="{
-                                'bg-btn-disabled cursor-not-allowed text-opacity-20': hide.length === 0,
-                            }"
-                            :disabled="hide.length === 0"
-                            v-if="isPCLayout"
-                            @click="showAll"
-                        >
-                            <span>Show All</span>
-                        </Button>
-                    </template>
-                </Card>
-            </section>
-            <div class="fixed bottom-0 left-0 right-0 flex gap-5 m-auto px-4 py-4 w-full max-w-md bg-btn-container">
-                <Button
-                    size="lg"
-                    class="flex-1 text-secondary-btn-text text-lg bg-secondary-btn shadow-secondary-btn"
-                    @click="back"
-                    ><span>Discard</span></Button
-                >
-                <Button
-                    size="lg"
-                    class="flex-1 text-primary-btn-text text-lg bg-primary-btn shadow-primary-btn"
-                    @click="save"
-                    ><span>Save</span></Button
-                >
+                    </div>
+                </section>
             </div>
+
             <LoadingContainer v-show="isLoading" />
 
             <Modal v-if="isShowingAddSpecifyAccountInput">
@@ -349,10 +311,12 @@ import Input from '@/components/Input/Input.vue';
 import EVMpAccountItem from '@/components/Account/EVMpAccountItem.vue';
 import Header from '@/components/Common/Header.vue';
 import utils from '@/common/utils';
+import TransBarCard from '@/components/Card/TransBarCard.vue';
 
 @Options({
     name: 'SetupAccounts',
     components: {
+        TransBarCard,
         EVMpAccountItem,
         Input,
         Modal,
