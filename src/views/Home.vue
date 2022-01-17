@@ -534,7 +534,7 @@ export default class Home extends Vue {
     notice: string = '';
     isShowingNotice: boolean = false;
 
-    isPCLayout: boolean = false;
+    isPCLayout: boolean = window.innerWidth > config.ui.md;
     isOwnerValidRSS3: boolean = false;
     ownerETHAddress: string = '';
 
@@ -551,10 +551,9 @@ export default class Home extends Vue {
     allClasses: string[] = Object.keys(this.classifiedList);
 
     async mounted() {
-        this.isPCLayout = window.innerWidth >= 768;
         window.onresize = () => {
             return (() => {
-                this.isPCLayout = window.innerWidth >= 768;
+                this.isPCLayout = window.innerWidth > config.ui.md;
             })();
         };
         this.mountScrollEvent();
@@ -960,6 +959,10 @@ export default class Home extends Vue {
         } else if (platform === 'Misskey') {
             const [username, instance] = user.split('@');
             link = `https://${instance}/notes/${content.target.action.payload}`;
+        } else if (platform === 'Jike') {
+            link = `https://${this.isPCLayout ? 'web' : 'm'}.okjike.com/${
+                this.isPCLayout ? 'originalPost' : 'originalPosts'
+            }/${content.target.action.payload}`;
         } else if (user === 'Mirror.XYZ') {
             link = content.target.action.payload;
         }
