@@ -11,7 +11,7 @@
         "
     >
         <div class="flex flex-col m-auto pt-8 px-4 max-w-screen-lg h-full">
-            <Header title="Manage Footprints" :avatar="avatar" />
+            <Header />
 
             <div class="flex flex-col flex-grow gap-4 pb-8 h-0 md:flex-row">
                 <section class="flex flex-col gap-4 h-1/2 md:w-3/5 md:h-full md:overflow-y-auto">

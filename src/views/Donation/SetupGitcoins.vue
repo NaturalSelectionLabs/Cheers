@@ -11,7 +11,7 @@
         "
     >
         <div class="flex flex-col m-auto pt-8 px-4 max-w-screen-lg h-full">
-            <Header title="Manage Donations" :avatar="avatar" />
+            <Header />
 
             <div class="flex flex-col flex-grow gap-4 pb-8 h-0 md:flex-row">
                 <section class="flex flex-col gap-4 h-1/2 md:w-3/5 md:h-full md:overflow-y-auto">
@@ -109,7 +109,6 @@ import config from '@/common/config';
     },
 })
 export default class SetupGitcoins extends Vue {
-    avatar: string = legacyConfig.defaultAvatar;
     isLoading: Boolean = false;
 
     show: DetailedDonation[] = [];
@@ -122,9 +121,6 @@ export default class SetupGitcoins extends Vue {
         await utils.tryEnsureOrRedirect(this.$route, this.$router);
         const loginUser = await RSS3.getLoginUser();
         await RSS3.setPageOwner(loginUser.address);
-        const profile = loginUser.profile;
-        this.avatar = profile?.avatar?.[0] || legacyConfig.defaultAvatar;
-
         // Get NFTs
         const { donations, hiddenDonations } = await utils.initAssets();
 

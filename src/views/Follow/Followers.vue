@@ -2,7 +2,7 @@
     <div class="h-screen bg-gradient-to-tr from-blue-400 to-blue-200 via-blue-100">
         <div class="h-full overflow-y-auto">
             <div class="m-auto pb-20 pt-8 px-4 max-w-screen-lg">
-                <Header :ethAddress="ethAddress" :rns="rns" :rss3Profile="rss3Profile" title="Followers" />
+                <Header />
                 <TransBarCard
                     :title="(rss3Profile.name ? rss3Profile.name + `'s ` : '') + 'Followers'"
                     :have-details="true"
@@ -66,8 +66,6 @@ import TransBarCard from '@/components/Card/TransBarCard.vue';
 export default class Followers extends Vue {
     followRenderList: Profile[] = [];
     rss3Profile: RSS3Profile = {};
-    rns: string = '';
-    ethAddress: string = '';
     lastRoute: string = '';
     isPageActive: boolean = false;
     loadingNo: number = 0;
@@ -84,10 +82,7 @@ export default class Followers extends Vue {
         const addrOrName = utils.getAddress(<string>this.$route.params.address);
         const pageOwner = await RSS3.setPageOwner(addrOrName);
 
-        this.ethAddress = pageOwner.address;
-        this.rns = pageOwner.name;
-
-        utils.subDomainModeRedirect(this.rns);
+        utils.subDomainModeRedirect(pageOwner.name);
 
         if (pageOwner.profile) {
             this.rss3Profile = pageOwner.profile;

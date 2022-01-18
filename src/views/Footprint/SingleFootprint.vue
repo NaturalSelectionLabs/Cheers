@@ -1,15 +1,9 @@
 <template>
     <div class="h-screen bg-gradient-to-tr from-blue-400 to-blue-200 via-blue-100 overflow-y-auto">
         <div class="m-auto pb-20 pt-8 px-4 max-w-screen-lg">
-            <Header
-                :ethAddress="ethAddress"
-                :rns="rns"
-                :rss3Profile="rss3Profile"
-                title="Footprint"
-                list="footprints"
-            />
-            <div class="py-12 bg-white bg-opacity-50 rounded-xl">
-                <section class="m-auto px-4 max-w-screen-sm">
+            <Header list="footprints" />
+            <div class="p-5 bg-white bg-opacity-50 rounded-xl md:py-12">
+                <section class="m-auto max-w-screen-sm">
                     <FootprintItem class="mb-4" :imageUrl="details.image_url" size="auto" />
                     <FootprintDetails :details="details" />
                 </section>
@@ -33,9 +27,6 @@ import Header from '@/components/Common/Header.vue';
     components: { Button, FootprintItem, FootprintDetails, Header },
 })
 export default class SingleFootprint extends Vue {
-    rns: string = '';
-    ethAddress: string = '';
-    rss3Profile: any = {};
     details: POAP = {
         id: 0,
         fancy_id: '',
@@ -55,13 +46,8 @@ export default class SingleFootprint extends Vue {
     async mounted() {
         const addrOrName = utils.getAddress(<string>this.$route.params.address);
         const pageOwner = await RSS3.setPageOwner(addrOrName);
-        this.ethAddress = pageOwner.address;
-        this.rns = pageOwner.name;
 
-        utils.subDomainModeRedirect(this.rns);
-
-        this.rss3Profile = await pageOwner.profile;
-
+        utils.subDomainModeRedirect(pageOwner.name);
         const platform: string = String(this.$route.params.platform);
         const identity: string = String(this.$route.params.identity);
         const id: string = String(this.$route.params.id);

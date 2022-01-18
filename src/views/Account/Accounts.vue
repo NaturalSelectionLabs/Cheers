@@ -1,7 +1,7 @@
 <template>
     <div class="h-screen bg-gradient-to-tr from-blue-400 to-blue-200 via-blue-100 overflow-y-auto">
         <div class="m-auto pb-32 pt-8 px-4 max-w-screen-lg">
-            <Header :ethAddress="ethAddress" :rns="rns" :rss3Profile="rss3Profile" />
+            <Header />
             <TransBarCard
                 :title="rss3Profile.name ? rss3Profile.name + `'s Accounts` : 'Accounts'"
                 :haveDetails="true"
@@ -90,12 +90,9 @@ import { formatter } from '@/common/address';
     components: { EVMpAccountItem, Button, AccountItem, Header, TransBarCard, AccountModal },
 })
 export default class Accounts extends Vue {
-    rns: string = '';
-    ethAddress: string = '';
     isOwner: boolean = false;
     accounts: DetailedAccount[] = [];
     lastRoute: string = '';
-    rss3Profile: RSS3Profile = {};
     isShowingAccount: boolean = false;
     showingAccountDetails: {
         address: string;
@@ -115,15 +112,9 @@ export default class Accounts extends Vue {
     async initLoad() {
         const addrOrName = utils.getAddress(<string>this.$route.params.address);
         const pageOwner = await RSS3.setPageOwner(addrOrName);
-        this.ethAddress = pageOwner.address;
-        this.rns = pageOwner.name;
         this.isOwner = RSS3.isNowOwner();
 
-        utils.subDomainModeRedirect(this.rns);
-
-        if (pageOwner.profile) {
-            this.rss3Profile = pageOwner.profile;
-        }
+        utils.subDomainModeRedirect(pageOwner.name);
 
         const { listed } = await utils.initAccounts();
         const accountDetails = listed.map((account) => RSS3Utils.id.parseAccount(account.id));

@@ -5,7 +5,6 @@
             gap-4
             items-start
             justify-start
-            px-5
             w-full
             text-black text-body-text
             border-card

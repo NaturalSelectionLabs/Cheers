@@ -46,6 +46,9 @@ const config = {
         groupLimit: 5,
         userLimit: 10,
     },
+    assets: {
+        brief: 7,
+    },
     ipfs: {
         download: {
             endpoint: 'https://infura-ipfs.io/ipfs',

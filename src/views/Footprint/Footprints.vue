@@ -1,7 +1,7 @@
 <template>
     <div id="main" class="h-screen bg-gradient-to-tr from-blue-400 to-blue-200 via-blue-100 overflow-y-auto">
         <div class="m-auto pb-32 pt-8 px-4 max-w-screen-lg">
-            <Header :ethAddress="ethAddress" :rns="rns" :rss3Profile="rss3Profile" />
+            <Header />
             <TransBarCard
                 :title="rss3Profile.name ? rss3Profile.name + `'s Footprints` : 'Footprints'"
                 :haveDetails="true"
