@@ -162,7 +162,7 @@ export default class Followers extends Vue {
         this.isPageActive = false;
     }
 
-    async toPublicPage(rns: string, ethAddress: string) {
+    toPublicPage(rns: string, ethAddress: string) {
         if (rns) {
             window.location.href = `//${rns}.${legacyConfig.subDomain.rootDomain}`;
         } else {
