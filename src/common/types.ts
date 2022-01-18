@@ -125,6 +125,10 @@ export interface GeneralAssetWithTags extends GeneralAsset {
     tags?: string[];
 }
 
+export interface GeneralAssetWithClass extends GeneralAsset {
+    class: string | undefined;
+}
+
 export interface ItemDetails {
     name: string | undefined;
     avatar: string;

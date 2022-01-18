@@ -421,7 +421,7 @@ import RNSUtils from '@/common/rns';
 import utils from '@/common/utils';
 import legacyConfig from '@/config';
 import GitcoinItem from '@/components/Donation/GitcoinItem.vue';
-import { Profile as ProfileInfo, GeneralAsset, DetailedNFT } from '@/common/types';
+import { Profile as ProfileInfo, GeneralAsset, DetailedNFT, GeneralAssetWithClass } from '@/common/types';
 
 import NFTIcon from '@/components/Icons/NFTIcon.vue';
 import GitcoinIcon from '@/components/Icons/GitcoinIcon.vue';
@@ -443,6 +443,7 @@ import AssetCard from '@/components/Card/AssetCard.vue';
 import config from '@/common/config';
 import Header from '@/components/Common/Header.vue';
 import AccountModal from '@/components/Account/AccountModal.vue';
+import { flattenDeep } from 'lodash';
 
 interface Relations {
     followers: string[];
@@ -665,11 +666,25 @@ export default class Home extends Vue {
         return assetDetails;
     }
 
-    async ivLoadNFT(refresh: boolean, assets: GeneralAsset[]): Promise<boolean> {
+    async ivLoadNFT(refresh: boolean, assets: GeneralAssetWithClass[]): Promise<boolean> {
         // Get NFTs
+        const classifiedBriefList: {
+            [className: string]: GeneralAssetWithClass[];
+        } = {};
 
-        const { nftsWithClassName } = await utils.initAssets();
+        await Promise.all(
+            assets.map((nft) => {
+                const className = nft.class || 'Vitrine';
+                if (!(className in classifiedBriefList)) {
+                    classifiedBriefList[className] = [];
+                }
+                if (classifiedBriefList[className].length < config.assets.brief) {
+                    classifiedBriefList[className].push(nft);
+                }
+            }),
+        );
 
+        const nftsWithClassName = flattenDeep(Object.values(classifiedBriefList));
         const displayedNFTsDetail = await utils.loadAssets(nftsWithClassName);
 
         const classifiedList: {
@@ -703,9 +718,6 @@ export default class Home extends Vue {
         );
         this.classifiedList = classifiedList;
         this.allClasses = Object.keys(this.classifiedList);
-
-        console.log(this.classifiedList);
-
         this.isLoadingAssets.NFT = false;
         return true;
     }
@@ -736,9 +748,9 @@ export default class Home extends Vue {
         let isFinish: boolean;
         const allAssets = await utils.initAssets();
         const result = await Promise.all([
-            this.ivLoadNFT(refresh, allAssets.nfts),
-            this.ivLoadGitcoin(refresh, allAssets.donations),
-            this.ivLoadFootprint(refresh, allAssets.footprints),
+            this.ivLoadNFT(refresh, allAssets.nftsWithClassName),
+            this.ivLoadGitcoin(refresh, allAssets.donations.slice(0, config.assets.brief)),
+            this.ivLoadFootprint(refresh, allAssets.footprints.slice(0, config.assets.brief)),
         ]);
         isFinish = result[0] && result[1] && result[2];
         if (isFinish) {
