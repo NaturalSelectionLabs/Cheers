@@ -8,18 +8,19 @@
                 'badge-header': location === 'header',
             }"
             :style="{ backgroundImage: `url(${collectionImg})` }"
-        ></div>
+        />
         <div
             class="badge bg-white"
             :class="{
                 'bg-BSC': chain === 'BSC.NFT',
                 'bg-Ethereum': chain === 'Ethereum.NFT',
                 'bg-Polygon': chain === 'Polygon.NFT',
+                'bg-Arbitrum': chain === 'Arbitrum.NFT',
                 'bg-Ronin': chain === 'Ronin.NFT',
                 'badge-overlay': location === 'overlay',
                 'badge-header': location === 'header',
             }"
-        ></div>
+        />
     </div>
 </template>
 

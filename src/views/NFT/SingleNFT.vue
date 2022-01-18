@@ -23,7 +23,7 @@
                             size="contain"
                             :is-showing-details="true"
                         />
-                        <NFTDetail :chain="details.chain" :details="details" :market="market" />
+                        <NFTDetail :chain="details.chain.split('.')[0]" :details="details" />
                     </div>
                 </template>
             </TransBarCard>
@@ -55,7 +55,6 @@ export default class SingleNFT extends Vue {
             address: '',
         },
     };
-    private market: string = 'opensea';
 
     async mounted() {
         const addrOrName = utils.getAddress(<string>this.$route.params.address);
