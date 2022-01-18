@@ -73,9 +73,11 @@ export default class Header extends Vue {
     isdisplayDialog: boolean = false;
 
     async mounted() {
-        this.rss3Profile = await RSS3.ensureLoginUser();
-        this.rns = this.rss3Profile.name;
-        this.ethAddress = this.rss3Profile.address;
+        if (RSS3.isValidRSS3()) {
+            this.rss3Profile = await RSS3.ensureLoginUser();
+            this.rns = this.rss3Profile.name;
+            this.ethAddress = this.rss3Profile.address;
+        }
     }
 
     toggleDialog() {
