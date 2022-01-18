@@ -1,14 +1,20 @@
 <template>
     <div class="flex flex-col items-center p-4 bg-white bg-opacity-50 border-card rounded box-border md:p-6">
-        <div class="grid gap-x-6 gap-y-2 grid-cols-3 content-center items-center w-full">
-            <ImgHolder class="col-span-1 w-22 h-22" :is-rounded="true" :is-border="false" :src="avatar" />
-            <div class="stats-container row-span-1 self-end ml-2 leading-5" @click="toFollowersPage">
+        <div class="grid gap-x-6 gap-y-2 grid-cols-3 content-center items-center w-full md:grid-cols-5">
+            <ImgHolder class="col-span-1 col-start-1 w-22 h-22" :is-rounded="true" :is-border="false" :src="avatar" />
+            <div
+                class="stats-container row-span-1 self-end ml-2 leading-5 md:col-span-1 md:col-start-2"
+                @click="toFollowersPage"
+            >
                 <div class="stats-number">
                     {{ followers }}
                 </div>
                 <div class="stats-type">Followers</div>
             </div>
-            <div class="stats-container row-span-1 self-end leading-5" @click="toFollowingsPage">
+            <div
+                class="stats-container row-span-1 self-end leading-5 md:col-span-1 md:col-start-3"
+                @click="toFollowingsPage"
+            >
                 <div class="stats-number">
                     {{ followings }}
                 </div>
@@ -37,7 +43,7 @@
             <div class="bio col-span-full whitespace-pre-line font-normal">
                 {{ bio }}
             </div>
-            <div class="col-span-full md:col-span-2">
+            <div class="col-span-full md:col-span-2 md:col-start-4 md:row-span-1 md:row-start-1 md:self-end md:pb-2">
                 <slot name="Toolbar" />
             </div>
         </div>
