@@ -12,13 +12,7 @@
         "
     >
         <div v-if="isAccountExist" class="m-auto pb-12 pt-8 px-4 max-w-screen-lg">
-            <Header
-                :ethAddress="ethAddress"
-                :rns="rns"
-                :avatar="rss3Profile.avatar"
-                :rss3Profile="rss3Profile"
-                :displayLogo="true"
-            />
+            <Header :displayLogo="true" />
             <div class="flex flex-col gap-4 md:flex-row">
                 <section class="md:w-3/5">
                     <div class="affix-container sticky flex flex-col gap-4">
@@ -73,7 +67,6 @@
                                     :isFollowing="isFollowing"
                                     :is-loading-persona="isLoadingPersona"
                                     @to-setup-page="toSetupPage"
-                                    @logout="logout"
                                     @toggleFollow="toggleFollow"
                                 />
                             </template>
@@ -174,7 +167,7 @@
                                             item.detail.animation_original_url ||
                                             defaultAvatar
                                         "
-                                        size="md"
+                                        size="sm"
                                         @click="toSingleItemPage(item.id)"
                                     />
                                 </template>
@@ -568,7 +561,6 @@ export default class Home extends Vue {
 
         this.isLoadingPersona = true;
         const aon = utils.getAddress(<string>this.$route.params.address);
-        console.log(aon);
         const pageOwner = await RSS3.setPageOwner(aon);
         this.isShowingAccount = false;
 
@@ -1029,21 +1021,6 @@ export default class Home extends Vue {
                 ? `https://${this.rns}.${legacyConfig.subDomain.rootDomain}`
                 : `https://${legacyConfig.subDomain.rootDomain}/${this.ethAddress}`,
         );
-    }
-
-    async logout() {
-        if (confirm('Are you sure to logout?')) {
-            (<HTMLLinkElement>document.getElementById('favicon')).href = '/favicon.ico';
-            document.title = 'Web3 Pass';
-
-            await RSS3.disconnect();
-            if (legacyConfig.subDomain.isSubDomainMode) {
-                window.location.href = '//' + legacyConfig.subDomain.rootDomain;
-            } else {
-                await this.$router.push('/');
-            }
-            this.lastRoute = '';
-        }
     }
 
     mountScrollEvent() {

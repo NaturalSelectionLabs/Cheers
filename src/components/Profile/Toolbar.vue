@@ -31,9 +31,6 @@
                 <span>Edit Profile</span>
                 <i class="bx bx-pencil bx-sm"></i>
             </Button>
-            <Button size="sm" class="w-13 text-secondary-btn-text text-lg bg-secondary-btn" @click="emitLogout">
-                <i class="bx bx-log-out bx-sm"></i>
-            </Button>
         </div>
     </section>
 </template>
@@ -51,7 +48,7 @@ import Button from '@/components/Button/Button.vue';
         isFollowing: Boolean,
         isOwner: Boolean,
     },
-    emits: ['toggleFollow', 'toSetupPage', 'logout'],
+    emits: ['toggleFollow', 'toSetupPage'],
 })
 export default class Toolbar extends Vue {
     emitToggleFollow() {
@@ -60,10 +57,6 @@ export default class Toolbar extends Vue {
 
     emitSetUp() {
         this.$emit('toSetupPage');
-    }
-
-    emitLogout() {
-        this.$emit('logout');
     }
 }
 </script>

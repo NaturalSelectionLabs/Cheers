@@ -1,5 +1,5 @@
 <template>
-    <div class="flex items-center justify-between pb-4">
+    <div class="relative flex items-center justify-between pb-4">
         <Logo v-if="displayLogo" class="w-10 h-10 cursor-pointer" />
         <div
             v-else
@@ -9,14 +9,42 @@
             <i class="bx bx-chevron-left bx-sm" />
         </div>
         <ImgHolder
-            class="inline-flex my-auto w-10 h-10"
-            :class="{ 'cursor-pointer': rns && ethAddress }"
+            class="inline-flex my-auto w-10 h-10 cursor-pointer"
             :is-rounded="true"
             :is-border="false"
-            :src="avatar || rss3Profile?.avatar?.[0] || defaultAvatar"
-            :alt="rss3Profile?.username || ''"
-            @click="toPublicPage(rns, ethAddress)"
+            :src="rss3Profile?.profile?.avatar?.[0] || defaultAvatar"
+            :alt="rns || ethAddress || ''"
+            @click="toggleDialog()"
         />
+        <div
+            v-if="rss3Profile && isdisplayDialog"
+            class="
+                absolute
+                z-50
+                bottom-0
+                right-0
+                flex flex-col
+                gap-2
+                justify-center
+                p-5
+                w-32
+                text-primary-text
+                bg-white
+                rounded
+                shadow-md
+                transform
+                translate-y-full
+            "
+        >
+            <div class="flex flex-row gap-2 items-center cursor-pointer" @click="toPublicPage">
+                <i class="bx bx-user bx-xs" />
+                Home
+            </div>
+            <div class="flex flex-row gap-2 items-center cursor-pointer" @click="logout">
+                <i class="bx bx-log-out bx-xs" />
+                Logout
+            </div>
+        </div>
     </div>
 </template>
 
@@ -24,31 +52,35 @@
 import { Options, Vue } from 'vue-class-component';
 import Button from '@/components/Button/Button.vue';
 import ImgHolder from '@/components/Common/ImgHolder.vue';
-import config from '@/config';
-import { AnyObject } from 'rss3/types/extend';
 import Logo from '@/components/Icons/Logo.vue';
+import RSS3 from '@/common/rss3';
+import config from '@/config';
 
 @Options({
     name: 'Header',
     components: { ImgHolder, Button, Logo },
     props: {
-        avatar: String,
-        rss3Profile: Object,
-        title: String,
-        ethAddress: String,
-        rns: String,
         list: String,
         displayLogo: Boolean,
     },
 })
 export default class Header extends Vue {
-    avatar!: string;
-    rss3Profile!: AnyObject;
-    title!: string;
-    ethAddress!: string;
-    rns!: string;
+    rss3Profile: any;
+    ethAddress: string = '';
+    rns: string = '';
     list!: string;
     defaultAvatar = config.defaultAvatar;
+    isdisplayDialog: boolean = false;
+
+    async mounted() {
+        this.rss3Profile = await RSS3.ensureLoginUser();
+        this.rns = this.rss3Profile.name;
+        this.ethAddress = this.rss3Profile.address;
+    }
+
+    toggleDialog() {
+        this.isdisplayDialog = !this.isdisplayDialog;
+    }
 
     back() {
         if (window.history.state.back) {
@@ -64,12 +96,26 @@ export default class Header extends Vue {
         }
     }
 
-    toPublicPage(rns: string, ethAddress: string) {
-        if (rns && ethAddress) {
-            if (rns && config.subDomain.isSubDomainMode) {
+    toPublicPage() {
+        if (this.rns && this.ethAddress) {
+            if (this.rns && config.subDomain.isSubDomainMode) {
                 this.$router.push('/');
             } else {
-                this.$router.push(`/${rns || ethAddress}`);
+                this.$router.push(`/${this.rns || this.ethAddress}`);
+            }
+        }
+    }
+
+    async logout() {
+        if (confirm('Are you sure to logout?')) {
+            (<HTMLLinkElement>document.getElementById('favicon')).href = '/favicon.ico';
+            document.title = 'Web3 Pass';
+
+            await RSS3.disconnect();
+            if (config.subDomain.isSubDomainMode) {
+                window.location.href = '//' + config.subDomain.rootDomain;
+            } else {
+                await this.$router.push('/');
             }
         }
     }
