@@ -4,9 +4,9 @@
             class="flex-shrink m-0.5 w-22 h-22 bg-cover bg-center bg-no-repeat rounded-2xl md:w-28 md:h-28"
             :style="{ backgroundImage: `url(${imageUrl})` }"
         />
-        <div class="flex-1 pl-8 w-0">
+        <div class="flex-1 pl-8 w-0 text-sm md:text-base">
             <p>{{ date }}</p>
-            <div class="line-clamp-3 font-semibold">
+            <div class="line-clamp-3">
                 <span class="text-primary-text">{{ username + ' contributed ' }}</span>
                 {{ amount.formatedAmount + ' ' + amount.symbol }}
                 <span class="text-primary-text"> to </span>{{ title }}

@@ -16,7 +16,7 @@
                     />
                 </template>
                 <template #details>
-                    <div class="flex flex-col gap-4 m-auto py-4 w-full max-w-screen-sm">
+                    <div class="flex flex-col gap-4 m-auto py-4 w-full max-w-screen-sm md:py-8">
                         <NFTItem
                             :imageUrl="details.animation_url || details.image_url"
                             :poster-url="details.image_url"

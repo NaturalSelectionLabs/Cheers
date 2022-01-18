@@ -8,8 +8,8 @@
                 title="Footprint"
                 list="footprints"
             />
-            <div class="py-12 bg-white bg-opacity-50 rounded-xl">
-                <section class="m-auto px-4 max-w-screen-sm">
+            <div class="p-5 bg-white bg-opacity-50 rounded-xl md:py-12">
+                <section class="m-auto max-w-screen-sm">
                     <FootprintItem class="mb-4" :imageUrl="details.image_url" size="auto" />
                     <FootprintDetails :details="details" />
                 </section>
