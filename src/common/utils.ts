@@ -65,6 +65,7 @@ async function initAssets() {
     const nfts = parsedAssets?.filter((asset) => asset.type.split('.')[1] === 'NFT');
     const nftRecords =
         ((await apiUserPersona.items.getListByPersona({
+            limit: 99999,
             persona: pageOwner.address,
             tsp: '',
             fieldLike: 'NFT',
