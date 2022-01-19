@@ -18,7 +18,7 @@ import { formatDate } from '@/common/timeStamp';
 @Options({
     props: {
         imageUrl: String,
-        timestamp: Number,
+        timestamp: String,
         username: String,
         name: String,
         size: String,
@@ -29,11 +29,16 @@ import { formatDate } from '@/common/timeStamp';
     },
 })
 export default class AssetCard extends Vue {
-    timestamp!: number;
+    timestamp!: string;
     date: string = '';
 
     mounted() {
-        this.date = this.timestamp ? formatDate(this.timestamp.toString()) : 'After the birth of the universe';
+        if (this.timestamp) {
+            let time = new Date(this.timestamp).getTime() / 1000;
+            this.date = formatDate(time.toString());
+        } else {
+            this.date = 'After the birth of the universe';
+        }
     }
 
     getTitle(type: string) {

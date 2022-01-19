@@ -121,7 +121,7 @@ export default class SetupGitcoins extends Vue {
         await utils.tryEnsureOrRedirect(this.$route, this.$router);
         const loginUser = await RSS3.getLoginUser();
         await RSS3.setPageOwner(loginUser.address);
-        // Get NFTs
+        // Get donations
         const { donations, hiddenDonations } = await utils.initAssets();
 
         this.show = await utils.loadAssets(donations);

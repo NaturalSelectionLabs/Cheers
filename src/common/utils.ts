@@ -63,14 +63,27 @@ async function initAssets() {
     const parsedAssets = orderedAssetList?.map((asset) => RSS3Utils.id.parseAsset(asset));
 
     const nfts = parsedAssets?.filter((asset) => asset.type.split('.')[1] === 'NFT');
+    const nftRecords =
+        ((await apiUserPersona.items.getListByPersona({
+            persona: pageOwner.address,
+            tsp: '',
+            fieldLike: 'NFT',
+        })) as RSS3AutoItem[]) || [];
+
     const nftsWithClassName = nfts.map((nft) => {
         return {
             ...nft,
             class: validTaggedList.find(
                 (asset) => asset.id === RSS3Utils.id.getAsset(nft.platform, nft.identity, nft.type, nft.uniqueID),
             )?.class,
+            timestamp: nftRecords.find(
+                (asset) =>
+                    asset.target.field.slice(7) ===
+                    RSS3Utils.id.getAsset(nft.platform, nft.identity, nft.type, nft.uniqueID),
+            )?.date_updated,
         };
     });
+
     const donations = parsedAssets?.filter((asset) => asset.type.split('.')[1] === 'Donation');
     const footprints = parsedAssets?.filter((asset) => asset.type.split('.')[1] === 'POAP');
 
@@ -123,39 +136,6 @@ async function loadAssets(parsedAssets: GeneralAsset[]) {
     return res;
 }
 
-async function getAssetsTillSuccess(assetSet: Set<string>, delay: number = 1500, count: number = 5) {
-    const apiUserPersona = RSS3.getAPIUser().persona as IRSS3;
-    return new Promise<(NFTResponse | GitcoinResponse | POAPResponse)[]>(async (resolve, reject) => {
-        const tryReq = async () => {
-            try {
-                const details = (await apiUserPersona.assets.getDetails({
-                    assets: Array.from(assetSet),
-                    full: true,
-                })) as (NFTResponse | GitcoinResponse | POAPResponse)[];
-                if (details) {
-                    resolve(details);
-                    return true;
-                }
-            } catch (e) {
-                reject(e);
-            }
-            return false;
-        };
-
-        if (!(await tryReq())) {
-            let iv = setInterval(async () => {
-                count--;
-                if (count < 0) {
-                    resolve([]);
-                    clearInterval(iv);
-                } else if (await tryReq()) {
-                    clearInterval(iv);
-                }
-            }, delay);
-        }
-    });
-}
-
 async function initAccounts(pageOwner = RSS3.getPageOwner()) {
     const listed: RSS3Account[] = [];
     const unlisted: RSS3Account[] = [];
@@ -173,11 +153,6 @@ async function initAccounts(pageOwner = RSS3.getPageOwner()) {
         listed: utils.sortByOrderTag(listed),
         unlisted,
     };
-}
-
-function isAsset(field: string | undefined): boolean {
-    const condition = ['NFT', 'POAP', 'Gitcoin'];
-    return !!(field && condition.find((item) => field.includes(item)));
 }
 
 async function initContent(timestamp: string = '') {

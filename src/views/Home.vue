@@ -140,11 +140,7 @@
                                         :image-url="
                                             item.detail.animation_url || item.detail.image_preview_url || defaultAvatar
                                         "
-                                        :timestamp="
-                                            item.detail.asset_contract.created_date
-                                                ? Date.parse(item.detail.asset_contract.created_date) / 1000
-                                                : undefined
-                                        "
+                                        :timestamp="item.timestamp"
                                         size="sm"
                                         :type="className"
                                         :name="item.detail.name"
@@ -155,7 +151,7 @@
                                 <template #content>
                                     <NFTItem
                                         class="mr-1 cursor-pointer"
-                                        v-for="item in classifiedList[className].slice(4)"
+                                        v-for="item in classifiedList[className].slice(3)"
                                         :key="item.id"
                                         :image-url="
                                             item.detail.animation_url || item.detail.image_preview_url || defaultAvatar
@@ -695,9 +691,13 @@ export default class Home extends Vue {
                     classifiedList[className] = [];
                 }
                 classifiedList[className].push(
-                    displayedNFTsDetail.find(
-                        (dNFT) => dNFT.id === RSS3Utils.id.getAsset(nft.platform, nft.identity, nft.type, nft.uniqueID),
-                    ) || {},
+                    {
+                        ...displayedNFTsDetail.find(
+                            (dNFT) =>
+                                dNFT.id === RSS3Utils.id.getAsset(nft.platform, nft.identity, nft.type, nft.uniqueID),
+                        ),
+                        timestamp: nft.timestamp,
+                    } || {},
                 );
             }),
         );

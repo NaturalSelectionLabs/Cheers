@@ -70,11 +70,7 @@
                             v-for="item in nfts"
                             :key="item.id"
                             :image-url="item.detail.animation_url || item.detail.image_preview_url || defaultAvatar"
-                            :timestamp="
-                                item.detail.asset_contract.created_date
-                                    ? Date.parse(item.detail.asset_contract.created_date) / 1000
-                                    : undefined
-                            "
+                            :timestamp="item.timestamp"
                             size="xl"
                             :type="title"
                             :name="item.detail.name"
@@ -115,7 +111,7 @@ import config from '@/common/config';
 import { debounce, filter } from 'lodash';
 import utils from '@/common/utils';
 import Header from '@/components/Common/Header.vue';
-import { DetailedNFT, GeneralAsset } from '@/common/types';
+import { DetailedNFT, GeneralAssetWithClass } from '@/common/types';
 import IntersectionObserverContainer from '@/components/Common/IntersectionObserverContainer.vue';
 import TransBarCard from '@/components/Card/TransBarCard.vue';
 import { formatter } from '@/common/address';
@@ -135,7 +131,7 @@ export default class NFTs extends Vue {
     $gtag: any;
     scrollTop: number = 0;
     lastRoute: string = '';
-    assetList: GeneralAsset[] = [];
+    assetList: GeneralAssetWithClass[] = [];
     assetsStartIndex: number = 0;
     isLoadingAssets: boolean = true;
     isHavingMoreAssets: boolean = true;
@@ -179,7 +175,15 @@ export default class NFTs extends Vue {
                 endIndex = this.assetList.length;
                 this.isHavingMoreAssets = false;
             }
-            this.nfts = this.nfts.concat(await utils.loadAssets(this.assetList.slice(this.assetsStartIndex, endIndex)));
+            const nftDetailsList = await utils.loadAssets(this.assetList.slice(this.assetsStartIndex, endIndex));
+            this.assetList.map((nft) => {
+                this.nfts.push({
+                    ...nftDetailsList.find(
+                        (dNFT) => dNFT.id === RSS3Utils.id.getAsset(nft.platform, nft.identity, nft.type, nft.uniqueID),
+                    ),
+                    timestamp: nft.timestamp,
+                });
+            });
             this.assetsStartIndex = endIndex;
             this.isLoadingAssets = false;
         }
