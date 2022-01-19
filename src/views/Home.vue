@@ -1040,8 +1040,6 @@ export default class Home extends Vue {
             if (el) {
                 el.scrollTop = this.scrollTop;
             }
-
-            await this.updateUserInfo();
         } else {
             this.contents = [];
             this.contentTimestamp = '';

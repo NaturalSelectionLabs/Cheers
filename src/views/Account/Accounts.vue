@@ -93,6 +93,7 @@ export default class Accounts extends Vue {
     isOwner: boolean = false;
     accounts: DetailedAccount[] = [];
     lastRoute: string = '';
+    rss3Profile: RSS3Profile = {};
     isShowingAccount: boolean = false;
     showingAccountDetails: {
         address: string;
@@ -115,6 +116,10 @@ export default class Accounts extends Vue {
         this.isOwner = RSS3.isNowOwner();
 
         utils.subDomainModeRedirect(pageOwner.name);
+
+        if (pageOwner.profile) {
+            this.rss3Profile = pageOwner.profile;
+        }
 
         const { listed } = await utils.initAccounts();
         const accountDetails = listed.map((account) => RSS3Utils.id.parseAccount(account.id));

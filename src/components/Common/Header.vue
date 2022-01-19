@@ -12,12 +12,12 @@
             class="inline-flex my-auto w-10 h-10 cursor-pointer"
             :is-rounded="true"
             :is-border="false"
-            :src="rss3Profile?.profile?.avatar?.[0] || defaultAvatar"
-            :alt="rns || ethAddress || ''"
+            :src="avatar"
+            :alt="rns || ethAddress || 'avatar'"
             @click="toggleDialog()"
         />
         <div
-            v-if="rss3Profile && isdisplayDialog"
+            v-if="isdisplayDialog && isLogin"
             class="
                 absolute
                 z-50
@@ -65,18 +65,21 @@ import config from '@/config';
     },
 })
 export default class Header extends Vue {
-    rss3Profile: any;
+    avatar: string = config.defaultAvatar;
+    isLogin: boolean = false;
     ethAddress: string = '';
     rns: string = '';
-    list!: string;
-    defaultAvatar = config.defaultAvatar;
+    list!: string | undefined;
+    displayLogo!: boolean;
     isdisplayDialog: boolean = false;
 
     async mounted() {
         if (RSS3.isValidRSS3()) {
-            this.rss3Profile = await RSS3.ensureLoginUser();
-            this.rns = this.rss3Profile.name;
-            this.ethAddress = this.rss3Profile.address;
+            const rss3Profile = (await RSS3.ensureLoginUser()) as any;
+            this.rns = rss3Profile.name;
+            this.ethAddress = rss3Profile.address;
+            this.avatar = rss3Profile?.profile?.avatar?.[0];
+            this.isLogin = true;
         }
     }
 
@@ -101,9 +104,9 @@ export default class Header extends Vue {
     toPublicPage() {
         if (this.rns && this.ethAddress) {
             if (this.rns && config.subDomain.isSubDomainMode) {
-                this.$router.push('/');
+                window.location.href = `//${this.rns}.${config.subDomain.rootDomain}`;
             } else {
-                this.$router.push(`/${this.rns || this.ethAddress}`);
+                window.location.href = `//${config.subDomain.rootDomain}/${this.ethAddress}`;
             }
         }
     }
