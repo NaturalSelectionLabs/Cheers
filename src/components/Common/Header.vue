@@ -13,38 +13,41 @@
             :is-rounded="true"
             :is-border="false"
             :src="avatar"
-            :alt="rns || ethAddress || 'avatar'"
+            :alt="rns || ethAddress || ''"
             @click="toggleDialog()"
         />
-        <div
-            v-if="isdisplayDialog && isLogin"
-            class="
-                absolute
-                z-50
-                bottom-0
-                right-0
-                flex flex-col
-                gap-2
-                justify-center
-                p-5
-                w-32
-                text-primary-text
-                bg-white
-                rounded
-                shadow-md
-                transform
-                translate-y-full
-            "
-        >
-            <div class="flex flex-row gap-2 items-center cursor-pointer" @click="toPublicPage">
-                <i class="bx bx-user bx-xs" />
-                Home
-            </div>
-            <div class="flex flex-row gap-2 items-center cursor-pointer" @click="logout">
-                <i class="bx bx-log-out bx-xs" />
-                Logout
-            </div>
-        </div>
+        <transition name="fade">
+            <template v-if="isdisplayDialog && isLogin">
+                <div
+                    class="
+                        absolute
+                        z-50
+                        bottom-0
+                        right-0
+                        flex flex-col
+                        gap-2
+                        justify-center
+                        p-5
+                        w-32
+                        text-primary-text
+                        bg-white
+                        rounded
+                        shadow-md
+                        transform
+                        translate-y-full
+                    "
+                >
+                    <div class="flex flex-row gap-2 items-center cursor-pointer" @click="toPublicPage">
+                        <i class="bx bx-user bx-xs" />
+                        Home
+                    </div>
+                    <div class="flex flex-row gap-2 items-center cursor-pointer" @click="logout">
+                        <i class="bx bx-log-out bx-xs" />
+                        Logout
+                    </div>
+                </div>
+            </template>
+        </transition>
     </div>
 </template>
 
@@ -127,4 +130,14 @@ export default class Header extends Vue {
 }
 </script>
 
-<style></style>
+<style scoped>
+.fade-enter-active,
+.fade-leave-active {
+    transition: opacity 0.5s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+    opacity: 0;
+}
+</style>
