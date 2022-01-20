@@ -37,7 +37,7 @@
                 </template>
                 <template #content>
                     <div
-                        class="shadow-account-sm inline-flex m-0.5 rounded-full"
+                        class="inline-flex m-0.5 rounded-full"
                         v-for="item in accounts"
                         :key="item.platform + item.identity"
                     >
@@ -180,7 +180,7 @@
                     <div class="flex flex-row gap-5">
                         <Button
                             size="sm"
-                            class="w-72 text-primary-btn-text bg-primary-btn shadow-primary-btn"
+                            class="w-72 text-primary-btn-text bg-primary-btn"
                             @click="isShowingNotice = false"
                         >
                             OK

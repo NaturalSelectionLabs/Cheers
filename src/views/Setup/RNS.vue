@@ -34,16 +34,10 @@
                 </div>
                 <div>
                     <div class="flex gap-5 m-auto px-4 py-4 w-full">
-                        <Button
-                            size="lg"
-                            class="flex-1 text-secondary-btn-text text-lg bg-secondary-btn shadow-secondary-btn"
-                            @click="skip"
+                        <Button size="lg" class="flex-1 text-secondary-btn-text text-lg bg-secondary-btn" @click="skip"
                             >Skip</Button
                         >
-                        <Button
-                            size="lg"
-                            class="flex-1 text-primary-btn-text text-lg bg-primary-btn shadow-primary-btn"
-                            @click="verifyRNS"
+                        <Button size="lg" class="flex-1 text-primary-btn-text text-lg bg-primary-btn" @click="verifyRNS"
                             >Go</Button
                         >
                     </div>
@@ -70,16 +64,12 @@
                     <div class="flex flex-row gap-5">
                         <Button
                             size="sm"
-                            class="w-32 text-secondary-btn-text bg-secondary-btn shadow-secondary-btn"
+                            class="w-32 text-secondary-btn-text bg-secondary-btn"
                             @click="isShowingConfirm = false"
                         >
                             No
                         </Button>
-                        <Button
-                            size="sm"
-                            class="w-32 text-primary-btn-text bg-primary-btn shadow-primary-btn"
-                            @click="confirm"
-                        >
+                        <Button size="sm" class="w-32 text-primary-btn-text bg-primary-btn" @click="confirm">
                             Yes
                         </Button>
                     </div>

@@ -69,7 +69,7 @@
                     <div class="flex flex-row gap-5">
                         <Button
                             size="sm"
-                            class="w-72 text-primary-btn-text bg-primary-btn shadow-primary-btn"
+                            class="w-72 text-primary-btn-text bg-primary-btn"
                             @click="isShowingNotice = false"
                         >
                             <span>OK</span>

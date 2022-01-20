@@ -44,7 +44,7 @@ export default class Tooltip extends Vue {
     }
 
     .color-account {
-        @apply text-account-title bg-account-bg shadow-account;
+        @apply text-account-title bg-account-bg;
         &.tooltip::after {
             border-color: transparent var(--color-account-bg) transparent transparent;
         }

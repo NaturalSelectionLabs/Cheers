@@ -33,12 +33,4 @@ export default class Loading extends Vue {
 }
 </script>
 
-<style lang="postcss" scoped>
-@layer components {
-    .lottie-container {
-        > svg {
-            @apply shadow-secondary-btn;
-        }
-    }
-}
-</style>
+<style lang="postcss" scoped></style>

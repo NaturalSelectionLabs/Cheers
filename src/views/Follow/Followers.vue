@@ -29,7 +29,7 @@
                         >
                             <Button
                                 size="sm"
-                                class="w-full h-6 text-content-btn-s-text bg-content-btn-s shadow-content-btn-s"
+                                class="w-full h-6 text-content-btn-s-text bg-content-btn-s"
                                 @click="loadMoreFollows"
                             >
                                 <i v-if="isLoadingFollows" class="bx bx-loader-circle bx-spin"></i>

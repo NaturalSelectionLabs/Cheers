@@ -292,13 +292,7 @@
                                     >
                                         <Button
                                             size="sm"
-                                            class="
-                                                w-full
-                                                h-6
-                                                text-content-btn-s-text
-                                                bg-content-btn-s
-                                                shadow-content-btn-s
-                                            "
+                                            class="w-full h-6 text-content-btn-s-text bg-content-btn-s"
                                             v-show="isContentsHaveMore"
                                             @click="loadMoreContents"
                                             id="contents-load-more-button"
@@ -362,7 +356,7 @@
                         <div class="flex flex-row gap-5">
                             <Button
                                 size="sm"
-                                class="w-72 text-primary-btn-text bg-primary-btn shadow-primary-btn"
+                                class="w-72 text-primary-btn-text bg-primary-btn"
                                 @click="isShowingNotice = false"
                             >
                                 OK
@@ -384,7 +378,7 @@
                 <div class="mx-auto w-83.5 text-2xl leading-17.5">
                     <Button
                         size="lg"
-                        class="mb-9 w-full h-17.5 text-primary-btn-text bg-primary-btn rounded-3xl shadow-primary-btn"
+                        class="mb-9 w-full h-17.5 text-primary-btn-text bg-primary-btn rounded-3xl"
                         @click="toHomePage"
                     >
                         <span> Go Home </span>
@@ -578,6 +572,7 @@ export default class Home extends Vue {
             await RSS3.ensureLoginUser();
             this.checkIsFollowing();
             this.isOwner = RSS3.isNowOwner();
+            this.isLoadingPersona = false;
         }
     }
 
@@ -602,8 +597,6 @@ export default class Home extends Vue {
 
         this.rss3Relations.followers = pageOwner.followers;
         this.rss3Relations.followings = pageOwner.followings;
-
-        this.isLoadingPersona = false;
 
         // Load assets
         await this.startLoadingAssets(true);

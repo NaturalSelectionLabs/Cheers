@@ -3,7 +3,7 @@
         <template #header>
             <Button
                 size="sm"
-                class="absolute left-4 w-10 h-10 text-secondary-btn-text bg-secondary-btn shadow-secondary-btn"
+                class="absolute left-4 w-10 h-10 text-secondary-btn-text bg-secondary-btn"
                 @click="emitCloseDialog"
             >
                 <i class="bx bx-chevron-left bx-sm"></i>
@@ -29,7 +29,7 @@
                 </span>
                 <Button
                     size="sm"
-                    class="text-md m-auto mt-4 w-1/4 text-account-btn-m-text bg-account-btn-m shadow-account-btn-m"
+                    class="text-md m-auto mt-4 w-1/4 text-account-btn-m-text bg-account-btn-m"
                     @click="
                         showingAccountDetails.isLink
                             ? toExternalLink(showingAccountDetails.link)
