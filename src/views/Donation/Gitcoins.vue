@@ -24,6 +24,21 @@
                             @click="toSingleGitcoin(item.id)"
                         />
                     </div>
+                    <IntersectionObserverContainer
+                        v-if="isHavingMoreAssets"
+                        :once="false"
+                        :enabled="!isLoadingAssets"
+                        @trigger="loadMoreAssets"
+                    >
+                        <Button
+                            size="sm"
+                            class="m-auto text-primary-btn-text text-lg bg-primary-btn"
+                            @click="loadMoreAssets"
+                        >
+                            <i v-if="isLoadingAssets" class="bx bx-loader-circle bx-spin" />
+                            <i v-else class="bx bx-dots-horizontal-rounded" />
+                        </Button>
+                    </IntersectionObserverContainer>
                 </template>
             </TransBarCard>
         </div>
@@ -37,17 +52,18 @@ import GitcoinCard from '@/components/Donation/GitcoinCard.vue';
 import legacyConfig from '@/config';
 import config from '@/common/config';
 import RSS3 from '@/common/rss3';
-import { DetailedDonation } from '@/common/types';
+import { DetailedDonation, GeneralAsset } from '@/common/types';
 import { debounce } from 'lodash';
 import utils from '@/common/utils';
 import Header from '@/components/Common/Header.vue';
 import { utils as RSS3Utils } from 'rss3';
 import TransBarCard from '@/components/Card/TransBarCard.vue';
+import IntersectionObserverContainer from '@/components/Common/IntersectionObserverContainer.vue';
 import { formatter } from '@/common/address';
 
 @Options({
     name: 'Gitcoins',
-    components: { Button, GitcoinCard, Header, TransBarCard },
+    components: { IntersectionObserverContainer, Button, GitcoinCard, Header, TransBarCard },
 })
 export default class Gitcoins extends Vue {
     rns: string = '';
@@ -59,9 +75,11 @@ export default class Gitcoins extends Vue {
     rss3Profile: any = {};
     scrollTop: number = 0;
     lastRoute: string = '';
+    assetList: GeneralAsset[] = [];
+    assetsStartIndex: number = 0;
+    isLoadingAssets: boolean = true;
+    isHavingMoreAssets: boolean = true;
     $gtag: any;
-
-    undefinedImageAlt = config.undefinedImageAlt;
 
     async mounted() {
         this.mountScrollEvent();
@@ -69,7 +87,6 @@ export default class Gitcoins extends Vue {
 
     async initLoad() {
         this.lastRoute = this.$route.fullPath;
-        this.contribs = 0;
         this.gitcoins = [];
 
         const addrOrName = utils.getAddress(<string>this.$route.params.address);
@@ -87,10 +104,25 @@ export default class Gitcoins extends Vue {
         }
 
         const { donations } = await utils.initAssets();
-        this.gitcoins = await utils.loadAssets(donations);
-        this.grants = this.gitcoins.length;
-        for (const grant of this.gitcoins) {
-            this.contribs += grant.detail.txs.length;
+        this.assetList = donations;
+        this.isLoadingAssets = false;
+        await this.loadMoreAssets();
+    }
+
+    async loadMoreAssets() {
+        if (!this.isLoadingAssets) {
+            this.isLoadingAssets = true;
+            let endIndex = this.assetsStartIndex + config.splitPageLimits.assets;
+            if (endIndex >= this.assetList.length) {
+                // Not having more assets
+                endIndex = this.assetList.length;
+                this.isHavingMoreAssets = false;
+            }
+            this.gitcoins = this.gitcoins.concat(
+                await utils.loadAssets(this.assetList.slice(this.assetsStartIndex, endIndex)),
+            );
+            this.assetsStartIndex = endIndex;
+            this.isLoadingAssets = false;
         }
     }
 

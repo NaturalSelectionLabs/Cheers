@@ -27,6 +27,8 @@
                         flex flex-col
                         gap-2
                         justify-center
+                        -my-2
+                        mx-2
                         p-5
                         w-32
                         text-primary-text
@@ -48,6 +50,11 @@
                 </div>
             </template>
         </transition>
+        <div
+            v-if="isdisplayDialog && isLogin"
+            class="fixed z-10 left-0 top-0 m-0 p-0 w-screen h-screen"
+            @click="toggleDialog()"
+        />
     </div>
 </template>
 
