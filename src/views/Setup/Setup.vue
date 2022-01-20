@@ -1,22 +1,40 @@
 <template>
-    <div class="h-screen text-body-text bg-body-bg overflow-y-auto">
-        <div class="m-auto pb-32 pt-8 px-4 max-w-md">
-            <div class="mb-4 text-center">
+    <div
+        class="
+            h-screen
+            text-body-text
+            bg-body-bg bg-gradient-to-tr
+            from-blue-400
+            to-blue-200
+            via-blue-100
+            overflow-y-auto
+        "
+    >
+        <div class="flex flex-col gap-y-4 m-auto pb-20 pt-8 px-4 max-w-md">
+            <div class="mb-6 text-center">
                 <h1 class="text-primary-text text-xl font-bold">Setup</h1>
             </div>
-            <AvatarEditor class="m-auto mb-4" size="lg" :url="profile.avatar" ref="avatar" />
-            <Input class="mb-4 w-full" :is-single-line="true" placeholder="Username" v-model="profile.name" />
+            <AvatarEditor class="m-auto" size="lg" :url="profile.avatar" ref="avatar" />
+            <Input class="w-full" :is-single-line="true" placeholder="Username" v-model="profile.name" />
             <Input
-                class="mb-4 w-full"
+                class="w-full"
                 :is-single-line="true"
                 placeholder="Personal link"
                 prefix="https://"
                 v-model="profile.link"
             />
-            <Input class="mb-4 w-full" :is-single-line="false" placeholder="Bio" v-model="profile.bio" />
+            <Input class="w-full" :is-single-line="false" placeholder="Bio" v-model="profile.bio" />
 
-            <BarCard color="account" class="mb-4 w-full">
-                <template #header><AccountIcon /></template>
+            <TransBarCard title="Accounts" :haveContent="true" :haveContentInfo="accounts.length > 0">
+                <template #header>
+                    <Button
+                        size="sm"
+                        class="w-8 h-8 text-secondary-btn-text bg-secondary-btn"
+                        @click="toManageAccounts"
+                    >
+                        <i class="bx bx-plus bx-xs cursor-pointer" />
+                    </Button>
+                </template>
                 <template #content>
                     <div
                         class="shadow-account-sm inline-flex m-0.5 rounded-full"
@@ -27,122 +45,96 @@
                         <AccountItem v-else :size="40" :chain="item.platform" :address="item.identity" />
                     </div>
                 </template>
-                <template #footer>
-                    <Button
-                        size="sm"
-                        class="w-8 h-8 text-account-btn-m-text bg-account-btn-m shadow-account-btn-m"
-                        @click="toManageAccounts"
-                    >
-                        <i class="bx bx-pencil bx-sm" />
+            </TransBarCard>
+
+            <TransBarCard
+                title="Vitrine"
+                :tip="isLoadingAssets.NFT ? 'Loading...' : 'Haven\'t found anything yet...'"
+                :haveDetails="false"
+                :haveContent="true"
+                :haveContentInfo="nfts.length > 0"
+            >
+                <template #header>
+                    <Button size="sm" class="w-8 h-8 text-secondary-btn-text bg-secondary-btn" @click="toManageNFTs">
+                        <i class="bx bx-plus bx-xs cursor-pointer" />
                     </Button>
                 </template>
-            </BarCard>
-
-            <BarCard color="nft" class="mb-4 w-full">
-                <template #header>
-                    <NFTIcon />
-                </template>
                 <template #content>
-                    <template v-if="isLoadingAssets.NFT">
-                        <span class="text-nft-title">Loading... Hold on a little bit 🙌</span>
-                    </template>
-                    <template v-else-if="nfts.length === 0">
-                        <span class="text-nft-title">Haven't found anything yet...</span>
-                    </template>
-                    <template v-else>
-                        <NFTItem
-                            class="inline-flex mx-0.5"
-                            v-for="asset in nfts"
-                            :key="asset.id"
-                            size="sm"
-                            :image-url="asset.detail.animation_url || asset.detail.image_preview_url"
-                            :poster-url="asset.detail.image_preview_url"
-                        />
-                    </template>
+                    <NFTItem
+                        class="inline-flex mx-0.5"
+                        v-for="asset in nfts"
+                        :key="asset.id"
+                        size="sm"
+                        :image-url="asset.detail.animation_url || asset.detail.image_preview_url"
+                        :poster-url="asset.detail.image_preview_url"
+                    />
                 </template>
-                <template #footer>
+            </TransBarCard>
+
+            <TransBarCard
+                title="Donations"
+                :tip="isLoadingAssets.Gitcoin ? 'Loading...' : 'Haven\'t found anything yet...'"
+                :haveDetails="gitcoins.length !== 0"
+                :haveContent="true"
+                :haveContentInfo="gitcoins.length > 0"
+            >
+                <template #header>
                     <Button
                         size="sm"
-                        class="w-8 h-8 text-nft-btn-m-text bg-nft-btn-m shadow-nft-btn-m"
-                        @click="toManageNFTs"
-                    >
-                        <i class="bx bx-pencil bx-sm" />
-                    </Button>
-                </template>
-            </BarCard>
-
-            <BarCard color="gitcoin" class="mb-4 w-full">
-                <template #header>
-                    <GitcoinIcon :iconColor="currentTheme === 'loot' ? 'white' : 'black'" />
-                </template>
-                <template #content>
-                    <template v-if="isLoadingAssets.Gitcoin">
-                        <span class="text-gitcoin-title">Loading... Hold on a little bit 🙌</span>
-                    </template>
-                    <template v-else-if="nfts.length === 0">
-                        <span class="text-gitcoin-title">Haven't found anything yet...</span>
-                    </template>
-                    <template v-else>
-                        <GitcoinItem
-                            class="inline-flex mx-0.5"
-                            v-for="item in gitcoins"
-                            :key="item.id"
-                            size="sm"
-                            :imageUrl="item.detail.grant.logo"
-                        />
-                    </template>
-                </template>
-                <template #footer>
-                    <Button
-                        size="sm"
-                        class="w-8 h-8 text-gitcoin-btn-m-text bg-gitcoin-btn-m shadow-gitcoin-btn-m"
+                        class="w-8 h-8 text-secondary-btn-text bg-secondary-btn"
                         @click="toManageGitcoins"
                     >
-                        <i class="bx bx-pencil bx-sm" />
+                        <i class="bx bx-plus bx-xs cursor-pointer" />
                     </Button>
-                </template>
-            </BarCard>
-
-            <BarCard color="footprint" class="mb-4 w-full">
-                <template #header>
-                    <FootprintIcon />
                 </template>
                 <template #content>
-                    <template v-if="isLoadingAssets.Footprint">
-                        <span class="text-footprint-title">Loading... Hold on a little bit 🙌</span>
-                    </template>
-                    <template v-else-if="nfts.length === 0">
-                        <span class="text-footprint-title">Haven't found anything yet...</span>
-                    </template>
-                    <template v-else>
-                        <FootprintItem
-                            class="inline-flex mx-0.5"
-                            v-for="asset in footprints"
-                            :key="asset.id"
-                            size="sm"
-                            :image-url="asset.detail.image_url"
-                        />
-                    </template>
+                    <GitcoinItem
+                        class="inline-flex mx-0.5"
+                        v-for="item in gitcoins"
+                        :key="item.id"
+                        size="sm"
+                        :imageUrl="item.detail.grant.logo"
+                    />
                 </template>
-                <template #footer>
+            </TransBarCard>
+
+            <TransBarCard
+                title="Footprints"
+                :tip="isLoadingAssets.Footprint ? 'Loading...' : 'Haven\'t found anything yet...'"
+                :haveDetails="footprints.length !== 0"
+                :haveContent="true"
+                :haveContentInfo="footprints.length > 0"
+            >
+                <template #header>
                     <Button
                         size="sm"
-                        class="w-8 h-8 text-footprint-btn-m-text bg-footprint-btn-m shadow-footprint-btn-m"
+                        class="w-8 h-8 text-secondary-btn-text bg-secondary-btn"
                         @click="toManageFootprints"
                     >
-                        <i class="bx bx-pencil bx-sm" />
+                        <i class="bx bx-plus bx-xs cursor-pointer" />
                     </Button>
                 </template>
-            </BarCard>
+                <template #content>
+                    <FootprintItem
+                        class="inline-flex mx-0.5"
+                        v-for="asset in footprints"
+                        :key="asset.id"
+                        size="sm"
+                        :image-url="asset.detail.image_url"
+                    />
+                </template>
+            </TransBarCard>
 
-            <BarCard color="content" class="mb-4 w-full">
+            <TransBarCard title="Contents" :haveContent="true">
                 <template #header>
-                    <ContentIcon />
+                    <Button size="sm" class="w-8 h-8 text-secondary-btn-text bg-secondary-btn">
+                        <i class="bx bx-plus bx-xs cursor-pointer" />
+                    </Button>
                 </template>
                 <template #content>
                     <span class="text-content-title">Check out in homepage!</span>
                 </template>
-            </BarCard>
+            </TransBarCard>
 
             <div
                 class="
@@ -154,22 +146,21 @@
                     gap-5
                     justify-between
                     m-auto
-                    px-4
-                    py-4
+                    p-4
                     w-full
                     max-w-md
                     bg-btn-container
                 "
             >
                 <Button
-                    size="lg"
-                    class="flex-1 text-secondary-btn-text text-lg bg-secondary-btn shadow-secondary-btn"
+                    size="sm"
+                    class="flex-1 h-9 text-secondary-btn-text text-lg bg-secondary-btn opacity-80"
                     @click="back"
                     ><span>Back</span></Button
                 >
                 <Button
-                    size="lg"
-                    class="flex-1 text-primary-btn-text text-lg bg-primary-btn shadow-primary-btn"
+                    size="sm"
+                    class="flex-1 h-9 text-primary-btn-text text-lg bg-primary-btn opacity-80"
                     @click="save"
                     ><span>Done</span></Button
                 >
@@ -206,6 +197,7 @@ import { Options, Vue } from 'vue-class-component';
 import Button from '@/components/Button/Button.vue';
 import AvatarEditor from '@/components/Profile/AvatarEditor.vue';
 import BarCard from '@/components/Card/BarCard.vue';
+import TransBarCard from '@/components/Card/TransBarCard.vue';
 import AccountItem from '@/components/Account/AccountItem.vue';
 import NFTItem from '@/components/NFT/NFTItem.vue';
 import Input from '@/components/Input/Input.vue';
@@ -238,6 +230,7 @@ import utils from '@/common/utils';
         Button,
         AvatarEditor,
         BarCard,
+        TransBarCard,
         GitcoinItem,
         AccountItem,
         NFTItem,
