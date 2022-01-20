@@ -329,8 +329,9 @@
                                         text-xs
                                         font-normal
                                     "
-                                    >RSS3</a
                                 >
+                                    RSS3
+                                </a>
                             </span>
                         </div>
                     </div>
@@ -682,15 +683,15 @@ export default class Home extends Vue {
                 if (!(className in classifiedList)) {
                     classifiedList[className] = [];
                 }
-                classifiedList[className].push(
-                    {
-                        ...displayedNFTsDetail.find(
-                            (dNFT) =>
-                                dNFT.id === RSS3Utils.id.getAsset(nft.platform, nft.identity, nft.type, nft.uniqueID),
-                        ),
-                        timestamp: nft.timestamp,
-                    } || {},
+                const detailedNFT = displayedNFTsDetail.find(
+                    (dNFT) => dNFT.id === RSS3Utils.id.getAsset(nft.platform, nft.identity, nft.type, nft.uniqueID),
                 );
+                if (detailedNFT) {
+                    classifiedList[className].push({
+                        ...detailedNFT,
+                        timestamp: nft.timestamp,
+                    });
+                }
             }),
         );
         await Promise.all(
