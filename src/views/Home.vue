@@ -312,7 +312,7 @@
                     </div>
                 </section>
 
-                <div class="fixed bottom-0 left-0 mt-2 w-full bg-footer-bg">
+                <div class="safe-area-fixed-bottom fixed bottom-0 left-0 mt-2 w-full bg-footer-bg">
                     <div class="flex flex-row gap-x-2 items-center justify-end m-auto px-4 py-2 max-w-screen-lg">
                         <div class="text-right text-body-text text-xs font-normal">
                             <a href="https://rss3.io/#/privacy"> Privacy </a>
