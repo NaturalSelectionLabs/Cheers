@@ -3,7 +3,7 @@ import setupTheme from '@/common/theme';
 import utils from '@/common/utils';
 import legacyConfig from '@/config';
 import WalletConnectProvider from '@walletconnect/web3-provider';
-import { ethers } from 'ethers';
+import { ethers, utils as ethersUtils } from 'ethers';
 import Cookies from 'js-cookie';
 import RSS3, { utils as RSS3Utils } from 'rss3';
 import config from './config';
@@ -397,7 +397,7 @@ export default {
                 if (addrOrName.startsWith('0x') && addrOrName.length === 42) {
                     if (RSS3PageOwner.address !== addrOrName) {
                         isReloadRequired = true;
-                        RSS3PageOwner.address = addrOrName;
+                        RSS3PageOwner.address = ethersUtils.getAddress(addrOrName);
                         RSS3PageOwner.name = '';
                     }
                 } else {
