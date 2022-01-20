@@ -1,6 +1,6 @@
 <template>
     <div class="relative flex items-center justify-between pb-4">
-        <Logo v-if="displayLogo" class="w-10 h-10 cursor-pointer" />
+        <Logo v-if="displayLogo" class="w-10 h-10 cursor-pointer" @click="toHomePage" />
         <div
             v-else
             class="flex items-center justify-center w-10 h-10 text-secondary-btn-text cursor-pointer"
@@ -109,6 +109,10 @@ export default class Header extends Vue {
                 this.$router.push(config.subDomain.isSubDomainMode ? '/' : `/${this.rns || this.ethAddress}`);
             }
         }
+    }
+
+    toHomePage() {
+        window.location.href = '//' + config.subDomain.rootDomain;
     }
 
     toPublicPage() {

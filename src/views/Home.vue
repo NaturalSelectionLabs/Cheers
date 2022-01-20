@@ -312,9 +312,8 @@
                     </div>
                 </section>
 
-                <div class="center fixed bottom-0 left-0 mt-2 w-full bg-footer-bg">
-                    <div class="flex flex-row gap-x-2 items-center justify-between m-auto px-4 py-2 max-w-screen-lg">
-                        <Logo class="cursor-pointer" :size="18" @click="toHomePage" />
+                <div class="fixed bottom-0 left-0 mt-2 w-full bg-footer-bg">
+                    <div class="flex flex-row gap-x-2 items-center justify-end m-auto px-4 py-2 max-w-screen-lg">
                         <div class="text-right text-body-text text-xs font-normal">
                             <a href="https://rss3.io/#/privacy"> Privacy </a>
                             |
@@ -370,7 +369,7 @@
             v-else
             class="onboarding flex items-center justify-center h-full text-center bg-pass3gradient bg-cover bg-fixed"
         >
-            <div class="body flex flex-col items-center justify-between justify-center px-4 h-2/3">
+            <div class="body flex flex-col items-center justify-between px-4 h-2/3">
                 <Logo :size="200" />
                 <div class="max-w-md text-primary-text text-2xl">
                     <p>This account is not on RSS3 yet...</p>
