@@ -80,6 +80,7 @@ export default class Gitcoins extends Vue {
     isLoadingAssets: boolean = true;
     isHavingMoreAssets: boolean = true;
     $gtag: any;
+    undefinedImageAlt: string = config.undefinedImageAlt;
 
     async mounted() {
         this.mountScrollEvent();
