@@ -41,7 +41,7 @@ import { Vue, Options } from 'vue-class-component';
 import Trait from '@/components/NFT/Trait.vue';
 import ScanTag from '@/components/NFT/ScanTag.vue';
 import MarketTag from '@/components/NFT/MarketTag.vue';
-import marked from 'marked';
+import { marked } from 'marked';
 
 @Options({
     components: { Trait, ScanTag, MarketTag },

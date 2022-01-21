@@ -18,7 +18,7 @@
 import { Vue, Options } from 'vue-class-component';
 import ContentBadge from '@/components/Content/ContentBadge.vue';
 import { timeDifferent } from '@/common/timeStamp';
-import marked from 'marked';
+import { marked } from 'marked';
 
 @Options({
     components: { ContentBadge },
