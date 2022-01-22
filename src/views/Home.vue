@@ -271,6 +271,48 @@
                 <section class="md:w-2/5">
                     <div class="affix-container sticky">
                         <TransBarCard title="Content" :haveDetails="true" :haveContent="false">
+                            <template #header>
+                                <div class="flex flex-col gap-y-2">
+                                    <div class="flex gap-2 items-center justify-between" @click="toggleWeb3Only()">
+                                        <h2>Web3 Only</h2>
+                                        <div
+                                            class="
+                                                flex
+                                                items-center
+                                                p-1
+                                                w-11
+                                                h-6
+                                                bg-gray-500 bg-opacity-10
+                                                rounded-full
+                                                cursor-pointer
+                                                duration-200
+                                                ease-in-out
+                                            "
+                                            :class="{ 'bg-primary-text': !isWeb3Only }"
+                                        >
+                                            <div
+                                                class="
+                                                    w-4
+                                                    h-4
+                                                    bg-black bg-opacity-50
+                                                    rounded-full
+                                                    shadow-md
+                                                    transform
+                                                    duration-200
+                                                    ease-in-out
+                                                "
+                                                :class="{ 'translate-x-5 bg-primary-text bg-opacity-80': !isWeb3Only }"
+                                            ></div>
+                                        </div>
+                                        <h2
+                                            class="text-black text-opacity-50"
+                                            :class="{ 'translate-x-5 text-primary-text text-opacity-80': !isWeb3Only }"
+                                        >
+                                            Hybrid
+                                        </h2>
+                                    </div>
+                                </div>
+                            </template>
                             <template #details>
                                 <div v-if="contents?.length > 0">
                                     <div class="flex flex-col gap-4">
@@ -503,6 +545,7 @@ export default class Home extends Vue {
     isLoadingMore: boolean = false;
     currentTheme: string = '';
     isLoadingPersona: boolean = true;
+    isWeb3Only: boolean = false;
 
     rss3Profile: ProfileInfo = {
         avatar: legacyConfig.defaultAvatar,
@@ -614,7 +657,7 @@ export default class Home extends Vue {
 
         // Load Contents
         setTimeout(async () => {
-            const { listed, haveMore, timestamp } = await utils.initContent();
+            const { listed, haveMore, timestamp } = await utils.initContent('', this.isWeb3Only);
             while (listed.length > 0) {
                 if ('target' in listed[0] && listed[0].target.field.includes('Mirror.XYZ')) {
                     if (this.contents.findIndex((item) => 'target' in item && item.title === listed[0].title) === -1) {
@@ -773,7 +816,7 @@ export default class Home extends Vue {
         this.isLoadingContents = true;
 
         if (this.isContentsHaveMore) {
-            const { listed, haveMore, timestamp } = await utils.initContent(this.contentTimestamp);
+            const { listed, haveMore, timestamp } = await utils.initContent(this.contentTimestamp, this.isWeb3Only);
             while (listed.length > 0) {
                 if ('target' in listed[0] && listed[0].target.field.includes('Mirror.XYZ')) {
                     if (this.contents.findIndex((item) => 'target' in item && item.title === listed[0].title) === -1) {
@@ -855,6 +898,30 @@ export default class Home extends Vue {
             await loginUser.persona?.links.delete('following', pageOwner.address);
         }
         this.isFollowing = false;
+    }
+
+    async updateFilteredContent() {
+        const { listed, haveMore, timestamp } = await utils.initContent('', this.isWeb3Only);
+        while (listed.length > 0) {
+            if ('target' in listed[0] && listed[0].target.field.includes('Mirror.XYZ')) {
+                if (this.contents.findIndex((item) => 'target' in item && item.title === listed[0].title) === -1) {
+                    this.contents.push(listed[0]);
+                }
+            } else {
+                this.contents.push(listed[0]);
+            }
+            listed.shift();
+        }
+        this.contentTimestamp = timestamp;
+        this.isContentsHaveMore = haveMore;
+    }
+
+    async toggleWeb3Only() {
+        this.isLoadingContents = true;
+        this.contents = [];
+        this.isWeb3Only = !this.isWeb3Only;
+        await this.updateFilteredContent();
+        this.isLoadingContents = false;
     }
 
     toManageAccounts() {
