@@ -272,7 +272,10 @@
                     <div class="affix-container sticky">
                         <TransBarCard title="Content" :haveDetails="true" :haveContent="false">
                             <template #header>
-                                <div class="flex flex-col gap-y-2">
+                                <div
+                                    class="flex flex-col gap-y-2"
+                                    :class="{ 'pointer-events-none': isLoadingContents }"
+                                >
                                     <div class="flex gap-2 items-center justify-between" @click="toggleWeb3Only()">
                                         <h2>Web3 Only</h2>
                                         <div
