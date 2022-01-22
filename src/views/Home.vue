@@ -695,7 +695,7 @@ export default class Home extends Vue {
         return assetDetails;
     }
 
-    async ivLoadNFT(refresh: boolean, assets: GeneralAssetWithClass[]): Promise<boolean> {
+    async ivLoadNFT(assets: GeneralAssetWithClass[]): Promise<boolean> {
         // Get NFTs
         const classifiedBriefList: {
             [className: string]: GeneralAssetWithClass[];
@@ -744,7 +744,7 @@ export default class Home extends Vue {
         );
         await Promise.all(
             Object.keys(classifiedList).map((listName) => {
-                if (classifiedList[listName].length === 0) {
+                if (classifiedList[listName].length === 0 && listName !== 'Vitrine') {
                     delete classifiedList[listName];
                 }
             }),
@@ -755,7 +755,7 @@ export default class Home extends Vue {
         return true;
     }
 
-    async ivLoadGitcoin(refresh: boolean, assets: GeneralAsset[]): Promise<boolean> {
+    async ivLoadGitcoin(assets: GeneralAsset[]): Promise<boolean> {
         if (assets) {
             this.gitcoins = await this.loadAssetDetails(assets);
             this.isLoadingAssets.Gitcoin = false;
@@ -764,7 +764,7 @@ export default class Home extends Vue {
         return false;
     }
 
-    async ivLoadFootprint(refresh: boolean, assets: GeneralAsset[]): Promise<boolean> {
+    async ivLoadFootprint(assets: GeneralAsset[]): Promise<boolean> {
         if (assets) {
             this.footprints = await this.loadAssetDetails(assets);
             this.isLoadingAssets.Footprint = false;
@@ -773,7 +773,7 @@ export default class Home extends Vue {
         return false;
     }
 
-    async ivLoadAsset(refresh: boolean): Promise<boolean> {
+    async ivLoadAsset(): Promise<boolean> {
         if (!this.isAccountExist) {
             // Account not exist, prevent loading assets
             return true;
@@ -781,9 +781,9 @@ export default class Home extends Vue {
         let isFinish: boolean;
         const allAssets = await utils.initAssets();
         const result = await Promise.all([
-            this.ivLoadNFT(refresh, allAssets.nftsWithClassName),
-            this.ivLoadGitcoin(refresh, allAssets.donations.slice(0, config.assets.brief)),
-            this.ivLoadFootprint(refresh, allAssets.footprints.slice(0, config.assets.brief)),
+            this.ivLoadNFT(allAssets.nftsWithClassName),
+            this.ivLoadGitcoin(allAssets.donations.slice(0, config.assets.brief)),
+            this.ivLoadFootprint(allAssets.footprints.slice(0, config.assets.brief)),
         ]);
         isFinish = result[0] && result[1] && result[2];
         if (isFinish) {
@@ -803,9 +803,9 @@ export default class Home extends Vue {
                 Footprint: true,
             };
         }
-        if (!(await this.ivLoadAsset(refresh))) {
+        if (!(await this.ivLoadAsset())) {
             this.loadingAssetsIntervalID = setInterval(async () => {
-                await this.ivLoadAsset(refresh);
+                await this.ivLoadAsset();
             }, 2000);
         }
     }
