@@ -273,7 +273,12 @@
                                     :class="{ 'pointer-events-none': isLoadingContents }"
                                 >
                                     <div class="flex gap-2 items-center justify-between" @click="toggleWeb3Only()">
-                                        <h2>Web3 Only</h2>
+                                        <h2
+                                            class="text-black text-opacity-50"
+                                            :class="{ 'translate-x-5 text-primary-text text-opacity-80': isWeb3Only }"
+                                        >
+                                            Web3 Only
+                                        </h2>
                                         <div
                                             class="
                                                 flex
