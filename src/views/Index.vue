@@ -7,7 +7,7 @@
             justify-center
             h-screen
             text-center
-            bg-body-bg bg-gradient-to-tr bg-cover bg-fixed
+            bg-gradient-to-tr bg-cover bg-fixed
             from-blue-400
             to-blue-200
             via-blue-100

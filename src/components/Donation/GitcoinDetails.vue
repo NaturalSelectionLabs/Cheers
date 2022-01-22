@@ -50,9 +50,7 @@
         </div>
         <div class="flex flex-col gap-y-2 w-full">
             <div class="flex flex-row gap-x-2 justify-start" v-for="item in donationInfo" :key="item.txHash">
-                <div
-                    class="flex flex-1 flex-row items-center justify-between px-4 py-2 text-black bg-body-bg rounded-xl"
-                >
+                <div class="flex flex-1 flex-row items-center justify-between px-4 py-2 text-black rounded-xl">
                     <div class="flex-shrink pr-2 text-primary-text">
                         <vue3-autocounter
                             ref="counter"
@@ -69,7 +67,7 @@
                         {{ timeDifferent(item.timeStamp) }}
                     </div>
                 </div>
-                <Button size="sm" class="ml-1 w-9 h-9 text-secondary-btn-text bg-secondary-btn" @click="toScanTx(item)">
+                <Button size="sm" class="ml-1 w-9 h-9" @click="toScanTx(item)">
                     <i class="bx bx-link-external bx-xs" />
                 </Button>
             </div>

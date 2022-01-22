@@ -27,11 +27,7 @@
                             :enabled="!isLoadingFollows"
                             @trigger="loadMoreFollows"
                         >
-                            <Button
-                                size="sm"
-                                class="w-full h-6 text-content-btn-s-text bg-content-btn-s"
-                                @click="loadMoreFollows"
-                            >
+                            <Button size="sm" class="w-full h-6" @click="loadMoreFollows">
                                 <i v-if="isLoadingFollows" class="bx bx-loader-circle bx-spin"></i>
                                 <i v-else class="bx bx-dots-horizontal-rounded" />
                             </Button>

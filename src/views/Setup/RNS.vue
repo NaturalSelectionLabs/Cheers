@@ -1,5 +1,5 @@
 <template>
-    <div class="h-screen text-body-text bg-body-bg bg-gradient-to-tr from-blue-400 to-blue-200 via-blue-100">
+    <div class="h-screen text-body-text bg-gradient-to-tr from-blue-400 to-blue-200 via-blue-100">
         <div class="flex items-center justify-center mx-auto w-full max-w-md h-full text-center">
             <div class="flex flex-col justify-between w-full h-2/3">
                 <h1 class="text-primary-text text-6xl font-bold">Claim your RNS</h1>
@@ -34,10 +34,10 @@
                 </div>
                 <div>
                     <div class="flex gap-5 m-auto px-4 py-4 w-full">
-                        <Button size="lg" class="flex-1 text-secondary-btn-text text-lg bg-secondary-btn" @click="skip"
+                        <Button size="lg" class="text-secondary-btn-text flex-1 text-lg bg-secondary-btn" @click="skip"
                             >Skip</Button
                         >
-                        <Button size="lg" class="flex-1 text-primary-btn-text text-lg bg-primary-btn" @click="verifyRNS"
+                        <Button size="lg" class="flex-1 text-body-text text-lg bg-primary-btn" @click="verifyRNS"
                             >Go</Button
                         >
                     </div>
@@ -62,16 +62,8 @@
                 </template>
                 <template #footer>
                     <div class="flex flex-row gap-5">
-                        <Button
-                            size="sm"
-                            class="w-32 text-secondary-btn-text bg-secondary-btn"
-                            @click="isShowingConfirm = false"
-                        >
-                            No
-                        </Button>
-                        <Button size="sm" class="w-32 text-primary-btn-text bg-primary-btn" @click="confirm">
-                            Yes
-                        </Button>
+                        <Button size="sm" class="w-32" @click="isShowingConfirm = false"> No </Button>
+                        <Button size="sm" class="w-32 text-body-text bg-primary-btn" @click="confirm"> Yes </Button>
                     </div>
                 </template>
             </Modal>

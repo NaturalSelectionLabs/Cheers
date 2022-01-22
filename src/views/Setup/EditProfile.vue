@@ -1,18 +1,8 @@
 <template>
-    <div
-        class="
-            h-screen
-            text-body-text
-            bg-body-bg bg-gradient-to-tr
-            from-blue-400
-            to-blue-200
-            via-blue-100
-            overflow-y-auto
-        "
-    >
+    <div class="h-screen text-body-text bg-gradient-to-tr from-blue-400 to-blue-200 via-blue-100 overflow-y-auto">
         <div class="m-auto pb-20 px-4 py-9 max-w-screen-lg">
             <div class="flex items-center justify-between mb-10 w-full text-center">
-                <i class="bx bx-chevron-left bx-sm w-10 h-10 text-secondary-btn-text cursor-pointer" @click="back"></i>
+                <i class="bx bx-chevron-left bx-sm text-secondary-btn-text w-10 h-10 cursor-pointer" @click="back"></i>
                 <div class="flex flex-grow justify-center mr-10">
                     <h1 class="text-primary-text text-2xl font-bold">Edit Profile</h1>
                 </div>
@@ -41,13 +31,13 @@
                 <div class="fixed left-0 right-0 flex gap-5 m-auto px-4 w-full max-w-md md:px-0">
                     <Button
                         size="sm"
-                        class="flex-1 h-9 text-secondary-btn-text text-base bg-secondary-btn opacity-80"
+                        class="text-secondary-btn-text flex-1 h-9 text-base bg-secondary-btn opacity-80"
                         @click="back"
                         ><span>Discard</span></Button
                     >
                     <Button
                         size="sm"
-                        class="flex-1 h-9 text-primary-btn-text text-base bg-primary-btn opacity-80"
+                        class="flex-1 h-9 text-body-text text-base bg-primary-btn opacity-80"
                         @click="save"
                         ><span>Save</span></Button
                     >
@@ -67,11 +57,7 @@
                 </template>
                 <template #footer>
                     <div class="flex flex-row gap-5">
-                        <Button
-                            size="sm"
-                            class="w-72 text-primary-btn-text bg-primary-btn"
-                            @click="isShowingNotice = false"
-                        >
+                        <Button size="sm" class="w-72 text-body-text bg-primary-btn" @click="isShowingNotice = false">
                             <span>OK</span>
                         </Button>
                     </div>

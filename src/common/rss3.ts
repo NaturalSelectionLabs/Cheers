@@ -411,7 +411,8 @@ export default {
                     await initUser(RSS3PageOwner);
                 }
                 await setPageTitleFavicon();
-                await setupTheme(); // Setup theme
+                // Setup theme
+                //await setupTheme();
                 dispatchEvent(Events.pageOwnerReady, RSS3PageOwner);
                 isSettingPageOwner = false;
                 resolve(RSS3PageOwner);

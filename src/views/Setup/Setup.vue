@@ -1,15 +1,5 @@
 <template>
-    <div
-        class="
-            h-screen
-            text-body-text
-            bg-body-bg bg-gradient-to-tr
-            from-blue-400
-            to-blue-200
-            via-blue-100
-            overflow-y-auto
-        "
-    >
+    <div class="h-screen text-body-text bg-gradient-to-tr from-blue-400 to-blue-200 via-blue-100 overflow-y-auto">
         <div class="flex flex-col gap-y-4 m-auto pb-20 pt-8 px-4 max-w-md">
             <div class="mb-6 text-center">
                 <h1 class="text-primary-text text-xl font-bold">Setup</h1>
@@ -27,11 +17,7 @@
 
             <TransBarCard title="Accounts" :haveContent="true" :haveContentInfo="accounts.length > 0">
                 <template #header>
-                    <Button
-                        size="sm"
-                        class="w-8 h-8 text-secondary-btn-text bg-secondary-btn"
-                        @click="toManageAccounts"
-                    >
+                    <Button size="sm" class="w-8 h-8" @click="toManageAccounts">
                         <i class="bx bx-plus bx-xs cursor-pointer" />
                     </Button>
                 </template>
@@ -55,7 +41,7 @@
                 :haveContentInfo="nfts.length > 0"
             >
                 <template #header>
-                    <Button size="sm" class="w-8 h-8 text-secondary-btn-text bg-secondary-btn" @click="toManageNFTs">
+                    <Button size="sm" class="w-8 h-8" @click="toManageNFTs">
                         <i class="bx bx-plus bx-xs cursor-pointer" />
                     </Button>
                 </template>
@@ -79,11 +65,7 @@
                 :haveContentInfo="gitcoins.length > 0"
             >
                 <template #header>
-                    <Button
-                        size="sm"
-                        class="w-8 h-8 text-secondary-btn-text bg-secondary-btn"
-                        @click="toManageGitcoins"
-                    >
+                    <Button size="sm" class="w-8 h-8" @click="toManageGitcoins">
                         <i class="bx bx-plus bx-xs cursor-pointer" />
                     </Button>
                 </template>
@@ -106,11 +88,7 @@
                 :haveContentInfo="footprints.length > 0"
             >
                 <template #header>
-                    <Button
-                        size="sm"
-                        class="w-8 h-8 text-secondary-btn-text bg-secondary-btn"
-                        @click="toManageFootprints"
-                    >
+                    <Button size="sm" class="w-8 h-8" @click="toManageFootprints">
                         <i class="bx bx-plus bx-xs cursor-pointer" />
                     </Button>
                 </template>
@@ -127,7 +105,7 @@
 
             <TransBarCard title="Contents" :haveContent="true" :haveContentInfo="true">
                 <template #content>
-                    <span class="text-content-title">Check out in homepage!</span>
+                    <span>Check out in homepage!</span>
                 </template>
             </TransBarCard>
 
@@ -149,14 +127,11 @@
             >
                 <Button
                     size="sm"
-                    class="flex-1 h-9 text-secondary-btn-text text-lg bg-secondary-btn opacity-80"
+                    class="text-secondary-btn-text flex-1 h-9 text-lg bg-secondary-btn opacity-80"
                     @click="back"
                     ><span>Back</span></Button
                 >
-                <Button
-                    size="sm"
-                    class="flex-1 h-9 text-primary-btn-text text-lg bg-primary-btn opacity-80"
-                    @click="save"
+                <Button size="sm" class="flex-1 h-9 text-body-text text-lg bg-primary-btn opacity-80" @click="save"
                     ><span>Done</span></Button
                 >
             </div>
@@ -173,11 +148,7 @@
                 </template>
                 <template #footer>
                     <div class="flex flex-row gap-5">
-                        <Button
-                            size="sm"
-                            class="w-72 text-primary-btn-text bg-primary-btn"
-                            @click="isShowingNotice = false"
-                        >
+                        <Button size="sm" class="w-72 text-body-text bg-primary-btn" @click="isShowingNotice = false">
                             OK
                         </Button>
                     </div>

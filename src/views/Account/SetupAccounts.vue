@@ -1,15 +1,5 @@
 <template>
-    <div
-        class="
-            h-screen
-            text-body-text
-            bg-body-bg bg-gradient-to-tr
-            from-blue-400
-            to-blue-200
-            via-blue-100
-            overflow-y-auto
-        "
-    >
+    <div class="h-screen text-body-text bg-gradient-to-tr from-blue-400 to-blue-200 via-blue-100 overflow-y-auto">
         <div class="flex flex-col m-auto pt-8 px-4 max-w-screen-lg h-full">
             <Header />
             <div class="flex flex-col flex-grow gap-4 pb-8 h-0 md:flex-row">
@@ -183,10 +173,10 @@
                         </template>
                     </TransBarCard>
                     <div class="flex flex-row-reverse gap-5 m-auto px-4 py-2 w-full md:flex-col">
-                        <Button size="lg" class="flex-1 text-primary-btn-text text-lg bg-primary-btn" @click="save">
+                        <Button size="lg" class="flex-1 text-body-text text-lg bg-primary-btn" @click="save">
                             <span>Save</span>
                         </Button>
-                        <Button size="lg" class="flex-1 text-secondary-btn-text text-lg bg-secondary-btn" @click="back">
+                        <Button size="lg" class="text-secondary-btn-text flex-1 text-lg bg-secondary-btn" @click="back">
                             <span>Discard</span>
                         </Button>
                     </div>
@@ -241,18 +231,10 @@
                 </template>
                 <template #footer>
                     <div class="flex flex-row gap-5">
-                        <Button
-                            size="sm"
-                            class="w-32 text-secondary-btn-text bg-secondary-btn"
-                            @click="isShowingAddSpecifyAccountInput = false"
-                        >
+                        <Button size="sm" class="w-32" @click="isShowingAddSpecifyAccountInput = false">
                             Cancel
                         </Button>
-                        <Button
-                            size="sm"
-                            class="w-32 text-primary-btn-text bg-primary-btn"
-                            @click="addNoSignAccountConfirm"
-                        >
+                        <Button size="sm" class="w-32 text-body-text bg-primary-btn" @click="addNoSignAccountConfirm">
                             Confirm
                         </Button>
                     </div>
@@ -272,7 +254,7 @@
                     <div class="flex flex-row gap-5">
                         <Button
                             size="sm"
-                            class="w-72 text-primary-btn-text bg-primary-btn"
+                            class="w-72 text-body-text bg-primary-btn"
                             @click="isShowingAddAccountNotice = false"
                         >
                             <span>OK</span>

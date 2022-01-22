@@ -43,11 +43,7 @@
                         :enabled="!isLoadingAssets"
                         @trigger="loadMoreAssets"
                     >
-                        <Button
-                            size="sm"
-                            class="m-auto text-primary-btn-text text-lg bg-primary-btn"
-                            @click="loadMoreAssets"
-                        >
+                        <Button size="sm" class="m-auto text-body-text text-lg bg-primary-btn" @click="loadMoreAssets">
                             <i v-if="isLoadingAssets" class="bx bx-loader-circle bx-spin" />
                             <i v-else class="bx bx-dots-horizontal-rounded" />
                         </Button>
@@ -84,11 +80,7 @@
                         :enabled="!isLoadingAssets"
                         @trigger="loadMoreAssets"
                     >
-                        <Button
-                            size="sm"
-                            class="m-auto text-primary-btn-text text-lg bg-primary-btn"
-                            @click="loadMoreAssets"
-                        >
+                        <Button size="sm" class="m-auto text-body-text text-lg bg-primary-btn" @click="loadMoreAssets">
                             <i v-if="isLoadingAssets" class="bx bx-loader-circle bx-spin" />
                             <i v-else class="bx bx-dots-horizontal-rounded" />
                         </Button>

@@ -6,10 +6,9 @@
             :class="{ 'md:gap-2': type === 'details' }"
         >
             <span class="text-body-text truncate">{{ getDate() }}</span>
-            <span class="text-body-text truncate"> <span class="text-primary-text">@ </span>{{ location }}</span>
+            <span class="text-body-text truncate">@ {{ location }}</span>
             <div class="line-clamp-2">
-                <span class="text-primary-text">{{ username }} attended</span>
-                <span class="flex-1 w-0">{{ ' ' + activity }}</span>
+                {{ username }} attended <span class="flex-1 w-0">{{ activity }}</span>
             </div>
         </section>
     </div>

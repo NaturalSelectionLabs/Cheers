@@ -1,16 +1,5 @@
 <template>
-    <div
-        id="main"
-        class="
-            h-screen
-            text-body-text
-            bg-body-bg bg-gradient-to-tr
-            from-blue-400
-            to-blue-200
-            via-blue-100
-            overflow-y-auto
-        "
-    >
+    <div id="main" class="h-screen text-body-text overflow-y-auto">
         <div v-if="isAccountExist" class="m-auto pb-12 pt-8 px-4 max-w-screen-lg">
             <Header :displayLogo="true" />
             <div class="flex flex-col gap-4 md:flex-row">
@@ -46,7 +35,7 @@
                                     v-if="isOwner"
                                     size="sm"
                                     shape="circle"
-                                    class="inline-block mr-1 w-8 h-8 text-secondary-btn-text bg-secondary-btn"
+                                    class="inline-block mr-1 w-8 h-8 bg-secondary-btn-card"
                                     @click="toManageAccounts"
                                 >
                                     <i class="bx bxs-pencil bx-xs" />
@@ -54,7 +43,7 @@
                                 <Button
                                     size="sm"
                                     shape="circle"
-                                    class="inline-block mr-1 w-8 h-8 text-secondary-btn-text bg-secondary-btn"
+                                    class="inline-block mr-1 w-8 h-8 bg-secondary-btn-card"
                                     @click="toAccountsPage"
                                 >
                                     <i class="bx bx-expand-alt bx-xs" />
@@ -110,7 +99,7 @@
                                 <template #button>
                                     <Button
                                         size="sm"
-                                        class="w-8 h-8 text-secondary-btn-text bg-secondary-btn"
+                                        class="w-8 h-8 text-btn-icon bg-secondary-btn-card"
                                         @click="toListPage(`nfts/${className}`)"
                                     >
                                         <i class="bx bx-expand-alt bx-xs" />
@@ -170,7 +159,7 @@
                                 <template #button>
                                     <Button
                                         size="sm"
-                                        class="w-8 h-8 text-secondary-btn-text bg-secondary-btn"
+                                        class="w-8 h-8 text-btn-icon bg-secondary-btn-card"
                                         @click="toListPage(`nfts/${className}`)"
                                     >
                                         <i class="bx bx-expand-alt bx-xs" />
@@ -219,7 +208,7 @@
                             <template #button>
                                 <Button
                                     size="sm"
-                                    class="w-8 h-8 text-secondary-btn-text bg-secondary-btn"
+                                    class="w-8 h-8 text-btn-icon bg-secondary-btn-card"
                                     @click="toListPage('Footprints')"
                                 >
                                     <i class="bx bx-expand-alt bx-xs" />
@@ -254,7 +243,7 @@
                             <template #button>
                                 <Button
                                     size="sm"
-                                    class="w-8 h-8 text-secondary-btn-text bg-secondary-btn"
+                                    class="w-8 h-8 text-btn-icon bg-secondary-btn-card"
                                     @click="toListPage('Gitcoins')"
                                 >
                                     <i class="bx bx-expand-alt bx-xs" />
@@ -275,7 +264,7 @@
                                     <div class="flex gap-2 items-center justify-between" @click="toggleWeb3Only()">
                                         <h2
                                             class="text-black text-opacity-50"
-                                            :class="{ 'translate-x-5 text-primary-text text-opacity-80': isWeb3Only }"
+                                            :class="{ 'translate-x-5 text-opacity-80': isWeb3Only }"
                                         >
                                             Web3 Only
                                         </h2>
@@ -292,7 +281,6 @@
                                                 duration-200
                                                 ease-in-out
                                             "
-                                            :class="{ 'bg-primary-text': !isWeb3Only }"
                                         >
                                             <div
                                                 class="
@@ -305,12 +293,12 @@
                                                     duration-200
                                                     ease-in-out
                                                 "
-                                                :class="{ 'translate-x-5 bg-primary-text bg-opacity-80': !isWeb3Only }"
-                                            ></div>
+                                                :class="{ 'translate-x-5 bg-opacity-80': !isWeb3Only }"
+                                            />
                                         </div>
                                         <h2
                                             class="text-black text-opacity-50"
-                                            :class="{ 'translate-x-5 text-primary-text text-opacity-80': !isWeb3Only }"
+                                            :class="{ 'translate-x-5 text-opacity-80': !isWeb3Only }"
                                         >
                                             Hybrid
                                         </h2>
@@ -342,7 +330,7 @@
                                     >
                                         <Button
                                             size="sm"
-                                            class="w-full h-6 text-content-btn-s-text bg-content-btn-s"
+                                            class="w-full h-6"
                                             v-show="isContentsHaveMore"
                                             @click="loadMoreContents"
                                             id="contents-load-more-button"
@@ -353,7 +341,7 @@
                                     </IntersectionObserverContainer>
                                 </div>
                                 <div v-else class="flex flex-col justify-center h-96">
-                                    <span class="w-full text-center text-primary-text">{{
+                                    <span class="w-full text-center">{{
                                         isLoadingContents ? 'Loading...' : "Haven't found anything yet..."
                                     }}</span>
                                 </div>
@@ -406,7 +394,7 @@
                         <div class="flex flex-row gap-5">
                             <Button
                                 size="sm"
-                                class="w-72 text-primary-btn-text bg-primary-btn"
+                                class="w-72 text-body-text bg-primary-btn"
                                 @click="isShowingNotice = false"
                             >
                                 OK
@@ -428,7 +416,7 @@
                 <div class="mx-auto w-83.5 text-2xl leading-17.5">
                     <Button
                         size="lg"
-                        class="mb-9 w-full h-17.5 text-primary-btn-text bg-primary-btn rounded-3xl"
+                        class="mb-9 w-full h-17.5 text-body-text bg-primary-btn rounded-3xl"
                         @click="toHomePage"
                     >
                         <span> Go Home </span>

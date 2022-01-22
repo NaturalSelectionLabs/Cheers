@@ -3,7 +3,7 @@
         <Logo v-if="displayLogo" class="w-10 h-10 cursor-pointer" @click="toHomePage" />
         <div
             v-else
-            class="flex items-center justify-center w-10 h-10 text-secondary-btn-text cursor-pointer"
+            class="text-secondary-btn-text flex items-center justify-center w-10 h-10 cursor-pointer"
             @click="back"
         >
             <i class="bx bx-chevron-left bx-sm" />
@@ -31,7 +31,7 @@
                         mx-2
                         p-5
                         w-32
-                        text-primary-text
+                        text-body-text
                         bg-white
                         rounded
                         shadow-md
@@ -40,11 +40,11 @@
                     "
                 >
                     <div class="flex flex-row gap-2 items-center cursor-pointer" @click="toPublicPage">
-                        <i class="bx bx-user bx-xs" />
+                        <i class="bx bx-user bx-xs text-btn-icon" />
                         Home
                     </div>
                     <div class="flex flex-row gap-2 items-center cursor-pointer" @click="logout">
-                        <i class="bx bx-log-out bx-xs" />
+                        <i class="bx bx-log-out bx-xs text-btn-icon" />
                         Logout
                     </div>
                 </div>
