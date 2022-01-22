@@ -156,16 +156,18 @@ async function initAccounts(pageOwner = RSS3.getPageOwner()) {
     };
 }
 
-async function initContent(timestamp: string = '') {
+async function initContent(timestamp: string = '', isWeb3Only: boolean) {
     const pageOwner = await RSS3.getPageOwner();
     const apiUserPersona = RSS3.getAPIUser().persona as IRSS3;
+
+    let QUERY_STRING = isWeb3Only ? 'Mirror.XYZ' : 'Twitter,Misskey,Mirror.XYZ,Jike';
 
     let allItems =
         (await apiUserPersona.items.getListByPersona({
             persona: pageOwner.address,
             limit: config.splitPageLimits.contents,
             tsp: timestamp,
-            fieldLike: 'Twitter,Misskey,Mirror.XYZ,Jike',
+            fieldLike: QUERY_STRING,
         })) || [];
 
     let haveMore = allItems.length === config.splitPageLimits.contents;
@@ -337,6 +339,18 @@ const tryEnsureOrRedirect = async (route: RouteLocationNormalizedLoaded, router:
     }
 };
 
+function setStorage(key: string, value: string) {
+    if (value) {
+        localStorage.setItem(key, value);
+    } else {
+        localStorage.removeItem(key);
+    }
+}
+
+function getStorage(key: string): string | null {
+    return localStorage.getItem(key);
+}
+
 const utils = {
     sortByOrderTag,
     initAssets,
@@ -352,6 +366,8 @@ const utils = {
     getAddress,
     subDomainModeRedirect,
     tryEnsureOrRedirect,
+    setStorage,
+    getStorage,
 };
 
 export default utils;
