@@ -197,6 +197,7 @@ module.exports = {
                 18.5: '4.625rem', // 74px
                 83.5: '20.875rem', // 334px
                 72: '18rem', //288px
+                68: '17rem', //272px
             },
             lineHeight: {
                 17.5: '4.375rem', // 70px
@@ -226,6 +227,7 @@ module.exports = {
                 BSC: 'url(@/assets/images/chains/BSC.png)',
                 Ethereum: 'url(@/assets/images/chains/Ethereum.png)',
                 Polygon: 'url(@/assets/images/chains/Polygon.png)',
+                Arbitrum: 'url(@/assets/images/chains/Arbitrum.png)',
                 Ronin: 'url(@/assets/images/chains/Ronin.png)',
                 Misskey: 'url(@/assets/images/chains/Misskey.png)',
                 Twitter: 'url(@/assets/images/chains/Twitter.png)',

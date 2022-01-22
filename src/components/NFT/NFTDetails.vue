@@ -8,6 +8,7 @@
                 @click="toScan(details.asset_contract?.address, details.token_id)"
             />
             <MarketTag
+                v-if="market"
                 :market="market"
                 class="cursor-pointer"
                 @click="toMarket(details.asset_contract?.address, details.token_id)"
@@ -40,29 +41,37 @@ import { Vue, Options } from 'vue-class-component';
 import Trait from '@/components/NFT/Trait.vue';
 import ScanTag from '@/components/NFT/ScanTag.vue';
 import MarketTag from '@/components/NFT/MarketTag.vue';
-import marked from 'marked';
+import { marked } from 'marked';
 
 @Options({
     components: { Trait, ScanTag, MarketTag },
     props: {
         details: Object,
         chain: String,
-        market: String,
     },
 })
 export default class NFTDetail extends Vue {
     details!: Object;
     chain!: String;
-    market!: String;
+
+    get market(): string {
+        switch (this.chain) {
+            case 'Ethereum':
+            case 'Polygon':
+                return 'opensea';
+            default:
+                return '';
+        }
+    }
 
     toMarket(address: string, tokenId: string) {
         switch (this.market) {
             case 'opensea':
                 switch (this.chain) {
-                    case 'Polygon.NFT':
+                    case 'Polygon':
                         window.open(`https://opensea.io/assets/matic/${address}/${tokenId}`);
                         break;
-                    default:
+                    case 'Ethereum':
                         window.open(`https://opensea.io/assets/${address}/${tokenId}`);
                         break;
                 }
@@ -75,14 +84,17 @@ export default class NFTDetail extends Vue {
 
     toScan(address: string, tokenId: string) {
         switch (this.chain) {
-            case 'BSC.NFT':
+            case 'BSC':
                 window.open(`https://bscscan.com/token/${address}?a=${tokenId}`);
                 break;
-            case 'Ethereum.NFT':
+            case 'Ethereum':
                 window.open(`https://etherscan.io/token/${address}?a=${tokenId}`);
                 break;
-            case 'Polygon.NFT':
+            case 'Polygon':
                 window.open(`https://polygonscan.com/token/${address}?a=${tokenId}`);
+                break;
+            case 'Arbitrum':
+                window.open(`https://arbiscan.io/token/${address}?a=${tokenId}`);
                 break;
         }
     }

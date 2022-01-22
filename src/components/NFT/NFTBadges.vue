@@ -8,18 +8,19 @@
                 'badge-header': location === 'header',
             }"
             :style="{ backgroundImage: `url(${collectionImg})` }"
-        ></div>
+        />
         <div
             class="badge bg-white"
             :class="{
                 'bg-BSC': chain === 'BSC.NFT',
                 'bg-Ethereum': chain === 'Ethereum.NFT',
                 'bg-Polygon': chain === 'Polygon.NFT',
+                'bg-Arbitrum': chain === 'Arbitrum.NFT',
                 'bg-Ronin': chain === 'Ronin.NFT',
                 'badge-overlay': location === 'overlay',
                 'badge-header': location === 'header',
             }"
-        ></div>
+        />
     </div>
 </template>
 
@@ -47,7 +48,7 @@ export default class NFTBadges extends Vue {
     }
 
     .badge {
-        @apply bg-item-bg bg-cover bg-center bg-no-repeat border-sm border-item-border rounded-full shadow-nft;
+        @apply bg-item-bg bg-cover bg-center bg-no-repeat border-sm border-item-border rounded-full;
     }
     .badge-overlay {
         @apply w-6 h-6;

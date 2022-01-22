@@ -46,7 +46,7 @@
                                     v-if="isOwner"
                                     size="sm"
                                     shape="circle"
-                                    class="inline-block mr-1 w-8 h-8 text-account-btn-s-text bg-account-btn-s"
+                                    class="inline-block mr-1 w-8 h-8 text-secondary-btn-text bg-secondary-btn"
                                     @click="toManageAccounts"
                                 >
                                     <i class="bx bxs-pencil bx-xs" />
@@ -54,7 +54,7 @@
                                 <Button
                                     size="sm"
                                     shape="circle"
-                                    class="inline-block mr-1 w-8 h-8 text-account-btn-s-text bg-account-btn-s"
+                                    class="inline-block mr-1 w-8 h-8 text-secondary-btn-text bg-secondary-btn"
                                     @click="toAccountsPage"
                                 >
                                     <i class="bx bx-expand-alt bx-xs" />
@@ -140,11 +140,7 @@
                                         :image-url="
                                             item.detail.animation_url || item.detail.image_preview_url || defaultAvatar
                                         "
-                                        :timestamp="
-                                            item.detail.asset_contract.created_date
-                                                ? Date.parse(item.detail.asset_contract.created_date) / 1000
-                                                : undefined
-                                        "
+                                        :timestamp="item.timestamp"
                                         size="sm"
                                         :type="className"
                                         :name="item.detail.name"
@@ -155,7 +151,7 @@
                                 <template #content>
                                     <NFTItem
                                         class="mr-1 cursor-pointer"
-                                        v-for="item in classifiedList[className].slice(4)"
+                                        v-for="item in classifiedList[className].slice(3)"
                                         :key="item.id"
                                         :image-url="
                                             item.detail.animation_url || item.detail.image_preview_url || defaultAvatar
@@ -341,13 +337,7 @@
                                     >
                                         <Button
                                             size="sm"
-                                            class="
-                                                w-full
-                                                h-6
-                                                text-content-btn-s-text
-                                                bg-content-btn-s
-                                                shadow-content-btn-s
-                                            "
+                                            class="w-full h-6 text-content-btn-s-text bg-content-btn-s"
                                             v-show="isContentsHaveMore"
                                             @click="loadMoreContents"
                                             id="contents-load-more-button"
@@ -367,9 +357,8 @@
                     </div>
                 </section>
 
-                <div class="center fixed bottom-0 left-0 mt-2 w-full bg-footer-bg">
-                    <div class="flex flex-row gap-x-2 items-center justify-between m-auto px-4 py-2 max-w-screen-lg">
-                        <Logo class="cursor-pointer" :size="18" @click="toHomePage" />
+                <div class="safe-area-fixed-bottom fixed bottom-0 left-0 mt-2 w-full bg-footer-bg">
+                    <div class="flex flex-row gap-x-2 items-center justify-end m-auto px-4 py-2 max-w-screen-lg">
                         <div class="text-right text-body-text text-xs font-normal">
                             <a href="https://rss3.io/#/privacy"> Privacy </a>
                             |
@@ -385,8 +374,9 @@
                                         text-xs
                                         font-normal
                                     "
-                                    >RSS3</a
                                 >
+                                    RSS3
+                                </a>
                             </span>
                         </div>
                     </div>
@@ -411,7 +401,7 @@
                         <div class="flex flex-row gap-5">
                             <Button
                                 size="sm"
-                                class="w-72 text-primary-btn-text bg-primary-btn shadow-primary-btn"
+                                class="w-72 text-primary-btn-text bg-primary-btn"
                                 @click="isShowingNotice = false"
                             >
                                 OK
@@ -425,7 +415,7 @@
             v-else
             class="onboarding flex items-center justify-center h-full text-center bg-pass3gradient bg-cover bg-fixed"
         >
-            <div class="body flex flex-col items-center justify-between justify-center px-4 h-2/3">
+            <div class="body flex flex-col items-center justify-between px-4 h-2/3">
                 <Logo :size="200" />
                 <div class="max-w-md text-primary-text text-2xl">
                     <p>This account is not on RSS3 yet...</p>
@@ -433,7 +423,7 @@
                 <div class="mx-auto w-83.5 text-2xl leading-17.5">
                     <Button
                         size="lg"
-                        class="mb-9 w-full h-17.5 text-primary-btn-text bg-primary-btn rounded-3xl shadow-primary-btn"
+                        class="mb-9 w-full h-17.5 text-primary-btn-text bg-primary-btn rounded-3xl"
                         @click="toHomePage"
                     >
                         <span> Go Home </span>
@@ -628,6 +618,7 @@ export default class Home extends Vue {
             await RSS3.ensureLoginUser();
             this.checkIsFollowing();
             this.isOwner = RSS3.isNowOwner();
+            this.isLoadingPersona = false;
         }
     }
 
@@ -652,8 +643,6 @@ export default class Home extends Vue {
 
         this.rss3Relations.followers = pageOwner.followers;
         this.rss3Relations.followings = pageOwner.followings;
-
-        this.isLoadingPersona = false;
 
         // Load assets
         await this.startLoadingAssets(true);
@@ -742,11 +731,15 @@ export default class Home extends Vue {
                 if (!(className in classifiedList)) {
                     classifiedList[className] = [];
                 }
-                classifiedList[className].push(
-                    displayedNFTsDetail.find(
-                        (dNFT) => dNFT.id === RSS3Utils.id.getAsset(nft.platform, nft.identity, nft.type, nft.uniqueID),
-                    ) || {},
+                const detailedNFT = displayedNFTsDetail.find(
+                    (dNFT) => dNFT.id === RSS3Utils.id.getAsset(nft.platform, nft.identity, nft.type, nft.uniqueID),
                 );
+                if (detailedNFT) {
+                    classifiedList[className].push({
+                        ...detailedNFT,
+                        timestamp: nft.timestamp,
+                    });
+                }
             }),
         );
         await Promise.all(
@@ -1115,7 +1108,7 @@ export default class Home extends Vue {
             if (el) {
                 el.scrollTop = this.scrollTop;
             }
-
+            this.contents = [];
             await this.updateUserInfo();
         } else {
             this.contents = [];

@@ -18,7 +18,7 @@
                         <template #details>
                             <div class="relative">
                                 <EVMpAccountItem
-                                    class="shadow-account-sm inline-flex m-0.5 rounded-full"
+                                    class="inline-flex m-0.5 rounded-full"
                                     :size="64"
                                     chain="Ethereum"
                                     :address="ethAddress"
@@ -38,7 +38,7 @@
                                 <Button
                                     v-if="mode === 'delete'"
                                     size="sm"
-                                    class="w-8 h-8 text-account-btn-s-text bg-account-btn-s shadow-account-btn-s"
+                                    class="w-8 h-8 text-account-btn-s-text bg-account-btn-s"
                                     @click="mode = 'normal'"
                                 >
                                     <i class="bx bx-check bx-xs" />
@@ -46,7 +46,7 @@
                                 <Button
                                     v-else
                                     size="sm"
-                                    class="w-8 h-8 text-account-btn-s-text bg-account-btn-s shadow-account-btn-s"
+                                    class="w-8 h-8 text-account-btn-s-text bg-account-btn-s"
                                     @click="mode = 'delete'"
                                 >
                                     <i class="bx bx-minus bx-xs" />
@@ -54,7 +54,7 @@
                                 <Button
                                     v-if="mode === 'add'"
                                     size="sm"
-                                    class="w-8 h-8 text-account-btn-s-text bg-account-btn-s shadow-account-btn-s"
+                                    class="w-8 h-8 text-account-btn-s-text bg-account-btn-s"
                                     @click="mode = 'normal'"
                                 >
                                     <i class="bx bx-x bx-xs" />
@@ -62,7 +62,7 @@
                                 <Button
                                     v-else
                                     size="sm"
-                                    class="w-8 h-8 text-account-btn-m-text bg-account-btn-m shadow-account-btn-s"
+                                    class="w-8 h-8 text-account-btn-m-text bg-account-btn-m"
                                     @click="mode = 'add'"
                                 >
                                     <i class="bx bx-plus bx-xs" />
@@ -73,7 +73,7 @@
                             <div v-if="mode === 'add'" class="text-center md:h-screen-30">
                                 <div>
                                     <EVMpAccountItem
-                                        class="inline-flex m-0.5 rounded-full shadow-account cursor-pointer"
+                                        class="inline-flex m-0.5 rounded-full cursor-pointer"
                                         :size="64"
                                         @click="addMetamaskAccount"
                                     />
@@ -82,7 +82,7 @@
                                     <AccountItem
                                         v-for="platform in additionalNoSignAccounts"
                                         :key="platform"
-                                        class="inline-flex m-0.5 rounded-full shadow-account cursor-pointer"
+                                        class="inline-flex m-0.5 rounded-full cursor-pointer"
                                         :size="64"
                                         :chain="platform"
                                         @click="addNoSignAccount(platform)"
@@ -92,7 +92,7 @@
                             <div v-else-if="mode === 'delete'" class="md:h-screen-30">
                                 <div>
                                     <div
-                                        class="inline-flex m-0.5 rounded-full shadow-account cursor-pointer"
+                                        class="inline-flex m-0.5 rounded-full cursor-pointer"
                                         v-for="(item, index) in show"
                                         :key="item.id"
                                     >
@@ -183,18 +183,10 @@
                         </template>
                     </TransBarCard>
                     <div class="flex flex-row-reverse gap-5 m-auto px-4 py-2 w-full md:flex-col">
-                        <Button
-                            size="lg"
-                            class="flex-1 text-primary-btn-text text-lg bg-primary-btn shadow-primary-btn"
-                            @click="save"
-                        >
+                        <Button size="lg" class="flex-1 text-primary-btn-text text-lg bg-primary-btn" @click="save">
                             <span>Save</span>
                         </Button>
-                        <Button
-                            size="lg"
-                            class="flex-1 text-secondary-btn-text text-lg bg-secondary-btn shadow-secondary-btn"
-                            @click="back"
-                        >
+                        <Button size="lg" class="flex-1 text-secondary-btn-text text-lg bg-secondary-btn" @click="back">
                             <span>Discard</span>
                         </Button>
                     </div>
@@ -251,14 +243,14 @@
                     <div class="flex flex-row gap-5">
                         <Button
                             size="sm"
-                            class="w-32 text-secondary-btn-text bg-secondary-btn shadow-secondary-btn"
+                            class="w-32 text-secondary-btn-text bg-secondary-btn"
                             @click="isShowingAddSpecifyAccountInput = false"
                         >
                             Cancel
                         </Button>
                         <Button
                             size="sm"
-                            class="w-32 text-primary-btn-text bg-primary-btn shadow-primary-btn"
+                            class="w-32 text-primary-btn-text bg-primary-btn"
                             @click="addNoSignAccountConfirm"
                         >
                             Confirm
@@ -280,7 +272,7 @@
                     <div class="flex flex-row gap-5">
                         <Button
                             size="sm"
-                            class="w-72 text-primary-btn-text bg-primary-btn shadow-primary-btn"
+                            class="w-72 text-primary-btn-text bg-primary-btn"
                             @click="isShowingAddAccountNotice = false"
                         >
                             <span>OK</span>

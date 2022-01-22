@@ -33,7 +33,12 @@ export default class AssetCard extends Vue {
     date: string = '';
 
     mounted() {
-        this.date = this.timestamp ? formatDate(this.timestamp) : 'After the birth of the universe';
+        if (this.timestamp) {
+            let time = new Date(this.timestamp).getTime() / 1000;
+            this.date = formatDate(time.toString());
+        } else {
+            this.date = 'After the birth of the universe';
+        }
     }
 
     getTitle(type: string) {

@@ -29,7 +29,7 @@
                         >
                             <Button
                                 size="sm"
-                                class="w-full h-6 text-content-btn-s-text bg-content-btn-s shadow-content-btn-s"
+                                class="w-full h-6 text-content-btn-s-text bg-content-btn-s"
                                 @click="loadMoreFollows"
                             >
                                 <i v-if="isLoadingFollows" class="bx bx-loader-circle bx-spin"></i>
@@ -162,7 +162,7 @@ export default class Followers extends Vue {
         this.isPageActive = false;
     }
 
-    async toPublicPage(rns: string, ethAddress: string) {
+    toPublicPage(rns: string, ethAddress: string) {
         if (rns) {
             window.location.href = `//${rns}.${legacyConfig.subDomain.rootDomain}`;
         } else {

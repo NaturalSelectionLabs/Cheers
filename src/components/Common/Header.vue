@@ -1,6 +1,6 @@
 <template>
     <div class="relative flex items-center justify-between pb-4">
-        <Logo v-if="displayLogo" class="w-10 h-10 cursor-pointer" />
+        <Logo v-if="displayLogo" class="w-10 h-10 cursor-pointer" @click="toHomePage" />
         <div
             v-else
             class="flex items-center justify-center w-10 h-10 text-secondary-btn-text cursor-pointer"
@@ -12,39 +12,49 @@
             class="inline-flex my-auto w-10 h-10 cursor-pointer"
             :is-rounded="true"
             :is-border="false"
-            :src="rss3Profile?.profile?.avatar?.[0] || defaultAvatar"
+            :src="avatar"
             :alt="rns || ethAddress || ''"
             @click="toggleDialog()"
         />
+        <transition name="fade">
+            <template v-if="isdisplayDialog && isLogin">
+                <div
+                    class="
+                        absolute
+                        z-50
+                        bottom-0
+                        right-0
+                        flex flex-col
+                        gap-2
+                        justify-center
+                        -my-2
+                        mx-2
+                        p-5
+                        w-32
+                        text-primary-text
+                        bg-white
+                        rounded
+                        shadow-md
+                        transform
+                        translate-y-full
+                    "
+                >
+                    <div class="flex flex-row gap-2 items-center cursor-pointer" @click="toPublicPage">
+                        <i class="bx bx-user bx-xs" />
+                        Home
+                    </div>
+                    <div class="flex flex-row gap-2 items-center cursor-pointer" @click="logout">
+                        <i class="bx bx-log-out bx-xs" />
+                        Logout
+                    </div>
+                </div>
+            </template>
+        </transition>
         <div
-            v-if="rss3Profile && isdisplayDialog"
-            class="
-                absolute
-                z-50
-                bottom-0
-                right-0
-                flex flex-col
-                gap-2
-                justify-center
-                p-5
-                w-32
-                text-primary-text
-                bg-white
-                rounded
-                shadow-md
-                transform
-                translate-y-full
-            "
-        >
-            <div class="flex flex-row gap-2 items-center cursor-pointer" @click="toPublicPage">
-                <i class="bx bx-user bx-xs" />
-                Home
-            </div>
-            <div class="flex flex-row gap-2 items-center cursor-pointer" @click="logout">
-                <i class="bx bx-log-out bx-xs" />
-                Logout
-            </div>
-        </div>
+            v-if="isdisplayDialog && isLogin"
+            class="fixed z-10 left-0 top-0 m-0 p-0 w-screen h-screen"
+            @click="toggleDialog()"
+        />
     </div>
 </template>
 
@@ -65,18 +75,21 @@ import config from '@/config';
     },
 })
 export default class Header extends Vue {
-    rss3Profile: any;
+    avatar: string = config.defaultAvatar;
+    isLogin: boolean = false;
     ethAddress: string = '';
     rns: string = '';
-    list!: string;
-    defaultAvatar = config.defaultAvatar;
+    list!: string | undefined;
+    displayLogo!: boolean;
     isdisplayDialog: boolean = false;
 
     async mounted() {
         if (RSS3.isValidRSS3()) {
-            this.rss3Profile = await RSS3.ensureLoginUser();
-            this.rns = this.rss3Profile.name;
-            this.ethAddress = this.rss3Profile.address;
+            const rss3Profile = (await RSS3.ensureLoginUser()) as any;
+            this.rns = rss3Profile.name;
+            this.ethAddress = rss3Profile.address;
+            this.avatar = rss3Profile?.profile?.avatar?.[0];
+            this.isLogin = true;
         }
     }
 
@@ -98,12 +111,16 @@ export default class Header extends Vue {
         }
     }
 
+    toHomePage() {
+        window.location.href = '//' + config.subDomain.rootDomain;
+    }
+
     toPublicPage() {
         if (this.rns && this.ethAddress) {
             if (this.rns && config.subDomain.isSubDomainMode) {
-                this.$router.push('/');
+                window.location.href = `//${this.rns}.${config.subDomain.rootDomain}`;
             } else {
-                this.$router.push(`/${this.rns || this.ethAddress}`);
+                window.location.href = `//${config.subDomain.rootDomain}/${this.ethAddress}`;
             }
         }
     }
@@ -124,4 +141,14 @@ export default class Header extends Vue {
 }
 </script>
 
-<style></style>
+<style scoped>
+.fade-enter-active,
+.fade-leave-active {
+    transition: opacity 0.5s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+    opacity: 0;
+}
+</style>

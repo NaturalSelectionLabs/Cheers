@@ -58,18 +58,10 @@
                         </template>
                     </TransBarCard>
                     <div class="flex flex-row-reverse gap-5 m-auto px-4 py-2 w-full md:flex-col">
-                        <Button
-                            size="lg"
-                            class="flex-1 text-primary-btn-text text-lg bg-primary-btn shadow-primary-btn"
-                            @click="save"
-                        >
+                        <Button size="lg" class="flex-1 text-primary-btn-text text-lg bg-primary-btn" @click="save">
                             <span>Save</span>
                         </Button>
-                        <Button
-                            size="lg"
-                            class="flex-1 text-secondary-btn-text text-lg bg-secondary-btn shadow-secondary-btn"
-                            @click="back"
-                        >
+                        <Button size="lg" class="flex-1 text-secondary-btn-text text-lg bg-secondary-btn" @click="back">
                             <span>Discard</span>
                         </Button>
                     </div>
@@ -121,7 +113,7 @@ export default class SetupGitcoins extends Vue {
         await utils.tryEnsureOrRedirect(this.$route, this.$router);
         const loginUser = await RSS3.getLoginUser();
         await RSS3.setPageOwner(loginUser.address);
-        // Get NFTs
+        // Get donations
         const { donations, hiddenDonations } = await utils.initAssets();
 
         this.show = await utils.loadAssets(donations);

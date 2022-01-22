@@ -21,6 +21,6 @@ export const timeDifferent = (timeStamp: number): string => {
 export const formatDate = (ts: string): string => {
     let month = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     let date = new Date(parseInt(ts) * 1000);
-    let day = date.getDay() < 10 ? '0' + date.getDay() : date.getDay();
+    let day = date.getDate() < 10 ? '0' + date.getDate() : date.getDate();
     return `${month[date.getMonth()]} ${day}, ${date.getFullYear()}`;
 };

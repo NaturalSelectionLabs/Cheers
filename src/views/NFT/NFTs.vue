@@ -18,13 +18,13 @@
                             <NFTItem
                                 class="cursor-pointer"
                                 size="auto"
-                                :image-url="item.detail.animation_url || item.detail.image_preview_url || defaultAvatar"
+                                :image-url="item.detail.animation_url || item.detail.image_preview_url || fallbackImage"
                                 :poster-url="
                                     item.detail.image_preview_url ||
                                     item.detail.image_url ||
                                     item.detail.animation_url ||
                                     item.detail.animation_original_url ||
-                                    defaultAvatar
+                                    fallbackImage
                                 "
                                 :is-showing-details="false"
                                 @click="toSingleNFTPage(item.id)"
@@ -70,11 +70,7 @@
                             v-for="item in nfts"
                             :key="item.id"
                             :image-url="item.detail.animation_url || item.detail.image_preview_url || defaultAvatar"
-                            :timestamp="
-                                item.detail.asset_contract.created_date
-                                    ? Date.parse(item.detail.asset_contract.created_date) / 1000
-                                    : undefined
-                            "
+                            :timestamp="item.timestamp"
                             size="xl"
                             :type="title"
                             :name="item.detail.name"
@@ -115,7 +111,7 @@ import config from '@/common/config';
 import { debounce, filter } from 'lodash';
 import utils from '@/common/utils';
 import Header from '@/components/Common/Header.vue';
-import { DetailedNFT, GeneralAsset } from '@/common/types';
+import { DetailedNFT, GeneralAssetWithClass } from '@/common/types';
 import IntersectionObserverContainer from '@/components/Common/IntersectionObserverContainer.vue';
 import TransBarCard from '@/components/Card/TransBarCard.vue';
 import { formatter } from '@/common/address';
@@ -135,10 +131,11 @@ export default class NFTs extends Vue {
     $gtag: any;
     scrollTop: number = 0;
     lastRoute: string = '';
-    assetList: GeneralAsset[] = [];
+    assetList: GeneralAssetWithClass[] = [];
     assetsStartIndex: number = 0;
     isLoadingAssets: boolean = true;
     isHavingMoreAssets: boolean = true;
+    fallbackImage: string = config.undefinedImageAlt;
 
     async initLoad() {
         this.lastRoute = this.$route.fullPath;
@@ -160,10 +157,7 @@ export default class NFTs extends Vue {
         }
 
         const { nftsWithClassName } = await utils.initAssets();
-        this.assetList =
-            filter(nftsWithClassName, (element) => {
-                return (element.class || 'Vitrine') === this.title;
-            }) || [];
+        this.assetList = nftsWithClassName.filter((element) => (element.class || 'Vitrine') === this.title);
         this.isLoadingAssets = false;
         this.nfts = [];
         this.assetsStartIndex = 0;
@@ -179,7 +173,18 @@ export default class NFTs extends Vue {
                 endIndex = this.assetList.length;
                 this.isHavingMoreAssets = false;
             }
-            this.nfts = this.nfts.concat(await utils.loadAssets(this.assetList.slice(this.assetsStartIndex, endIndex)));
+            const nftDetailsList = await utils.loadAssets(this.assetList.slice(this.assetsStartIndex, endIndex));
+            this.assetList.map((nft) => {
+                const detailedNFT = nftDetailsList.find(
+                    (dNFT) => dNFT.id === RSS3Utils.id.getAsset(nft.platform, nft.identity, nft.type, nft.uniqueID),
+                );
+                if (detailedNFT) {
+                    this.nfts.push({
+                        ...detailedNFT,
+                        timestamp: nft.timestamp,
+                    });
+                }
+            });
             this.assetsStartIndex = endIndex;
             this.isLoadingAssets = false;
         }

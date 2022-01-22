@@ -1,5 +1,19 @@
 <template>
-    <div class="market-tag">
+    <div
+        class="
+            flex
+            items-center
+            justify-center
+            px-2
+            py-1.5
+            text-center
+            leading-none
+            bg-white bg-contain bg-center bg-no-repeat
+            border-sm border-nft-bg
+            rounded-sm
+            bg-origin-content
+        "
+    >
         <Opensea v-if="market === 'opensea'" />
         <Rarible v-if="market === 'rarible'" />
     </div>
@@ -21,10 +35,4 @@ export default class MarketTag extends Vue {
 }
 </script>
 
-<style scoped lang="postcss">
-@layer components {
-    .market-tag {
-        @apply flex items-center justify-center px-2 py-1.5 text-center leading-none bg-white bg-contain bg-center bg-no-repeat border-sm border-nft-bg rounded-sm bg-origin-content;
-    }
-}
-</style>
+<style scoped lang="postcss"></style>

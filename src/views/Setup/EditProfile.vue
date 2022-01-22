@@ -1,17 +1,21 @@
 <template>
-    <div class="h-screen text-body-text bg-body-bg overflow-y-auto">
+    <div
+        class="
+            h-screen
+            text-body-text
+            bg-body-bg bg-gradient-to-tr
+            from-blue-400
+            to-blue-200
+            via-blue-100
+            overflow-y-auto
+        "
+    >
         <div class="m-auto pb-20 px-4 py-9 max-w-screen-lg">
-            <div class="relative mb-4 text-center">
-                <Button
-                    size="sm"
-                    class="w-10 h-10 text-secondary-btn-text bg-secondary-btn shadow-secondary-btn"
-                    @click="back"
-                >
-                    <i class="bx bx-chevron-left bx-sm"></i>
-                </Button>
-                <h1 class="absolute -z-10 top-0 w-full text-center text-primary-text text-xl font-bold leading-10">
-                    Edit Profile
-                </h1>
+            <div class="flex items-center justify-between mb-10 w-full text-center">
+                <i class="bx bx-chevron-left bx-sm w-10 h-10 text-secondary-btn-text cursor-pointer" @click="back"></i>
+                <div class="flex flex-grow justify-center mr-10">
+                    <h1 class="text-primary-text text-2xl font-bold">Edit Profile</h1>
+                </div>
             </div>
             <section class="m-auto max-w-md">
                 <AvatarEditor class="m-auto mb-4" size="lg" :url="profile.avatar" ref="avatar" />
@@ -34,47 +38,16 @@
                 />
                 <Input class="mb-4 w-full" :is-single-line="false" placeholder="Bio" v-model="profile.bio" />
 
-                <BarCard color="account" class="mb-4 w-full">
-                    <template #content>
-                        <div
-                            class="inline-block mr-1 cursor-pointer"
-                            v-for="item in accounts"
-                            :key="item.platform + item.identity"
-                        >
-                            <EVMpAccountItem v-if="item.platform === 'EVM+'" :size="40" :address="item.identity" />
-                            <AccountItem v-else :size="40" :chain="item.platform" :address="item.identity" />
-                        </div>
-                    </template>
-                    <template #footer>
-                        <section class="flex flex-row gap-2">
-                            <Button
-                                size="sm"
-                                class="w-8 h-8 text-account-btn-s-text bg-account-btn-s shadow-account-btn-s"
-                                @click="toManageAccounts"
-                            >
-                                <i class="bx bxs-pencil bx-xs" />
-                            </Button>
-                            <Button
-                                size="sm"
-                                class="w-8 h-8 text-account-btn-s-text bg-account-btn-s shadow-account-btn-s"
-                                @click="toAccountsPage"
-                            >
-                                <i class="bx bx-expand-alt bx-xs" />
-                            </Button>
-                        </section>
-                    </template>
-                </BarCard>
-
-                <div class="fixed bottom-4 left-0 right-0 flex gap-5 m-auto px-4 py-4 w-full max-w-md">
+                <div class="fixed left-0 right-0 flex gap-5 m-auto px-4 w-full max-w-md md:px-0">
                     <Button
-                        size="lg"
-                        class="flex-1 text-secondary-btn-text text-lg bg-secondary-btn shadow-secondary-btn"
+                        size="sm"
+                        class="flex-1 h-9 text-secondary-btn-text text-base bg-secondary-btn opacity-80"
                         @click="back"
                         ><span>Discard</span></Button
                     >
                     <Button
-                        size="lg"
-                        class="flex-1 text-primary-btn-text text-lg bg-primary-btn shadow-primary-btn"
+                        size="sm"
+                        class="flex-1 h-9 text-primary-btn-text text-base bg-primary-btn opacity-80"
                         @click="save"
                         ><span>Save</span></Button
                     >
@@ -96,7 +69,7 @@
                     <div class="flex flex-row gap-5">
                         <Button
                             size="sm"
-                            class="w-72 text-primary-btn-text bg-primary-btn shadow-primary-btn"
+                            class="w-72 text-primary-btn-text bg-primary-btn"
                             @click="isShowingNotice = false"
                         >
                             <span>OK</span>
@@ -124,6 +97,7 @@ import config from '@/config';
 import LinkButton from '@/components/Button/LinkButton.vue';
 import RNSUtils from '@/common/rns';
 import BarCard from '@/components/Card/BarCard.vue';
+import TransBarCard from '@/components/Card/TransBarCard.vue';
 import utils from '@/common/utils';
 
 @Options({
@@ -139,6 +113,7 @@ import utils from '@/common/utils';
         Loading,
         LoadingContainer,
         BarCard,
+        TransBarCard,
     },
 })
 export default class EditProfile extends Vue {
