@@ -180,16 +180,18 @@ function isAsset(field: string | undefined): boolean {
     return !!(field && condition.find((item) => field.includes(item)));
 }
 
-async function initContent(timestamp: string = '') {
+async function initContent(timestamp: string = '', isWeb3Only: boolean) {
     const pageOwner = await RSS3.getPageOwner();
     const apiUserPersona = RSS3.getAPIUser().persona as IRSS3;
+
+    let QUERY_STRING = isWeb3Only ? 'Mirror.XYZ' : 'Twitter,Misskey,Mirror.XYZ,Jike';
 
     let allItems =
         (await apiUserPersona.items.getListByPersona({
             persona: pageOwner.address,
             limit: config.splitPageLimits.contents,
             tsp: timestamp,
-            fieldLike: 'Twitter,Misskey,Mirror.XYZ,Jike',
+            fieldLike: QUERY_STRING,
         })) || [];
 
     let haveMore = allItems.length === config.splitPageLimits.contents;
