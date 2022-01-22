@@ -363,6 +363,18 @@ const tryEnsureOrRedirect = async (route: RouteLocationNormalizedLoaded, router:
     }
 };
 
+function setStorage(key: string, value: string) {
+    if (value) {
+        localStorage.setItem(key, value);
+    } else {
+        localStorage.removeItem(key);
+    }
+}
+
+function getStorage(key: string): string | null {
+    return localStorage.getItem(key);
+}
+
 const utils = {
     sortByOrderTag,
     initAssets,
@@ -378,6 +390,8 @@ const utils = {
     getAddress,
     subDomainModeRedirect,
     tryEnsureOrRedirect,
+    setStorage,
+    getStorage,
 };
 
 export default utils;

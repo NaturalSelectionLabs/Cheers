@@ -657,6 +657,8 @@ export default class Home extends Vue {
 
         // Load Contents
         setTimeout(async () => {
+            const localStoreIsWeb3Only = JSON.parse(utils.getStorage('isWeb3Only') || 'false');
+            this.isWeb3Only = localStoreIsWeb3Only;
             const { listed, haveMore, timestamp } = await utils.initContent('', this.isWeb3Only);
             while (listed.length > 0) {
                 if ('target' in listed[0] && listed[0].target.field.includes('Mirror.XYZ')) {
@@ -919,7 +921,10 @@ export default class Home extends Vue {
     async toggleWeb3Only() {
         this.isLoadingContents = true;
         this.contents = [];
-        this.isWeb3Only = !this.isWeb3Only;
+        if (this.isWeb3Only !== undefined) {
+            this.isWeb3Only = !this.isWeb3Only;
+            utils.setStorage('isWeb3Only', JSON.stringify(this.isWeb3Only));
+        }
         await this.updateFilteredContent();
         this.isLoadingContents = false;
     }
