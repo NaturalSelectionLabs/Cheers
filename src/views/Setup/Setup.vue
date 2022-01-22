@@ -125,12 +125,7 @@
                 </template>
             </TransBarCard>
 
-            <TransBarCard title="Contents" :haveContent="true">
-                <template #header>
-                    <Button size="sm" class="w-8 h-8 text-secondary-btn-text bg-secondary-btn">
-                        <i class="bx bx-plus bx-xs cursor-pointer" />
-                    </Button>
-                </template>
+            <TransBarCard title="Contents" :haveContent="true" :haveContentInfo="true">
                 <template #content>
                     <span class="text-content-title">Check out in homepage!</span>
                 </template>
