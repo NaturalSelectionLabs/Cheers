@@ -4,7 +4,6 @@
         ref="lottieContainer"
         :style="{
             width: size + 'px',
-            height: size + 'px',
         }"
     ></div>
 </template>

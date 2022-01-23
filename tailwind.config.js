@@ -70,6 +70,7 @@ module.exports = {
                 },
                 success: '#00c700',
                 danger: '#b01a0a',
+                walletConnect: '#0072ff',
                 metamask: {
                     text: '#944300',
                     bg: '#fff4eb',

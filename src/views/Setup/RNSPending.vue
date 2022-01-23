@@ -2,7 +2,7 @@
     <div class="flex items-center justify-center h-screen">
         <div class="flex flex-col gap-20 items-center justify-center px-4 py-9 max-w-md h-full">
             <Loading :size="200" class="mb-50" />
-            <div class="w-full text-left text-primary-text font-medium">
+            <div class="w-full text-left text-body-text font-medium">
                 <p class="text-2xl">Preparing your Pass ...</p>
                 <p class="text-base">Hold on a little bit or come back later!</p>
             </div>

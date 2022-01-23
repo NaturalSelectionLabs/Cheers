@@ -1,18 +1,5 @@
 <template>
-    <div
-        class="
-            onboarding
-            flex
-            items-center
-            justify-center
-            h-screen
-            text-center
-            bg-gradient-to-tr bg-cover bg-fixed
-            from-blue-400
-            to-blue-200
-            via-blue-100
-        "
-    >
+    <div class="onboarding flex items-center justify-center h-screen text-center">
         <div class="fixed top-0 flex px-6 py-3 w-full md:px-14 md:py-2">
             <div class="h-18 flex items-center justify-start md:h-20">
                 <div class="flex-shrink-0 mr-4 mt-2 md:mt-0">
@@ -27,21 +14,21 @@
                     <li>
                         <a
                             href="https://twitter.com/rss3_"
-                            class="font-base nav-item text-primary-text hover:text-white text-lg"
+                            class="font-base nav-item text-primary-btn hover:text-secondary-btn text-lg"
                             >Twitter</a
                         >
                     </li>
                     <li>
                         <a
                             href="https://github.com/NaturalSelectionLabs"
-                            class="font-base nav-item text-primary-text hover:text-white text-lg"
+                            class="font-base nav-item text-primary-btn hover:text-secondary-btn text-lg"
                             >GitHub</a
                         >
                     </li>
                     <li>
                         <a
                             href="https://rss3.fun/"
-                            class="font-base nav-item text-primary-text hover:text-white text-lg"
+                            class="font-base nav-item text-primary-btn hover:text-secondary-btn text-lg"
                             >Tutorials</a
                         >
                     </li>
@@ -79,28 +66,28 @@
                             <li>
                                 <a
                                     href="https://twitter.com/rss3_"
-                                    class="font-base nav-item text-primary-text hover:text-white text-2xl"
+                                    class="font-base nav-item text-body-text hover:text-primary-text text-2xl"
                                     >Twitter</a
                                 >
                             </li>
                             <li>
                                 <a
                                     href="https://github.com/NaturalSelectionLabs"
-                                    class="font-base nav-item text-primary-text hover:text-white text-2xl"
+                                    class="font-base nav-item text-body-text hover:text-primary-text text-2xl"
                                     >GitHub</a
                                 >
                             </li>
                             <li>
                                 <a
                                     href="https://rss3.fun/"
-                                    class="font-base nav-item text-primary-text hover:text-white text-2xl"
+                                    class="font-base nav-item text-body-text hover:text-primary-text text-2xl"
                                     >Tutorials</a
                                 >
                             </li>
                             <li>
                                 <a
                                     href="https://rss3.io/#/privacy"
-                                    class="font-base nav-item text-primary-text hover:text-white text-2xl"
+                                    class="font-base nav-item text-body-text hover:text-primary-text text-2xl"
                                     >Privacy policy</a
                                 >
                             </li>
@@ -112,13 +99,10 @@
 
         <div v-show="!mobileNavOpen" class="z-1 body flex flex-col gap-10 items-center justify-center mt-24 px-4 h-3/4">
             <div class="flex flex-col gap-6 items-center mb-10">
-                <h1 class="text-6xl font-medium md:text-7xl">
-                    <span class="text-primary-text">Pass</span> is the LinkedIn of
-                    <span class="text-primary-text">Web3</span>
-                </h1>
-                <span class="mt-1 w-3/4 text-lg font-light md:mt-3 md:text-2xl">
+                <Loading :size="200" />
+                <span class="mt-1 w-3/4 text-lg font-light md:mt-3 md:w-full md:text-2xl">
                     Your Web3 activites and contents all in one place. <br />
-                    Made for Web3, made for you.
+                    Your Web3 in one shot.
                 </span>
                 <div
                     class="
@@ -130,17 +114,13 @@
                         md:flex md:flex-row md:gap-6 md:justify-center md:mt-8 md:w-full
                     "
                 >
-                    <Button
-                        size="sm"
-                        class="mb-6 w-60 h-13 text-primary-text bg-white bg-opacity-50"
-                        @click="walletConnect"
-                    >
+                    <Button size="sm" class="mb-6 w-60 h-13 text-walletConnect bg-card-bg" @click="walletConnect">
                         <WalletConnect :size="30" />
                         <span> Wallet Connect </span>
                     </Button>
                     <Button
                         size="sm"
-                        class="w-60 h-13 text-metamask-text bg-white bg-opacity-50 invisible md:visible"
+                        class="w-60 h-13 text-metamask-text bg-card-bg invisible md:visible"
                         v-show="isHavingMetamaskPlugin"
                         @click="metaMask"
                     >
