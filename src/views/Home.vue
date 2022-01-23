@@ -350,7 +350,7 @@
                     </div>
                 </section>
 
-                <div class="safe-area-fixed-bottom fixed bottom-0 left-0 mt-2 w-full bg-footer-bg">
+                <div class="safe-area-fixed-bottom bg-footer-bg fixed bottom-0 left-0 mt-2 w-full">
                     <div class="flex flex-row gap-x-2 items-center justify-end m-auto px-4 py-2 max-w-screen-lg">
                         <div class="text-right text-body-text text-xs font-normal">
                             <a href="https://rss3.io/#/privacy"> Privacy </a>
@@ -406,7 +406,7 @@
         </div>
         <div
             v-else
-            class="onboarding flex items-center justify-center h-full text-center bg-pass3gradient bg-cover bg-fixed"
+            class="onboarding bg-pass3gradient flex items-center justify-center h-full text-center bg-cover bg-fixed"
         >
             <div class="body flex flex-col items-center justify-between px-4 h-2/3">
                 <Logo :size="200" />
@@ -1145,8 +1145,9 @@ export default class Home extends Vue {
             if (isScrollDown) {
                 if (!this.isLastScrollingDown) {
                     containers.forEach((container) => {
-                        if (window.innerHeight < container.clientHeight) {
-                            container.style.top = `${window.innerHeight - container.clientHeight - 50}px`;
+                        const realHeight = container.clientHeight + 50; // why?
+                        if (window.innerHeight < realHeight) {
+                            container.style.top = `${window.innerHeight - realHeight}px`;
                         } else {
                             container.style.top = '32px';
                         }
