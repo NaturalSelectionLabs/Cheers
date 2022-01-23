@@ -1,10 +1,10 @@
 <template>
-    <div class="h-screen bg-gradient-to-tr from-blue-400 to-blue-200 via-blue-100 overflow-y-auto">
+    <div class="h-screen overflow-y-auto">
         <div class="m-auto pb-20 pt-8 px-4 max-w-screen-lg">
             <Header list="footprints" />
-            <div class="p-5 bg-white bg-opacity-50 rounded-xl md:py-12">
+            <div class="p-5 bg-card-bg rounded-xl md:py-12">
                 <section class="m-auto max-w-screen-sm">
-                    <FootprintItem class="mb-4" :imageUrl="details.image_url" size="auto" />
+                    <FootprintItem :imageUrl="details.image_url" size="auto" />
                     <FootprintDetails :details="details" />
                 </section>
             </div>

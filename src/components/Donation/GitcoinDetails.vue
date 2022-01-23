@@ -1,17 +1,5 @@
 <template>
-    <div
-        class="
-            flex flex-col
-            gap-4
-            items-start
-            justify-start
-            w-full
-            text-black text-body-text
-            border-card
-            rounded
-            filter
-        "
-    >
+    <div class="flex flex-col gap-4 items-start justify-start w-full text-body-text border-card rounded filter">
         <div class="w-full">
             <h2 class="break-words text-xl font-semibold">
                 {{ details.title || 'Inactive Project' }}
@@ -37,7 +25,7 @@
         </div>
         <div>
             <h2 class="text-xl font-semibold">Contributions</h2>
-            <h1 class="text-primary-text text-2xl font-semibold">
+            <h1 class="text-2xl font-semibold">
                 <vue3-autocounter
                     ref="counter"
                     :startAmount="0"
@@ -49,9 +37,9 @@
             </h1>
         </div>
         <div class="flex flex-col gap-y-2 w-full">
-            <div class="flex flex-row gap-x-2 justify-start" v-for="item in donationInfo" :key="item.txHash">
+            <div class="flex flex-row gap-x-2 items-center" v-for="item in donationInfo" :key="item.txHash">
                 <div class="flex flex-1 flex-row items-center justify-between px-4 py-2 text-black rounded-xl">
-                    <div class="flex-shrink pr-2 text-primary-text">
+                    <div class="flex-shrink pr-2">
                         <vue3-autocounter
                             ref="counter"
                             :startAmount="0"
@@ -67,7 +55,7 @@
                         {{ timeDifferent(item.timeStamp) }}
                     </div>
                 </div>
-                <Button size="sm" class="ml-1 w-9 h-9" @click="toScanTx(item)">
+                <Button size="sm" class="w-9 h-9 text-white bg-primary-text" @click="toScanTx(item)">
                     <i class="bx bx-link-external bx-xs" />
                 </Button>
             </div>
