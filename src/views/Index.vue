@@ -14,21 +14,21 @@
                     <li>
                         <a
                             href="https://twitter.com/rss3_"
-                            class="font-base nav-item text-primary-btn hover:text-secondary-btn text-lg"
+                            class="font-base nav-item hover:text-body-text text-primary-btn text-lg"
                             >Twitter</a
                         >
                     </li>
                     <li>
                         <a
                             href="https://github.com/NaturalSelectionLabs"
-                            class="font-base nav-item text-primary-btn hover:text-secondary-btn text-lg"
+                            class="font-base nav-item hover:text-body-text text-primary-btn text-lg"
                             >GitHub</a
                         >
                     </li>
                     <li>
                         <a
                             href="https://rss3.fun/"
-                            class="font-base nav-item text-primary-btn hover:text-secondary-btn text-lg"
+                            class="font-base nav-item hover:text-body-text text-primary-btn text-lg"
                             >Tutorials</a
                         >
                     </li>
