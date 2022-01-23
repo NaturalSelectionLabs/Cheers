@@ -18,4 +18,8 @@ export default class App extends Vue {
 }
 </script>
 
-<style></style>
+<style lang="postcss">
+#app {
+    @apply font-sf-compact-rounded;
+}
+</style>
