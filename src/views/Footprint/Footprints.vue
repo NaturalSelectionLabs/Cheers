@@ -12,7 +12,7 @@
                     <i v-if="isOwner" class="bx bxs-pencil bx-xs cursor-pointer" @click="toSetupFootprints" />
                 </template>
                 <template #details>
-                    <div class="grid gap-4 grid-cols-1 sm:grid-cols-2">
+                    <div class="grid gap-4 grid-cols-1 sm:grid-cols-2" v-if="footprints.length !== 0">
                         <FootprintCard
                             v-for="item of footprints"
                             :key="item.id"
@@ -25,6 +25,10 @@
                             type="details"
                             @click="toSingleFootprint(item.id)"
                         />
+                    </div>
+                    <div v-else class="flex gap-2 items-start justify-center">
+                        <span class="font-light">One moment! Details on the way</span>
+                        <Smile :size="18" />
                     </div>
                     <IntersectionObserverContainer
                         v-if="isHavingMoreAssets"
@@ -58,10 +62,11 @@ import { DetailedFootprint, GeneralAsset } from '@/common/types';
 import IntersectionObserverContainer from '@/components/Common/IntersectionObserverContainer.vue';
 import TransBarCard from '@/components/Card/TransBarCard.vue';
 import { formatter } from '@/common/address';
+import Smile from '@/components/Icons/Smile.vue';
 
 @Options({
     name: 'Footprints',
-    components: { IntersectionObserverContainer, FootprintCard, Button, Header, TransBarCard },
+    components: { IntersectionObserverContainer, FootprintCard, Button, Header, TransBarCard, Smile },
 })
 export default class Footprints extends Vue {
     rns: string = '';

@@ -13,7 +13,10 @@
                     <i v-if="isOwner" class="bx bxs-pencil bx-xs cursor-pointer" @click="toSetupNfts" />
                 </template>
                 <template #details>
-                    <div class="grid gap-3 grid-cols-2 justify-items-center sm:grid-cols-3 md:grid-cols-4">
+                    <div
+                        class="grid gap-3 grid-cols-2 justify-items-center sm:grid-cols-3 md:grid-cols-4"
+                        v-if="nfts.length !== 0"
+                    >
                         <div class="relative w-full" v-for="item in nfts" :key="item.id">
                             <NFTItem
                                 class="cursor-pointer"
@@ -36,6 +39,10 @@
                                 :collectionImg="item.detail.collection?.image_url"
                             />
                         </div>
+                    </div>
+                    <div v-else class="flex gap-2 items-start justify-center">
+                        <span class="font-light">One moment! Details on the way</span>
+                        <Smile :size="18" />
                     </div>
                     <IntersectionObserverContainer
                         v-if="isHavingMoreAssets"
@@ -61,7 +68,7 @@
                     <i v-if="isOwner" class="bx bxs-pencil bx-xs cursor-pointer" @click="toSetupNfts" />
                 </template>
                 <template #details>
-                    <div class="grid gap-3 grid-cols-1 justify-items-center md:grid-cols-2">
+                    <div class="grid gap-3 grid-cols-1 justify-items-center md:grid-cols-2" v-if="nfts.length !== 0">
                         <AssetCard
                             v-for="item in nfts"
                             :key="item.id"
@@ -73,6 +80,10 @@
                             :username="rss3Profile.name"
                             @click="toSingleNFTPage(item.id)"
                         />
+                    </div>
+                    <div v-else class="flex gap-2 items-start justify-center">
+                        <span class="font-light">One moment! Details on the way</span>
+                        <Smile :size="18" />
                     </div>
                     <IntersectionObserverContainer
                         v-if="isHavingMoreAssets"
@@ -108,10 +119,11 @@ import IntersectionObserverContainer from '@/components/Common/IntersectionObser
 import TransBarCard from '@/components/Card/TransBarCard.vue';
 import { formatter } from '@/common/address';
 import AssetCard from '@/components/Card/AssetCard.vue';
+import Smile from '@/components/Icons/Smile.vue';
 
 @Options({
     name: 'NFTs',
-    components: { IntersectionObserverContainer, Button, NFTItem, NFTBadges, Header, TransBarCard, AssetCard },
+    components: { IntersectionObserverContainer, Button, NFTItem, NFTBadges, Header, TransBarCard, AssetCard, Smile },
 })
 export default class NFTs extends Vue {
     title: string = '';

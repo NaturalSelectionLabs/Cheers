@@ -65,7 +65,7 @@
                             <TransBarCard
                                 v-if="className === 'Vitrine'"
                                 :title="className"
-                                :tip="isLoadingAssets.NFT ? 'Loading...' : 'One moment! Still looking for details.'"
+                                :tip="isLoadingAssets.NFT ? 'Loading...' : 'One moment! Details on the way.'"
                                 :haveDetails="false"
                                 :haveContent="true"
                                 :haveContentInfo="classifiedList[className].length > 0"
@@ -110,7 +110,7 @@
                             <TransBarCard
                                 v-else
                                 :title="className"
-                                :tip="isLoadingAssets.NFT ? 'Loading...' : 'One moment! Still looking for details.'"
+                                :tip="isLoadingAssets.NFT ? 'Loading...' : 'One moment! Details on the way.'"
                                 :haveDetails="classifiedList[className].length > 0"
                                 :haveContent="true"
                                 :haveContentInfo="classifiedList[className].length > 0"
@@ -170,7 +170,7 @@
 
                         <TransBarCard
                             title="Footprints"
-                            :tip="isLoadingAssets.Footprint ? 'Loading...' : 'One moment! Still looking for details.'"
+                            :tip="isLoadingAssets.Footprint ? 'Loading...' : 'One moment! Details on the way.'"
                             :haveDetails="footprints.length !== 0"
                             :haveContent="true"
                             :haveContentInfo="footprints.length > 0"
@@ -218,7 +218,7 @@
 
                         <TransBarCard
                             title="Donations"
-                            :tip="isLoadingAssets.Gitcoin ? 'Loading...' : 'One moment! Still looking for details.'"
+                            :tip="isLoadingAssets.Gitcoin ? 'Loading...' : 'One moment! Details on the way.'"
                             :haveDetails="false"
                             :haveContent="true"
                             :haveContentInfo="gitcoins.length > 0"
@@ -342,7 +342,7 @@
                                 </div>
                                 <div v-else class="flex flex-col justify-center h-96">
                                     <span class="w-full text-center">{{
-                                        isLoadingContents ? 'Loading...' : "Haven't found anything yet..."
+                                        isLoadingContents ? 'Loading...' : 'One moment! Details on the way.'
                                     }}</span>
                                 </div>
                             </template>
@@ -444,10 +444,6 @@ import legacyConfig from '@/config';
 import GitcoinItem from '@/components/Donation/GitcoinItem.vue';
 import { Profile as ProfileInfo, GeneralAsset, DetailedNFT, GeneralAssetWithClass } from '@/common/types';
 
-import NFTIcon from '@/components/Icons/NFTIcon.vue';
-import GitcoinIcon from '@/components/Icons/GitcoinIcon.vue';
-import ContentIcon from '@/components/Icons/ContentIcon.vue';
-import FootprintIcon from '@/components/Icons/FootprintIcon.vue';
 import Logo from '@/components/Icons/Logo.vue';
 
 import FootprintCard from '@/components/Footprint/FootprintCard.vue';
@@ -486,14 +482,10 @@ interface Relations {
         NFTItem,
         Modal,
         GitcoinItem,
-        NFTIcon,
-        ContentIcon,
-        GitcoinIcon,
         FootprintCard,
         ContentCard,
         Logo,
         Toolbar,
-        FootprintIcon,
         AssetCard,
         Header,
         AccountModal,

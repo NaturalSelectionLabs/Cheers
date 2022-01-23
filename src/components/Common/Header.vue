@@ -5,6 +5,7 @@
             <i class="bx bx-chevron-left bx-sm" />
         </div>
         <ImgHolder
+            v-if="isLogin"
             class="inline-flex my-auto w-10 h-10 cursor-pointer"
             :is-rounded="true"
             :is-border="false"
@@ -12,6 +13,7 @@
             :alt="rns || ethAddress || ''"
             @click="toggleDialog()"
         />
+        <Button v-else size="sm" class="w-32 text-body-text bg-primary-btn" @click="toHomePage"> Connect </Button>
         <transition name="fade">
             <template v-if="isdisplayDialog">
                 <div
@@ -34,7 +36,7 @@
                         translate-y-full
                     "
                 >
-                    <template v-if="isLogin">
+                    <template>
                         <div class="flex flex-row gap-2 items-center cursor-pointer" @click="toPublicPage">
                             <i class="bx bx-user bx-xs text-btn-icon" />
                             Home
@@ -44,10 +46,6 @@
                             Logout
                         </div>
                     </template>
-                    <div v-else class="flex flex-row gap-2 items-center cursor-pointer" @click="toHomePage">
-                        <i class="bx bx-link bx-xs text-btn-icon" />
-                        Connect
-                    </div>
                 </div>
             </template>
         </transition>

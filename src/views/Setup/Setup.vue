@@ -160,12 +160,6 @@ import RSS3 from '@/common/rss3';
 import { utils as RSS3Utils } from 'rss3';
 import config from '@/common/config';
 
-import NFTIcon from '@/components/Icons/NFTIcon.vue';
-import GitcoinIcon from '@/components/Icons/GitcoinIcon.vue';
-import ContentIcon from '@/components/Icons/ContentIcon.vue';
-import AccountIcon from '@/components/Icons/AccountIcon.vue';
-import FootprintIcon from '@/components/Icons/FootprintIcon.vue';
-
 import { DetailedFootprint, DetailedDonation, DetailedNFT } from '@/common/types';
 import GitcoinItem from '@/components/Donation/GitcoinItem.vue';
 import FootprintItem from '@/components/Footprint/FootprintItem.vue';
@@ -188,11 +182,6 @@ import utils from '@/common/utils';
         Input,
         Loading,
         LoadingContainer,
-        AccountIcon,
-        NFTIcon,
-        GitcoinIcon,
-        ContentIcon,
-        FootprintIcon,
     },
 })
 export default class Setup extends Vue {

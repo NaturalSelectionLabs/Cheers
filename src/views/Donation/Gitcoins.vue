@@ -12,7 +12,7 @@
                     <i v-if="isOwner" class="bx bxs-pencil bx-xs cursor-pointer" @click="toSetupGitcoins" />
                 </template>
                 <template #details>
-                    <div class="grid gap-6 grid-cols-1 sm:grid-cols-2" v-show="gitcoins.length !== 0">
+                    <div class="grid gap-6 grid-cols-1 sm:grid-cols-2" v-if="gitcoins.length !== 0">
                         <GitcoinCard
                             v-for="item in gitcoins"
                             :key="item.id"
@@ -23,6 +23,10 @@
                             :amount="item.detail.txs.slice(-1)[0]"
                             @click="toSingleGitcoin(item.id)"
                         />
+                    </div>
+                    <div v-else class="flex gap-2 items-start justify-center">
+                        <span class="font-light">One moment! Details on the way</span>
+                        <Smile :size="18" />
                     </div>
                     <IntersectionObserverContainer
                         v-if="isHavingMoreAssets"
@@ -56,10 +60,11 @@ import { utils as RSS3Utils } from 'rss3';
 import TransBarCard from '@/components/Card/TransBarCard.vue';
 import IntersectionObserverContainer from '@/components/Common/IntersectionObserverContainer.vue';
 import { formatter } from '@/common/address';
+import Smile from '@/components/Icons/Smile.vue';
 
 @Options({
     name: 'Gitcoins',
-    components: { IntersectionObserverContainer, Button, GitcoinCard, Header, TransBarCard },
+    components: { IntersectionObserverContainer, Button, GitcoinCard, Header, TransBarCard, Smile },
 })
 export default class Gitcoins extends Vue {
     rns: string = '';
