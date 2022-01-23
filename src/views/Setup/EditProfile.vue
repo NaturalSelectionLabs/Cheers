@@ -32,7 +32,7 @@
                     <Button
                         size="sm"
                         class="text-secondary-btn-text flex-1 h-9 text-base bg-secondary-btn opacity-80"
-                        @click="back"
+                        @click="handleDiscard()"
                         ><span>Discard</span></Button
                     >
                     <Button
@@ -56,8 +56,35 @@
                     </p>
                 </template>
                 <template #footer>
-                    <div class="flex flex-row gap-5">
+                    <div v-if="!isSavingNotice" class="flex flex-row gap-5">
                         <Button size="sm" class="w-72 text-body-text bg-primary-btn" @click="isShowingNotice = false">
+                            <span>OK</span>
+                        </Button>
+                    </div>
+                    <div v-else class="flex flex-row gap-5 w-full">
+                        <Button
+                            size="sm"
+                            class="w-33 text-body-text bg-secondary-btn"
+                            @click="
+                                () => {
+                                    isShowingNotice = false;
+                                    isSavingNotice = false;
+                                }
+                            "
+                        >
+                            <span>Cancel</span>
+                        </Button>
+                        <Button
+                            size="sm"
+                            class="w-33 text-body-text bg-primary-btn"
+                            @click="
+                                () => {
+                                    back();
+                                    isShowingNotice = false;
+                                    isSavingNotice = false;
+                                }
+                            "
+                        >
                             <span>OK</span>
                         </Button>
                     </div>
@@ -126,6 +153,8 @@ export default class EditProfile extends Vue {
         platform: string;
         identity: string;
     }[] = [];
+    isSaved: Boolean = false;
+    isSavingNotice: Boolean = false;
 
     async mounted() {
         await utils.tryEnsureOrRedirect(this.$route, this.$router);
@@ -138,6 +167,14 @@ export default class EditProfile extends Vue {
         if (userChanged) {
             this.clearProfileData();
             this.loadUserData();
+        }
+    }
+
+    handleDiscard() {
+        if (!this.isSaved) {
+            this.isSavingNotice = true;
+            this.isShowingNotice = true;
+            this.notice = 'Your edit will be discarded. Are you sure to go back?';
         }
     }
 
