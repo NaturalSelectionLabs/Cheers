@@ -19,7 +19,7 @@ module.exports = {
             },
             colors: {
                 primary: {
-                    text: '#ff0', // todo: remove unused primary color
+                    text: '#FED581', // todo: remove unused primary color
                     btn: '#FED581',
                     'btn-border': 'var(--color-primary-btn-border)',
                     link: '#FED58133',

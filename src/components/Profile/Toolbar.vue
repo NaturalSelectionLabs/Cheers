@@ -1,38 +1,24 @@
 <template>
-    <section>
-        <Button
-            size="sm"
-            class="w-full text-secondary-btn-text text-lg bg-secondary-btn cursor-wait"
-            v-if="isLoadingPersona"
-        >
+    <transition name="fade" mode="out-in">
+        <Button size="sm" class="mt-2 w-full text-lg bg-secondary-btn cursor-wait md:m-0" v-if="isLoadingPersona">
             <span>Loading...</span>
             <i class="bx bx-sm bx-loader-circle bx-spin" />
         </Button>
-
         <Button
             size="sm"
-            class="w-full text-lg duration-200 md:m-0"
+            class="mt-2 w-full text-lg duration-200 md:m-0"
             v-else-if="!isOwner"
-            v-bind:class="[
-                isFollowing ? 'bg-secondary-btn text-secondary-btn-text' : 'bg-primary-btn text-primary-btn-text',
-            ]"
+            v-bind:class="[isFollowing ? 'bg-white' : 'bg-primary-btn']"
             @click="emitToggleFollow"
         >
             <span>{{ isFollowing ? 'Following' : 'Follow' }}</span>
             <i class="bx bx-sm no-underline" v-bind:class="[isFollowing ? 'bx-check' : 'bx-plus']"></i>
         </Button>
-
-        <div class="flex gap-2 mt-2 md:m-0" v-else>
-            <Button
-                size="sm"
-                class="flex-1 text-secondary-btn-text text-lg bg-secondary-btn truncate"
-                @click="emitSetUp"
-            >
-                <span>Edit Profile</span>
-                <i class="bx bx-pencil bx-sm"></i>
-            </Button>
-        </div>
-    </section>
+        <Button v-else size="sm" class="mt-2 w-full text-lg bg-white truncate md:m-0" @click="emitSetUp">
+            <span>Edit Profile</span>
+            <i class="bx bx-pencil bx-sm"></i>
+        </Button>
+    </transition>
 </template>
 
 <script lang="ts">
@@ -61,4 +47,14 @@ export default class Toolbar extends Vue {
 }
 </script>
 
-<style></style>
+<style scoped>
+.fade-enter-active,
+.fade-leave-active {
+    transition: opacity 0.8s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+    opacity: 0;
+}
+</style>

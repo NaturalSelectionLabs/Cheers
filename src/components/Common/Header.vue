@@ -1,11 +1,7 @@
 <template>
-    <div class="relative flex items-center justify-between pb-4">
+    <div class="relative flex items-center justify-between pb-4 text-body-text">
         <Logo v-if="displayLogo" class="w-10 h-10 cursor-pointer" @click="toHomePage" />
-        <div
-            v-else
-            class="text-secondary-btn-text flex items-center justify-center w-10 h-10 cursor-pointer"
-            @click="back"
-        >
+        <div v-else class="flex items-center justify-center w-10 h-10 cursor-pointer" @click="back">
             <i class="bx bx-chevron-left bx-sm" />
         </div>
         <ImgHolder
@@ -31,7 +27,6 @@
                         mx-2
                         p-5
                         w-32
-                        text-body-text
                         bg-white
                         rounded
                         shadow-md

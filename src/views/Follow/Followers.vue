@@ -1,40 +1,38 @@
 <template>
-    <div class="h-screen bg-gradient-to-tr from-blue-400 to-blue-200 via-blue-100">
-        <div class="h-full overflow-y-auto">
-            <div class="m-auto pb-20 pt-8 px-4 max-w-screen-lg">
-                <Header />
-                <TransBarCard
-                    :title="(rss3Profile.name ? rss3Profile.name + `'s ` : '') + 'Followers'"
-                    :have-details="true"
-                >
-                    <template #details>
-                        <div class="flex flex-col gap-y-4 m-auto mt-2 w-full md:mt-4">
-                            <FollowCard
-                                class="w-auto cursor-pointer"
-                                v-for="item in followRenderList"
-                                :key="item.address"
-                                :avatar="item.avatar"
-                                :name="item.username"
-                                :bio="item.bio"
-                                :rns="item.rns"
-                                :address="item.address"
-                                @click="toPublicPage(item.rns, item.address)"
-                            />
-                        </div>
-                        <IntersectionObserverContainer
-                            v-if="isHavingMoreFollows"
-                            :once="false"
-                            :enabled="!isLoadingFollows"
-                            @trigger="loadMoreFollows"
-                        >
-                            <Button size="sm" class="w-full h-6" @click="loadMoreFollows">
-                                <i v-if="isLoadingFollows" class="bx bx-loader-circle bx-spin"></i>
-                                <i v-else class="bx bx-dots-horizontal-rounded" />
-                            </Button>
-                        </IntersectionObserverContainer>
-                    </template>
-                </TransBarCard>
-            </div>
+    <div class="h-screen text-body-text overflow-y-auto">
+        <div class="m-auto pb-20 pt-8 px-4 max-w-screen-lg">
+            <Header />
+            <TransBarCard
+                :title="(rss3Profile.name ? rss3Profile.name + `'s ` : '') + 'Followers'"
+                :have-details="true"
+            >
+                <template #details>
+                    <div class="flex flex-col gap-y-4 m-auto mt-2 w-full md:mt-4">
+                        <FollowCard
+                            class="w-auto cursor-pointer"
+                            v-for="item in followRenderList"
+                            :key="item.address"
+                            :avatar="item.avatar"
+                            :name="item.username"
+                            :bio="item.bio"
+                            :rns="item.rns"
+                            :address="item.address"
+                            @click="toPublicPage(item.rns, item.address)"
+                        />
+                    </div>
+                    <IntersectionObserverContainer
+                        v-if="isHavingMoreFollows"
+                        :once="false"
+                        :enabled="!isLoadingFollows"
+                        @trigger="loadMoreFollows"
+                    >
+                        <Button size="sm" class="m-auto text-white bg-primary-btn" @click="loadMoreFollows">
+                            <i v-if="isLoadingFollows" class="bx bx-loader-circle bx-spin"></i>
+                            <i v-else class="bx bx-dots-horizontal-rounded" />
+                        </Button>
+                    </IntersectionObserverContainer>
+                </template>
+            </TransBarCard>
         </div>
     </div>
 </template>

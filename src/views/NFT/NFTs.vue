@@ -1,5 +1,5 @@
 <template>
-    <div id="main" class="h-screen bg-gradient-to-tr from-blue-400 to-blue-200 via-blue-100 overflow-y-auto">
+    <div id="main" class="h-screen overflow-y-auto">
         <div class="m-auto pb-32 pt-8 px-4 max-w-screen-lg">
             <Header />
             <TransBarCard
@@ -43,7 +43,7 @@
                         :enabled="!isLoadingAssets"
                         @trigger="loadMoreAssets"
                     >
-                        <Button size="sm" class="m-auto text-body-text text-lg bg-primary-btn" @click="loadMoreAssets">
+                        <Button size="sm" class="m-auto text-white text-lg bg-primary-btn" @click="loadMoreAssets">
                             <i v-if="isLoadingAssets" class="bx bx-loader-circle bx-spin" />
                             <i v-else class="bx bx-dots-horizontal-rounded" />
                         </Button>
@@ -71,7 +71,7 @@
                             :type="title"
                             :name="item.detail.name"
                             :username="rss3Profile.name"
-                            @click="toSingleItemPage(item.id)"
+                            @click="toSingleNFTPage(item.id)"
                         />
                     </div>
                     <IntersectionObserverContainer
@@ -80,7 +80,7 @@
                         :enabled="!isLoadingAssets"
                         @trigger="loadMoreAssets"
                     >
-                        <Button size="sm" class="m-auto text-body-text text-lg bg-primary-btn" @click="loadMoreAssets">
+                        <Button size="sm" class="m-auto text-white text-lg bg-primary-btn" @click="loadMoreAssets">
                             <i v-if="isLoadingAssets" class="bx bx-loader-circle bx-spin" />
                             <i v-else class="bx bx-dots-horizontal-rounded" />
                         </Button>

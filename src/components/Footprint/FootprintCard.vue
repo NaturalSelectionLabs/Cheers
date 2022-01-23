@@ -3,7 +3,7 @@
         <FootprintItem :imageUrl="imageUrl" :size="type === 'details' ? 'xl' : 'lg'" class="flex-shrink-0" />
         <section
             class="flex flex-1 flex-col justify-center w-0 text-body-text text-sm leading-normal"
-            :class="{ 'md:gap-2': type === 'details' }"
+            :class="{ 'md:gap-1': type === 'details' }"
         >
             <span class="text-body-text truncate">{{ getDate() }}</span>
             <span class="text-body-text truncate">@ {{ location }}</span>

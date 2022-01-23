@@ -1,7 +1,7 @@
 <template>
     <div class="flex flex-row items-center justify-start w-full text-body-text border-card rounded-2xl cursor-pointer">
         <div
-            class="flex-shrink m-0.5 w-22 h-22 bg-cover bg-center bg-no-repeat rounded-2xl md:w-28 md:h-28"
+            class="flex-shrink m-0.5 w-22 h-22 bg-white bg-cover bg-center bg-no-repeat rounded-2xl md:w-28 md:h-28"
             :style="{ backgroundImage: `url(${imageUrl})` }"
         />
         <div class="flex-1 pl-8 w-0 text-sm md:text-base">
