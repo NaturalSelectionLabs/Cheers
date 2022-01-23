@@ -43,7 +43,7 @@
                                 <Button
                                     size="sm"
                                     shape="circle"
-                                    class="inline-block mr-1 w-8 h-8 bg-secondary-btn-card"
+                                    class="inline-block mr-1 w-8 h-8 text-btn-icon bg-secondary-btn-card"
                                     @click="toAccountsPage"
                                 >
                                     <i class="bx bx-expand-alt bx-xs" />
@@ -65,7 +65,7 @@
                             <TransBarCard
                                 v-if="className === 'Vitrine'"
                                 :title="className"
-                                :tip="isLoadingAssets.NFT ? 'Loading...' : 'Haven\'t found anything yet...'"
+                                :tip="isLoadingAssets.NFT ? 'Loading...' : 'One moment! Still looking for details.'"
                                 :haveDetails="false"
                                 :haveContent="true"
                                 :haveContentInfo="classifiedList[className].length > 0"
@@ -110,7 +110,7 @@
                             <TransBarCard
                                 v-else
                                 :title="className"
-                                :tip="isLoadingAssets.NFT ? 'Loading...' : 'Haven\'t found anything yet...'"
+                                :tip="isLoadingAssets.NFT ? 'Loading...' : 'One moment! Still looking for details.'"
                                 :haveDetails="classifiedList[className].length > 0"
                                 :haveContent="true"
                                 :haveContentInfo="classifiedList[className].length > 0"
@@ -170,7 +170,7 @@
 
                         <TransBarCard
                             title="Footprints"
-                            :tip="isLoadingAssets.Footprint ? 'Loading...' : 'Haven\'t found anything yet...'"
+                            :tip="isLoadingAssets.Footprint ? 'Loading...' : 'One moment! Still looking for details.'"
                             :haveDetails="footprints.length !== 0"
                             :haveContent="true"
                             :haveContentInfo="footprints.length > 0"
@@ -218,7 +218,7 @@
 
                         <TransBarCard
                             title="Donations"
-                            :tip="isLoadingAssets.Gitcoin ? 'Loading...' : 'Haven\'t found anything yet...'"
+                            :tip="isLoadingAssets.Gitcoin ? 'Loading...' : 'One moment! Still looking for details.'"
                             :haveDetails="false"
                             :haveContent="true"
                             :haveContentInfo="gitcoins.length > 0"

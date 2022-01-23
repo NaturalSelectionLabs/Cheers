@@ -10,7 +10,7 @@ module.exports = {
             borderWidth: {
                 xs: '1px',
                 sm: '2px',
-                DEFAULT: '4px',
+                DEFAULT: '2px',
                 card: '0px',
                 button: '0px',
                 input: '0px',
