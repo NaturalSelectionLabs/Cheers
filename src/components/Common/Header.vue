@@ -1,11 +1,7 @@
 <template>
-    <div class="relative flex items-center justify-between pb-4">
-        <Logo v-if="displayLogo" class="w-10 h-10 cursor-pointer" @click="toHomePage" />
-        <div
-            v-else
-            class="flex items-center justify-center w-10 h-10 text-secondary-btn-text cursor-pointer"
-            @click="back"
-        >
+    <div class="relative flex items-center justify-between pb-4 text-body-text">
+        <Logo v-if="displayLogo" class="cursor-pointer" @click="toHomePage" :size="55" />
+        <div v-else class="flex items-center justify-center w-10 h-10 cursor-pointer" @click="back">
             <i class="bx bx-chevron-left bx-sm" />
         </div>
         <ImgHolder
@@ -31,7 +27,6 @@
                         mx-2
                         p-5
                         w-32
-                        text-primary-text
                         bg-white
                         rounded
                         shadow-md
@@ -40,11 +35,11 @@
                     "
                 >
                     <div class="flex flex-row gap-2 items-center cursor-pointer" @click="toPublicPage">
-                        <i class="bx bx-user bx-xs" />
+                        <i class="bx bx-user bx-xs text-btn-icon" />
                         Home
                     </div>
                     <div class="flex flex-row gap-2 items-center cursor-pointer" @click="logout">
-                        <i class="bx bx-log-out bx-xs" />
+                        <i class="bx bx-log-out bx-xs text-btn-icon" />
                         Logout
                     </div>
                 </div>
@@ -128,7 +123,7 @@ export default class Header extends Vue {
     async logout() {
         if (confirm('Are you sure to logout?')) {
             (<HTMLLinkElement>document.getElementById('favicon')).href = '/favicon.ico';
-            document.title = 'Web3 Pass';
+            document.title = 'Cheers Bio';
 
             await RSS3.disconnect();
             if (config.subDomain.isSubDomainMode) {

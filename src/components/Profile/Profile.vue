@@ -1,5 +1,5 @@
 <template>
-    <div class="flex flex-col items-center p-4 bg-white bg-opacity-50 border-card rounded box-border md:p-6">
+    <div class="flex flex-col items-center p-4 bg-card-bg border-card rounded box-border md:p-6">
         <div class="grid gap-x-6 gap-y-2 grid-cols-3 content-center items-center w-full md:grid-cols-5">
             <ImgHolder class="col-span-1 col-start-1 w-22 h-22" :is-rounded="true" :is-border="false" :src="avatar" />
             <div
@@ -30,7 +30,7 @@
                         </transition>
                     </LinkButton>
                     <LinkButton @click="toExternalLink" v-if="website && !isLoadingPersona">
-                        <span><i class="bx bx-link align-bottom" />{{ fixWebsiteURI(website) }}</span>
+                        <span><i class="bx bx-link align-bottom mr-1" />{{ fixWebsiteURI(website) }}</span>
                     </LinkButton>
                 </div>
                 <div
@@ -118,7 +118,7 @@ export default class Profile extends Vue {
 <style lang="postcss" scoped>
 @layer components {
     .stats-container {
-        @apply mb-2 w-14 text-primary-text cursor-pointer;
+        @apply mb-2 w-14 cursor-pointer;
 
         .stats-number {
             @apply text-base font-normal;

@@ -4,7 +4,6 @@ import utils from '@/common/utils';
 import legacyConfig from '@/config';
 import WalletConnectProvider from '@walletconnect/web3-provider';
 import { ethers, utils as ethersUtils } from 'ethers';
-import Cookies from 'js-cookie';
 import RSS3, { utils as RSS3Utils } from 'rss3';
 import config from './config';
 import Events from './events';
@@ -60,17 +59,6 @@ export interface IAssetProfile {
     status?: boolean;
 }
 
-function setStorage(key: string, value: string) {
-    if (value) {
-        Cookies.set(key, value, cookieOptions);
-    } else {
-        Cookies.remove(key, cookieOptions);
-    }
-}
-function getStorage(key: string): string {
-    return Cookies.get(key) || '';
-}
-
 const KeyNames = {
     ConnectMethod: 'CONNECT_METHOD',
     ConnectAddress: 'CONNECT_ADDRESS',
@@ -83,13 +71,6 @@ export interface Theme {
     class: string;
     nftIdPrefix: string;
 }
-
-const cookieOptions: Cookies.CookieAttributes = {
-    domain: '.' + legacyConfig.subDomain.rootDomain,
-    secure: true,
-    sameSite: 'Strict',
-    expires: legacyConfig.subDomain.cookieExpires,
-};
 
 async function wcConn(skipSignSync: boolean = false) {
     // WalletConnect Connect
@@ -116,7 +97,7 @@ async function wcConn(skipSignSync: boolean = false) {
         disconnect();
     });
 
-    let address = getStorage(KeyNames.ConnectAddress);
+    let address = utils.getCrossDomainStorage(KeyNames.ConnectAddress);
     if (!address) {
         address = await ethersProvider.getSigner().getAddress();
     }
@@ -149,7 +130,7 @@ async function mmConn(skipSignSync: boolean = false) {
     const metamaskEthereum = (window as any).ethereum;
     ethersProvider = new ethers.providers.Web3Provider(metamaskEthereum);
 
-    let address = getStorage(KeyNames.ConnectAddress);
+    let address = utils.getCrossDomainStorage(KeyNames.ConnectAddress);
     if (!address) {
         const accounts = await metamaskEthereum.request({
             method: 'eth_requestAccounts',
@@ -170,8 +151,8 @@ async function mmConn(skipSignSync: boolean = false) {
 
 function saveConnect(method: string) {
     if (isValidRSS3()) {
-        setStorage(KeyNames.ConnectMethod, method);
-        setStorage(KeyNames.ConnectAddress, RSS3LoginUser.address);
+        utils.setCrossDomainStorage(KeyNames.ConnectMethod, method);
+        utils.setCrossDomainStorage(KeyNames.ConnectAddress, RSS3LoginUser.address);
     }
 }
 
@@ -179,8 +160,8 @@ async function reconnect() {
     if (isValidRSS3()) {
         return true;
     }
-    const lastConnect = getStorage(KeyNames.ConnectMethod);
-    const address = getStorage(KeyNames.ConnectAddress);
+    const lastConnect = utils.getCrossDomainStorage(KeyNames.ConnectMethod);
+    const address = utils.getCrossDomainStorage(KeyNames.ConnectAddress);
     if (address) {
         switch (lastConnect) {
             case KeyNames.WalletConnect:
@@ -247,7 +228,7 @@ async function reconnect() {
                 await mmConn(true);
                 break;
             default:
-                setStorage(KeyNames.ConnectMethod, ''); // logout
+                utils.setCrossDomainStorage(KeyNames.ConnectMethod, ''); // logout
                 break;
         }
         return isValidRSS3();
@@ -298,8 +279,8 @@ async function disconnect() {
     if (walletConnectProvider) {
         await walletConnectProvider.disconnect();
     }
-    setStorage(KeyNames.ConnectMethod, '');
-    setStorage(KeyNames.ConnectAddress, '');
+    utils.setCrossDomainStorage(KeyNames.ConnectMethod, '');
+    utils.setCrossDomainStorage(KeyNames.ConnectAddress, '');
 }
 
 function dispatchEvent(event: string, detail: any) {
@@ -320,7 +301,7 @@ async function setPageTitleFavicon() {
     } else {
         favicon.href = '/favicon.ico';
     }
-    document.title = profile?.name || 'Web3 Pass';
+    document.title = profile?.name || 'Cheers Bio';
 }
 
 async function ensureLoginUser() {
@@ -411,7 +392,8 @@ export default {
                     await initUser(RSS3PageOwner);
                 }
                 await setPageTitleFavicon();
-                await setupTheme(); // Setup theme
+                // Setup theme
+                //await setupTheme();
                 dispatchEvent(Events.pageOwnerReady, RSS3PageOwner);
                 isSettingPageOwner = false;
                 resolve(RSS3PageOwner);

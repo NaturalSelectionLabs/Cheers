@@ -1,14 +1,7 @@
 @import './fonts.css';
-@import '../themes/default.css';
-@import '../themes/loot.css';
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-body {
-    overflow: hidden;
-}
 ::-webkit-scrollbar {
     width: 3px;
     height: 3px;
@@ -24,11 +17,13 @@ body {
 }
 
 /* Hide google recaptcha */
+
 .grecaptcha-badge {
     display: none;
 }
 
 /* Safe area for iOS */
+
 .safe-area-fixed-bottom {
     position: fixed;
     bottom: 0;

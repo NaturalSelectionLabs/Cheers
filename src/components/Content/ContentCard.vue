@@ -1,11 +1,11 @@
 <template>
     <div class="w-full text-body-text text-sm bg-transparent border-card rounded cursor-pointer">
         <section class="flex flex-row flex-wrap gap-x-1 items-center justify-start pb-1 font-light">
-            <span class="text-primary-text font-medium">{{ username + ' posted on ' }}</span>
+            <span class="font-medium">{{ username + ' posted on ' }}</span>
             <ContentBadge :contentProvider="provider" />
             <span>{{ getDate(timestamp) }}</span>
         </section>
-        <section class="pl-2 border-l-2 border-primary-text border-opacity-75">
+        <section class="pl-2 border-l-2 border-secondary-btn">
             <h2 class="content-header text-base font-semibold truncate">
                 {{ title }}
             </h2>

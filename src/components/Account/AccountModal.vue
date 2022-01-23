@@ -1,11 +1,7 @@
 <template>
     <Modal v-show="isShowingAccount">
         <template #header>
-            <Button
-                size="sm"
-                class="absolute left-4 w-10 h-10 text-secondary-btn-text bg-secondary-btn"
-                @click="emitCloseDialog"
-            >
+            <Button size="sm" class="absolute left-4 w-10 h-10" @click="emitCloseDialog">
                 <i class="bx bx-chevron-left bx-sm"></i>
             </Button>
         </template>

@@ -15,11 +15,11 @@
             />
         </div>
         <div v-if="details.description">
-            <h3>Description</h3>
+            <h3 class="text-primary-text">Description</h3>
             <div v-html="getMarkdown(details.description)"></div>
         </div>
         <div v-if="details.traits && details.traits.length > 0">
-            <h3>Properties</h3>
+            <h3 class="text-primary-text">Properties</h3>
             <div class="traits-container mt-2">
                 <Trait
                     v-for="item in details.traits"
@@ -30,7 +30,7 @@
             </div>
         </div>
         <div v-if="details.collection?.description">
-            <h3>About {{ details.collection?.name }}</h3>
+            <h3 class="text-primary-text">About {{ details.collection?.name }}</h3>
             <div v-html="getMarkdown(details.collection?.description)"></div>
         </div>
     </div>

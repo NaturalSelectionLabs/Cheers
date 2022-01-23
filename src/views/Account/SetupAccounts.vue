@@ -1,15 +1,5 @@
 <template>
-    <div
-        class="
-            h-screen
-            text-body-text
-            bg-body-bg bg-gradient-to-tr
-            from-blue-400
-            to-blue-200
-            via-blue-100
-            overflow-y-auto
-        "
-    >
+    <div class="h-screen text-body-text overflow-y-auto">
         <div class="flex flex-col m-auto pt-8 px-4 max-w-screen-lg h-full">
             <Header />
             <div class="flex flex-col flex-grow gap-4 pb-8 h-0 md:flex-row">
@@ -183,17 +173,17 @@
                         </template>
                     </TransBarCard>
                     <div class="flex flex-row-reverse gap-5 m-auto px-4 py-2 w-full md:flex-col">
-                        <Button size="lg" class="flex-1 text-primary-btn-text text-lg bg-primary-btn" @click="save">
+                        <Button size="lg" class="flex-1 text-body-text text-lg bg-primary-btn" @click="save">
                             <span>Save</span>
                         </Button>
-                        <Button size="lg" class="flex-1 text-secondary-btn-text text-lg bg-secondary-btn" @click="back">
+                        <Button size="lg" class="text-secondary-btn-text flex-1 text-lg bg-secondary-btn" @click="back">
                             <span>Discard</span>
                         </Button>
                     </div>
                 </section>
             </div>
 
-            <LoadingContainer v-show="isLoading" />
+            <LoadingContainer v-show="isLoading" :isLooping="true" />
 
             <Modal v-if="isShowingAddSpecifyAccountInput">
                 <template #header>
@@ -241,18 +231,10 @@
                 </template>
                 <template #footer>
                     <div class="flex flex-row gap-5">
-                        <Button
-                            size="sm"
-                            class="w-32 text-secondary-btn-text bg-secondary-btn"
-                            @click="isShowingAddSpecifyAccountInput = false"
-                        >
+                        <Button size="sm" class="w-32" @click="isShowingAddSpecifyAccountInput = false">
                             Cancel
                         </Button>
-                        <Button
-                            size="sm"
-                            class="w-32 text-primary-btn-text bg-primary-btn"
-                            @click="addNoSignAccountConfirm"
-                        >
+                        <Button size="sm" class="w-32 text-body-text bg-primary-btn" @click="addNoSignAccountConfirm">
                             Confirm
                         </Button>
                     </div>
@@ -272,7 +254,7 @@
                     <div class="flex flex-row gap-5">
                         <Button
                             size="sm"
-                            class="w-72 text-primary-btn-text bg-primary-btn"
+                            class="w-72 text-body-text bg-primary-btn"
                             @click="isShowingAddAccountNotice = false"
                         >
                             <span>OK</span>
@@ -363,8 +345,9 @@ export default class SetupAccounts extends Vue {
         await utils.tryEnsureOrRedirect(this.$route, this.$router);
         const loginUser = await RSS3.getLoginUser();
         await RSS3.setPageOwner(loginUser.address);
-        if (sessionStorage.getItem('profile')) {
-            const profile = JSON.parse(<string>sessionStorage.getItem('profile'));
+        const sessionProfile = sessionStorage.getItem('profile');
+        if (sessionProfile) {
+            const profile = JSON.parse(sessionProfile);
             this.avatar = profile.avatar;
         } else {
             this.avatar = loginUser.profile?.avatar?.[0] || config.defaultAvatar;

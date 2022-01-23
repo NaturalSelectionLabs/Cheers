@@ -1,15 +1,5 @@
 <template>
-    <div
-        class="
-            h-screen
-            text-body-text
-            bg-body-bg bg-gradient-to-tr
-            from-blue-400
-            to-blue-200
-            via-blue-100
-            overflow-y-auto
-        "
-    >
+    <div class="h-screen text-body-text overflow-y-auto">
         <div class="flex flex-col m-auto pt-8 px-4 max-w-screen-lg h-full">
             <Header />
 
@@ -58,17 +48,17 @@
                         </template>
                     </TransBarCard>
                     <div class="flex flex-row-reverse gap-5 m-auto px-4 py-2 w-full md:flex-col">
-                        <Button size="lg" class="flex-1 text-primary-btn-text text-lg bg-primary-btn" @click="save">
+                        <Button size="lg" class="flex-1 text-body-text text-lg bg-primary-btn" @click="save">
                             <span>Save</span>
                         </Button>
-                        <Button size="lg" class="flex-1 text-secondary-btn-text text-lg bg-secondary-btn" @click="back">
+                        <Button size="lg" class="text-secondary-btn-text flex-1 text-lg bg-secondary-btn" @click="back">
                             <span>Discard</span>
                         </Button>
                     </div>
                 </section>
             </div>
 
-            <LoadingContainer v-show="isLoading" />
+            <LoadingContainer v-show="isLoading" :isLooping="true" />
         </div>
     </div>
 </template>

@@ -19,7 +19,7 @@
                         ml-1.5
                         px-1.5
                         py-0.5
-                        text-primary-text text-sm
+                        text-sm
                         bg-primary-text bg-opacity-5
                         rounded-sm
                         truncate

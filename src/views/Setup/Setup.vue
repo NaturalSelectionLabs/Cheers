@@ -1,18 +1,8 @@
 <template>
-    <div
-        class="
-            h-screen
-            text-body-text
-            bg-body-bg bg-gradient-to-tr
-            from-blue-400
-            to-blue-200
-            via-blue-100
-            overflow-y-auto
-        "
-    >
+    <div class="h-screen text-body-text overflow-y-auto">
         <div class="flex flex-col gap-y-4 m-auto pb-20 pt-8 px-4 max-w-md">
             <div class="mb-6 text-center">
-                <h1 class="text-primary-text text-xl font-bold">Setup</h1>
+                <h1 class="text-xl font-bold">Setup</h1>
             </div>
             <AvatarEditor class="m-auto" size="lg" :url="profile.avatar" ref="avatar" />
             <Input class="w-full" :is-single-line="true" placeholder="Username" v-model="profile.name" />
@@ -27,11 +17,7 @@
 
             <TransBarCard title="Accounts" :haveContent="true" :haveContentInfo="accounts.length > 0">
                 <template #header>
-                    <Button
-                        size="sm"
-                        class="w-8 h-8 text-secondary-btn-text bg-secondary-btn"
-                        @click="toManageAccounts"
-                    >
+                    <Button size="sm" class="w-8 h-8 text-btn-icon bg-secondary-btn-card" @click="toManageAccounts">
                         <i class="bx bx-plus bx-xs cursor-pointer" />
                     </Button>
                 </template>
@@ -55,7 +41,7 @@
                 :haveContentInfo="nfts.length > 0"
             >
                 <template #header>
-                    <Button size="sm" class="w-8 h-8 text-secondary-btn-text bg-secondary-btn" @click="toManageNFTs">
+                    <Button size="sm" class="w-8 h-8 text-btn-icon bg-secondary-btn-card" @click="toManageNFTs">
                         <i class="bx bx-plus bx-xs cursor-pointer" />
                     </Button>
                 </template>
@@ -79,11 +65,7 @@
                 :haveContentInfo="gitcoins.length > 0"
             >
                 <template #header>
-                    <Button
-                        size="sm"
-                        class="w-8 h-8 text-secondary-btn-text bg-secondary-btn"
-                        @click="toManageGitcoins"
-                    >
+                    <Button size="sm" class="w-8 h-8 text-btn-icon bg-secondary-btn-card" @click="toManageGitcoins">
                         <i class="bx bx-plus bx-xs cursor-pointer" />
                     </Button>
                 </template>
@@ -101,16 +83,12 @@
             <TransBarCard
                 title="Footprints"
                 :tip="isLoadingAssets.Footprint ? 'Loading...' : 'Haven\'t found anything yet...'"
-                :haveDetails="footprints.length !== 0"
+                :haveDetails="false"
                 :haveContent="true"
                 :haveContentInfo="footprints.length > 0"
             >
                 <template #header>
-                    <Button
-                        size="sm"
-                        class="w-8 h-8 text-secondary-btn-text bg-secondary-btn"
-                        @click="toManageFootprints"
-                    >
+                    <Button size="sm" class="w-8 h-8 text-btn-icon bg-secondary-btn-card" @click="toManageFootprints">
                         <i class="bx bx-plus bx-xs cursor-pointer" />
                     </Button>
                 </template>
@@ -127,40 +105,23 @@
 
             <TransBarCard title="Contents" :haveContent="true" :haveContentInfo="true">
                 <template #content>
-                    <span class="text-content-title">Check out in homepage!</span>
+                    <span>Check out in homepage!</span>
                 </template>
             </TransBarCard>
 
-            <div
-                class="
-                    fixed
-                    bottom-0
-                    left-0
-                    right-0
-                    flex
-                    gap-5
-                    justify-between
-                    m-auto
-                    p-4
-                    w-full
-                    max-w-md
-                    bg-btn-container
-                "
-            >
+            <div class="flex gap-5 justify-between">
                 <Button
                     size="sm"
-                    class="flex-1 h-9 text-secondary-btn-text text-lg bg-secondary-btn opacity-80"
+                    class="text-secondary-btn-text flex-1 h-9 text-lg bg-secondary-btn opacity-80"
                     @click="back"
-                    ><span>Back</span></Button
                 >
-                <Button
-                    size="sm"
-                    class="flex-1 h-9 text-primary-btn-text text-lg bg-primary-btn opacity-80"
-                    @click="save"
-                    ><span>Done</span></Button
-                >
+                    <span>Back</span>
+                </Button>
+                <Button size="sm" class="flex-1 h-9 text-body-text text-lg bg-primary-btn opacity-80" @click="save">
+                    <span>Done</span>
+                </Button>
             </div>
-            <LoadingContainer v-show="isLoading" />
+            <LoadingContainer v-show="isLoading" :isLooping="true" />
 
             <Modal v-if="isShowingNotice">
                 <template #header>
@@ -173,11 +134,7 @@
                 </template>
                 <template #footer>
                     <div class="flex flex-row gap-5">
-                        <Button
-                            size="sm"
-                            class="w-72 text-primary-btn-text bg-primary-btn"
-                            @click="isShowingNotice = false"
-                        >
+                        <Button size="sm" class="w-72 text-body-text bg-primary-btn" @click="isShowingNotice = false">
                             OK
                         </Button>
                     </div>
@@ -201,7 +158,7 @@ import Loading from '@/components/Loading/Loading.vue';
 import LoadingContainer from '@/components/Loading/LoadingContainer.vue';
 import RSS3 from '@/common/rss3';
 import { utils as RSS3Utils } from 'rss3';
-import config from '@/config';
+import config from '@/common/config';
 
 import NFTIcon from '@/components/Icons/NFTIcon.vue';
 import GitcoinIcon from '@/components/Icons/GitcoinIcon.vue';
@@ -211,7 +168,6 @@ import FootprintIcon from '@/components/Icons/FootprintIcon.vue';
 
 import { DetailedFootprint, DetailedDonation, DetailedNFT } from '@/common/types';
 import GitcoinItem from '@/components/Donation/GitcoinItem.vue';
-import RNSUtils from '@/common/rns';
 import FootprintItem from '@/components/Footprint/FootprintItem.vue';
 import EVMpAccountItem from '@/components/Account/EVMpAccountItem.vue';
 import utils from '@/common/utils';
@@ -246,7 +202,7 @@ export default class Setup extends Vue {
         bio: string;
         link: string;
     } = {
-        avatar: config.defaultAvatar,
+        avatar: config.undefinedImageAlt,
         name: '',
         bio: '',
         link: '',
@@ -283,8 +239,7 @@ export default class Setup extends Vue {
         const loginUser = await RSS3.getLoginUser();
         await RSS3.setPageOwner(loginUser.address);
         const profile = loginUser.profile;
-        console.log(profile);
-        this.profile.avatar = profile?.avatar?.[0] || config.defaultAvatar;
+        this.profile.avatar = profile?.avatar?.[0] || config.undefinedImageAlt;
         this.profile.name = profile?.name || '';
         this.profile.bio = profile?.bio || '';
 
@@ -319,15 +274,15 @@ export default class Setup extends Vue {
     async startLoadingAssets() {
         const { nfts, donations, footprints } = await utils.initAssets();
         setTimeout(async () => {
-            this.nfts = await utils.loadAssets(nfts);
+            this.nfts = await utils.loadAssets(nfts.slice(0, config.assets.brief));
             this.isLoadingAssets.NFT = false;
         }, 0);
         setTimeout(async () => {
-            this.gitcoins = await utils.loadAssets(donations);
+            this.gitcoins = await utils.loadAssets(donations.slice(0, config.assets.brief));
             this.isLoadingAssets.Gitcoin = false;
         }, 0);
         setTimeout(async () => {
-            this.footprints = await utils.loadAssets(footprints);
+            this.footprints = await utils.loadAssets(footprints.slice(0, config.assets.brief));
             this.isLoadingAssets.Footprint = false;
         }, 0);
     }
@@ -373,7 +328,7 @@ export default class Setup extends Vue {
         if (window.history.state.back) {
             window.history.back();
         } else {
-            this.$router.push(config.subDomain.isSubDomainMode ? '' : `/${rns || ethAddress}`);
+            this.$router.push(config.subDomain.preferSubDomainMode ? '/' : `/${rns || ethAddress}`);
         }
     }
 
@@ -420,9 +375,9 @@ export default class Setup extends Vue {
         const pageOwner = RSS3.getPageOwner();
         const rns = pageOwner.name;
         const ethAddress = pageOwner.address;
-        const redirectFrom = sessionStorage.getItem('redirectFrom');
-        sessionStorage.removeItem('redirectFrom');
-        await this.$router.push(config.subDomain.isSubDomainMode ? redirectFrom || '/' : `/${rns || ethAddress}`);
+        const redirectFrom = utils.getCrossDomainStorage('redirectFrom');
+        utils.setCrossDomainStorage('redirectFrom', '');
+        await this.$router.push(config.subDomain.preferSubDomainMode ? redirectFrom || '/' : `/${rns || ethAddress}`);
     }
 
     async mounted() {

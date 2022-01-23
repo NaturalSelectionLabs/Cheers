@@ -3,9 +3,7 @@
         <NFTItem class="flex-shrink-0 mr-1 cursor-pointer" :image-url="imageUrl || defaultAvatar" :size="size" />
         <div class="flex flex-1 flex-col gap-0.5 w-0 text-sm">
             <span>{{ date }}</span>
-            <span class="truncate">
-                <span class="text-primary-text">{{ username + getTitle(type) }}</span> {{ name }}
-            </span>
+            <span class="truncate">{{ username + getTitle(type) + name }}</span>
         </div>
     </div>
 </template>

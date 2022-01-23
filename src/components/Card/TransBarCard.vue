@@ -1,12 +1,12 @@
 <template>
     <div
         class="flex flex-col gap-2 items-start px-5 py-4 border-card rounded box-border"
-        :class="$props.isSecondary ? 'bg-secondary' : 'bg-blur'"
+        :class="$props.isSecondary ? 'bg-secondary' : 'bg-card-bg'"
     >
         <div
             v-if="title"
             class="flex flex-row items-center justify-between w-full"
-            :class="$props.isSecondary ? 'text-black text-opacity-50' : 'text-primary-text'"
+            :class="$props.isSecondary ? 'text-black text-opacity-50' : ''"
         >
             <div class="text-lg font-semibold leading-none">{{ title }}</div>
             <slot name="header" />
@@ -18,7 +18,7 @@
             <div v-if="haveContentInfo" class="flex flex-1 pb-1 overflow-x-auto" style="scrollbar-width: thin">
                 <div class="flex flex-row items-center"><slot name="content" /></div>
             </div>
-            <div v-else class="text-primary-text truncate">{{ tip }}</div>
+            <div v-else class="truncate">{{ tip }}</div>
             <div class="flex-shrink-0">
                 <slot name="button" />
             </div>
@@ -42,23 +42,4 @@ import { Vue, Options } from 'vue-class-component';
 export default class TransBarCard extends Vue {}
 </script>
 
-<style lang="postcss" scoped>
-@layer components {
-    /* slightly transparent fallback */
-    .bg-blur {
-        background-color: rgba(255, 255, 255, 0.6);
-    }
-
-    .bg-secondary {
-        background-color: rgba(0, 0, 0, 0.02);
-    }
-
-    @supports ((-webkit-backdrop-filter: none) or (backdrop-filter: none)) {
-        .bg-blur {
-            background-color: rgba(255, 255, 255, 0.6);
-            -webkit-backdrop-filter: blur(2em);
-            backdrop-filter: blur(2em);
-        }
-    }
-}
-</style>
+<style lang="postcss" scoped></style>
