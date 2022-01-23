@@ -845,7 +845,7 @@ export default class Home extends Vue {
             (<HTMLLinkElement>document.getElementById('favicon')).href = '/favicon.ico';
             document.title = 'Web3 Pass';
 
-            sessionStorage.setItem('redirectFrom', this.$route.fullPath);
+            utils.setCrossDomainStorage('redirectFrom', window.location.href); // Cross domain redirect
             if (legacyConfig.subDomain.isSubDomainMode) {
                 window.location.href = '//' + legacyConfig.subDomain.rootDomain;
             } else {

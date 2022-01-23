@@ -345,8 +345,9 @@ export default class SetupAccounts extends Vue {
         await utils.tryEnsureOrRedirect(this.$route, this.$router);
         const loginUser = await RSS3.getLoginUser();
         await RSS3.setPageOwner(loginUser.address);
-        if (sessionStorage.getItem('profile')) {
-            const profile = JSON.parse(<string>sessionStorage.getItem('profile'));
+        const sessionProfile = sessionStorage.getItem('profile');
+        if (sessionProfile) {
+            const profile = JSON.parse(sessionProfile);
             this.avatar = profile.avatar;
         } else {
             this.avatar = loginUser.profile?.avatar?.[0] || config.defaultAvatar;

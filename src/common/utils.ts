@@ -5,6 +5,7 @@ import config from './config';
 import RSS3, { IRSS3 } from './rss3';
 import { CustomField_PassAssets, GeneralAsset, GitcoinResponse, NFTResponse, POAPResponse } from './types';
 import { RouteLocationNormalizedLoaded, Router } from 'vue-router';
+import Cookies from 'js-cookie';
 
 const orderPattern = new RegExp(`^${config.tags.prefix}:order:(-?\\d+)$`, 'i');
 const hiddenTag = `${config.tags.prefix}:${config.tags.hiddenTag}`;
@@ -333,7 +334,7 @@ const tryEnsureOrRedirect = async (route: RouteLocationNormalizedLoaded, router:
             // redirect back to root domain
             window.location.host = legacyConfig.subDomain.rootDomain;
         } else {
-            sessionStorage.setItem('redirectFrom', route.fullPath);
+            setCrossDomainStorage('redirectFrom', route.fullPath);
             await router.push('/');
         }
     }
@@ -349,6 +350,24 @@ function setStorage(key: string, value: string) {
 
 function getStorage(key: string): string | null {
     return localStorage.getItem(key);
+}
+
+const cookieOptions: Cookies.CookieAttributes = {
+    domain: '.' + legacyConfig.subDomain.rootDomain,
+    secure: true,
+    sameSite: 'Strict',
+    expires: legacyConfig.subDomain.cookieExpires,
+};
+
+function setCrossDomainStorage(key: string, value: string) {
+    if (value) {
+        Cookies.set(key, value, cookieOptions);
+    } else {
+        Cookies.remove(key, cookieOptions);
+    }
+}
+function getCrossDomainStorage(key: string): string {
+    return Cookies.get(key) || '';
 }
 
 const utils = {
@@ -368,6 +387,8 @@ const utils = {
     tryEnsureOrRedirect,
     setStorage,
     getStorage,
+    setCrossDomainStorage,
+    getCrossDomainStorage,
 };
 
 export default utils;

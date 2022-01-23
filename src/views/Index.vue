@@ -166,6 +166,7 @@ import ShadowLogo from '@/components/Icons/ShadowLogo.vue';
 import MenuIcon from '@/components/Icons/Menu.vue';
 import CloseIcon from '@/components/Icons/Close.vue';
 import config from '@/config';
+import utils from '@/common/utils';
 @Options({
     name: 'Index',
     components: {
@@ -234,12 +235,14 @@ export default class Index extends Vue {
         } else {
             // Login
             this.$gtag.event('login', { userid: address });
-            const redirectFrom = sessionStorage.getItem('redirectFrom') || '';
-            sessionStorage.removeItem('redirectFrom');
-            if (rns) {
+            const redirectFrom = utils.getCrossDomainStorage('redirectFrom') || '';
+            utils.setCrossDomainStorage('redirectFrom', '');
+            if (redirectFrom && redirectFrom.includes(config.subDomain.rootDomain)) {
+                window.location.href = redirectFrom;
+            } else if (rns) {
                 window.location.href = '//' + rns + '.' + config.subDomain.rootDomain + redirectFrom;
             } else {
-                await this.$router.push(redirectFrom || `/${rns || address}`);
+                await this.$router.push(redirectFrom || `/${address}`);
             }
         }
         this.isLoading = false;

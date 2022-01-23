@@ -281,8 +281,8 @@ export default class EditProfile extends Vue {
         this.isLoading = false;
         await RSS3.reloadLoginUser();
         await RSS3.reloadPageOwner();
-        const redirectFrom = sessionStorage.getItem('redirectFrom');
-        sessionStorage.removeItem('redirectFrom');
+        const redirectFrom = utils.getCrossDomainStorage('redirectFrom');
+        utils.setCrossDomainStorage('redirectFrom', '');
         await this.$router.push(
             config.subDomain.isSubDomainMode ? redirectFrom || '/' : `/${this.web3name || this.ethAddress}`,
         );
@@ -304,7 +304,7 @@ export default class EditProfile extends Vue {
                 this.isShowingNotice = true;
             } else {
                 // this.saveEdited();
-                sessionStorage.setItem('redirectFrom', this.$route.fullPath);
+                utils.setCrossDomainStorage('redirectFrom', this.$route.fullPath);
                 await this.$router.push('/rns');
             }
         }

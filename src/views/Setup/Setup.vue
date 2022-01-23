@@ -375,8 +375,8 @@ export default class Setup extends Vue {
         const pageOwner = RSS3.getPageOwner();
         const rns = pageOwner.name;
         const ethAddress = pageOwner.address;
-        const redirectFrom = sessionStorage.getItem('redirectFrom');
-        sessionStorage.removeItem('redirectFrom');
+        const redirectFrom = utils.getCrossDomainStorage('redirectFrom');
+        utils.setCrossDomainStorage('redirectFrom', '');
         await this.$router.push(config.subDomain.preferSubDomainMode ? redirectFrom || '/' : `/${rns || ethAddress}`);
     }
 

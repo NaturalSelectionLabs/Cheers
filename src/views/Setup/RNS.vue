@@ -126,8 +126,8 @@ export default class RNS extends Vue {
 
     async skipRedirect() {
         // Login
-        const redirectFrom = sessionStorage.getItem('redirectFrom');
-        sessionStorage.removeItem('redirectFrom');
+        const redirectFrom = utils.getCrossDomainStorage('redirectFrom');
+        utils.setCrossDomainStorage('redirectFrom', '');
         if (this.isAlreadyHavingRNS) {
             window.location.href = '//' + this.rns + '.' + config.subDomain.rootDomain + (redirectFrom || '');
         } else {
@@ -137,7 +137,7 @@ export default class RNS extends Vue {
 
     async refreshAccount() {
         if (!RSS3.isValidRSS3()) {
-            sessionStorage.setItem('redirectFrom', this.$route.fullPath);
+            utils.setCrossDomainStorage('redirectFrom', this.$route.fullPath);
             await this.$router.push('/');
         } else {
             const loginUser = await RSS3.getLoginUser();

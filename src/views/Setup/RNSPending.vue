@@ -16,6 +16,7 @@ import Loading from '@/components/Loading/Loading.vue';
 import RSS3 from '@/common/rss3';
 import RNSUtils from '@/common/rns';
 import config from '@/config';
+import utils from '@/common/utils';
 
 @Options({
     name: 'RNSPending',
@@ -28,7 +29,7 @@ export default class RNSPending extends Vue {
 
     async mounted() {
         if (!RSS3.isValidRSS3()) {
-            sessionStorage.setItem('redirectFrom', this.$route.fullPath);
+            utils.setCrossDomainStorage('redirectFrom', this.$route.fullPath);
             await this.$router.push('/');
         } else {
             const loginUser = RSS3.getLoginUser();
@@ -50,8 +51,8 @@ export default class RNSPending extends Vue {
                     } else {
                         // Login
                         this.$gtag.event('login', { userid: loginUser.address });
-                        const redirectFrom = sessionStorage.getItem('redirectFrom');
-                        sessionStorage.removeItem('redirectFrom');
+                        const redirectFrom = utils.getCrossDomainStorage('redirectFrom');
+                        utils.setCrossDomainStorage('redirectFrom', '');
                         if (rns) {
                             window.location.href =
                                 '//' + rns + '.' + config.subDomain.rootDomain + (redirectFrom || '');
