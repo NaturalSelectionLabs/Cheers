@@ -27,7 +27,7 @@ export default class Modal extends Vue {}
     .modal {
         @apply fixed left-0 top-0 m-0 p-0 w-screen h-screen;
         .shadow {
-            @apply absolute left-0 top-0 m-0 p-0 w-screen h-screen bg-black opacity-50;
+            @apply absolute left-0 top-0 m-0 p-0 w-screen h-screen bg-black opacity-30;
         }
         .dialog {
             @apply relative left-1/2 top-1/2 p-4 w-80 h-80 bg-modal-bg border-modal border-modal-border rounded transform -translate-x-1/2 -translate-y-1/2;

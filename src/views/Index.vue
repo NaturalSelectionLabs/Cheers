@@ -99,7 +99,7 @@
 
         <div v-show="!mobileNavOpen" class="z-1 body flex flex-col gap-10 items-center justify-center mt-24 px-4 h-3/4">
             <div class="flex flex-col gap-6 items-center mb-10">
-                <Loading :size="200" />
+                <Loading :size="200" :class="{ invisible: isLoading }" />
                 <span class="mt-1 w-3/4 text-lg font-light md:mt-3 md:w-full md:text-2xl">
                     Your Web3 activites and contents all in one place. <br />
                     Your Web3 in one shot.
