@@ -24,12 +24,12 @@
                         :suffix="rnsSuffix"
                     />
                     <span class="flex px-2 w-full text-left">
-                        <i class="bx bx-info-circle mr-2 text-gray-400 text-lg" />
-                        <span class="text-primary-text"> An RNS is a unique domain for a Web 3 Pass by RSS3 </span>
+                        <i class="bx bx-info-circle mr-2 text-btn-icon text-lg" />
+                        <span> An RNS is a unique domain for a Web 3 Pass by RSS3 </span>
                     </span>
                     <span class="flex px-2 w-full text-left">
-                        <i class="bx bx-info-circle mr-2 text-gray-400 text-lg" />
-                        <span class="text-primary-text"> You can also set it up later in your profile </span>
+                        <i class="bx bx-info-circle mr-2 text-btn-icon text-lg" />
+                        <span> You can also set it up later in your profile </span>
                     </span>
                 </div>
                 <div>
