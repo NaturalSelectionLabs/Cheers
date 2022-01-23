@@ -21,9 +21,6 @@ module.exports = {
                 primary: {
                     text: '#FED581',
                     btn: '#FED581',
-                    link: '#FED58133',
-                    'link-border': 'none',
-                    'btn-border': 'none',
                 },
                 secondary: {
                     btn: '#FED58133',
@@ -34,6 +31,7 @@ module.exports = {
                 body: {
                     text: '#2F2F2D',
                 },
+                // todo: update colors of account settings page
                 account: {
                     border: 'transparent',
                     title: '#13bd00',

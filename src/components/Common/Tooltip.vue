@@ -37,16 +37,16 @@ export default class Tooltip extends Vue {
     }
 
     .color-default {
-        @apply text-primary-text bg-primary-link border-primary-link-border;
+        @apply text-primary-text bg-secondary-btn;
         &.tooltip::after {
-            border-color: transparent var(--color-sharebutton-border) transparent transparent;
+            border-color: transparent rgba(0, 114, 255, 0.1) transparent transparent;
         }
     }
 
     .color-account {
         @apply text-account-title bg-account-bg;
         &.tooltip::after {
-            border-color: transparent var(--color-account-bg) transparent transparent;
+            border-color: transparent #f6fff5 transparent transparent;
         }
     }
 }

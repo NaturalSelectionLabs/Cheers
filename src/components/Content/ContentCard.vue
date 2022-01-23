@@ -5,7 +5,7 @@
             <ContentBadge :contentProvider="provider" />
             <span>{{ getDate(timestamp) }}</span>
         </section>
-        <section class="pl-2 border-l-2 border-primary-link">
+        <section class="pl-2 border-l-2 border-secondary-btn">
             <h2 class="content-header text-base font-semibold truncate">
                 {{ title }}
             </h2>

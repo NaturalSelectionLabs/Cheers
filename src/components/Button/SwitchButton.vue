@@ -9,11 +9,10 @@
             py-2
             text-center text-body-text text-base
             leading-none
-            border-link border-primary-link-border
             rounded-sm
             focus:outline-none
         "
-        :class="isActivated ? 'bg-primary-text bg-opacity-70' : 'bg-primary-link'"
+        :class="isActivated ? 'bg-primary-text bg-opacity-70' : 'bg-secondary-btn'"
     >
         <slot></slot>
     </button>
