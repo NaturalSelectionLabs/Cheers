@@ -611,8 +611,9 @@ export default class Home extends Vue {
             await RSS3.ensureLoginUser();
             this.checkIsFollowing();
             this.isOwner = RSS3.isNowOwner();
-            this.isLoadingPersona = false;
         }
+
+        this.isLoadingPersona = false;
     }
 
     async updateUserInfo() {
