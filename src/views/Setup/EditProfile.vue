@@ -1,10 +1,10 @@
 <template>
-    <div class="h-screen text-body-text bg-gradient-to-tr from-blue-400 to-blue-200 via-blue-100 overflow-y-auto">
+    <div class="h-screen text-body-text overflow-y-auto">
         <div class="m-auto pb-20 px-4 py-9 max-w-screen-lg">
             <div class="flex items-center justify-between mb-10 w-full text-center">
                 <i class="bx bx-chevron-left bx-sm text-secondary-btn-text w-10 h-10 cursor-pointer" @click="back"></i>
                 <div class="flex flex-grow justify-center mr-10">
-                    <h1 class="text-primary-text text-2xl font-bold">Edit Profile</h1>
+                    <h1 class="text-2xl font-bold">Edit Profile</h1>
                 </div>
             </div>
             <section class="m-auto max-w-md">
@@ -16,7 +16,7 @@
                     }"
                     @click="toSetupRNS"
                 >
-                    <span>{{ rns ? rns : 'Claim Your RNS' }}</span>
+                    <span class="px-4 py-1">{{ rns ? rns : 'Claim Your RNS' }}</span>
                 </LinkButton>
                 <Input class="mb-4 w-full" :is-single-line="true" placeholder="Username" v-model="profile.name" />
                 <Input

@@ -7,8 +7,8 @@
                 fill: newUrl || url,
             }"
         >
-            <i class="bx bx-plus bx-sm text-primary-text fill-current" v-show="!newUrl" />
-            <i class="bx bx-pencil bx-sm text-primary-text fill-current" v-show="newUrl" />
+            <i class="bx bx-plus bx-sm fill-current" v-show="!newUrl" />
+            <i class="bx bx-pencil bx-sm fill-current" v-show="newUrl" />
         </div>
         <input type="file" class="hidden" accept="image/*" @change="preview" />
     </label>
@@ -65,7 +65,7 @@ export default class Avatar extends Vue {
         }
 
         .image {
-            @apply absolute left-0 top-0 w-full h-full rounded-full object-contain object-cover object-center;
+            @apply absolute left-0 top-0 w-full h-full rounded-full object-cover object-center;
         }
 
         .plus {

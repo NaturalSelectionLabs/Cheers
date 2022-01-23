@@ -1,8 +1,8 @@
 <template>
-    <div class="h-screen text-body-text bg-gradient-to-tr from-blue-400 to-blue-200 via-blue-100">
+    <div class="h-screen text-body-text">
         <div class="flex items-center justify-center mx-auto w-full max-w-md h-full text-center">
             <div class="flex flex-col justify-between w-full h-2/3">
-                <h1 class="text-primary-text text-6xl font-bold">Claim your RNS</h1>
+                <h1 class="text-6xl font-bold">Claim your RNS</h1>
                 <div class="input-rns">
                     <span
                         class="flex mb-2 px-2 w-full text-left text-lg font-normal opacity-0"

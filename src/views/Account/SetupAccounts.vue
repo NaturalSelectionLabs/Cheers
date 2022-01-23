@@ -1,5 +1,5 @@
 <template>
-    <div class="h-screen text-body-text bg-gradient-to-tr from-blue-400 to-blue-200 via-blue-100 overflow-y-auto">
+    <div class="h-screen text-body-text overflow-y-auto">
         <div class="flex flex-col m-auto pt-8 px-4 max-w-screen-lg h-full">
             <Header />
             <div class="flex flex-col flex-grow gap-4 pb-8 h-0 md:flex-row">
