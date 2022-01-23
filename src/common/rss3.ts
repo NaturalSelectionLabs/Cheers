@@ -301,7 +301,7 @@ async function setPageTitleFavicon() {
     } else {
         favicon.href = '/favicon.ico';
     }
-    document.title = profile?.name || 'Web3 Pass';
+    document.title = profile?.name || 'Cheers Bio';
 }
 
 async function ensureLoginUser() {

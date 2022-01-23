@@ -123,7 +123,7 @@ export default class Header extends Vue {
     async logout() {
         if (confirm('Are you sure to logout?')) {
             (<HTMLLinkElement>document.getElementById('favicon')).href = '/favicon.ico';
-            document.title = 'Web3 Pass';
+            document.title = 'Cheers Bio';
 
             await RSS3.disconnect();
             if (config.subDomain.isSubDomainMode) {

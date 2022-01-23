@@ -586,7 +586,7 @@ export default class Home extends Vue {
         this.lastRoute = this.$route.fullPath;
 
         (<HTMLLinkElement>document.getElementById('favicon')).href = '/favicon.ico';
-        document.title = 'Web3 Pass';
+        document.title = 'Cheers Bio';
 
         this.isLoadingPersona = true;
         const aon = utils.getAddress(<string>this.$route.params.address);
@@ -844,7 +844,7 @@ export default class Home extends Vue {
         } else {
             // Clear last user status
             (<HTMLLinkElement>document.getElementById('favicon')).href = '/favicon.ico';
-            document.title = 'Web3 Pass';
+            document.title = 'Cheers Bio';
 
             utils.setCrossDomainStorage('redirectFrom', window.location.href); // Cross domain redirect
             if (legacyConfig.subDomain.isSubDomainMode) {
