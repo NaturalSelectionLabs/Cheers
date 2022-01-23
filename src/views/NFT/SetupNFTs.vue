@@ -101,7 +101,7 @@
                 </section>
             </div>
 
-            <LoadingContainer v-show="isLoading" />
+            <LoadingContainer v-show="isLoading" :isLooping="true" />
         </div>
     </div>
 </template>

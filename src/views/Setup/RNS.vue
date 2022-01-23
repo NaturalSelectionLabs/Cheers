@@ -43,7 +43,7 @@
                     </div>
                 </div>
             </div>
-            <LoadingContainer v-show="isLoading" />
+            <LoadingContainer v-show="isLoading" :isLooping="true" />
 
             <Modal v-if="isShowingConfirm">
                 <template #header>

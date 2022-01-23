@@ -121,7 +121,7 @@
                     <span>Done</span>
                 </Button>
             </div>
-            <LoadingContainer v-show="isLoading" />
+            <LoadingContainer v-show="isLoading" :isLooping="true" />
 
             <Modal v-if="isShowingNotice">
                 <template #header>

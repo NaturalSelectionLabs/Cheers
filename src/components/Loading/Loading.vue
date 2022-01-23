@@ -14,17 +14,20 @@ import animationData from '@/assets/loadingAnimationData.json';
 @Options({
     props: {
         size: Number,
+        isLooping: Boolean,
     },
 })
 export default class Loading extends Vue {
     size!: Number;
+    isLooping!: Boolean;
+
     defaultOptions: Object = { animationData: animationData };
     async mounted() {
         const lottie: any = await import(/* webpackChunkName: "lottie" */ 'lottie-web');
         lottie.loadAnimation({
             container: <Element>this.$refs.lottieContainer,
             renderer: 'svg',
-            loop: true,
+            loop: this.isLooping,
             autoplay: true,
             animationData: animationData,
         });
