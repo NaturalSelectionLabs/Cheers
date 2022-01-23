@@ -4,7 +4,7 @@
             <div class="h-18 flex items-center justify-start md:h-20">
                 <div class="flex-shrink-0 mr-4 mt-2 md:mt-0">
                     <router-link to="/" class="block" aria-label="RSS3">
-                        <Logo :size="35" />
+                        <Logo :size="65" />
                     </router-link>
                 </div>
             </div>

@@ -1,6 +1,6 @@
 <template>
     <div class="relative flex items-center justify-between pb-4 text-body-text">
-        <Logo v-if="displayLogo" class="cursor-pointer" @click="toHomePage" size="100" />
+        <Logo v-if="displayLogo" class="cursor-pointer" @click="toHomePage" :size="55" />
         <div v-else class="flex items-center justify-center w-10 h-10 cursor-pointer" @click="back">
             <i class="bx bx-chevron-left bx-sm" />
         </div>
