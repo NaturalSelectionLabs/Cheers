@@ -152,12 +152,6 @@ module.exports = {
                 Jike: 'url(@/assets/images/chains/Jike.png)',
                 Solana: 'url(@/assets/images/chains/Solana.png)',
                 Roninscan: 'url(@/assets/images/scans/Roninscan.png)',
-                pass3gif: 'url(@/assets/images/pass3.gif)',
-                pass3logo: 'url(@/assets/images/pass3logo.svg)',
-                pass3gradient:
-                    'linear-gradient(172.52deg, #0072FF -40.83%, #96C5FF -3.21%, #DDECFF 28.66%, #FFFFFF 44.01%);',
-                'btn-container': 'var(--color-button-container)',
-                'footer-bg': 'var(--color-footer-bg)',
             }),
             backgroundSize: {
                 85: '85%',
