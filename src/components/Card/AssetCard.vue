@@ -41,11 +41,11 @@ export default class AssetCard extends Vue {
 
     getTitle(type: string) {
         const title = new Map([
-            ['Games', ' got one'],
-            ['Awards', ' obtained'],
-            ['Organizations', ' participated in'],
+            ['Games', ' got one '],
+            ['Awards', ' obtained '],
+            ['Organizations', ' participated in '],
         ]);
-        return type ? title.get(type) : 'attended';
+        return type ? title.get(type) : ' attended ';
     }
 }
 </script>
