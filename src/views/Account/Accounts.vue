@@ -9,20 +9,11 @@
                 :haveContentInfo="false"
             >
                 <template #header>
-                    <i v-if="isOwner" class="bx bxs-pencil bx-xs cursor-pointer" @click="toSetupAccounts" />
+                    <i v-if="isOwner" class="bx bx-pencil bx-xs cursor-pointer" @click="toSetupAccounts" />
                 </template>
                 <template #details>
                     <div
-                        class="
-                            grid
-                            gap-4
-                            grid-cols-1
-                            items-center
-                            justify-between
-                            py-4
-                            w-full
-                            md:grid-cols-2 md:justify-start
-                        "
+                        class="grid gap-4 grid-cols-1 items-center justify-between py-4 w-full md:grid-cols-2 md:justify-start"
                     >
                         <div
                             class="flex flex-row gap-4 items-center justify-between w-full cursor-pointer md:max-w-xs"
@@ -35,25 +26,11 @@
                             <span class="text-lg font-semibold truncate">{{ getDisplayAddress(item) }}</span>
                             <section class="flex flex-row flex-shrink-0 gap-4">
                                 <i
-                                    class="
-                                        bx
-                                        bxs-copy
-                                        bx-sm
-                                        text-primary-text
-                                        opacity-70
-                                        transform
-                                        active:-translate-y-px
-                                    "
+                                    class="bx bxs-copy bx-sm text-primary-text opacity-70 transform active:-translate-y-px"
                                     @click.stop="copyToClipboard(item.identity)"
                                 />
                                 <i
-                                    class="
-                                        bx bx-link-external bx-sm
-                                        text-primary-text
-                                        opacity-70
-                                        transform
-                                        active:-translate-y-px
-                                    "
+                                    class="bx bx-link-external bx-sm text-primary-text opacity-70 transform active:-translate-y-px"
                                     @click.stop="toExternalLink(item.identity, item.platform)"
                                 />
                             </section>

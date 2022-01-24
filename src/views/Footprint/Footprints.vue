@@ -9,7 +9,7 @@
                 :haveContentInfo="false"
             >
                 <template #header>
-                    <i v-if="isOwner" class="bx bxs-pencil bx-xs cursor-pointer" @click="toSetupFootprints" />
+                    <i v-if="isOwner" class="bx bx-pencil bx-xs cursor-pointer" @click="toSetupFootprints" />
                 </template>
                 <template #details>
                     <div class="grid gap-4 grid-cols-1 sm:grid-cols-2" v-if="footprints.length !== 0">

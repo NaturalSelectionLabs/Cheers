@@ -38,7 +38,7 @@
                                     class="inline-block mr-1 w-8 h-8 bg-secondary-btn-card"
                                     @click="toManageAccounts"
                                 >
-                                    <i class="bx bxs-pencil bx-xs" />
+                                    <i class="bx bx-pencil bx-xs" />
                                 </Button>
                                 <Button
                                     size="sm"
@@ -73,7 +73,7 @@
                                 <template #header>
                                     <i
                                         v-if="isOwner"
-                                        class="bx bxs-pencil bx-xs cursor-pointer"
+                                        class="bx bx-pencil bx-xs cursor-pointer"
                                         @click="toManageNFTs(className)"
                                     />
                                 </template>
@@ -118,7 +118,7 @@
                                 <template #header>
                                     <i
                                         v-if="isOwner"
-                                        class="bx bxs-pencil bx-xs cursor-pointer"
+                                        class="bx bx-pencil bx-xs cursor-pointer"
                                         @click="toManageNFTs(className)"
                                     />
                                 </template>
@@ -178,7 +178,7 @@
                             <template #header>
                                 <i
                                     v-if="isOwner"
-                                    class="bx bxs-pencil bx-xs cursor-pointer"
+                                    class="bx bx-pencil bx-xs cursor-pointer"
                                     @click="toManageFootprints"
                                 />
                             </template>
@@ -224,11 +224,7 @@
                             :haveContentInfo="gitcoins.length > 0"
                         >
                             <template #header>
-                                <i
-                                    v-if="isOwner"
-                                    class="bx bxs-pencil bx-xs cursor-pointer"
-                                    @click="toManageGitcoins"
-                                />
+                                <i v-if="isOwner" class="bx bx-pencil bx-xs cursor-pointer" @click="toManageGitcoins" />
                             </template>
                             <template #content>
                                 <GitcoinItem
@@ -269,30 +265,10 @@
                                             Web3 Only
                                         </h2>
                                         <div
-                                            class="
-                                                flex
-                                                items-center
-                                                p-1
-                                                w-11
-                                                h-6
-                                                bg-gray-500 bg-opacity-10
-                                                rounded-full
-                                                cursor-pointer
-                                                duration-200
-                                                ease-in-out
-                                            "
+                                            class="flex items-center p-1 w-11 h-6 bg-gray-500 bg-opacity-10 rounded-full cursor-pointer duration-200 ease-in-out"
                                         >
                                             <div
-                                                class="
-                                                    w-4
-                                                    h-4
-                                                    bg-black bg-opacity-50
-                                                    rounded-full
-                                                    shadow-md
-                                                    transform
-                                                    duration-200
-                                                    ease-in-out
-                                                "
+                                                class="w-4 h-4 bg-black bg-opacity-50 rounded-full shadow-md transform duration-200 ease-in-out"
                                                 :class="{ 'translate-x-5 bg-opacity-80': !isWeb3Only }"
                                             />
                                         </div>
@@ -359,14 +335,7 @@
                                 Made with 🌀 by
                                 <a
                                     href="https://rss3.io"
-                                    class="
-                                        text-body-text
-                                        no-underline
-                                        visited:no-underline
-                                        active:no-underline
-                                        text-xs
-                                        font-normal
-                                    "
+                                    class="text-body-text no-underline visited:no-underline active:no-underline text-xs font-normal"
                                 >
                                     RSS3
                                 </a>

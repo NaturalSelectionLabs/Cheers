@@ -10,7 +10,7 @@
                 :haveContentInfo="false"
             >
                 <template #header>
-                    <i v-if="isOwner" class="bx bxs-pencil bx-xs cursor-pointer" @click="toSetupNfts" />
+                    <i v-if="isOwner" class="bx bx-pencil bx-xs cursor-pointer" @click="toSetupNfts" />
                 </template>
                 <template #details>
                     <div
@@ -77,7 +77,7 @@
                 :haveContentInfo="false"
             >
                 <template #header>
-                    <i v-if="isOwner" class="bx bxs-pencil bx-xs cursor-pointer" @click="toSetupNfts" />
+                    <i v-if="isOwner" class="bx bx-pencil bx-xs cursor-pointer" @click="toSetupNfts" />
                 </template>
                 <template #details>
                     <div class="grid gap-3 grid-cols-1 justify-items-center md:grid-cols-2" v-if="nfts.length !== 0">
