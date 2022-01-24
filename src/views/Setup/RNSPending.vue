@@ -1,7 +1,7 @@
 <template>
     <div class="flex items-center justify-center h-screen">
         <div class="flex flex-col gap-20 items-center justify-center px-4 py-9 max-w-md h-full">
-            <Loading :size="200" class="mb-50" :isLooping="true" />
+            <LoadingContainer v-show="isLoading" :isLooping="true" />
             <div class="w-full text-left text-body-text font-medium">
                 <p class="text-2xl">Preparing your Pass ...</p>
                 <p class="text-base">Hold on a little bit or come back later!</p>
@@ -12,7 +12,7 @@
 
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
-import Loading from '@/components/Loading/Loading.vue';
+import LoadingContainer from '@/components/Loading/LoadingContainer.vue';
 import RSS3 from '@/common/rss3';
 import RNSUtils from '@/common/rns';
 import config from '@/config';
@@ -20,7 +20,7 @@ import utils from '@/common/utils';
 
 @Options({
     name: 'RNSPending',
-    components: { Loading },
+    components: { LoadingContainer },
 })
 export default class RNSPending extends Vue {
     rns: string = '';

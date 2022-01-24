@@ -31,6 +31,18 @@
                             <i v-else class="bx bx-dots-horizontal-rounded" />
                         </Button>
                     </IntersectionObserverContainer>
+                    <div v-if="!isLoadingAssets && followRenderList.length === 0">
+                        <div v-if="isOwner" class="flex gap-2 items-start justify-center">
+                            <span class="font-light">Make some new friends to get a shot</span>
+                            <Smile :size="18" />
+                        </div>
+                        <div v-else>
+                            <span class="font-light"
+                                >Looks like this user hasn't got a shot. Come back and check it out later</span
+                            >
+                            <Smile :size="18" />
+                        </div>
+                    </div>
                 </template>
             </TransBarCard>
         </div>
@@ -52,10 +64,11 @@ import { Profile } from '@/common/types';
 import Header from '@/components/Common/Header.vue';
 import IntersectionObserverContainer from '@/components/Common/IntersectionObserverContainer.vue';
 import TransBarCard from '@/components/Card/TransBarCard.vue';
+import Smile from '@/components/Icons/Smile.vue';
 
 @Options({
     name: 'Followings',
-    components: { TransBarCard, IntersectionObserverContainer, ImgHolder, Button, FollowCard, Header },
+    components: { TransBarCard, IntersectionObserverContainer, ImgHolder, Button, FollowCard, Header, Smile },
 })
 export default class Followings extends Vue {
     followRenderList: Profile[] = [];

@@ -341,7 +341,7 @@
                                     </IntersectionObserverContainer>
                                 </div>
                                 <div v-else class="flex flex-col justify-center h-96">
-                                    <span class="w-full text-center">{{
+                                    <span class="text-light w-full text-center">{{
                                         isLoadingContents ? 'Loading...' : 'One moment! Details on the way.'
                                     }}</span>
                                 </div>

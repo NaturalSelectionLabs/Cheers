@@ -78,7 +78,6 @@ import RSS3 from '@/common/rss3';
 import RNSUtils from '@/common/rns';
 import Modal from '@/components/Common/Modal.vue';
 import Input from '@/components/Input/Input.vue';
-import Loading from '@/components/Loading/Loading.vue';
 import LoadingContainer from '@/components/Loading/LoadingContainer.vue';
 import config from '@/config';
 import { routes } from '@/router';
@@ -89,7 +88,6 @@ import utils from '@/common/utils';
         Input,
         Modal,
         Button,
-        Loading,
         LoadingContainer,
     },
 })

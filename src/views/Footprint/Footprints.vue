@@ -28,7 +28,7 @@
                     </div>
                     <div v-else class="flex gap-2 items-start justify-center">
                         <span class="font-light">One moment! Details on the way</span>
-                        <Smile :size="18" />
+                        <LoadingSmileContainer :isLooping="true" />
                     </div>
                     <IntersectionObserverContainer
                         v-if="isHavingMoreAssets"
@@ -41,6 +41,18 @@
                             <i v-else class="bx bx-dots-horizontal-rounded" />
                         </Button>
                     </IntersectionObserverContainer>
+                    <div v-if="!isLoadingAssets && footprints.length === 0">
+                        <div v-if="isOwner" class="flex gap-2 items-start justify-center">
+                            <span class="font-light">Attend some events to get a shot</span>
+                            <Smile :size="18" />
+                        </div>
+                        <div v-else>
+                            <span class="font-light"
+                                >Looks like this user hasn't got a shot. Come back and check it out later</span
+                            >
+                            <Smile :size="18" />
+                        </div>
+                    </div>
                 </template>
             </TransBarCard>
         </div>
@@ -63,10 +75,19 @@ import IntersectionObserverContainer from '@/components/Common/IntersectionObser
 import TransBarCard from '@/components/Card/TransBarCard.vue';
 import { formatter } from '@/common/address';
 import Smile from '@/components/Icons/Smile.vue';
+import LoadingSmileContainer from '@/components/Loading/LoadingSmileContainer.vue';
 
 @Options({
     name: 'Footprints',
-    components: { IntersectionObserverContainer, FootprintCard, Button, Header, TransBarCard, Smile },
+    components: {
+        IntersectionObserverContainer,
+        FootprintCard,
+        Button,
+        Header,
+        TransBarCard,
+        Smile,
+        LoadingSmileContainer,
+    },
 })
 export default class Footprints extends Vue {
     rns: string = '';
