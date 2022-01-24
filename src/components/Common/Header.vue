@@ -36,16 +36,14 @@
                         translate-y-full
                     "
                 >
-                    <template>
-                        <div class="flex flex-row gap-2 items-center cursor-pointer" @click="toPublicPage">
-                            <i class="bx bx-user bx-xs text-btn-icon" />
-                            Home
-                        </div>
-                        <div class="flex flex-row gap-2 items-center cursor-pointer" @click="logout">
-                            <i class="bx bx-log-out bx-xs text-btn-icon" />
-                            Logout
-                        </div>
-                    </template>
+                    <div class="flex flex-row gap-2 items-center cursor-pointer" @click="toPublicPage">
+                        <i class="bx bx-user bx-xs text-btn-icon" />
+                        Home
+                    </div>
+                    <div class="flex flex-row gap-2 items-center cursor-pointer" @click="logout">
+                        <i class="bx bx-log-out bx-xs text-btn-icon" />
+                        Logout
+                    </div>
                 </div>
             </template>
         </transition>
