@@ -78,7 +78,7 @@
         "vuedraggable": "4.1.0"
     },
     "devDependencies": {
-        "@babel/core": "7.16.0",
+        "@babel/core": "7.16.12",
         "@babel/plugin-proposal-decorators": "7.16.7",
         "@babel/plugin-transform-runtime": "7.16.5",
         "@babel/preset-env": "7.16.4",
@@ -94,7 +94,7 @@
         "boxicons": "2.1.1",
         "copy-webpack-plugin": "10.2.1",
         "css-loader": "6.5.1",
-        "cssnano": "5.0.15",
+        "cssnano": "5.0.16",
         "html-webpack-plugin": "5.5.0",
         "husky": "7.0.4",
         "js-conditional-compile-loader": "1.0.15",
