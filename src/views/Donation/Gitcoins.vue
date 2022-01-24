@@ -24,20 +24,20 @@
                             @click="toSingleGitcoin(item.id)"
                         />
                     </div>
-                    <div v-else class="flex gap-2 items-start justify-center">
-                        <span class="font-light">One moment! Details on the way</span>
-                        <LoadingSmileContainer :isLooping="true" />
-                    </div>
                     <IntersectionObserverContainer
                         v-if="isHavingMoreAssets"
                         :once="false"
                         :enabled="!isLoadingAssets"
                         @trigger="loadMoreAssets"
                     >
-                        <Button size="sm" class="m-auto text-body-text text-lg bg-primary-btn" @click="loadMoreAssets">
+                        <!-- <Button size="sm" class="m-auto text-body-text text-lg bg-primary-btn" @click="loadMoreAssets">
                             <i v-if="isLoadingAssets" class="bx bx-loader-circle bx-spin" />
                             <i v-else class="bx bx-dots-horizontal-rounded" />
-                        </Button>
+                        </Button> -->
+                        <div class="flex gap-2 items-start justify-center">
+                            <span class="font-light">One moment </span>
+                            <LoadingSmileContainer :isLooping="true" />
+                        </div>
                     </IntersectionObserverContainer>
                     <div v-if="!isLoadingAssets && gitcoins.length === 0">
                         <div v-if="isOwner" class="flex gap-2 items-start justify-center">

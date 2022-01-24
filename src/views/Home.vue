@@ -65,7 +65,7 @@
                             <TransBarCard
                                 v-if="className === 'Vitrine'"
                                 :title="className"
-                                :tip="isLoadingAssets.NFT ? 'Loading...' : 'One moment! Details on the way.'"
+                                :tip="isLoadingAssets.NFT ? 'loading' : isOwner ? 'ownerEmpty' : 'notOwnerEmpty'"
                                 :haveDetails="false"
                                 :haveContent="true"
                                 :haveContentInfo="classifiedList[className].length > 0"
@@ -110,7 +110,7 @@
                             <TransBarCard
                                 v-else
                                 :title="className"
-                                :tip="isLoadingAssets.NFT ? 'Loading...' : 'One moment! Details on the way.'"
+                                :tip="isLoadingAssets.NFT ? 'loading' : isOwner ? 'ownerEmpty' : 'notOwnerEmpty'"
                                 :haveDetails="classifiedList[className].length > 0"
                                 :haveContent="true"
                                 :haveContentInfo="classifiedList[className].length > 0"
@@ -170,7 +170,7 @@
 
                         <TransBarCard
                             title="Footprints"
-                            :tip="isLoadingAssets.Footprint ? 'Loading...' : 'One moment! Details on the way.'"
+                            :tip="isLoadingAssets.Footprint ? 'loading' : isOwner ? 'ownerEmpty' : 'notOwnerEmpty'"
                             :haveDetails="footprints.length !== 0"
                             :haveContent="true"
                             :haveContentInfo="footprints.length > 0"
@@ -218,7 +218,7 @@
 
                         <TransBarCard
                             title="Donations"
-                            :tip="isLoadingAssets.Gitcoin ? 'Loading...' : 'One moment! Details on the way.'"
+                            :tip="isLoadingAssets.Gitcoin ? 'loading' : isOwner ? 'ownerEmpty' : 'notOwnerEmpty'"
                             :haveDetails="false"
                             :haveContent="true"
                             :haveContentInfo="gitcoins.length > 0"

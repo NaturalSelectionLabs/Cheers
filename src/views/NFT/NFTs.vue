@@ -40,20 +40,24 @@
                             />
                         </div>
                     </div>
-                    <div v-else class="flex gap-2 items-start justify-center">
+                    <!-- <div v-else class="flex gap-2 items-start justify-center">
                         <span class="font-light">One moment! Details on the way</span>
                         <LoadingSmileContainer :isLooping="true" />
-                    </div>
+                    </div> -->
                     <IntersectionObserverContainer
                         v-if="isHavingMoreAssets"
                         :once="false"
                         :enabled="!isLoadingAssets"
                         @trigger="loadMoreAssets"
                     >
-                        <Button size="sm" class="m-auto text-white text-lg bg-primary-btn" @click="loadMoreAssets">
+                        <div class="flex gap-2 items-start justify-center">
+                            <span class="font-light">One moment </span>
+                            <LoadingSmile :size="18" :isLooping="isLooping" />
+                        </div>
+                        <!-- <Button size="sm" class="m-auto text-white text-lg bg-primary-btn" @click="loadMoreAssets">
                             <i v-if="isLoadingAssets" class="bx bx-loader-circle bx-spin" />
                             <i v-else class="bx bx-dots-horizontal-rounded" />
-                        </Button>
+                        </Button> -->
                     </IntersectionObserverContainer>
                     <div v-if="!isLoadingAssets && nfts.length !== 0">
                         <div v-if="isOwner" class="flex gap-2 items-start justify-center">
@@ -93,23 +97,23 @@
                             @click="toSingleNFTPage(item.id)"
                         />
                     </div>
-                    <div v-else class="flex gap-2 items-start justify-center">
-                        <span class="font-light">One moment! Details on the way</span>
-                        <Smile :size="18" />
-                    </div>
                     <IntersectionObserverContainer
                         v-if="isHavingMoreAssets"
                         :once="false"
                         :enabled="!isLoadingAssets"
                         @trigger="loadMoreAssets"
                     >
-                        <Button size="sm" class="m-auto text-white text-lg bg-primary-btn" @click="loadMoreAssets">
+                        <!-- <Button size="sm" class="m-auto text-white text-lg bg-primary-btn" @click="loadMoreAssets">
                             <i v-if="isLoadingAssets" class="bx bx-loader-circle bx-spin" />
                             <i v-else class="bx bx-dots-horizontal-rounded" />
-                        </Button>
+                        </Button> -->
+                        <div class="flex gap-2 items-start justify-center">
+                            <span class="font-light">One moment </span>
+                            <LoadingSmile :size="18" :isLooping="isLooping" />
+                        </div>
                     </IntersectionObserverContainer>
                     <div v-if="!isLoadingAssets && nfts.length === 0">
-                        <div v-if="isOwner" class="flex gap-2 items-start justify-center">
+                        <div v-if="isOwner" class="flex flex-row gap-2 items-start justify-center">
                             <span class="font-light">Grab some collectibles to get a shot</span>
                             <Smile :size="18" />
                         </div>
@@ -144,7 +148,7 @@ import TransBarCard from '@/components/Card/TransBarCard.vue';
 import { formatter } from '@/common/address';
 import AssetCard from '@/components/Card/AssetCard.vue';
 import Smile from '@/components/Icons/Smile.vue';
-import LoadingSmileContainer from '@/components/Loading/LoadingSmileContainer.vue';
+import LoadingSmile from '@/components/Loading/LoadingSmile.vue';
 
 @Options({
     name: 'NFTs',
@@ -157,7 +161,7 @@ import LoadingSmileContainer from '@/components/Loading/LoadingSmileContainer.vu
         TransBarCard,
         AssetCard,
         Smile,
-        LoadingSmileContainer,
+        LoadingSmile,
     },
 })
 export default class NFTs extends Vue {

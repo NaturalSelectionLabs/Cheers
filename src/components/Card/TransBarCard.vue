@@ -18,7 +18,26 @@
             <div v-if="haveContentInfo" class="flex flex-1 pb-1 overflow-x-auto" style="scrollbar-width: thin">
                 <div class="flex flex-row items-center"><slot name="content" /></div>
             </div>
-            <div v-else class="text-light truncate">{{ tip }}</div>
+            <div v-else class="text-light truncate">
+                <div v-if="tip === 'loading'" class="flex gap-2 items-start justify-center">
+                    <span class="font-light">One moment </span>
+                    <LoadingSmileContainer :isLooping="true" />
+                </div>
+                <div v-else>
+                    <div v-if="tip === 'ownerEmpty'" class="flex gap-2 items-start justify-center">
+                        <span v-if="title === 'Vitrine'" class="font-light">Grab some collectibles to get a shot</span>
+                        <span v-if="title === 'Footprints'" class="font-light">Fund some projects to get a shot</span>
+                        <span v-if="title === 'Donations'" class="font-light">Attend some events to get a shot</span>
+                        <Smile :size="18" />
+                    </div>
+                    <div v-else>
+                        <span class="font-light"
+                            >Looks like this user hasn't got a shot. Come back and check it out later</span
+                        >
+                        <Smile :size="18" />
+                    </div>
+                </div>
+            </div>
             <div class="flex-shrink-0">
                 <slot name="button" />
             </div>
@@ -28,6 +47,8 @@
 
 <script lang="ts">
 import { Vue, Options } from 'vue-class-component';
+import Smile from '@/components/Icons/Smile.vue';
+import LoadingSmileContainer from '@/components/Loading/LoadingSmileContainer.vue';
 
 @Options({
     props: {
@@ -37,6 +58,10 @@ import { Vue, Options } from 'vue-class-component';
         haveContent: Boolean,
         haveContentInfo: Boolean,
         isSecondary: Boolean,
+    },
+    components: {
+        Smile,
+        LoadingSmileContainer,
     },
 })
 export default class TransBarCard extends Vue {}

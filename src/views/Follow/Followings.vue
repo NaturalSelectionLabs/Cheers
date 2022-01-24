@@ -26,10 +26,14 @@
                         :enabled="!isLoadingFollows"
                         @trigger="loadMoreFollows"
                     >
-                        <Button size="sm" class="m-auto text-white bg-primary-btn" @click="loadMoreFollows">
+                        <!-- <Button size="sm" class="m-auto text-white bg-primary-btn" @click="loadMoreFollows">
                             <i v-if="isLoadingFollows" class="bx bx-loader-circle bx-spin"></i>
                             <i v-else class="bx bx-dots-horizontal-rounded" />
-                        </Button>
+                        </Button> -->
+                        <div class="flex gap-2 items-start justify-center">
+                            <span class="font-light">One moment </span>
+                            <LoadingSmileContainer :isLooping="true" />
+                        </div>
                     </IntersectionObserverContainer>
                     <div v-if="!isLoadingAssets && followRenderList.length === 0">
                         <div v-if="isOwner" class="flex gap-2 items-start justify-center">
