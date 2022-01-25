@@ -34,7 +34,7 @@
             </TransBarCard>
 
             <TransBarCard
-                title="Collectibles"
+                title="Vitrine"
                 :tip="isLoadingAssets.NFT ? 'Loading...' : 'Haven\'t found anything yet...'"
                 :haveDetails="false"
                 :haveContent="true"
@@ -158,6 +158,7 @@ import Loading from '@/components/Loading/Loading.vue';
 import LoadingContainer from '@/components/Loading/LoadingContainer.vue';
 import RSS3 from '@/common/rss3';
 import { utils as RSS3Utils } from 'rss3';
+import legacyConfig from '@/config';
 import config from '@/common/config';
 
 import { DetailedFootprint, DetailedDonation, DetailedNFT } from '@/common/types';
@@ -191,7 +192,7 @@ export default class Setup extends Vue {
         bio: string;
         link: string;
     } = {
-        avatar: config.undefinedImageAlt,
+        avatar: legacyConfig.defaultAvatar,
         name: '',
         bio: '',
         link: '',
@@ -228,7 +229,7 @@ export default class Setup extends Vue {
         const loginUser = await RSS3.getLoginUser();
         await RSS3.setPageOwner(loginUser.address);
         const profile = loginUser.profile;
-        this.profile.avatar = profile?.avatar?.[0] || config.undefinedImageAlt;
+        this.profile.avatar = profile?.avatar?.[0] || legacyConfig.defaultAvatar;
         this.profile.name = profile?.name || '';
         this.profile.bio = profile?.bio || '';
 

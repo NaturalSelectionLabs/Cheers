@@ -15,7 +15,10 @@ export default {
         'a34494c90ca24f30b003a41b5a4c7752',
         'bad1e9a0ade24a0da20859746c54ad32',
     ],
-    defaultAvatar: 'https://infura-ipfs.io/ipfs/QmcK8FSTtLQVydLEDKLv1hEacLxZgi7j2i4mkQQMyKxv6k',
+    undefinedImageAlt:
+        'https://bafybeifh755n5rnss3qfrwxvtq26ojezj7tzu2kv4e43qcq3rl7flzjnqe.ipfs.infura-ipfs.io/on_error.png',
+    defaultAvatar:
+        'https://bafybeicy4uzchpntsgp5ffmd7qelcokyhhjm7ofnvvjnrmv5kztu6fsa3y.ipfs.infura-ipfs.io/default_avatar.png',
     hideUnlistedAsstes: false,
     tags: {
         prefix: 'pass',
@@ -38,6 +41,11 @@ export default {
             1: 'https://cloudflare-eth.com',
         },
         bridge: 'https://walletconnect-relay.rss3.dev',
+    },
+    splitPageLimits: {
+        assets: 30,
+        contents: 35,
+        follows: 15,
     },
     contentRequestLimit: 5,
     poapActivity: {

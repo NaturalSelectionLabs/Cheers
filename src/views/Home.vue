@@ -63,7 +63,7 @@
 
                         <template v-for="className in allClasses" :key="className">
                             <TransBarCard
-                                v-if="className === 'Collectibles'"
+                                v-if="className === 'Vitrine'"
                                 :title="className"
                                 :tip="isLoadingAssets.NFT ? 'loading' : isOwner ? 'ownerEmpty' : 'notOwnerEmpty'"
                                 :haveDetails="false"
@@ -83,14 +83,14 @@
                                         v-for="item in classifiedList[className]"
                                         :key="item.id"
                                         :image-url="
-                                            item.detail.animation_url || item.detail.image_preview_url || defaultAvatar
+                                            item.detail.animation_url || item.detail.image_preview_url || undefinedImage
                                         "
                                         :poster-url="
                                             item.detail.image_preview_url ||
                                             item.detail.image_url ||
                                             item.detail.animation_url ||
                                             item.detail.animation_original_url ||
-                                            defaultAvatar
+                                            undefinedImage
                                         "
                                         size="md"
                                         @click="toSingleItemPage(item.id)"
@@ -127,7 +127,7 @@
                                         v-for="item in classifiedList[className].slice(0, 3)"
                                         :key="item.id"
                                         :image-url="
-                                            item.detail.animation_url || item.detail.image_preview_url || defaultAvatar
+                                            item.detail.animation_url || item.detail.image_preview_url || undefinedImage
                                         "
                                         size="sm"
                                         :type="className"
@@ -142,7 +142,7 @@
                                         v-for="item in classifiedList[className].slice(3)"
                                         :key="item.id"
                                         :image-url="
-                                            item.detail.animation_url || item.detail.image_preview_url || defaultAvatar
+                                            item.detail.animation_url || item.detail.image_preview_url || undefinedImage
                                         "
                                         :poster-url="
                                             item.detail.image_preview_url ||
@@ -231,7 +231,7 @@
                                     v-for="item in gitcoins"
                                     :key="item.id"
                                     size="sm"
-                                    :imageUrl="item.detail.grant.logo || defaultAvatar"
+                                    :imageUrl="item.detail.grant.logo || undefinedImage"
                                     @click="toSingleItemPage(item.id)"
                                 />
                             </template>
@@ -526,6 +526,7 @@ export default class Home extends Vue {
     $gtag: any;
     scrollTop: number = 0;
     lastRoute: string = '';
+    undefinedImage = legacyConfig.undefinedImageAlt;
     defaultAvatar = legacyConfig.defaultAvatar;
     notice: string = '';
     isShowingNotice: boolean = false;
@@ -539,7 +540,7 @@ export default class Home extends Vue {
     classifiedList: {
         [className: string]: DetailedNFT[];
     } = {
-        Collectibles: [],
+        Vitrine: [],
         // Games: [],
         // Awards: [],
         // Organizations: [],
@@ -675,7 +676,7 @@ export default class Home extends Vue {
 
         await Promise.all(
             assets.map((nft) => {
-                const className = nft.class || 'Collectibles';
+                const className = nft.class || 'Vitrine';
                 if (!(className in classifiedBriefList)) {
                     classifiedBriefList[className] = [];
                 }
@@ -691,7 +692,7 @@ export default class Home extends Vue {
         const classifiedList: {
             [className: string]: DetailedNFT[];
         } = {
-            Collectibles: [],
+            Vitrine: [],
             Games: [],
             Awards: [],
             Organizations: [],
@@ -699,7 +700,7 @@ export default class Home extends Vue {
 
         await Promise.all(
             nftsWithClassName.map((nft) => {
-                const className = nft.class || 'Collectibles';
+                const className = nft.class || 'Vitrine';
                 if (!(className in classifiedList)) {
                     classifiedList[className] = [];
                 }
@@ -713,11 +714,12 @@ export default class Home extends Vue {
         );
         await Promise.all(
             Object.keys(classifiedList).map((listName) => {
-                if (classifiedList[listName].length === 0 && listName !== 'Collectibles') {
+                if (classifiedList[listName].length === 0 && listName !== 'Vitrine') {
                     delete classifiedList[listName];
                 }
             }),
         );
+
         this.classifiedList = classifiedList;
         this.allClasses = Object.keys(this.classifiedList);
         this.isLoadingAssets.NFT = false;
@@ -1091,7 +1093,7 @@ export default class Home extends Vue {
             this.isContentsHaveMore = true;
             // this.nfts = [];
             this.classifiedList = {
-                Collectibles: [],
+                Vitrine: [],
                 // Games: [],
                 // Awards: [],
                 // Organizations: [],
