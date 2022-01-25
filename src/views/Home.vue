@@ -38,7 +38,7 @@
                                     class="inline-block mr-1 w-8 h-8 bg-secondary-btn-card"
                                     @click="toManageAccounts"
                                 >
-                                    <i class="bx bxs-pencil bx-xs" />
+                                    <i class="bx bx-pencil bx-xs" />
                                 </Button>
                                 <Button
                                     size="sm"
@@ -73,7 +73,7 @@
                                 <template #header>
                                     <i
                                         v-if="isOwner"
-                                        class="bx bxs-pencil bx-xs cursor-pointer"
+                                        class="bx bx-pencil bx-xs cursor-pointer"
                                         @click="toManageNFTs(className)"
                                     />
                                 </template>
@@ -118,7 +118,7 @@
                                 <template #header>
                                     <i
                                         v-if="isOwner"
-                                        class="bx bxs-pencil bx-xs cursor-pointer"
+                                        class="bx bx-pencil bx-xs cursor-pointer"
                                         @click="toManageNFTs(className)"
                                     />
                                 </template>
@@ -129,7 +129,6 @@
                                         :image-url="
                                             item.detail.animation_url || item.detail.image_preview_url || defaultAvatar
                                         "
-                                        :timestamp="item.timestamp"
                                         size="sm"
                                         :type="className"
                                         :name="item.detail.name"
@@ -178,7 +177,7 @@
                             <template #header>
                                 <i
                                     v-if="isOwner"
-                                    class="bx bxs-pencil bx-xs cursor-pointer"
+                                    class="bx bx-pencil bx-xs cursor-pointer"
                                     @click="toManageFootprints"
                                 />
                             </template>
@@ -224,11 +223,7 @@
                             :haveContentInfo="gitcoins.length > 0"
                         >
                             <template #header>
-                                <i
-                                    v-if="isOwner"
-                                    class="bx bxs-pencil bx-xs cursor-pointer"
-                                    @click="toManageGitcoins"
-                                />
+                                <i v-if="isOwner" class="bx bx-pencil bx-xs cursor-pointer" @click="toManageGitcoins" />
                             </template>
                             <template #content>
                                 <GitcoinItem
@@ -393,7 +388,7 @@
             <div class="body flex flex-col items-center justify-between px-4 h-2/3">
                 <Logo :size="200" />
                 <div class="max-w-md text-primary-text text-2xl">
-                    <p>This account is not on RSS3 yet...</p>
+                    <p>This account is invalid...</p>
                 </div>
                 <div class="mx-auto w-83.5 text-2xl leading-17.5">
                     <Button
@@ -412,7 +407,6 @@
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
 import Button from '@/components/Button/Button.vue';
-import Card from '@/components/Card/Card.vue';
 import BarCard from '@/components/Card/BarCard.vue';
 import Profile from '@/components/Profile/Profile.vue';
 import AccountItem from '@/components/Account/AccountItem.vue';
@@ -445,6 +439,7 @@ import AccountModal from '@/components/Account/AccountModal.vue';
 import Smile from '@/components/Icons/Smile.vue';
 import LoadingSmile from '@/components/Loading/LoadingSmile.vue';
 import { flattenDeep } from 'lodash';
+import { formatter } from '@/common/address';
 
 interface Relations {
     followers: string[];
@@ -460,7 +455,6 @@ interface Relations {
         Button,
         TransBarCard,
         BarCard,
-        Card,
         Profile,
         AccountItem,
         NFTItem,
@@ -493,6 +487,7 @@ export default class Home extends Vue {
         platform: 'EVM+',
         isLink: false,
     };
+    isAccountRegistered: boolean = true;
     isAccountExist: boolean = true;
     isLoadingAssets: {
         NFT: boolean;
@@ -571,17 +566,17 @@ export default class Home extends Vue {
         const pageOwner = await RSS3.setPageOwner(aon);
         this.isShowingAccount = false;
 
+        if (parseInt(pageOwner.address) === 0) {
+            this.isAccountExist = false;
+            return;
+        }
+
         this.rns = pageOwner.name;
         this.ethAddress = pageOwner.address;
 
         utils.subDomainModeRedirect(this.rns);
 
-        if (pageOwner.file?.signature) {
-            this.isAccountExist = true;
-        } else {
-            this.isAccountExist = false;
-            return;
-        }
+        this.isAccountRegistered = !!pageOwner.file?.signature;
 
         await this.updateUserInfo();
 
@@ -600,7 +595,7 @@ export default class Home extends Vue {
         const profile = pageOwner.profile;
 
         this.rss3Profile.avatar = profile?.avatar?.[0] || legacyConfig.defaultAvatar;
-        this.rss3Profile.username = profile?.name || '';
+        this.rss3Profile.username = profile?.name || pageOwner.name || formatter(pageOwner.address);
         this.rss3Profile.address = this.ethAddress;
         if (profile?.bio) {
             // Profile
@@ -608,7 +603,12 @@ export default class Home extends Vue {
             this.rss3Profile.bio = extracted;
             this.rss3Profile.displayAddress = fieldsMatch?.['SITE'] || '';
         } else {
-            this.rss3Profile.bio = '';
+            if (this.isAccountRegistered) {
+                this.rss3Profile.bio = '';
+            } else {
+                this.rss3Profile.bio =
+                    'This account is not registered with RSS3. If you are the owner, you are welcome to register now : )';
+            }
         }
 
         this.startLoadingAccounts();
@@ -707,10 +707,7 @@ export default class Home extends Vue {
                     (dNFT) => dNFT.id === RSS3Utils.id.getAsset(nft.platform, nft.identity, nft.type, nft.uniqueID),
                 );
                 if (detailedNFT) {
-                    classifiedList[className].push({
-                        ...detailedNFT,
-                        timestamp: nft.timestamp,
-                    });
+                    classifiedList[className].push(detailedNFT);
                 }
             }),
         );
@@ -746,10 +743,6 @@ export default class Home extends Vue {
     }
 
     async ivLoadAsset(): Promise<boolean> {
-        if (!this.isAccountExist) {
-            // Account not exist, prevent loading assets
-            return true;
-        }
         let isFinish: boolean;
         const allAssets = await utils.initAssets();
         const result = await Promise.all([

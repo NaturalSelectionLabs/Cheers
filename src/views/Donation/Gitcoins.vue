@@ -9,7 +9,7 @@
                 :haveContentInfo="false"
             >
                 <template #header>
-                    <i v-if="isOwner" class="bx bxs-pencil bx-xs cursor-pointer" @click="toSetupGitcoins" />
+                    <i v-if="isOwner" class="bx bx-pencil bx-xs cursor-pointer" @click="toSetupGitcoins" />
                 </template>
                 <template #details>
                     <div class="grid gap-6 grid-cols-1 sm:grid-cols-2" v-if="gitcoins.length !== 0">

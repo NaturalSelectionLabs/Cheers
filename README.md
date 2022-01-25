@@ -1,5 +1,5 @@
 <p align="center">
-<img src="https://rss3.mypinata.cloud/ipfs/QmRk37r7GW3rzVncgNXH6XN1su9SiYxUvTr21pTSdmq5L5" alt="Cheers Bio" width="100">
+<img src="https://bafybeih7f7vqm3exiqxpo5i62evjxbclkpxfdmtmgz7t5ag7bx4i2xvovm.ipfs.infura-ipfs.io/cheers-02.png" alt="Cheers Bio" width="250">
 </p>
 <h1 align="center">Cheers Bio</h1>
 

@@ -3,7 +3,7 @@ import { utils as RSS3Utils } from 'rss3';
 import { AnyObject } from 'rss3/types/extend';
 import config from './config';
 import RSS3, { IRSS3 } from './rss3';
-import { CustomField_PassAssets, GeneralAsset, GitcoinResponse, NFTResponse, POAPResponse } from './types';
+import { CustomField_PassAssets, GeneralAsset } from './types';
 import { RouteLocationNormalizedLoaded, Router } from 'vue-router';
 import Cookies from 'js-cookie';
 
@@ -64,13 +64,6 @@ async function initAssets() {
     const parsedAssets = orderedAssetList?.map((asset) => RSS3Utils.id.parseAsset(asset));
 
     const nfts = parsedAssets?.filter((asset) => asset.type.split('.')[1] === 'NFT');
-    const nftRecords =
-        ((await apiUserPersona.items.getListByPersona({
-            limit: 99999,
-            persona: pageOwner.address,
-            tsp: '',
-            fieldLike: 'NFT',
-        })) as RSS3AutoItem[]) || [];
 
     const nftsWithClassName = nfts.map((nft) => {
         return {
@@ -78,11 +71,6 @@ async function initAssets() {
             class: validTaggedList.find(
                 (asset) => asset.id === RSS3Utils.id.getAsset(nft.platform, nft.identity, nft.type, nft.uniqueID),
             )?.class,
-            timestamp: nftRecords.find(
-                (asset) =>
-                    asset.target.field.slice(7) ===
-                    RSS3Utils.id.getAsset(nft.platform, nft.identity, nft.type, nft.uniqueID),
-            )?.date_updated,
         };
     });
 
