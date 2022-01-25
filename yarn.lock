@@ -312,11 +312,6 @@
   resolved "https://registry.yarnpkg.com/@babel/helper-validator-option/-/helper-validator-option-7.16.7.tgz#b203ce62ce5fe153899b617c08957de860de4d23"
   integrity sha512-TRtenOuRUVo9oIQGPC5G9DgK4743cdxvtOw0weQNpZXaS16SCBi5MNjZF8vba3ETURjZpTbVn7Vvcf2eAwFozQ==
 
-"@babel/helper-validator-option@^7.16.7":
-  version "7.16.7"
-  resolved "https://registry.yarnpkg.com/@babel/helper-validator-option/-/helper-validator-option-7.16.7.tgz#b203ce62ce5fe153899b617c08957de860de4d23"
-  integrity sha512-TRtenOuRUVo9oIQGPC5G9DgK4743cdxvtOw0weQNpZXaS16SCBi5MNjZF8vba3ETURjZpTbVn7Vvcf2eAwFozQ==
-
 "@babel/helper-wrap-function@^7.16.0":
   version "7.16.0"
   resolved "https://registry.yarnpkg.com/@babel/helper-wrap-function/-/helper-wrap-function-7.16.0.tgz#b3cf318afce774dfe75b86767cd6d68f3482e57c"
@@ -7965,10 +7960,10 @@ rlp@^2.0.0, rlp@^2.2.3, rlp@^2.2.4:
   dependencies:
     bn.js "^4.11.1"
 
-rss3@0.8.14:
-  version "0.8.14"
-  resolved "https://registry.yarnpkg.com/rss3/-/rss3-0.8.14.tgz#43d3466ce4fce02a1af18d21c2c6b29156575a4c"
-  integrity sha512-XU3uQxyl4vW9mTc3bQlbY9ZT7QUX5f7LdCeghDQkTLuqDavxrr0APUOZp1ld2gjMOJ/OaUN276YvUxxaCfgvvA==
+rss3@0.8.15:
+  version "0.8.15"
+  resolved "https://registry.yarnpkg.com/rss3/-/rss3-0.8.15.tgz#72076a8d924f5c3b9f93e9c3e2e58cbb86314d67"
+  integrity sha512-9OcVHo0X0MmDTssQXOEgBswr9ta7NDKWkoyyVhrc/LPbILUEk3dXBXin/nVU9aujPjd0DTiKmMBrOG97w6znlA==
   dependencies:
     async-lock "1.3.0"
     axios "0.21.1"

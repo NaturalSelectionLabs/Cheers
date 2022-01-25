@@ -1,6 +1,6 @@
 <template>
     <div id="main" class="h-screen text-body-text overflow-y-auto">
-        <div v-if="isAccountExist" class="m-auto pb-12 pt-8 px-4 max-w-screen-lg">
+        <div class="m-auto pb-12 pt-8 px-4 max-w-screen-lg">
             <Header :displayLogo="true" />
             <div class="flex flex-col gap-4 md:flex-row">
                 <section class="md:w-3/5">
@@ -373,26 +373,6 @@
                 </Modal>
             </div>
         </div>
-        <div
-            v-else
-            class="onboarding bg-pass3gradient flex items-center justify-center h-full text-center bg-cover bg-fixed"
-        >
-            <div class="body flex flex-col items-center justify-between px-4 h-2/3">
-                <Logo :size="200" />
-                <div class="max-w-md text-primary-text text-2xl">
-                    <p>This account is not on RSS3 yet...</p>
-                </div>
-                <div class="mx-auto w-83.5 text-2xl leading-17.5">
-                    <Button
-                        size="lg"
-                        class="mb-9 w-full h-17.5 text-body-text bg-primary-btn rounded-3xl"
-                        @click="toHomePage"
-                    >
-                        <span> Go Home </span>
-                    </Button>
-                </div>
-            </div>
-        </div>
     </div>
 </template>
 
@@ -430,6 +410,7 @@ import config from '@/common/config';
 import Header from '@/components/Common/Header.vue';
 import AccountModal from '@/components/Account/AccountModal.vue';
 import { flattenDeep } from 'lodash';
+import { formatter } from '@/common/address';
 
 interface Relations {
     followers: string[];
@@ -559,12 +540,7 @@ export default class Home extends Vue {
 
         utils.subDomainModeRedirect(this.rns);
 
-        if (pageOwner.file?.signature) {
-            this.isAccountExist = true;
-        } else {
-            this.isAccountExist = false;
-            return;
-        }
+        this.isAccountExist = !!pageOwner.file?.signature;
 
         await this.updateUserInfo();
 
@@ -583,7 +559,7 @@ export default class Home extends Vue {
         const profile = pageOwner.profile;
 
         this.rss3Profile.avatar = profile?.avatar?.[0] || legacyConfig.defaultAvatar;
-        this.rss3Profile.username = profile?.name || '';
+        this.rss3Profile.username = profile?.name || pageOwner.name || formatter(pageOwner.address);
         this.rss3Profile.address = this.ethAddress;
         if (profile?.bio) {
             // Profile
@@ -591,7 +567,12 @@ export default class Home extends Vue {
             this.rss3Profile.bio = extracted;
             this.rss3Profile.displayAddress = fieldsMatch?.['SITE'] || '';
         } else {
-            this.rss3Profile.bio = '';
+            if (this.isAccountExist) {
+                this.rss3Profile.bio = '';
+            } else {
+                this.rss3Profile.bio =
+                    'This account is not registered with RSS3. If you are the owner, you are welcome to register now : )';
+            }
         }
 
         this.startLoadingAccounts();
@@ -729,10 +710,6 @@ export default class Home extends Vue {
     }
 
     async ivLoadAsset(): Promise<boolean> {
-        if (!this.isAccountExist) {
-            // Account not exist, prevent loading assets
-            return true;
-        }
         let isFinish: boolean;
         const allAssets = await utils.initAssets();
         const result = await Promise.all([
