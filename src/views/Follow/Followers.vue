@@ -26,22 +26,20 @@
                         :enabled="!isLoadingFollows"
                         @trigger="loadMoreFollows"
                     >
-                        <Button size="sm" class="m-auto text-white bg-primary-btn" @click="loadMoreFollows">
-                            <i v-if="isLoadingFollows" class="bx bx-loader-circle bx-spin"></i>
-                            <i v-else class="bx bx-dots-horizontal-rounded" />
-                        </Button>
+                        <div class="flex gap-2 items-start justify-center">
+                            <span class="font-light">One moment </span>
+                            <LoadingSmile :size="18" :isLooping="isLooping" />
+                        </div>
                     </IntersectionObserverContainer>
-                    <div v-if="!isLoadingAssets && followRenderList.length === 0">
-                        <div v-if="isOwner" class="flex gap-2 items-start justify-center">
-                            <span class="font-light">Make some new friends to get a shot</span>
-                            <Smile :size="18" />
-                        </div>
-                        <div v-else>
-                            <span class="font-light"
-                                >Looks like this user hasn't got a shot. Come back and check it out later</span
-                            >
-                            <Smile :size="18" />
-                        </div>
+                    <div
+                        v-if="!isLoadingFollows && followRenderList.length === 0"
+                        class="flex flex-row gap-2 items-end justify-center"
+                    >
+                        <span class="font-light">
+                            Looks like this user hasn't got a shot.<br />
+                            Come back and check it out later
+                        </span>
+                        <Smile :size="18" class="mb-1" />
                     </div>
                 </template>
             </TransBarCard>
@@ -64,11 +62,19 @@ import { Profile } from '@/common/types';
 import Header from '@/components/Common/Header.vue';
 import IntersectionObserverContainer from '@/components/Common/IntersectionObserverContainer.vue';
 import TransBarCard from '@/components/Card/TransBarCard.vue';
-import Smile from '@/components/Icons/Smile.vue';
+import LoadingSmile from '@/components/Loading/LoadingSmile.vue';
 
 @Options({
     name: 'Followers',
-    components: { TransBarCard, IntersectionObserverContainer, ImgHolder, Button, FollowCard, Header, Smile },
+    components: {
+        TransBarCard,
+        IntersectionObserverContainer,
+        ImgHolder,
+        Button,
+        FollowCard,
+        Header,
+        LoadingSmile,
+    },
 })
 export default class Followers extends Vue {
     followRenderList: Profile[] = [];

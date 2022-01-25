@@ -65,7 +65,7 @@
                             <TransBarCard
                                 v-if="className === 'Vitrine'"
                                 :title="className"
-                                :tip="isLoadingAssets.NFT ? 'Loading...' : 'One moment! Details on the way.'"
+                                :tip="isLoadingAssets.NFT ? 'loading' : isOwner ? 'ownerEmpty' : 'notOwnerEmpty'"
                                 :haveDetails="false"
                                 :haveContent="true"
                                 :haveContentInfo="classifiedList[className].length > 0"
@@ -110,7 +110,7 @@
                             <TransBarCard
                                 v-else
                                 :title="className"
-                                :tip="isLoadingAssets.NFT ? 'Loading...' : 'One moment! Details on the way.'"
+                                :tip="isLoadingAssets.NFT ? 'loading' : isOwner ? 'ownerEmpty' : 'notOwnerEmpty'"
                                 :haveDetails="classifiedList[className].length > 0"
                                 :haveContent="true"
                                 :haveContentInfo="classifiedList[className].length > 0"
@@ -169,7 +169,7 @@
 
                         <TransBarCard
                             title="Footprints"
-                            :tip="isLoadingAssets.Footprint ? 'Loading...' : 'One moment! Details on the way.'"
+                            :tip="isLoadingAssets.Footprint ? 'loading' : isOwner ? 'ownerEmpty' : 'notOwnerEmpty'"
                             :haveDetails="footprints.length !== 0"
                             :haveContent="true"
                             :haveContentInfo="footprints.length > 0"
@@ -217,7 +217,7 @@
 
                         <TransBarCard
                             title="Donations"
-                            :tip="isLoadingAssets.Gitcoin ? 'Loading...' : 'One moment! Details on the way.'"
+                            :tip="isLoadingAssets.Gitcoin ? 'loading' : isOwner ? 'ownerEmpty' : 'notOwnerEmpty'"
                             :haveDetails="false"
                             :haveContent="true"
                             :haveContentInfo="gitcoins.length > 0"
@@ -315,10 +315,19 @@
                                         </Button>
                                     </IntersectionObserverContainer>
                                 </div>
-                                <div v-else class="flex flex-col justify-center h-96">
-                                    <span class="w-full text-center font-light">{{
-                                        isLoadingContents ? 'Loading...' : 'One moment! Details on the way.'
-                                    }}</span>
+                                <div v-else class="flex flex-col gap-1 items-center justify-center p-5 h-96">
+                                    <template v-if="isLoadingContents">
+                                        <span class="text-light w-1/2 text-center break-words">
+                                            One moment! Details on the way
+                                        </span>
+                                        <LoadingSmile :size="18" :isLooping="isLooping" />
+                                    </template>
+                                    <template v-else>
+                                        <span class="text-light w-1/2 text-center break-words">
+                                            Looks like this user hasn't got a shot. Come back and check it out later.
+                                        </span>
+                                        <Smile :size="18" />
+                                    </template>
                                 </div>
                             </template>
                         </TransBarCard>
@@ -427,6 +436,8 @@ import AssetCard from '@/components/Card/AssetCard.vue';
 import config from '@/common/config';
 import Header from '@/components/Common/Header.vue';
 import AccountModal from '@/components/Account/AccountModal.vue';
+import Smile from '@/components/Icons/Smile.vue';
+import LoadingSmile from '@/components/Loading/LoadingSmile.vue';
 import { flattenDeep } from 'lodash';
 import { formatter } from '@/common/address';
 
@@ -456,6 +467,8 @@ interface Relations {
         AssetCard,
         Header,
         AccountModal,
+        Smile,
+        LoadingSmile,
     },
 })
 export default class Home extends Vue {
