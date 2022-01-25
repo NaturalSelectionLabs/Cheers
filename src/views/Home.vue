@@ -317,7 +317,7 @@
                                     </IntersectionObserverContainer>
                                 </div>
                                 <div v-else class="flex flex-col justify-center h-96">
-                                    <span class="text-light w-full text-center">{{
+                                    <span class="w-full text-center font-light">{{
                                         isLoadingContents ? 'Loading...' : 'One moment! Details on the way.'
                                     }}</span>
                                 </div>
@@ -399,7 +399,6 @@
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
 import Button from '@/components/Button/Button.vue';
-import Card from '@/components/Card/Card.vue';
 import BarCard from '@/components/Card/BarCard.vue';
 import Profile from '@/components/Profile/Profile.vue';
 import AccountItem from '@/components/Account/AccountItem.vue';
@@ -445,7 +444,6 @@ interface Relations {
         Button,
         TransBarCard,
         BarCard,
-        Card,
         Profile,
         AccountItem,
         NFTItem,

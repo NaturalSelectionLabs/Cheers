@@ -269,7 +269,6 @@
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
 import Button from '@/components/Button/Button.vue';
-import Card from '@/components/Card/Card.vue';
 import AccountItem from '@/components/Account/AccountItem.vue';
 import Modal from '@/components/Common/Modal.vue';
 import Loading from '@/components/Loading/Loading.vue';
@@ -294,7 +293,6 @@ import TransBarCard from '@/components/Card/TransBarCard.vue';
         Input,
         Modal,
         Button,
-        Card,
         AccountItem,
         draggable,
         Loading,
