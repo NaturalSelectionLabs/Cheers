@@ -12,11 +12,11 @@
             @click="emitToggleFollow"
         >
             <span>{{ isFollowing ? 'Following' : 'Follow' }}</span>
-            <i class="bx no-underline" v-bind:class="[isFollowing ? 'bx-check' : 'bx-plus']"></i>
+            <i class="bx bx-sm no-underline" v-bind:class="[isFollowing ? 'bx-check' : 'bx-plus']"></i>
         </Button>
         <Button v-else size="sm" class="mt-2 w-full text-lg bg-white truncate md:m-0" @click="emitSetUp">
             <span>Edit Profile</span>
-            <i class="bx bx-pencil"></i>
+            <i class="bx bx-sm bx-pencil"></i>
         </Button>
     </transition>
 </template>
