@@ -1,6 +1,6 @@
 <template>
     <div id="main" class="h-screen text-body-text overflow-y-auto">
-        <div class="m-auto pb-12 pt-8 px-4 max-w-screen-lg">
+        <div v-if="isAccountExist" class="m-auto pb-12 pt-8 px-4 max-w-screen-lg">
             <Header :displayLogo="true" />
             <div class="flex flex-col gap-4 md:flex-row">
                 <section class="md:w-3/5">
@@ -372,6 +372,26 @@
                 </Modal>
             </div>
         </div>
+        <div
+            v-else
+            class="onboarding bg-pass3gradient flex items-center justify-center h-full text-center bg-cover bg-fixed"
+        >
+            <div class="body flex flex-col items-center justify-between px-4 h-2/3">
+                <Logo :size="200" />
+                <div class="max-w-md text-primary-text text-2xl">
+                    <p>This account is invalid...</p>
+                </div>
+                <div class="mx-auto w-83.5 text-2xl leading-17.5">
+                    <Button
+                        size="lg"
+                        class="mb-9 w-full h-17.5 text-body-text bg-primary-btn rounded-3xl"
+                        @click="toHomePage"
+                    >
+                        <span> Go Home </span>
+                    </Button>
+                </div>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -454,6 +474,7 @@ export default class Home extends Vue {
         platform: 'EVM+',
         isLink: false,
     };
+    isAccountRegistered: boolean = true;
     isAccountExist: boolean = true;
     isLoadingAssets: {
         NFT: boolean;
@@ -532,12 +553,17 @@ export default class Home extends Vue {
         const pageOwner = await RSS3.setPageOwner(aon);
         this.isShowingAccount = false;
 
+        if (parseInt(pageOwner.address) === 0) {
+            this.isAccountExist = false;
+            return;
+        }
+
         this.rns = pageOwner.name;
         this.ethAddress = pageOwner.address;
 
         utils.subDomainModeRedirect(this.rns);
 
-        this.isAccountExist = !!pageOwner.file?.signature;
+        this.isAccountRegistered = !!pageOwner.file?.signature;
 
         await this.updateUserInfo();
 
@@ -564,7 +590,7 @@ export default class Home extends Vue {
             this.rss3Profile.bio = extracted;
             this.rss3Profile.displayAddress = fieldsMatch?.['SITE'] || '';
         } else {
-            if (this.isAccountExist) {
+            if (this.isAccountRegistered) {
                 this.rss3Profile.bio = '';
             } else {
                 this.rss3Profile.bio =
