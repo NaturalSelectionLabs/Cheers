@@ -316,6 +316,7 @@ export default class Setup extends Vue {
 
         if (window.history.state.back) {
             window.history.back();
+            window.location.reload();
         } else {
             this.$router.push(config.subDomain.preferSubDomainMode ? '/' : `/${rns || ethAddress}`);
         }
