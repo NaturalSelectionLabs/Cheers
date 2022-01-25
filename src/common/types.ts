@@ -127,7 +127,6 @@ export interface GeneralAssetWithTags extends GeneralAsset {
 
 export interface GeneralAssetWithClass extends GeneralAsset {
     class: string | undefined;
-    timestamp: string | undefined;
 }
 
 export interface ItemDetails {
