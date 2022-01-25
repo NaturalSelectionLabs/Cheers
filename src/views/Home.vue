@@ -269,30 +269,10 @@
                                             Web3 Only
                                         </h2>
                                         <div
-                                            class="
-                                                flex
-                                                items-center
-                                                p-1
-                                                w-11
-                                                h-6
-                                                bg-gray-500 bg-opacity-10
-                                                rounded-full
-                                                cursor-pointer
-                                                duration-200
-                                                ease-in-out
-                                            "
+                                            class="flex items-center p-1 w-11 h-6 bg-gray-500 bg-opacity-10 rounded-full cursor-pointer duration-200 ease-in-out"
                                         >
                                             <div
-                                                class="
-                                                    w-4
-                                                    h-4
-                                                    bg-black bg-opacity-50
-                                                    rounded-full
-                                                    shadow-md
-                                                    transform
-                                                    duration-200
-                                                    ease-in-out
-                                                "
+                                                class="w-4 h-4 bg-black bg-opacity-50 rounded-full shadow-md transform duration-200 ease-in-out"
                                                 :class="{ 'translate-x-5 bg-opacity-80': !isWeb3Only }"
                                             />
                                         </div>
@@ -340,10 +320,19 @@
                                         </Button>
                                     </IntersectionObserverContainer>
                                 </div>
-                                <div v-else class="flex flex-col justify-center h-96">
-                                    <span class="text-light w-full text-center">{{
-                                        isLoadingContents ? 'Loading...' : 'One moment! Details on the way.'
-                                    }}</span>
+                                <div v-else class="flex flex-col gap-1 items-center justify-center p-5 h-96">
+                                    <template v-if="isLoadingContents">
+                                        <span class="text-light w-1/2 text-center break-words">
+                                            One moment! Details on the way
+                                        </span>
+                                        <LoadingSmile :size="18" :isLooping="isLooping" />
+                                    </template>
+                                    <template v-else>
+                                        <span class="text-light w-1/2 text-center break-words">
+                                            Looks like this user hasn't got a shot. Come back and check it out later.
+                                        </span>
+                                        <Smile :size="18" />
+                                    </template>
                                 </div>
                             </template>
                         </TransBarCard>
@@ -359,14 +348,7 @@
                                 Made with 🌀 by
                                 <a
                                     href="https://rss3.io"
-                                    class="
-                                        text-body-text
-                                        no-underline
-                                        visited:no-underline
-                                        active:no-underline
-                                        text-xs
-                                        font-normal
-                                    "
+                                    class="text-body-text no-underline visited:no-underline active:no-underline text-xs font-normal"
                                 >
                                     RSS3
                                 </a>
@@ -460,6 +442,8 @@ import AssetCard from '@/components/Card/AssetCard.vue';
 import config from '@/common/config';
 import Header from '@/components/Common/Header.vue';
 import AccountModal from '@/components/Account/AccountModal.vue';
+import Smile from '@/components/Icons/Smile.vue';
+import LoadingSmile from '@/components/Loading/LoadingSmile.vue';
 import { flattenDeep } from 'lodash';
 
 interface Relations {
@@ -489,6 +473,8 @@ interface Relations {
         AssetCard,
         Header,
         AccountModal,
+        Smile,
+        LoadingSmile,
     },
 })
 export default class Home extends Vue {

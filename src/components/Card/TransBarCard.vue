@@ -21,21 +21,19 @@
             <div v-else class="text-light truncate">
                 <div v-if="tip === 'loading'" class="flex gap-2 items-start justify-center">
                     <span class="font-light">One moment </span>
-                    <LoadingSmileContainer :isLooping="true" />
+                    <LoadingSmile :size="18" :isLooping="isLooping" />
                 </div>
-                <div v-else>
-                    <div v-if="tip === 'ownerEmpty'" class="flex gap-2 items-start justify-center">
-                        <span v-if="title === 'Vitrine'" class="font-light">Grab some collectibles to get a shot</span>
-                        <span v-if="title === 'Footprints'" class="font-light">Fund some projects to get a shot</span>
-                        <span v-if="title === 'Donations'" class="font-light">Attend some events to get a shot</span>
-                        <Smile :size="18" />
-                    </div>
-                    <div v-else>
-                        <span class="font-light"
-                            >Looks like this user hasn't got a shot. Come back and check it out later</span
-                        >
-                        <Smile :size="18" />
-                    </div>
+                <div v-else-if="tip === 'ownerEmpty'" class="flex gap-2 items-start justify-center">
+                    <span v-if="title === 'Vitrine'" class="font-light">Grab some collectibles to get a shot</span>
+                    <span v-if="title === 'Footprints'" class="font-light">Fund some projects to get a shot</span>
+                    <span v-if="title === 'Donations'" class="font-light">Attend some events to get a shot</span>
+                    <Smile :size="18" />
+                </div>
+                <div v-else class="flex flex-row gap-2 items-end">
+                    <span class="font-light">
+                        Looks like this user hasn't got a shot.<br />Come back and check it out later.
+                    </span>
+                    <Smile :size="18" class="mb-1" />
                 </div>
             </div>
             <div class="flex-shrink-0">
@@ -47,8 +45,8 @@
 
 <script lang="ts">
 import { Vue, Options } from 'vue-class-component';
+import LoadingSmile from '@/components/Loading/LoadingSmile.vue';
 import Smile from '@/components/Icons/Smile.vue';
-import LoadingSmileContainer from '@/components/Loading/LoadingSmileContainer.vue';
 
 @Options({
     props: {
@@ -60,8 +58,8 @@ import LoadingSmileContainer from '@/components/Loading/LoadingSmileContainer.vu
         isSecondary: Boolean,
     },
     components: {
+        LoadingSmile,
         Smile,
-        LoadingSmileContainer,
     },
 })
 export default class TransBarCard extends Vue {}

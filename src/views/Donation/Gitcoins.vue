@@ -30,26 +30,21 @@
                         :enabled="!isLoadingAssets"
                         @trigger="loadMoreAssets"
                     >
-                        <!-- <Button size="sm" class="m-auto text-body-text text-lg bg-primary-btn" @click="loadMoreAssets">
-                            <i v-if="isLoadingAssets" class="bx bx-loader-circle bx-spin" />
-                            <i v-else class="bx bx-dots-horizontal-rounded" />
-                        </Button> -->
                         <div class="flex gap-2 items-start justify-center">
                             <span class="font-light">One moment </span>
-                            <LoadingSmileContainer :isLooping="true" />
+                            <LoadingSmile :size="18" :isLooping="isLooping" />
                         </div>
                     </IntersectionObserverContainer>
-                    <div v-if="!isLoadingAssets && gitcoins.length === 0">
-                        <div v-if="isOwner" class="flex gap-2 items-start justify-center">
-                            <span class="font-light">Fund some projects to get a shot</span>
-                            <Smile :size="18" />
-                        </div>
-                        <div v-else>
-                            <span class="font-light"
-                                >Looks like this user hasn't got a shot. Come back and check it out later</span
-                            >
-                            <Smile :size="18" />
-                        </div>
+                    <div
+                        v-if="!isLoadingAssets && footprints.length === 0"
+                        class="flex flex-row gap-2 items-end justify-center"
+                    >
+                        <span v-if="isOwner" class="font-light">Grab some collectibles to get a shot</span>
+                        <span v-else class="font-light">
+                            Looks like this user hasn't got a shot.<br />
+                            Come back and check it out later
+                        </span>
+                        <Smile :size="18" class="mb-1" />
                     </div>
                 </template>
             </TransBarCard>
@@ -73,7 +68,7 @@ import TransBarCard from '@/components/Card/TransBarCard.vue';
 import IntersectionObserverContainer from '@/components/Common/IntersectionObserverContainer.vue';
 import { formatter } from '@/common/address';
 import Smile from '@/components/Icons/Smile.vue';
-import LoadingSmileContainer from '@/components/Loading/LoadingSmileContainer.vue';
+import LoadingSmile from '@/components/Loading/LoadingSmile.vue';
 
 @Options({
     name: 'Gitcoins',
@@ -84,7 +79,7 @@ import LoadingSmileContainer from '@/components/Loading/LoadingSmileContainer.vu
         Header,
         TransBarCard,
         Smile,
-        LoadingSmileContainer,
+        LoadingSmile,
     },
 })
 export default class Gitcoins extends Vue {

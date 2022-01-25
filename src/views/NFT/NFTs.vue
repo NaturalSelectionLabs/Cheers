@@ -3,7 +3,6 @@
         <div class="m-auto pb-32 pt-8 px-4 max-w-screen-lg">
             <Header />
             <TransBarCard
-                v-if="title === 'Vitrine'"
                 :title="rss3Profile.name ? rss3Profile.name + `'s ${title}` : title"
                 :haveDetails="true"
                 :haveContent="false"
@@ -15,7 +14,7 @@
                 <template #details>
                     <div
                         class="grid gap-3 grid-cols-2 justify-items-center sm:grid-cols-3 md:grid-cols-4"
-                        v-if="nfts.length !== 0"
+                        v-if="nfts.length !== 0 && title === 'Vitrine'"
                     >
                         <div class="relative w-full" v-for="item in nfts" :key="item.id">
                             <NFTItem
@@ -40,51 +39,10 @@
                             />
                         </div>
                     </div>
-                    <!-- <div v-else class="flex gap-2 items-start justify-center">
-                        <span class="font-light">One moment! Details on the way</span>
-                        <LoadingSmileContainer :isLooping="true" />
-                    </div> -->
-                    <IntersectionObserverContainer
-                        v-if="isHavingMoreAssets"
-                        :once="false"
-                        :enabled="!isLoadingAssets"
-                        @trigger="loadMoreAssets"
+                    <div
+                        class="grid gap-3 grid-cols-1 justify-items-center md:grid-cols-2"
+                        v-if="nfts.length !== 0 && title !== 'Vitrine'"
                     >
-                        <div class="flex gap-2 items-start justify-center">
-                            <span class="font-light">One moment </span>
-                            <LoadingSmile :size="18" :isLooping="isLooping" />
-                        </div>
-                        <!-- <Button size="sm" class="m-auto text-white text-lg bg-primary-btn" @click="loadMoreAssets">
-                            <i v-if="isLoadingAssets" class="bx bx-loader-circle bx-spin" />
-                            <i v-else class="bx bx-dots-horizontal-rounded" />
-                        </Button> -->
-                    </IntersectionObserverContainer>
-                    <div v-if="!isLoadingAssets && nfts.length !== 0">
-                        <div v-if="isOwner" class="flex gap-2 items-start justify-center">
-                            <span class="font-light">Grab some collectibles to get a shot</span>
-                            <Smile :size="18" />
-                        </div>
-                        <div v-else>
-                            <span class="font-light"
-                                >Looks like this user hasn't got a shot. Come back and check it out later</span
-                            >
-                            <Smile :size="18" />
-                        </div>
-                    </div>
-                </template>
-            </TransBarCard>
-            <TransBarCard
-                v-else
-                :title="rss3Profile.name ? rss3Profile.name + `'s ${title}` : title"
-                :haveDetails="true"
-                :haveContent="false"
-                :haveContentInfo="false"
-            >
-                <template #header>
-                    <i v-if="isOwner" class="bx bxs-pencil bx-xs cursor-pointer" @click="toSetupNfts" />
-                </template>
-                <template #details>
-                    <div class="grid gap-3 grid-cols-1 justify-items-center md:grid-cols-2" v-if="nfts.length !== 0">
                         <AssetCard
                             v-for="item in nfts"
                             :key="item.id"
@@ -103,26 +61,21 @@
                         :enabled="!isLoadingAssets"
                         @trigger="loadMoreAssets"
                     >
-                        <!-- <Button size="sm" class="m-auto text-white text-lg bg-primary-btn" @click="loadMoreAssets">
-                            <i v-if="isLoadingAssets" class="bx bx-loader-circle bx-spin" />
-                            <i v-else class="bx bx-dots-horizontal-rounded" />
-                        </Button> -->
                         <div class="flex gap-2 items-start justify-center">
                             <span class="font-light">One moment </span>
                             <LoadingSmile :size="18" :isLooping="isLooping" />
                         </div>
                     </IntersectionObserverContainer>
-                    <div v-if="!isLoadingAssets && nfts.length === 0">
-                        <div v-if="isOwner" class="flex flex-row gap-2 items-start justify-center">
-                            <span class="font-light">Grab some collectibles to get a shot</span>
-                            <Smile :size="18" />
-                        </div>
-                        <div v-else>
-                            <span class="font-light"
-                                >Looks like this user hasn't got a shot. Come back and check it out later</span
-                            >
-                            <Smile :size="18" />
-                        </div>
+                    <div
+                        v-if="!isLoadingAssets && nfts.length === 0"
+                        class="flex flex-row gap-2 items-end justify-center"
+                    >
+                        <span v-if="isOwner" class="font-light">Grab some collectibles to get a shot</span>
+                        <span v-else class="font-light">
+                            Looks like this user hasn't got a shot.<br />
+                            Come back and check it out later
+                        </span>
+                        <Smile :size="18" class="mb-1" />
                     </div>
                 </template>
             </TransBarCard>
