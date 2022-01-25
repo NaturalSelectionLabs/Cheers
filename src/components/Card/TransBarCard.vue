@@ -21,7 +21,7 @@
             <div v-else class="text-light truncate">
                 <div v-if="tip === 'loading'" class="flex gap-2 items-start justify-center">
                     <span class="font-light">One moment </span>
-                    <LoadingSmile :size="18" :isLooping="isLooping" />
+                    <LoadingSmile :size="18" :isLooping="true" />
                 </div>
                 <div v-else-if="tip === 'ownerEmpty'" class="flex gap-2 items-start justify-center">
                     <span v-if="title === 'Vitrine'" class="font-light">Grab some collectibles to get a shot</span>

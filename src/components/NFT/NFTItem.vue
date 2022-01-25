@@ -83,7 +83,7 @@ export default class NFTItem extends Vue {
                     this.posterUrl?.endsWith('.webm')
                 )
             ) {
-                this.subUrl = this.posterUrl.toString();
+                this.subUrl = this.posterUrl?.toString();
             } else {
                 this.subUrl = undefined;
             }

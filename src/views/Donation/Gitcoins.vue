@@ -32,7 +32,7 @@
                     >
                         <div class="flex gap-2 items-start justify-center">
                             <span class="font-light">One moment </span>
-                            <LoadingSmile :size="18" :isLooping="isLooping" />
+                            <LoadingSmile :size="18" :isLooping="true" />
                         </div>
                     </IntersectionObserverContainer>
                     <div

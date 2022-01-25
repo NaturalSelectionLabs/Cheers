@@ -63,7 +63,7 @@
 
                         <template v-for="className in allClasses" :key="className">
                             <TransBarCard
-                                v-if="className === 'Vitrine'"
+                                v-if="className === 'Collectibles'"
                                 :title="className"
                                 :tip="isLoadingAssets.NFT ? 'loading' : isOwner ? 'ownerEmpty' : 'notOwnerEmpty'"
                                 :haveDetails="false"
@@ -320,7 +320,7 @@
                                         <span class="text-light w-1/2 text-center break-words">
                                             One moment! Details on the way
                                         </span>
-                                        <LoadingSmile :size="18" :isLooping="isLooping" />
+                                        <LoadingSmile :size="18" :isLooping="true" />
                                     </template>
                                     <template v-else>
                                         <span class="text-light w-1/2 text-center break-words">
@@ -539,7 +539,7 @@ export default class Home extends Vue {
     classifiedList: {
         [className: string]: DetailedNFT[];
     } = {
-        Vitrine: [],
+        Collectibles: [],
         // Games: [],
         // Awards: [],
         // Organizations: [],
@@ -675,7 +675,7 @@ export default class Home extends Vue {
 
         await Promise.all(
             assets.map((nft) => {
-                const className = nft.class || 'Vitrine';
+                const className = nft.class || 'Collectibles';
                 if (!(className in classifiedBriefList)) {
                     classifiedBriefList[className] = [];
                 }
@@ -691,7 +691,7 @@ export default class Home extends Vue {
         const classifiedList: {
             [className: string]: DetailedNFT[];
         } = {
-            Vitrine: [],
+            Collectibles: [],
             Games: [],
             Awards: [],
             Organizations: [],
@@ -699,7 +699,7 @@ export default class Home extends Vue {
 
         await Promise.all(
             nftsWithClassName.map((nft) => {
-                const className = nft.class || 'Vitrine';
+                const className = nft.class || 'Collectibles';
                 if (!(className in classifiedList)) {
                     classifiedList[className] = [];
                 }
@@ -713,7 +713,7 @@ export default class Home extends Vue {
         );
         await Promise.all(
             Object.keys(classifiedList).map((listName) => {
-                if (classifiedList[listName].length === 0 && listName !== 'Vitrine') {
+                if (classifiedList[listName].length === 0 && listName !== 'Collectibles') {
                     delete classifiedList[listName];
                 }
             }),
@@ -1091,7 +1091,7 @@ export default class Home extends Vue {
             this.isContentsHaveMore = true;
             // this.nfts = [];
             this.classifiedList = {
-                Vitrine: [],
+                Collectibles: [],
                 // Games: [],
                 // Awards: [],
                 // Organizations: [],
