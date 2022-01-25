@@ -2,8 +2,7 @@
     <div class="flex flex-row gap-2 items-center justify-start w-full cursor-pointer">
         <NFTItem class="flex-shrink-0 mr-1 cursor-pointer" :image-url="imageUrl || defaultAvatar" :size="size" />
         <div class="flex flex-1 flex-col gap-0.5 w-0 text-sm">
-            <span>{{ date }}</span>
-            <span class="truncate">{{ username + getTitle(type) + name }}</span>
+            <span class="line-clamp-2">{{ username + getTitle(type) + name }}</span>
         </div>
     </div>
 </template>
@@ -16,7 +15,6 @@ import { formatDate } from '@/common/timeStamp';
 @Options({
     props: {
         imageUrl: String,
-        timestamp: String,
         username: String,
         name: String,
         size: String,

@@ -85,7 +85,6 @@
                             v-for="item in nfts"
                             :key="item.id"
                             :image-url="item.detail.animation_url || item.detail.image_preview_url || defaultAvatar"
-                            :timestamp="item.timestamp"
                             size="xl"
                             :type="title"
                             :name="item.detail.name"
@@ -218,10 +217,7 @@ export default class NFTs extends Vue {
                     (dNFT) => dNFT.id === RSS3Utils.id.getAsset(nft.platform, nft.identity, nft.type, nft.uniqueID),
                 );
                 if (detailedNFT) {
-                    this.nfts.push({
-                        ...detailedNFT,
-                        timestamp: nft.timestamp,
-                    });
+                    this.nfts.push(detailedNFT);
                 }
             });
             this.assetsStartIndex = endIndex;

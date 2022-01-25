@@ -18,7 +18,7 @@
             <div v-if="haveContentInfo" class="flex flex-1 pb-1 overflow-x-auto" style="scrollbar-width: thin">
                 <div class="flex flex-row items-center"><slot name="content" /></div>
             </div>
-            <div v-else class="text-light truncate">{{ tip }}</div>
+            <div v-else class="font-light truncate">{{ tip }}</div>
             <div class="flex-shrink-0">
                 <slot name="button" />
             </div>

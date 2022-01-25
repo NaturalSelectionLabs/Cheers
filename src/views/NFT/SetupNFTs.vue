@@ -109,7 +109,6 @@
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
 import Button from '@/components/Button/Button.vue';
-import Card from '@/components/Card/Card.vue';
 import NFTItem from '@/components/NFT/NFTItem.vue';
 import RSS3 from '@/common/rss3';
 import legacyConfig from '@/config';
@@ -131,7 +130,6 @@ import { utils as RSS3Utils } from 'rss3';
         TransBarCard,
         LoadingContainer,
         Button,
-        Card,
         NFTItem,
         draggable,
         Header,

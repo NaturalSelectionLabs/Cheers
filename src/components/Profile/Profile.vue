@@ -52,13 +52,12 @@
 
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
-import Card from '@/components/Card/Card.vue';
 import ImgHolder from '@/components/Common/ImgHolder.vue';
 import LinkButton from '@/components/Button/LinkButton.vue';
 import config from '@/config';
 
 @Options({
-    components: { ImgHolder, LinkButton, Card },
+    components: { ImgHolder, LinkButton },
     props: {
         avatar: String,
         username: String,

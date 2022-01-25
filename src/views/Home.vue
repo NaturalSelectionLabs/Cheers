@@ -129,7 +129,6 @@
                                         :image-url="
                                             item.detail.animation_url || item.detail.image_preview_url || defaultAvatar
                                         "
-                                        :timestamp="item.timestamp"
                                         size="sm"
                                         :type="className"
                                         :name="item.detail.name"
@@ -317,7 +316,7 @@
                                     </IntersectionObserverContainer>
                                 </div>
                                 <div v-else class="flex flex-col justify-center h-96">
-                                    <span class="text-light w-full text-center">{{
+                                    <span class="w-full text-center font-light">{{
                                         isLoadingContents ? 'Loading...' : 'One moment! Details on the way.'
                                     }}</span>
                                 </div>
@@ -379,7 +378,6 @@
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
 import Button from '@/components/Button/Button.vue';
-import Card from '@/components/Card/Card.vue';
 import BarCard from '@/components/Card/BarCard.vue';
 import Profile from '@/components/Profile/Profile.vue';
 import AccountItem from '@/components/Account/AccountItem.vue';
@@ -426,7 +424,6 @@ interface Relations {
         Button,
         TransBarCard,
         BarCard,
-        Card,
         Profile,
         AccountItem,
         NFTItem,
@@ -671,10 +668,7 @@ export default class Home extends Vue {
                     (dNFT) => dNFT.id === RSS3Utils.id.getAsset(nft.platform, nft.identity, nft.type, nft.uniqueID),
                 );
                 if (detailedNFT) {
-                    classifiedList[className].push({
-                        ...detailedNFT,
-                        timestamp: nft.timestamp,
-                    });
+                    classifiedList[className].push(detailedNFT);
                 }
             }),
         );
