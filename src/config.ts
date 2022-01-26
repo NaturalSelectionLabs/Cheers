@@ -23,7 +23,7 @@ export default {
     },
     subDomain: {
         isSubDomainMode,
-        rootDomain: PAGE_ENV === 'production' ? 'rss3.bio' : currentRootDomain,
+        rootDomain: currentRootDomain,
         cookieExpires: 14,
     },
     theme: [
