@@ -142,7 +142,7 @@ export default class SetupNFTs extends Vue {
     classifiedList: {
         [className: string]: DetailedNFT[];
     } = {
-        Vitrine: [],
+        Collectibles: [],
         Games: [],
         Awards: [],
         Organizations: [],
@@ -166,7 +166,7 @@ export default class SetupNFTs extends Vue {
 
         await Promise.all(
             nftsWithClassName.map((nft) => {
-                const className = nft.class || 'Vitrine';
+                const className = nft.class || 'Collectibles';
                 if (!(className in this.classifiedList)) {
                     this.classifiedList[className] = [];
                 }

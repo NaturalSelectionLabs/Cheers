@@ -34,7 +34,7 @@
             </TransBarCard>
 
             <TransBarCard
-                title="Vitrine"
+                title="Collectibles"
                 :tip="isLoadingAssets.NFT ? 'Loading...' : 'Haven\'t found anything yet...'"
                 :haveDetails="false"
                 :haveContent="true"

@@ -24,7 +24,7 @@
                     <LoadingSmile :size="18" :isLooping="true" />
                 </div>
                 <div v-else-if="tip === 'ownerEmpty'" class="flex gap-2 items-start justify-center">
-                    <span v-if="title === 'Vitrine'" class="font-light">Grab some collectibles to get a shot</span>
+                    <span v-if="title === 'Collectibles'" class="font-light">Grab some collectibles to get a shot</span>
                     <span v-if="title === 'Footprints'" class="font-light">Fund some projects to get a shot</span>
                     <span v-if="title === 'Donations'" class="font-light">Attend some events to get a shot</span>
                     <Smile :size="18" />

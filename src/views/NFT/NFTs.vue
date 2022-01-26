@@ -14,7 +14,7 @@
                 <template #details>
                     <div
                         class="grid gap-3 grid-cols-2 justify-items-center sm:grid-cols-3 md:grid-cols-4"
-                        v-if="nfts.length !== 0 && title === 'Vitrine'"
+                        v-if="nfts.length !== 0 && title === 'Collectibles'"
                     >
                         <div class="relative w-full" v-for="item in nfts" :key="item.id">
                             <NFTItem
@@ -41,7 +41,7 @@
                     </div>
                     <div
                         class="grid gap-3 grid-cols-1 justify-items-center md:grid-cols-2"
-                        v-if="nfts.length !== 0 && title !== 'Vitrine'"
+                        v-if="nfts.length !== 0 && title !== 'Collectibles'"
                     >
                         <AssetCard
                             v-for="item in nfts"
@@ -152,7 +152,7 @@ export default class NFTs extends Vue {
         }
 
         const { nftsWithClassName } = await utils.initAssets();
-        this.assetList = nftsWithClassName.filter((element) => (element.class || 'Vitrine') === this.title);
+        this.assetList = nftsWithClassName.filter((element) => (element.class || 'Collectibles') === this.title);
         this.isLoadingAssets = false;
         this.nfts = [];
         this.assetsStartIndex = 0;

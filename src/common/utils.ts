@@ -66,11 +66,12 @@ async function initAssets() {
     const nfts = parsedAssets?.filter((asset) => asset.type.split('.')[1] === 'NFT');
 
     const nftsWithClassName = nfts.map((nft) => {
+        const className = validTaggedList.find(
+            (asset) => asset.id === RSS3Utils.id.getAsset(nft.platform, nft.identity, nft.type, nft.uniqueID),
+        )?.class;
         return {
             ...nft,
-            class: validTaggedList.find(
-                (asset) => asset.id === RSS3Utils.id.getAsset(nft.platform, nft.identity, nft.type, nft.uniqueID),
-            )?.class,
+            class: className === 'Vitrine' ? 'Collectibles' : className, // change the old 'Vitrine' to 'Collectibles'
         };
     });
 
