@@ -42,7 +42,7 @@
 
 <script lang="ts">
 import { Vue, Options } from 'vue-class-component';
-import config from '@/common/config';
+import config from '@/config';
 
 @Options({
     props: {

@@ -1,18 +1,6 @@
 <template>
     <div
-        class="
-            flex
-            items-center
-            justify-center
-            px-2
-            py-1.5
-            text-center
-            leading-none
-            bg-white bg-contain bg-center bg-no-repeat
-            border-sm border-nft-bg
-            rounded-sm
-            bg-origin-content
-        "
+        class="flex items-center justify-center px-2 py-1.5 text-center leading-none bg-white bg-contain bg-center bg-no-repeat rounded-sm bg-origin-content"
     >
         <Opensea v-if="market === 'opensea'" />
         <Rarible v-if="market === 'rarible'" />

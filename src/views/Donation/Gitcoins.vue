@@ -56,8 +56,7 @@
 import { Options, Vue } from 'vue-class-component';
 import Button from '@/components/Button/Button.vue';
 import GitcoinCard from '@/components/Donation/GitcoinCard.vue';
-import legacyConfig from '@/config';
-import config from '@/common/config';
+import config from '@/config';
 import RSS3 from '@/common/rss3';
 import { DetailedDonation, GeneralAsset } from '@/common/types';
 import { debounce } from 'lodash';
@@ -162,7 +161,7 @@ export default class Gitcoins extends Vue {
             type,
         });
         this.$router.push(
-            (legacyConfig.subDomain.isSubDomainMode ? '' : `/${this.rns || this.ethAddress}`) +
+            (config.subDomain.isSubDomainMode ? '' : `/${this.rns || this.ethAddress}`) +
                 `/singlegitcoin/${platform}/${identity}/${uniqueID}/${type}`,
         );
     }

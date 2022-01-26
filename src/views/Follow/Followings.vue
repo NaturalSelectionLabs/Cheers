@@ -126,7 +126,7 @@ export default class Followings extends Vue {
             for (const profile of profiles) {
                 const { extracted } = utils.extractEmbedFields(profile.bio || '', []);
                 this.followRenderList.push({
-                    avatar: profile.avatar?.[0] || config.undefinedImageAlt,
+                    avatar: profile.avatar?.[0] || legacyConfig.defaultAvatar,
                     username: profile.name || '',
                     bio: extracted,
                     address: profile.persona,
