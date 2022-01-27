@@ -4,6 +4,7 @@
         <div v-else class="flex items-center justify-center w-10 h-10 cursor-pointer" @click="back">
             <i class="bx bx-chevron-left bx-sm" />
         </div>
+        <h1 v-if="title" class="text-2xl font-bold">{{ title }}</h1>
         <ImgHolder
             v-if="isLogin"
             class="inline-flex my-auto w-10 h-10 cursor-pointer"
@@ -22,6 +23,10 @@
                     <div class="flex flex-row gap-2 items-center cursor-pointer" @click="toPublicPage">
                         <i class="bx bx-user bx-xs text-btn-icon" />
                         Home
+                    </div>
+                    <div class="flex flex-row gap-2 items-center cursor-pointer" @click="toInvitePage">
+                        <i class="bx bxs-send bx-xs text-btn-icon" />
+                        Invite
                     </div>
                     <div class="flex flex-row gap-2 items-center cursor-pointer" @click="logout">
                         <i class="bx bx-log-out bx-xs text-btn-icon" />
@@ -51,6 +56,7 @@ import config from '@/config';
     components: { ImgHolder, Button, Logo },
     props: {
         list: String,
+        title: String,
         displayLogo: Boolean,
     },
 })
@@ -123,6 +129,10 @@ export default class Header extends Vue {
                 window.location.href = `//${config.subDomain.rootDomain}/${this.ethAddress}`;
             }
         }
+    }
+
+    toInvitePage() {
+        this.$router.push(config.subDomain.isSubDomainMode ? '/invite' : `/${this.rns || this.ethAddress}/invite`);
     }
 
     async logout() {

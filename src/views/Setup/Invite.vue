@@ -1,17 +1,7 @@
 <template>
     <div class="m-auto px-4 py-9 max-w-screen-lg text-body-text">
-        <section class="flex flex-row items-center justify-between mb-4 w-full text-center">
-            <i class="bx bx-chevron-left bx-sm cursor-pointer" />
-            <h1 class="text-2xl font-bold">Invite</h1>
-            <ImgHolder
-                class="inline-flex my-auto w-10 h-10 cursor-pointer"
-                :is-rounded="true"
-                :is-border="false"
-                :src="avatar"
-                :alt="rns || ethAddress || ''"
-            />
-        </section>
-        <div class="flex flex-col gap-8 m-auto max-w-screen-sm">
+        <Header title="Invite" />
+        <div class="flex flex-col gap-8 m-auto mt-4 max-w-screen-sm">
             <section class="flex flex-row gap-4 items-center w-full">
                 <Input
                     class="flex flex-1"
@@ -62,6 +52,7 @@ import ImgHolder from '@/components/Common/ImgHolder.vue';
 import Vue3Autocounter from 'vue3-autocounter';
 import FollowCard from '@/components/Follow/FollowCard.vue';
 import Input from '@/components/Input/Input.vue';
+import Header from '@/components/Common/Header.vue';
 import RSS3 from '@/common/rss3';
 import config from '@/config';
 import { Profile } from '@/common/types';
@@ -69,7 +60,7 @@ import utils from '@/common/utils';
 
 @Options({
     name: 'Invite',
-    components: { ImgHolder, Button, Vue3Autocounter, FollowCard, Input },
+    components: { ImgHolder, Button, Vue3Autocounter, FollowCard, Input, Header },
 })
 export default class Invite extends Vue {
     avatar: string = config.defaultAvatar;
@@ -87,13 +78,7 @@ export default class Invite extends Vue {
 
     async mounted() {
         if (RSS3.isValidRSS3()) {
-            const rss3Profile = (await RSS3.ensureLoginUser()) as any;
-            this.rns = rss3Profile.name;
-            this.ethAddress = rss3Profile.address;
-            this.avatar = rss3Profile?.profile?.avatar?.[0];
-
             const apiUser = RSS3.getAPIUser().persona;
-
             const profiles = await apiUser.profile.getList(this.followList);
             for (const profile of profiles) {
                 const { extracted } = utils.extractEmbedFields(profile.bio || '', []);
