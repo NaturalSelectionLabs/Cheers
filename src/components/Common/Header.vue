@@ -9,7 +9,7 @@
             class="inline-flex my-auto w-10 h-10 cursor-pointer"
             :is-rounded="true"
             :is-border="false"
-            :src="avatar"
+            :src="avatar || defaultAvatar"
             :alt="rns || ethAddress || ''"
             @click="toggleDialog()"
         />
@@ -17,24 +17,7 @@
         <transition name="fade">
             <template v-if="isdisplayDialog">
                 <div
-                    class="
-                        absolute
-                        z-50
-                        bottom-0
-                        right-0
-                        flex flex-col
-                        gap-2
-                        justify-center
-                        -my-2
-                        mx-2
-                        p-5
-                        w-32
-                        bg-white
-                        rounded
-                        shadow-md
-                        transform
-                        translate-y-full
-                    "
+                    class="absolute z-50 bottom-0 right-0 flex flex-col gap-2 justify-center -my-2 mx-2 p-5 w-32 bg-white rounded shadow-md transform translate-y-full"
                 >
                     <div class="flex flex-row gap-2 items-center cursor-pointer" @click="toPublicPage">
                         <i class="bx bx-user bx-xs text-btn-icon" />
@@ -72,7 +55,8 @@ import config from '@/config';
     },
 })
 export default class Header extends Vue {
-    avatar: string = config.defaultAvatar;
+    defaultAvatar: string = config.defaultAvatar;
+    avatar?: string;
     isLogin: boolean = false;
     ethAddress: string = '';
     rns: string = '';
@@ -87,6 +71,25 @@ export default class Header extends Vue {
             this.ethAddress = rss3Profile.address;
             this.avatar = rss3Profile?.profile?.avatar?.[0];
             this.isLogin = true;
+
+            if (this.avatar === config.oldDefaultAvatar) {
+                this.avatar = this.defaultAvatar;
+                const loginUserPersona = RSS3.getLoginUser().persona;
+                // remove the old default avatar
+                const newProfile: RSS3Profile = {
+                    avatar: [],
+                    name: rss3Profile?.profile?.name,
+                    bio: rss3Profile?.profile?.bio,
+                };
+                await loginUserPersona?.profile.patch(newProfile);
+                // Save
+                try {
+                    await loginUserPersona?.files.sync();
+                } catch (e) {
+                    console.log(e);
+                    return;
+                }
+            }
         }
     }
 

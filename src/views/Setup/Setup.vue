@@ -4,7 +4,7 @@
             <div class="mb-6 text-center">
                 <h1 class="text-xl font-bold">Setup</h1>
             </div>
-            <AvatarEditor class="m-auto" size="lg" :url="profile.avatar" ref="avatar" />
+            <AvatarEditor class="m-auto" size="lg" :url="profile.avatar || defaultAvatar" ref="avatar" />
             <Input class="w-full" :is-single-line="true" placeholder="Username" v-model="profile.name" />
             <Input
                 class="w-full"
@@ -187,12 +187,11 @@ import utils from '@/common/utils';
 })
 export default class Setup extends Vue {
     profile: {
-        avatar: string;
+        avatar?: string;
         name: string;
         bio: string;
         link: string;
     } = {
-        avatar: legacyConfig.defaultAvatar,
         name: '',
         bio: '',
         link: '',
@@ -221,6 +220,7 @@ export default class Setup extends Vue {
     currentTheme: string = '';
     $gtag: any;
     lastRoute: string = '';
+    defaultAvatar = legacyConfig.defaultAvatar;
 
     async initLoad() {
         this.isLoading = true;
@@ -229,7 +229,7 @@ export default class Setup extends Vue {
         const loginUser = await RSS3.getLoginUser();
         await RSS3.setPageOwner(loginUser.address);
         const profile = loginUser.profile;
-        this.profile.avatar = profile?.avatar?.[0] || legacyConfig.defaultAvatar;
+        this.profile.avatar = profile?.avatar?.[0];
         this.profile.name = profile?.name || '';
         this.profile.bio = profile?.bio || '';
 
@@ -339,7 +339,7 @@ export default class Setup extends Vue {
             return;
         }
         const newProfile: RSS3Profile = {
-            avatar: [this.profile.avatar],
+            avatar: this.profile.avatar ? [this.profile.avatar] : [],
             name: this.profile.name,
             bio: this.profile.bio + (this.profile.link ? `<SITE#${this.profile.link}>` : ''),
         };
