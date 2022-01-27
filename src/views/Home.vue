@@ -359,28 +359,6 @@
                 />
 
                 <InviteModal :isShowingModal="false" address="0x0000000" />
-
-                <!-- <Modal v-if="isShowingNotice">
-                    <template #header>
-                        <h1>Oops!</h1>
-                    </template>
-                    <template #body>
-                        <p class="mt-1 p-4">
-                            {{ notice }}
-                        </p>
-                    </template>
-                    <template #footer>
-                        <div class="flex flex-row gap-5">
-                            <Button
-                                size="sm"
-                                class="w-72 text-body-text bg-primary-btn"
-                                @click="isShowingNotice = false"
-                            >
-                                OK
-                            </Button>
-                        </div>
-                    </template>
-                </Modal> -->
             </div>
         </div>
         <div v-else class="flex items-center justify-center h-full text-center">
@@ -897,33 +875,13 @@ export default class Home extends Vue {
         this.$router.push('/setup/accounts');
     }
     toManageNFTs(className: string) {
-        // this.saveEdited();
-        // if (this.isLoadingAssets.NFT) {
-        //     this.notice = 'NFTs still loading... Maybe check back later?';
-        //     this.isShowingNotice = true;
-        // } else {
-        //     sessionStorage.setItem('NFTEditDefaultExpandClassName', className);
-        //     this.$router.push('/setup/nfts');
-        // }
         sessionStorage.setItem('NFTEditDefaultExpandClassName', className);
         this.$router.push('/setup/nfts');
     }
     toManageGitcoins() {
-        // if (this.isLoadingAssets.Gitcoin) {
-        //     this.notice = 'Gitcoins still loading... Maybe check back later?';
-        //     this.isShowingNotice = true;
-        // } else {
-        //     this.$router.push('/setup/gitcoins');
-        // }
         this.$router.push('/setup/gitcoins');
     }
     toManageFootprints() {
-        // if (this.isLoadingAssets.Footprint) {
-        //     this.notice = 'Footprints still loading... Maybe check back later?';
-        //     this.isShowingNotice = true;
-        // } else {
-        //     this.$router.push('/setup/footprints');
-        // }
         this.$router.push('/setup/footprints');
     }
 
