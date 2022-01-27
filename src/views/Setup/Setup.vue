@@ -220,7 +220,7 @@ export default class Setup extends Vue {
     currentTheme: string = '';
     $gtag: any;
     lastRoute: string = '';
-    defaultAvatar = legacyConfig.defaultAvatar;
+    defaultAvatar: string = legacyConfig.defaultAvatar;
 
     async initLoad() {
         this.isLoading = true;

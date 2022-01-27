@@ -154,7 +154,7 @@ export default class EditProfile extends Vue {
     }[] = [];
     isSaved: Boolean = false;
     isSavingNotice: Boolean = false;
-    defaultAvatar = config.defaultAvatar;
+    defaultAvatar: string = config.defaultAvatar;
 
     async mounted() {
         await utils.tryEnsureOrRedirect(this.$route, this.$router);
