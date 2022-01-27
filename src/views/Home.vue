@@ -35,7 +35,7 @@
                                     v-if="isOwner"
                                     size="sm"
                                     shape="circle"
-                                    class="inline-block mr-1 w-8 h-8 bg-secondary-btn-card"
+                                    class="inline-block mr-1 w-8 h-8 text-btn-icon bg-secondary-btn-card"
                                     @click="toManageAccounts"
                                 >
                                     <i class="bx bx-pencil bx-xs" />
@@ -358,7 +358,9 @@
                     @closeDialog="closeAccountDialog"
                 />
 
-                <Modal v-if="isShowingNotice">
+                <InviteModal :isShowingModal="false" address="0x0000000" />
+
+                <!-- <Modal v-if="isShowingNotice">
                     <template #header>
                         <h1>Oops!</h1>
                     </template>
@@ -378,14 +380,11 @@
                             </Button>
                         </div>
                     </template>
-                </Modal>
+                </Modal> -->
             </div>
         </div>
-        <div
-            v-else
-            class="onboarding bg-pass3gradient flex items-center justify-center h-full text-center bg-cover bg-fixed"
-        >
-            <div class="body flex flex-col items-center justify-between px-4 h-2/3">
+        <div v-else class="flex items-center justify-center h-full text-center">
+            <div class="flex flex-col gap-8 items-center justify-between px-4">
                 <Logo :size="200" />
                 <div class="max-w-md text-primary-text text-2xl">
                     <p>This account is invalid...</p>
@@ -440,6 +439,7 @@ import Smile from '@/components/Icons/Smile.vue';
 import LoadingSmile from '@/components/Loading/LoadingSmile.vue';
 import { flattenDeep } from 'lodash';
 import { formatter } from '@/common/address';
+import InviteModal from '@/components/Common/InviteModal.vue';
 
 interface Relations {
     followers: string[];
@@ -469,6 +469,7 @@ interface Relations {
         AccountModal,
         Smile,
         LoadingSmile,
+        InviteModal,
     },
 })
 export default class Home extends Vue {
@@ -528,8 +529,8 @@ export default class Home extends Vue {
     lastRoute: string = '';
     undefinedImage = legacyConfig.undefinedImageAlt;
     defaultAvatar = legacyConfig.defaultAvatar;
-    notice: string = '';
-    isShowingNotice: boolean = false;
+    // notice: string = '';
+    // isShowingNotice: boolean = false;
 
     isPCLayout: boolean = window.innerWidth > config.ui.md;
     isOwnerValidRSS3: boolean = false;
@@ -897,29 +898,33 @@ export default class Home extends Vue {
     }
     toManageNFTs(className: string) {
         // this.saveEdited();
-        if (this.isLoadingAssets.NFT) {
-            this.notice = 'NFTs still loading... Maybe check back later?';
-            this.isShowingNotice = true;
-        } else {
-            sessionStorage.setItem('NFTEditDefaultExpandClassName', className);
-            this.$router.push('/setup/nfts');
-        }
+        // if (this.isLoadingAssets.NFT) {
+        //     this.notice = 'NFTs still loading... Maybe check back later?';
+        //     this.isShowingNotice = true;
+        // } else {
+        //     sessionStorage.setItem('NFTEditDefaultExpandClassName', className);
+        //     this.$router.push('/setup/nfts');
+        // }
+        sessionStorage.setItem('NFTEditDefaultExpandClassName', className);
+        this.$router.push('/setup/nfts');
     }
     toManageGitcoins() {
-        if (this.isLoadingAssets.Gitcoin) {
-            this.notice = 'Gitcoins still loading... Maybe check back later?';
-            this.isShowingNotice = true;
-        } else {
-            this.$router.push('/setup/gitcoins');
-        }
+        // if (this.isLoadingAssets.Gitcoin) {
+        //     this.notice = 'Gitcoins still loading... Maybe check back later?';
+        //     this.isShowingNotice = true;
+        // } else {
+        //     this.$router.push('/setup/gitcoins');
+        // }
+        this.$router.push('/setup/gitcoins');
     }
     toManageFootprints() {
-        if (this.isLoadingAssets.Footprint) {
-            this.notice = 'Footprints still loading... Maybe check back later?';
-            this.isShowingNotice = true;
-        } else {
-            this.$router.push('/setup/footprints');
-        }
+        // if (this.isLoadingAssets.Footprint) {
+        //     this.notice = 'Footprints still loading... Maybe check back later?';
+        //     this.isShowingNotice = true;
+        // } else {
+        //     this.$router.push('/setup/footprints');
+        // }
+        this.$router.push('/setup/footprints');
     }
 
     toAccountsPage() {

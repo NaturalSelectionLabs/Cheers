@@ -25,7 +25,7 @@
                 </span>
                 <Button
                     size="sm"
-                    class="text-md m-auto mt-4 w-1/4 text-account-btn-m-text bg-account-btn-m"
+                    class="text-md m-auto mt-4 w-1/4 text-white bg-primary-btn"
                     @click="
                         showingAccountDetails.isLink
                             ? toExternalLink(showingAccountDetails.link)
