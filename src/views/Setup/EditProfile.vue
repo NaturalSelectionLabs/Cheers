@@ -8,7 +8,7 @@
                 </div>
             </div>
             <section class="m-auto max-w-md">
-                <AvatarEditor class="m-auto mb-4" size="lg" :url="profile.avatar" ref="avatar" />
+                <AvatarEditor class="m-auto mb-4" size="lg" :url="profile.avatar || defaultAvatar" ref="avatar" />
                 <LinkButton
                     class="m-auto mb-4"
                     :class="{
@@ -155,6 +155,7 @@ export default class EditProfile extends Vue {
     }[] = [];
     isSaved: Boolean = false;
     isSavingNotice: Boolean = false;
+    defaultAvatar: string = config.defaultAvatar;
 
     async mounted() {
         await utils.tryEnsureOrRedirect(this.$route, this.$router);
@@ -198,7 +199,7 @@ export default class EditProfile extends Vue {
 
         const profile = loginUser.profile;
 
-        this.profile.avatar = profile?.avatar?.[0] || config.defaultAvatar;
+        this.profile.avatar = profile?.avatar?.[0] || '';
         this.profile.name = profile?.name || '';
         if (profile?.bio) {
             // Profile
@@ -256,7 +257,7 @@ export default class EditProfile extends Vue {
 
         const loginUserPersona = RSS3.getLoginUser().persona;
         const newProfile: RSS3Profile = {
-            avatar: [this.profile.avatar],
+            avatar: this.profile.avatar ? [this.profile.avatar] : [],
             name: this.profile.name,
             bio: this.profile.bio + (this.profile.link ? `<SITE#${this.profile.link}>` : ''),
         };
