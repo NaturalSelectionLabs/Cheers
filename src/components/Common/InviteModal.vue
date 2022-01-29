@@ -1,10 +1,13 @@
 <template>
     <Modal v-show="isShowingModal">
-        <template #header>
-            <h1>Oops!</h1>
-        </template>
         <template #body>
-            <p class="mt-1 p-4">Reach out for an invitation to get started!</p>
+            <p class="mt-1 p-4">
+                This user has not been invited, copy the address. Reach out for an invitation to get started!
+            </p>
+            <span class="flex px-2 w-full text-left">
+                <i class="bx bx-info-circle mr-2 text-btn-icon text-lg" />
+                <span class="break-all"> {{ address }} </span>
+            </span>
         </template>
         <template #footer>
             <div class="flex flex-row items-center justify-center">
@@ -24,6 +27,7 @@ import Button from '@/components/Button/Button.vue';
     components: { Modal, Button },
     props: {
         isShowingModal: Boolean,
+        address: String,
     },
 })
 export default class InviteModal extends Vue {

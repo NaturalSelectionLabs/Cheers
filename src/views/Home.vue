@@ -358,7 +358,7 @@
                     @closeDialog="closeAccountDialog"
                 />
 
-                <InviteModal :isShowingModal="false" address="0x0000000" />
+                <InviteModal :isShowingModal="!hasBeenInvited" :address="ethAddress" />
             </div>
         </div>
         <div v-else class="flex items-center justify-center h-full text-center">
@@ -418,6 +418,7 @@ import LoadingSmile from '@/components/Loading/LoadingSmile.vue';
 import { flattenDeep } from 'lodash';
 import { formatter } from '@/common/address';
 import InviteModal from '@/components/Common/InviteModal.vue';
+import axios from 'axios';
 
 interface Relations {
     followers: string[];
@@ -525,6 +526,7 @@ export default class Home extends Vue {
         // Organizations: [],
     };
     allClasses: string[] = Object.keys(this.classifiedList);
+    hasBeenInvited: boolean = true;
 
     async mounted() {
         window.onresize = () => {
@@ -557,6 +559,10 @@ export default class Home extends Vue {
         utils.subDomainModeRedirect(this.rns);
 
         this.isAccountRegistered = !!pageOwner.file?.signature;
+
+        const res = await axios.get(`https://whitelist.cheer.bio/api/status/${this.ethAddress}`);
+        // set the invite modal
+        this.hasBeenInvited = res.data.ok;
 
         await this.updateUserInfo();
 
@@ -1063,6 +1069,7 @@ export default class Home extends Vue {
             };
             this.gitcoins = [];
             this.footprints = [];
+            this.hasBeenInvited = true;
 
             await this.initLoad();
         }

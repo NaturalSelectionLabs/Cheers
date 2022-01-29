@@ -2,16 +2,22 @@
     <div class="m-auto px-4 py-9 max-w-screen-lg text-body-text">
         <Header title="Invite" />
         <div class="flex flex-col gap-8 m-auto mt-4 max-w-screen-sm">
-            <section class="flex flex-row gap-4 items-center w-full">
-                <Input
-                    class="flex flex-1"
-                    :is-single-line="true"
-                    placeholder="Invitee's Address"
-                    v-model="inviteAddress"
-                />
-                <Button size="sm" class="w-9 h-9 text-white bg-primary-text">
-                    <i class="bx bxs-send bx-xs" />
-                </Button>
+            <section>
+                <div class="flex flex-row gap-4 items-center w-full">
+                    <Input
+                        class="flex flex-1"
+                        :is-single-line="true"
+                        placeholder="Invitee's Address"
+                        v-model="inviteAddress"
+                    />
+                    <Button size="sm" class="w-9 h-9 text-white bg-primary-text" @click="invite">
+                        <i class="bx bxs-send bx-xs" />
+                    </Button>
+                </div>
+                <span class="flex px-2 w-full text-left" v-if="tip">
+                    <i class="bx bx-info-circle mr-2 text-btn-icon text-lg" />
+                    <span> {{ tip }} </span>
+                </span>
             </section>
             <section>
                 <h2 class="mb-2 text-xl font-semibold">Remaining Invitations</h2>
@@ -19,7 +25,7 @@
                     <vue3-autocounter
                         ref="counter"
                         :startAmount="0"
-                        :endAmount="residue"
+                        :endAmount="remainQuota"
                         :duration="1"
                         separator=","
                         :autoinit="true"
@@ -39,6 +45,12 @@
                         :rns="item.rns"
                         :address="item.address"
                     />
+                    <div
+                        class="flex flex-col items-center justify-center w-full h-32"
+                        v-if="followRenderList.length === 0"
+                    >
+                        <span>No invitees yet</span>
+                    </div>
                 </div>
             </section>
         </div>
@@ -57,6 +69,7 @@ import RSS3 from '@/common/rss3';
 import config from '@/config';
 import { Profile } from '@/common/types';
 import utils from '@/common/utils';
+import axios from 'axios';
 
 @Options({
     name: 'Invite',
@@ -65,21 +78,27 @@ import utils from '@/common/utils';
 export default class Invite extends Vue {
     avatar: string = config.defaultAvatar;
     ethAddress: string = '';
-    rns: string = '';
-    residue: number = 5;
+    remainQuota: number = 0;
     followRenderList: Profile[] = [];
-    followList: string[] = [
-        '0x55F110395C844963b075674e2956eb414018a7a7',
-        '0xcb1DAd9bd43576Edf39768E8990FeAcf9E8BBD89',
-        '0xD3E8ce4841ed658Ec8dcb99B7a74beFC377253EA',
-        '0xDA048BED40d40B1EBd9239Cdf56ca0c2F018ae65',
-    ];
     inviteAddress: string = '';
+    hasBeenInvited: boolean = true;
+    tip: string = '';
 
     async mounted() {
         if (RSS3.isValidRSS3()) {
+            const rss3Profile = RSS3.getLoginUser();
+            this.ethAddress = rss3Profile.address;
+            const res = await axios.get(`https://whitelist.cheer.bio/api/status/${this.ethAddress}`);
+
+            if (!res.data.ok) {
+                this.hasBeenInvited = res.data.ok;
+                return;
+            }
+
+            this.remainQuota = res.data.data.remain_quota;
+
             const apiUser = RSS3.getAPIUser().persona;
-            const profiles = await apiUser.profile.getList(this.followList);
+            const profiles = await apiUser.profile.getList(res.data.data.invitees);
             for (const profile of profiles) {
                 const { extracted } = utils.extractEmbedFields(profile.bio || '', []);
                 this.followRenderList.push({
@@ -91,7 +110,32 @@ export default class Invite extends Vue {
                 });
             }
         } else {
-            this.$router.push(config.subDomain.isSubDomainMode ? '/' : `/${this.rns || this.ethAddress}`);
+            this.$router.push('/');
+        }
+    }
+
+    async invite() {
+        if (this.remainQuota < 1) {
+            this.tip = 'All quota exhausted.';
+            return;
+        }
+        const res = await axios.post('https://whitelist.cheer.bio/api/invite', {
+            address: this.ethAddress,
+            invitee: this.inviteAddress,
+        });
+        this.tip = res.data.message;
+        if (res.data.code === 200 && res.data.ok) {
+            const apiUser = RSS3.getAPIUser().persona;
+            const profile = await apiUser.profile.get(this.inviteAddress);
+            const { extracted } = utils.extractEmbedFields(profile.bio || '', []);
+            this.followRenderList.push({
+                avatar: profile.avatar?.[0] || config.defaultAvatar,
+                username: profile.name || '',
+                bio: extracted,
+                address: this.inviteAddress,
+                rns: '',
+            });
+            this.remainQuota--;
         }
     }
 }
