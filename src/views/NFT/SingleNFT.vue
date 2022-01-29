@@ -2,12 +2,7 @@
     <div class="h-screen overflow-y-auto">
         <div class="m-auto pb-20 pt-8 px-4 max-w-screen-lg">
             <Header />
-            <TransBarCard
-                :title="details.collection?.name"
-                :haveDetails="true"
-                :haveContent="false"
-                :haveContentInfo="false"
-            >
+            <TransBarCard :title="details.name" :haveDetails="true" :haveContent="false" :haveContentInfo="false">
                 <template #header>
                     <NFTBadges
                         :chain="details.chain"
