@@ -25,7 +25,7 @@
                         Home
                     </div>
                     <div class="flex flex-row gap-2 items-center cursor-pointer" @click="toInvitePage">
-                        <i class="bx bxs-send bx-xs text-btn-icon" />
+                        <i class="bx bx-beer bx-xs text-btn-icon" />
                         Invite
                     </div>
                     <div class="flex flex-row gap-2 items-center cursor-pointer" @click="logout">

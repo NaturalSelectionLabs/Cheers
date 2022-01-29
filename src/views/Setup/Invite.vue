@@ -11,7 +11,7 @@
                         v-model="inviteAddress"
                     />
                     <Button size="sm" class="w-9 h-9 text-white bg-primary-text" @click="invite">
-                        <i class="bx bxs-send bx-xs" />
+                        <i class="bx bx-beer bx-xs" />
                     </Button>
                 </div>
                 <span class="flex px-2 w-full text-left" v-if="tip">

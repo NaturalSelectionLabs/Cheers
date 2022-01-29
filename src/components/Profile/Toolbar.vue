@@ -1,8 +1,8 @@
 <template>
     <transition name="fade" mode="out-in">
         <Button size="sm" class="mt-2 w-full text-lg bg-secondary-btn cursor-wait md:m-0" v-if="isLoadingPersona">
+            <i class="bx bx-xs bx-loader-circle bx-spin" />
             <span>Loading...</span>
-            <i class="bx bx-sm bx-loader-circle bx-spin" />
         </Button>
         <Button
             size="sm"
@@ -11,12 +11,12 @@
             v-bind:class="[isFollowing ? 'bg-white' : 'bg-primary-btn']"
             @click="emitToggleFollow"
         >
+            <i class="bx bx-xs no-underline" v-bind:class="[isFollowing ? 'bx-check' : 'bx-plus']"></i>
             <span>{{ isFollowing ? 'Following' : 'Follow' }}</span>
-            <i class="bx bx-sm no-underline" v-bind:class="[isFollowing ? 'bx-check' : 'bx-plus']"></i>
         </Button>
         <Button v-else size="sm" class="mt-2 w-full text-lg bg-white truncate md:m-0" @click="emitSetUp">
+            <i class="bx bx-xs bx-pencil" />
             <span>Edit Profile</span>
-            <i class="bx bx-sm bx-pencil"></i>
         </Button>
     </transition>
 </template>

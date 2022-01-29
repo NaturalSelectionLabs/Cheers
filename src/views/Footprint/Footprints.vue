@@ -41,7 +41,7 @@
                         v-if="!isLoadingAssets && footprints.length === 0"
                         class="flex flex-row gap-2 items-end justify-center"
                     >
-                        <span v-if="isOwner" class="font-light">Grab some collectibles to get a shot</span>
+                        <span v-if="isOwner" class="font-light">Attend some events to get a shot</span>
                         <span v-else class="font-light">
                             Looks like this user hasn't got a shot.<br />
                             Come back and check it out later
