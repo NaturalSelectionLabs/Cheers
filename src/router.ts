@@ -18,6 +18,7 @@ import EditProfile from '@/views/Setup/EditProfile.vue';
 import RNS from '@/views/Setup/RNS.vue';
 import RNSPending from '@/views/Setup/RNSPending.vue';
 import Setup from '@/views/Setup/Setup.vue';
+import Invite from '@/views/Setup/Invite.vue';
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
 
 const basePath = config.subDomain.isSubDomainMode ? '/' : '/:address/';
@@ -78,6 +79,11 @@ export const routes: RouteRecordRaw[] = [
         path: '/setup',
         name: 'Setup',
         component: Setup,
+    },
+    {
+        path: '/invite',
+        name: 'Invite',
+        component: Invite,
     },
     {
         path: '/setup/accounts',

@@ -19,6 +19,7 @@ export default {
         'https://bafybeifh755n5rnss3qfrwxvtq26ojezj7tzu2kv4e43qcq3rl7flzjnqe.ipfs.infura-ipfs.io/on_error.png',
     defaultAvatar:
         'https://bafybeicy4uzchpntsgp5ffmd7qelcokyhhjm7ofnvvjnrmv5kztu6fsa3y.ipfs.infura-ipfs.io/default_avatar.png',
+    oldDefaultAvatar: 'https://infura-ipfs.io/ipfs/QmcK8FSTtLQVydLEDKLv1hEacLxZgi7j2i4mkQQMyKxv6k',
     hideUnlistedAsstes: false,
     tags: {
         prefix: 'pass',

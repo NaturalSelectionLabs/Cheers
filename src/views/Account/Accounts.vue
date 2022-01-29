@@ -38,6 +38,7 @@
                     </div>
                 </template>
             </TransBarCard>
+            <InviteModal :isShowingModal="!hasBeenInvited" :address="ethAddress" />
         </div>
         <AccountModal
             :isShowingAccount="isShowingAccount"
@@ -61,10 +62,12 @@ import TransBarCard from '@/components/Card/TransBarCard.vue';
 import AccountModal from '@/components/Account/AccountModal.vue';
 import { DetailedAccount } from '@/common/types';
 import { formatter } from '@/common/address';
+import InviteModal from '@/components/Common/InviteModal.vue';
+import axios from 'axios';
 
 @Options({
     name: 'Accounts',
-    components: { EVMpAccountItem, Button, AccountItem, Header, TransBarCard, AccountModal },
+    components: { EVMpAccountItem, Button, AccountItem, Header, TransBarCard, AccountModal, InviteModal },
 })
 export default class Accounts extends Vue {
     isOwner: boolean = false;
@@ -82,6 +85,7 @@ export default class Accounts extends Vue {
         platform: 'EVM+',
         isLink: false,
     };
+    hasBeenInvited: boolean = true;
 
     async mounted() {
         await this.initLoad();
@@ -91,12 +95,17 @@ export default class Accounts extends Vue {
         const addrOrName = utils.getAddress(<string>this.$route.params.address);
         const pageOwner = await RSS3.setPageOwner(addrOrName);
         this.isOwner = RSS3.isNowOwner();
+        this.hasBeenInvited = true;
 
         utils.subDomainModeRedirect(pageOwner.name);
 
         if (pageOwner.profile) {
             this.rss3Profile = pageOwner.profile;
         }
+
+        const res = await axios.get(`https://whitelist.cheer.bio/api/status/${pageOwner.address}`);
+        // set the invite modal
+        this.hasBeenInvited = res.data.ok;
 
         const { listed } = await utils.initAccounts();
         const accountDetails = listed.map((account) => RSS3Utils.id.parseAccount(account.id));

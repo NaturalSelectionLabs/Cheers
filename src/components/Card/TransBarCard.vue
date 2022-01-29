@@ -25,8 +25,8 @@
                 </div>
                 <div v-else-if="tip === 'ownerEmpty'" class="flex gap-2 items-start justify-center">
                     <span v-if="title === 'Collectibles'" class="font-light">Grab some collectibles to get a shot</span>
-                    <span v-if="title === 'Footprints'" class="font-light">Fund some projects to get a shot</span>
-                    <span v-if="title === 'Donations'" class="font-light">Attend some events to get a shot</span>
+                    <span v-if="title === 'Footprints'" class="font-light">Attend some events to get a shot</span>
+                    <span v-if="title === 'Donations'" class="font-light">Support some projects to get a shot</span>
                     <Smile :size="18" />
                 </div>
                 <div v-else class="flex flex-row gap-2 items-end">

@@ -131,12 +131,11 @@ import utils from '@/common/utils';
 })
 export default class EditProfile extends Vue {
     profile: {
-        avatar: string;
+        avatar?: string;
         name: string;
         bio: string;
         link: string;
     } = {
-        avatar: config.defaultAvatar,
         name: '',
         bio: '',
         link: '',
@@ -181,7 +180,6 @@ export default class EditProfile extends Vue {
 
     clearProfileData() {
         this.profile = {
-            avatar: config.defaultAvatar,
             name: '',
             bio: '',
             link: '',
@@ -199,7 +197,7 @@ export default class EditProfile extends Vue {
 
         const profile = loginUser.profile;
 
-        this.profile.avatar = profile?.avatar?.[0] || '';
+        this.profile.avatar = profile?.avatar?.[0];
         this.profile.name = profile?.name || '';
         if (profile?.bio) {
             // Profile

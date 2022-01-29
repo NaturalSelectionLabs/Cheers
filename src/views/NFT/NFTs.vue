@@ -78,6 +78,7 @@
                     </div>
                 </template>
             </TransBarCard>
+            <InviteModal :isShowingModal="!hasBeenInvited" :address="ethAddress" />
         </div>
     </div>
 </template>
@@ -101,6 +102,8 @@ import { formatter } from '@/common/address';
 import AssetCard from '@/components/Card/AssetCard.vue';
 import Smile from '@/components/Icons/Smile.vue';
 import LoadingSmile from '@/components/Loading/LoadingSmile.vue';
+import InviteModal from '@/components/Common/InviteModal.vue';
+import axios from 'axios';
 
 @Options({
     name: 'NFTs',
@@ -114,6 +117,7 @@ import LoadingSmile from '@/components/Loading/LoadingSmile.vue';
         AssetCard,
         Smile,
         LoadingSmile,
+        InviteModal,
     },
 })
 export default class NFTs extends Vue {
@@ -131,11 +135,13 @@ export default class NFTs extends Vue {
     isLoadingAssets: boolean = true;
     isHavingMoreAssets: boolean = true;
     fallbackImage: string = legacyConfig.undefinedImageAlt;
+    hasBeenInvited: boolean = true;
 
     async initLoad() {
         this.lastRoute = this.$route.fullPath;
         let type = String(this.$route.params.type);
         this.title = type.replace(type[0], type[0].toUpperCase());
+        this.hasBeenInvited = true;
 
         const addrOrName = utils.getAddress(<string>this.$route.params.address);
         const pageOwner = await RSS3.setPageOwner(addrOrName);
@@ -150,6 +156,10 @@ export default class NFTs extends Vue {
         if (!this.rss3Profile.name) {
             this.rss3Profile.name = formatter(this.ethAddress);
         }
+
+        const res = await axios.get(`https://whitelist.cheer.bio/api/status/${this.ethAddress}`);
+        // set the invite modal
+        this.hasBeenInvited = res.data.ok;
 
         const { nftsWithClassName } = await utils.initAssets();
         this.assetList = nftsWithClassName.filter((element) => (element.class || 'Collectibles') === this.title);
