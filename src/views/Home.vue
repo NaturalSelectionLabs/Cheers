@@ -359,6 +359,8 @@
                 />
 
                 <InviteModal :isShowingModal="!hasBeenInvited" :address="ethAddress" />
+
+                <Confetti v-if="!isLoadingPersona && isOwner && hasBeenInvited && !hasBeenActivated" />
             </div>
         </div>
         <div v-else class="flex items-center justify-center h-full text-center">
@@ -418,6 +420,7 @@ import LoadingSmile from '@/components/Loading/LoadingSmile.vue';
 import { flattenDeep } from 'lodash';
 import { formatter } from '@/common/address';
 import InviteModal from '@/components/Common/InviteModal.vue';
+import Confetti from '@/components/Common/Confetti.vue';
 import axios from 'axios';
 
 interface Relations {
@@ -449,6 +452,7 @@ interface Relations {
         Smile,
         LoadingSmile,
         InviteModal,
+        Confetti,
     },
 })
 export default class Home extends Vue {
@@ -527,6 +531,7 @@ export default class Home extends Vue {
     };
     allClasses: string[] = Object.keys(this.classifiedList);
     hasBeenInvited: boolean = true;
+    hasBeenActivated: boolean = true;
 
     async mounted() {
         window.onresize = () => {
@@ -563,6 +568,7 @@ export default class Home extends Vue {
         const res = await axios.get(`https://whitelist.cheer.bio/api/status/${this.ethAddress}`);
         // set the invite modal
         this.hasBeenInvited = res.data.ok;
+        this.hasBeenActivated = res.data.data.is_activated;
 
         await this.updateUserInfo();
 
@@ -573,6 +579,14 @@ export default class Home extends Vue {
         }
 
         this.isLoadingPersona = false;
+
+        // this login user (this owner) has been invited but not activated yet
+        // send the activate request
+        if (this.isOwner && this.hasBeenInvited && !this.hasBeenActivated) {
+            axios.post('https://whitelist.cheer.bio/api/activate', {
+                address: this.ethAddress,
+            });
+        }
     }
 
     async updateUserInfo() {
@@ -1070,6 +1084,7 @@ export default class Home extends Vue {
             this.gitcoins = [];
             this.footprints = [];
             this.hasBeenInvited = true;
+            this.hasBeenActivated = true;
 
             await this.initLoad();
         }
