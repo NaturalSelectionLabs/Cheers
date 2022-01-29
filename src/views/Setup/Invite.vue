@@ -98,7 +98,7 @@ export default class Invite extends Vue {
             this.remainQuota = res.data.data.remain_quota;
 
             const apiUser = RSS3.getAPIUser().persona;
-            const profiles = await apiUser.profile.getList(res.data.data.invitees);
+            const profiles = await apiUser.profile.getList(res.data.data.invitees.map((invitee) => invitee.address));
             for (const profile of profiles) {
                 const { extracted } = utils.extractEmbedFields(profile.bio || '', []);
                 this.followRenderList.push({
