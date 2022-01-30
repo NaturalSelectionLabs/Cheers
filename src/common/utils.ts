@@ -105,26 +105,35 @@ async function loadAssets(parsedAssets: GeneralAsset[]) {
     );
 
     const res: AnyObject[] = []; // todo: fix this
-    let startIndex = 0;
-    let isHaveMore = true;
 
-    while (isHaveMore) {
-        let endIndex = startIndex + config.splitPageLimits.assets;
-        if (endIndex >= assetIDList.length) {
-            endIndex = assetIDList.length;
-            isHaveMore = false;
+    while (true) {
+        // find all the assets without details from res
+        const assetsNoDetails = assetIDList.filter((asset) => !res.find((detail) => detail.id === asset));
+        if (!assetsNoDetails.length) {
+            // all the assets have details, break
+            break;
         }
+        // only request part of them to avoid 'code:1'
         const asset = await apiUser.assets.getDetails({
-            assets: assetIDList.slice(startIndex, endIndex),
+            assets: assetsNoDetails.slice(0, config.splitPageLimits.assets),
             full: true,
         });
+        // if have details return, add them to the res list
         if (asset?.length) {
             res.push(...asset);
         }
-        startIndex = endIndex;
     }
 
-    return res;
+    // sort asset details
+    const orderRes: AnyObject[] = [];
+    assetIDList.map((assetID) => {
+        const detailedAsset = res.find((details) => details.id === assetID);
+        if (detailedAsset) {
+            orderRes.push(detailedAsset);
+        }
+    });
+
+    return orderRes;
 }
 
 async function initAccounts(pageOwner = RSS3.getPageOwner()) {
