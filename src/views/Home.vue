@@ -351,16 +351,16 @@
                         </div>
                     </div>
                 </div>
-
                 <AccountModal
                     :isShowingAccount="isShowingAccount"
                     :showingAccountDetails="showingAccountDetails"
                     @closeDialog="closeAccountDialog"
                 />
-
                 <InviteModal :isShowingModal="!hasBeenInvited" :address="ethAddress" />
-
-                <Confetti v-if="!isLoadingPersona && isOwner && hasBeenInvited && !hasBeenActivated" />
+                <Confetti
+                    v-if="!isLoadingPersona && isOwner && hasBeenInvited && !hasBeenActivated"
+                    :isPCLayout="isPCLayout"
+                />
             </div>
         </div>
         <div v-else class="flex items-center justify-center h-full text-center">
