@@ -100,6 +100,7 @@ export default class Invite extends Vue {
 
             if (!res.data.ok) {
                 this.hasBeenInvited = res.data.ok;
+                this.tip = 'Not in whitelist currently';
                 return;
             }
 

@@ -568,7 +568,7 @@ export default class Home extends Vue {
         const res = await axios.get(`https://whitelist.cheer.bio/api/status/${this.ethAddress}`);
         // set the invite modal
         this.hasBeenInvited = res.data.ok;
-        this.hasBeenActivated = res.data.data.is_activated;
+        this.hasBeenActivated = res.data.data?.is_activated;
 
         await this.updateUserInfo();
 
