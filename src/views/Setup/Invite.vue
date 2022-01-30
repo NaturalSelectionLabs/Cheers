@@ -27,7 +27,6 @@
                         :startAmount="0"
                         :endAmount="remainQuota"
                         :duration="1"
-                        separator=","
                         :autoinit="true"
                     />
                 </h1>
@@ -35,19 +34,25 @@
             <section>
                 <h2 class="mb-2 text-xl font-semibold">Invitees</h2>
                 <div class="flex flex-col gap-y-4 p-4 w-full bg-card-bg rounded">
-                    <FollowCard
-                        class="w-auto cursor-pointer"
-                        v-for="item in followRenderList"
+                    <div
+                        class="flex flex-row gap-2 items-center"
+                        v-for="item in inviteesRenderList"
                         :key="item.address"
-                        :avatar="item.avatar"
-                        :name="item.username"
-                        :bio="item.bio"
-                        :rns="item.rns"
-                        :address="item.address"
-                    />
+                    >
+                        <FollowCard
+                            class="flex-1 cursor-pointer"
+                            :avatar="item.avatar"
+                            :name="item.username"
+                            :bio="item.bio"
+                            :rns="item.rns"
+                            :address="item.address"
+                            @click="toPublicPage(item.rns, item.address)"
+                        />
+                        <i v-show="getActiveState(item.address)" class="bx bx-sm bx-check text-account-btn-m" />
+                    </div>
                     <div
                         class="flex flex-col items-center justify-center w-full h-32"
-                        v-if="followRenderList.length === 0"
+                        v-if="inviteesRenderList.length === 0"
                     >
                         <span>No invitees yet</span>
                     </div>
@@ -70,6 +75,7 @@ import config from '@/config';
 import { Profile } from '@/common/types';
 import utils from '@/common/utils';
 import axios from 'axios';
+import RNS from '@/common/rns';
 
 @Options({
     name: 'Invite',
@@ -79,10 +85,12 @@ export default class Invite extends Vue {
     avatar: string = config.defaultAvatar;
     ethAddress: string = '';
     remainQuota: number = 0;
-    followRenderList: Profile[] = [];
+    inviteesRenderList: Profile[] = [];
     inviteAddress: string = '';
     hasBeenInvited: boolean = true;
     tip: string = '';
+    loadingNo: number = 0;
+    invitees: any[] = [];
 
     async mounted() {
         if (RSS3.isValidRSS3()) {
@@ -96,12 +104,13 @@ export default class Invite extends Vue {
             }
 
             this.remainQuota = res.data.data.remain_quota;
+            this.invitees = res.data.data.invitees;
 
             const apiUser = RSS3.getAPIUser().persona;
-            const profiles = await apiUser.profile.getList(res.data.data.invitees.map((invitee) => invitee.address));
+            const profiles = await apiUser.profile.getList(this.invitees.map((invitee) => invitee.address));
             for (const profile of profiles) {
                 const { extracted } = utils.extractEmbedFields(profile.bio || '', []);
-                this.followRenderList.push({
+                this.inviteesRenderList.push({
                     avatar: profile.avatar?.[0] || config.defaultAvatar,
                     username: profile.name || '',
                     bio: extracted,
@@ -109,6 +118,7 @@ export default class Invite extends Vue {
                     rns: '',
                 });
             }
+            this.startLoadRNS();
         } else {
             this.$router.push('/');
         }
@@ -125,10 +135,12 @@ export default class Invite extends Vue {
         });
         this.tip = res.data.message;
         if (res.data.code === 200 && res.data.ok) {
+            //  active status for the new invited user
+            this.invitees.push({ address: this.inviteAddress, is_activated: false });
             const apiUser = RSS3.getAPIUser().persona;
             const profile = await apiUser.profile.get(this.inviteAddress);
             const { extracted } = utils.extractEmbedFields(profile.bio || '', []);
-            this.followRenderList.push({
+            this.inviteesRenderList.push({
                 avatar: profile.avatar?.[0] || config.defaultAvatar,
                 username: profile.name || '',
                 bio: extracted,
@@ -136,7 +148,41 @@ export default class Invite extends Vue {
                 rns: '',
             });
             this.remainQuota--;
+            this.startLoadRNS();
         }
+    }
+
+    startLoadRNS() {
+        setTimeout(() => {
+            this.loadRNS();
+        }, 0);
+    }
+
+    async loadRNS() {
+        const startNo = this.loadingNo;
+        const endNo = this.inviteesRenderList.length;
+        for (let i = startNo; i < endNo; i++) {
+            const item = this.inviteesRenderList[i];
+            try {
+                item.rns = await RNS.addr2Name(item.address);
+            } catch (e) {
+                console.log(item, e);
+            }
+            this.loadingNo = i;
+        }
+    }
+
+    toPublicPage(rns: string, ethAddress: string) {
+        if (rns) {
+            window.location.href = `//${rns}.${config.subDomain.rootDomain}`;
+        } else {
+            window.location.href = `//${config.subDomain.rootDomain}/${ethAddress}`;
+        }
+    }
+
+    getActiveState(address: string) {
+        const invitee = this.invitees.find((invitee) => invitee.address === address);
+        return invitee.is_activated;
     }
 }
 </script>
