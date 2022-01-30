@@ -356,7 +356,7 @@
                     :showingAccountDetails="showingAccountDetails"
                     @closeDialog="closeAccountDialog"
                 />
-                <InviteModal :isShowingModal="!hasBeenInvited" :address="ethAddress" />
+                <InviteModal :isShowingModal="!hasBeenInvited" :address="ethAddress" :isOwner="isOwner" />
                 <Confetti
                     v-if="!isLoadingPersona && isOwner && hasBeenInvited && !hasBeenActivated"
                     :isPCLayout="isPCLayout"

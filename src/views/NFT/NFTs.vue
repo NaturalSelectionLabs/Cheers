@@ -78,7 +78,7 @@
                     </div>
                 </template>
             </TransBarCard>
-            <InviteModal :isShowingModal="!hasBeenInvited" :address="ethAddress" />
+            <InviteModal :isShowingModal="!hasBeenInvited" :address="ethAddress" :isOwner="isOwner" />
         </div>
     </div>
 </template>
