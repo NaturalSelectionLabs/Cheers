@@ -22,7 +22,7 @@ app.use(
 
 const getName = async (host, url) => {
     if (host.split('.').length > 2) {
-        return /^(.+?)\.rss3\.[^.]+$/.exec(host)[1];
+        return host.split('.').slice(0, -2).join('.');
     } else {
         return /^\/(.+?)\//.exec(url + '/')?.[1];
     }
@@ -43,7 +43,7 @@ const getAddress = async (name) => {
 
 const getPersona = async (address) => {
     try {
-        return (await axios.get(`https://hub.pass3.me/${address}`)).data;
+        return (await axios.get(`https://prenode.rss3.dev/${address}`)).data;
     } catch (e) {
         console.log(e);
         return null;
@@ -72,7 +72,7 @@ const injectMetadata = async (ctx) => {
     await ctx.render('index', {
         user: JSON.stringify(persona),
         title: (persona?.profile?.name ? persona?.profile?.name + "'s " : '') + 'Cheers.Bio',
-        avatar: persona?.profile?.avatar?.[0] || defaultAvatar,
+        avatar: persona?.profile?.avatar?.[0]?.replace('ipfs://', 'https://ipfs.io/ipfs/') || defaultAvatar,
         bio: persona?.profile?.bio?.replace(/\n/g, ' ') || 'Cheers.Bio',
         url: ctx.request.href.replace('http://', 'https://'),
     });
