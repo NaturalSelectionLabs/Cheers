@@ -71,9 +71,9 @@ const injectMetadata = async (ctx) => {
     // embed default data (so page don't need to request again)
     await ctx.render('index', {
         user: JSON.stringify(persona),
-        title: (persona?.profile?.name ? persona?.profile?.name + "'s " : '') + 'RSS3.Bio',
+        title: (persona?.profile?.name ? persona?.profile?.name + "'s " : '') + 'Cheers.Bio',
         avatar: persona?.profile?.avatar?.[0] || defaultAvatar,
-        bio: persona?.profile?.bio?.replace(/\n/g, ' ') || 'RSS3.Bio',
+        bio: persona?.profile?.bio?.replace(/\n/g, ' ') || 'Cheers.Bio',
         url: ctx.request.href.replace('http://', 'https://'),
     });
 };

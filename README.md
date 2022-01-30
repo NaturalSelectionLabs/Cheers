@@ -3,9 +3,9 @@
 </p>
 <h1 align="center">Cheers Bio</h1>
 
-Front part of [Cheers Bio](https://rss3.bio/)
+Front part of [Cheers Bio](https://cheers.bio/)
 
-The `main` branch is automatically deployed to https://rss3.bio
+The `cheers` branch is automatically deployed to https://cheers.bio
 
 ## Contribution
 

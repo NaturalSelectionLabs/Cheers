@@ -4,16 +4,6 @@ interface ProductsDefine {
     subDomainMode: boolean;
 }
 
-const productsList: {
-    [key: string]: ProductsDefine;
-} = {
-    RSS3Bio: {
-        schema: 'https://',
-        baseDomain: 'rss3.bio',
-        subDomainMode: true,
-    },
-};
-
 const config = {
     hubEndpoint: 'https://prenode.rss3.dev',
     undefinedImageAlt: 'https://infura-ipfs.io/ipfs/QmcK8FSTtLQVydLEDKLv1hEacLxZgi7j2i4mkQQMyKxv6k',
@@ -25,7 +15,6 @@ const config = {
     ui: {
         md: 768, // px
     },
-    productsList,
     subDomain: {
         preferSubDomainMode: true,
     },
