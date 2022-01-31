@@ -106,7 +106,8 @@ async function loadAssets(parsedAssets: GeneralAsset[]) {
 
     const res: AnyObject[] = []; // todo: fix this
 
-    while (true) {
+    // only retry 10 times
+    for (let i = 0; i < 10; i++) {
         // find all the assets without details from res
         const assetsNoDetails = assetIDList.filter((asset) => !res.find((detail) => detail.id === asset));
         if (!assetsNoDetails.length) {
@@ -114,14 +115,22 @@ async function loadAssets(parsedAssets: GeneralAsset[]) {
             break;
         }
         // only request part of them to avoid 'code:1'
-        const asset = await apiUser.assets.getDetails({
-            assets: assetsNoDetails.slice(0, config.splitPageLimits.assets),
-            full: true,
-        });
-        // if have details return, add them to the res list
-        if (asset?.length) {
-            res.push(...asset);
+        const asset: any[] = [];
+
+        for (let j = 0; j < Math.ceil(assetsNoDetails.length / config.splitPageLimits.assets); j++) {
+            let start = j * config.splitPageLimits.assets;
+            let end = start + config.splitPageLimits.assets;
+            const temp = await apiUser.assets.getDetails({
+                assets: assetsNoDetails.slice(start, end),
+                full: true,
+            });
+            // if have details return, add them to the res list
+            if (temp?.length) {
+                asset.push(...temp);
+            }
         }
+
+        res.push(...asset);
     }
 
     // sort asset details
