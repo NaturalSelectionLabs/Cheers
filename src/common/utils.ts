@@ -6,6 +6,7 @@ import RSS3, { IRSS3 } from './rss3';
 import { CustomField_PassAssets, GeneralAsset } from './types';
 import { RouteLocationNormalizedLoaded, Router } from 'vue-router';
 import Cookies from 'js-cookie';
+import { chunk } from 'lodash';
 
 const orderPattern = new RegExp(`^${config.tags.prefix}:order:(-?\\d+)$`, 'i');
 const hiddenTag = `${config.tags.prefix}:${config.tags.hiddenTag}`;
@@ -99,53 +100,53 @@ async function loadAssets(parsedAssets: GeneralAsset[]) {
     }
 
     const apiUser = (await RSS3.getAPIUser().persona) as IRSS3;
-
     const assetIDList = parsedAssets.map((asset) =>
         RSS3Utils.id.getAsset(asset.platform, asset.identity, asset.type, asset.uniqueID),
     );
-
-    const res: AnyObject[] = []; // todo: fix this
+    const assetDetailsList: AnyObject[] = []; // todo: fix this
 
     // only retry 10 times
     for (let i = 0; i < 10; i++) {
         // find all the assets without details from res
-        const assetsNoDetails = assetIDList.filter((asset) => !res.find((detail) => detail.id === asset));
+        const assetsNoDetails = assetIDList.filter((asset) => !assetDetailsList.find((detail) => detail.id === asset));
         if (!assetsNoDetails.length) {
             // all the assets have details, break
             break;
-        }
-        // only request part of them to avoid 'code:1'
-        const asset: any[] = [];
-
-        for (let j = 0; j < Math.ceil(assetsNoDetails.length / config.splitPageLimits.assets); j++) {
-            let start = j * config.splitPageLimits.assets;
-            let end = start + config.splitPageLimits.assets;
-            const temp = await apiUser.assets.getDetails({
-                assets: assetsNoDetails.slice(start, end),
-                full: true,
-            });
-            // if have details return, add them to the res list
-            if (temp?.length) {
-                asset.push(...temp);
-            }
+        } else if (assetDetailsList.length !== 0) {
+            // already request but not get full details
+            // sleep for two seconds
+            await new Promise((r) => setTimeout(r, 2000));
         }
 
-        res.push(...asset);
+        // divide asset ID list into different parts to avoid "code:1"
+        // https://lodash.shujuwajue.com/array/chunk
+        const splitList: Array<string[]> = chunk(assetsNoDetails, config.splitPageLimits.assets);
 
-        // sleep for two seconds
-        await new Promise((r) => setTimeout(r, 2000));
+        // process asset requests concurrently
+        await Promise.all(
+            splitList.map(async (items) => {
+                const res = await apiUser.assets.getDetails({
+                    assets: items,
+                    full: true,
+                });
+                // if have details return, add them to the res list
+                if (res?.length) {
+                    assetDetailsList.push(...res);
+                }
+            }),
+        );
     }
 
     // sort asset details
-    const orderRes: AnyObject[] = [];
+    const sortedAssetDetailsList: AnyObject[] = [];
     assetIDList.map((assetID) => {
-        const detailedAsset = res.find((details) => details.id === assetID);
+        const detailedAsset = assetDetailsList.find((details) => details.id === assetID);
         if (detailedAsset) {
-            orderRes.push(detailedAsset);
+            sortedAssetDetailsList.push(detailedAsset);
         }
     });
 
-    return orderRes;
+    return sortedAssetDetailsList;
 }
 
 async function initAccounts(pageOwner = RSS3.getPageOwner()) {
