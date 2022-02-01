@@ -131,6 +131,9 @@ async function loadAssets(parsedAssets: GeneralAsset[]) {
         }
 
         res.push(...asset);
+
+        // sleep for two seconds
+        await new Promise((r) => setTimeout(r, 2000));
     }
 
     // sort asset details
