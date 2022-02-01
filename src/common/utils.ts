@@ -115,7 +115,7 @@ async function loadAssets(parsedAssets: GeneralAsset[]) {
         } else if (assetDetailsList.length !== 0) {
             // already request but not get full details
             // sleep for two seconds
-            await new Promise((r) => setTimeout(r, 2000));
+            await new Promise((r) => setTimeout(r, 3100));
         }
 
         // divide asset ID list into different parts to avoid "code:1"
