@@ -7,6 +7,10 @@ if (isSubDomainMode) {
     currentRootDomain = window.location.hostname;
 }
 
+if (currentRootDomain === 'rss3.bio') {
+    window.location.hostname = window.location.hostname.replace('rss3.bio', 'cheers.bio');
+}
+
 export default {
     infuraId: [
         '76af1228cdf345d2bff6a9c0f35112e1',
