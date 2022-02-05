@@ -24,10 +24,6 @@
                         <i class="bx bx-user bx-xs text-btn-icon" />
                         Home
                     </div>
-                    <div class="flex flex-row gap-2 items-center cursor-pointer" @click="toInvitePage">
-                        <i class="bx bx-beer bx-xs text-btn-icon" />
-                        Invite
-                    </div>
                     <div class="flex flex-row gap-2 items-center cursor-pointer" @click="logout">
                         <i class="bx bx-log-out bx-xs text-btn-icon" />
                         Logout
@@ -129,10 +125,6 @@ export default class Header extends Vue {
                 window.location.href = `//${config.subDomain.rootDomain}/${this.ethAddress}`;
             }
         }
-    }
-
-    toInvitePage() {
-        this.$router.push(config.subDomain.isSubDomainMode ? '/invite' : `/${this.rns || this.ethAddress}/invite`);
     }
 
     async logout() {
