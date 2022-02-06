@@ -3,6 +3,7 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
 const { VueLoaderPlugin } = require('vue-loader');
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 module.exports = (env, argv) => ({
     devtool: argv.mode === 'production' ? false : 'inline-cheap-module-source-map',
     entry: {
@@ -114,6 +115,10 @@ module.exports = (env, argv) => ({
         ],
     },
     plugins: [
+        new BundleAnalyzerPlugin({
+            analyzerMode: 'disabled',
+            generateStatsFile: true, // only set true under develop enviorment
+        }),
         new HtmlWebpackPlugin(
             argv.mode === 'production'
                 ? {

@@ -12,7 +12,9 @@
         "serv:dev": "npm run build:dev && npm run serv",
         "serv:prod": "npm run build && npm run serv",
         "start": "npm run serv",
-        "pretty": "prettier --write \"./**/*.{js,vue,json}\""
+        "pretty": "prettier --write \"./**/*.{js,vue,json}\"",
+        "generateAnalyzeFile": "webpack --profile --json > stats.json",
+        "analyze": "webpack-bundle-analyzer --port 8888 ./dist/stats.json"
     },
     "lint-staged": {
         "**/*": "prettier --write --ignore-unknown"
@@ -76,7 +78,8 @@
         "vue-moment": "4.1.0",
         "vue-recaptcha-v3": "2.0.1",
         "vue3-autocounter": "1.0.6",
-        "vuedraggable": "4.1.0"
+        "vuedraggable": "4.1.0",
+        "webpack-bundle-analyzer": "4.5.0"
     },
     "devDependencies": {
         "@babel/core": "7.16.12",

@@ -10,3 +10,4 @@ storage
 .env
 .cache
 yarn.lock
+stats.json
