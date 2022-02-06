@@ -109,7 +109,6 @@ import { utils as RSS3Utils } from 'rss3';
 import config from '@/config';
 import LinkButton from '@/components/Button/LinkButton.vue';
 import RNSUtils from '@/common/rns';
-import BarCard from '@/components/Card/BarCard.vue';
 import TransBarCard from '@/components/Card/TransBarCard.vue';
 import utils from '@/common/utils';
 
@@ -125,7 +124,6 @@ import utils from '@/common/utils';
         Input,
         Loading,
         LoadingContainer,
-        BarCard,
         TransBarCard,
     },
 })

@@ -1,5 +1,3 @@
-/* eslint-disable import/no-anonymous-default-export */
-import setupTheme from '@/common/theme';
 import utils from '@/common/utils';
 import legacyConfig from '@/config';
 import WalletConnectProvider from '@walletconnect/web3-provider';
@@ -392,8 +390,6 @@ export default {
                     await initUser(RSS3PageOwner);
                 }
                 await setPageTitleFavicon();
-                // Setup theme
-                //await setupTheme();
                 dispatchEvent(Events.pageOwnerReady, RSS3PageOwner);
                 isSettingPageOwner = false;
                 resolve(RSS3PageOwner);
@@ -418,22 +414,6 @@ export default {
     },
     isValidRSS3,
 
-    buildProductBaseURL: (product: string, address: string, name?: string) => {
-        if (product in config.productsList) {
-            const p = config.productsList[product];
-            if (p.subDomainMode) {
-                if (name) {
-                    const fixedName = name.endsWith(config.rns.suffix) ? name.replace(config.rns.suffix, '') : name;
-                    return `${p.schema}${fixedName}.${p.baseDomain}`;
-                } else {
-                    return `${p.schema}${p.baseDomain}/${address}`;
-                }
-            } else {
-                return `${p.schema}${p.baseDomain}/${name || address}`;
-            }
-        }
-        return '';
-    },
     getAvailableThemes(assets: RSS3AutoAsset[], _passAssetsField: CustomField_PassAssets[]) {
         // ${platform}-${identity}-${type}-${uniqueID}
         const availableThemes: Theme[] = [];

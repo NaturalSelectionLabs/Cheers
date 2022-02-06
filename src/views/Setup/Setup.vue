@@ -148,7 +148,6 @@
 import { Options, Vue } from 'vue-class-component';
 import Button from '@/components/Button/Button.vue';
 import AvatarEditor from '@/components/Profile/AvatarEditor.vue';
-import BarCard from '@/components/Card/BarCard.vue';
 import TransBarCard from '@/components/Card/TransBarCard.vue';
 import AccountItem from '@/components/Account/AccountItem.vue';
 import NFTItem from '@/components/NFT/NFTItem.vue';
@@ -175,7 +174,6 @@ import utils from '@/common/utils';
         Modal,
         Button,
         AvatarEditor,
-        BarCard,
         TransBarCard,
         GitcoinItem,
         AccountItem,

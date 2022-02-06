@@ -372,7 +372,6 @@
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
 import Button from '@/components/Button/Button.vue';
-import BarCard from '@/components/Card/BarCard.vue';
 import Profile from '@/components/Profile/Profile.vue';
 import AccountItem from '@/components/Account/AccountItem.vue';
 import NFTItem from '@/components/NFT/NFTItem.vue';
@@ -419,7 +418,6 @@ interface Relations {
         FootprintItem,
         Button,
         TransBarCard,
-        BarCard,
         Profile,
         AccountItem,
         NFTItem,
