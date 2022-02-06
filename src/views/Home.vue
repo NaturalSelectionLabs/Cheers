@@ -78,7 +78,7 @@
                                     v-for="item in classifiedList[className]"
                                     :key="item.id"
                                     :image-url="
-                                        item.detail.animation_url || item.detail.image_preview_url || undefinedImage
+                                        item.detail.image_preview_url || item.detail.animation_url || undefinedImage
                                     "
                                     :poster-url="
                                         item.detail.image_preview_url ||
@@ -122,7 +122,7 @@
                                     v-for="item in classifiedList[className].slice(0, 3)"
                                     :key="item.id"
                                     :image-url="
-                                        item.detail.animation_url || item.detail.image_preview_url || undefinedImage
+                                        item.detail.image_preview_url || item.detail.animation_url || undefinedImage
                                     "
                                     size="sm"
                                     :type="className"
@@ -137,7 +137,7 @@
                                     v-for="item in classifiedList[className].slice(3)"
                                     :key="item.id"
                                     :image-url="
-                                        item.detail.animation_url || item.detail.image_preview_url || undefinedImage
+                                        item.detail.image_preview_url || item.detail.animation_url || undefinedImage
                                     "
                                     :poster-url="
                                         item.detail.image_preview_url ||
