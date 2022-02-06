@@ -60,8 +60,7 @@ const router = new Router();
 const injectMetadata = async (ctx) => {
     // extract name
     const host = ctx.host;
-    const url = ctx.url;
-    const aon = await getName(host, url);
+    const aon = await getName(host, ctx.url);
 
     let address = '';
     // get address
@@ -70,10 +69,12 @@ const injectMetadata = async (ctx) => {
         const name = await getNameByAddress(aon);
         if (name) {
             // redirect to name
+            const fullUrl = ctx.request.href;
             const rootDomain = host.split('.').slice(-2).join('.');
-            const newURL = url.replace(`${rootDomain}/${aon}`, `${name}.${rootDomain}`);
+            const newURL = fullUrl.replace(`${rootDomain}/${aon}`, `${name}.${rootDomain}`);
 
-            ctx.response.redirect(newURL);
+            console.log(newURL);
+            ctx.redirect(newURL);
             return;
         } else {
             // no name found, use address
