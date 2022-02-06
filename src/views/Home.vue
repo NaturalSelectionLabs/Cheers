@@ -348,10 +348,6 @@
                 :showingAccountDetails="showingAccountDetails"
                 @closeDialog="closeAccountDialog"
             />
-            <!-- <Confetti
-                v-if="!isLoadingPersona && isOwner"
-                :isPCLayout="isPCLayout"
-            /> -->
         </div>
     </div>
     <div v-else class="flex items-center justify-center h-screen text-center">
@@ -409,8 +405,6 @@ import Smile from '@/components/Icons/Smile.vue';
 import LoadingSmile from '@/components/Loading/LoadingSmile.vue';
 import { flattenDeep } from 'lodash';
 import { formatter } from '@/common/address';
-import Confetti from '@/components/Common/Confetti.vue';
-import axios from 'axios';
 
 interface Relations {
     followers: string[];
@@ -440,7 +434,6 @@ interface Relations {
         AccountModal,
         Smile,
         LoadingSmile,
-        Confetti,
     },
 })
 export default class Home extends Vue {
