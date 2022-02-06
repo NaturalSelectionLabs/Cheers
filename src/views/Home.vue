@@ -403,7 +403,7 @@ import Header from '@/components/Common/Header.vue';
 import AccountModal from '@/components/Account/AccountModal.vue';
 import Smile from '@/components/Icons/Smile.vue';
 import LoadingSmile from '@/components/Loading/LoadingSmile.vue';
-import { flattenDeep } from 'lodash';
+import flattenDeep from 'lodash/flattenDeep';
 import { formatter } from '@/common/address';
 
 interface Relations {

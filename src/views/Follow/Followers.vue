@@ -56,7 +56,6 @@ import RSS3, { IRSS3 } from '@/common/rss3';
 import RNS from '@/common/rns';
 import legacyConfig from '@/config';
 import config from '@/common/config';
-import { reverse, uniq } from 'lodash';
 import utils from '@/common/utils';
 import { Profile } from '@/common/types';
 import Header from '@/components/Common/Header.vue';
@@ -101,7 +100,7 @@ export default class Followers extends Vue {
             this.rss3Profile = pageOwner.profile;
         }
 
-        this.followList = reverse(uniq(pageOwner.followers));
+        this.followList = Array.from(new Set(pageOwner.followers)).reverse();
 
         this.isLoadingFollows = false;
         await this.loadMoreFollows();

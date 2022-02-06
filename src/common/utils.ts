@@ -6,7 +6,7 @@ import RSS3, { IRSS3 } from './rss3';
 import { CustomField_PassAssets, GeneralAsset } from './types';
 import { RouteLocationNormalizedLoaded, Router } from 'vue-router';
 import Cookies from 'js-cookie';
-import { chunk } from 'lodash';
+import chunk from 'lodash/chunk';
 
 const orderPattern = new RegExp(`^${config.tags.prefix}:order:(-?\\d+)$`, 'i');
 const hiddenTag = `${config.tags.prefix}:${config.tags.hiddenTag}`;
