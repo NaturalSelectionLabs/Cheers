@@ -99,7 +99,7 @@ async function loadAssets(parsedAssets: GeneralAsset[]) {
         return [];
     }
 
-    const apiUser = (await RSS3.getAPIUser().persona) as IRSS3;
+    const apiUser = RSS3.getAPIUser().persona as IRSS3;
     const assetIDList = parsedAssets.map((asset) =>
         RSS3Utils.id.getAsset(asset.platform, asset.identity, asset.type, asset.uniqueID),
     );
@@ -153,7 +153,7 @@ async function initAccounts(pageOwner = RSS3.getPageOwner()) {
     const listed: RSS3Account[] = [];
     const unlisted: RSS3Account[] = [];
 
-    const allAccounts = (await pageOwner.profile?.accounts) || [];
+    const allAccounts = pageOwner.profile?.accounts || [];
     for (const account of allAccounts) {
         if (account.tags?.includes(`${config.tags.prefix}:${config.tags.hiddenTag}`)) {
             unlisted.push(account);
@@ -169,7 +169,7 @@ async function initAccounts(pageOwner = RSS3.getPageOwner()) {
 }
 
 async function initContent(timestamp: string = '', isWeb3Only: boolean) {
-    const pageOwner = await RSS3.getPageOwner();
+    const pageOwner = RSS3.getPageOwner();
     const apiUserPersona = RSS3.getAPIUser().persona as IRSS3;
 
     let QUERY_STRING = isWeb3Only ? 'Mirror.XYZ' : 'Twitter,Misskey,Mirror.XYZ,Jike';
@@ -221,7 +221,7 @@ function fixURLSchemas(url: string) {
 }
 
 async function updateAssetTags(assetFields: CustomField_PassAssets[]) {
-    const loginUser = await RSS3.getLoginUser();
+    const loginUser = RSS3.getLoginUser();
     if (loginUser.file) {
         const personaFile = loginUser.file;
         // Init base structure
