@@ -68,9 +68,13 @@
                             <template #header>
                                 <i
                                     v-if="isOwner"
-                                    class="bx bx-pencil bx-xs cursor-pointer"
+                                    class="bx bx-pencil bx-xs relative cursor-pointer"
                                     @click="toManageNFTs(className)"
-                                />
+                                >
+                                    <span
+                                        class="absolute -right-1.5 -top-1.5 inline-flex w-2 h-2 bg-red-500 rounded-full"
+                                    />
+                                </i>
                             </template>
                             <template #content>
                                 <NFTItem
