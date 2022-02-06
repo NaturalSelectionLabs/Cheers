@@ -7,7 +7,6 @@ const koaViews = require('koa-views');
 const koaStatic = require('koa-static');
 const path = require('path');
 const axios = require('axios');
-const ethers = require('ethers');
 
 const app = new Koa();
 app.use(CORS());
@@ -20,6 +19,16 @@ app.use(
     }),
 );
 
+const getNameByAddress = async (address) => {
+    try {
+        const name = (await axios.get(`https://rss3.domains/address/${address}`)).data;
+        return name?.rnsName.replace('.rss3', '') || name?.dasName || name?.ensName || '';
+    } catch (e) {
+        console.log(e);
+        return '';
+    }
+};
+
 const getName = async (host, url) => {
     if (host.split('.').length > 2) {
         return host.split('.').slice(0, -2).join('.');
@@ -29,15 +38,11 @@ const getName = async (host, url) => {
 };
 
 const getAddress = async (name) => {
-    if (/^0x[a-fA-F0-9]{40}$/.test(name)) {
-        return name;
-    } else {
-        try {
-            return (await axios.get(`https://rss3.domains/name/${name}`)).data.address;
-        } catch (e) {
-            console.log(e);
-            return '';
-        }
+    try {
+        return (await axios.get(`https://rss3.domains/name/${name}`)).data.address;
+    } catch (e) {
+        console.log(e);
+        return '';
     }
 };
 
@@ -54,12 +59,28 @@ const router = new Router();
 
 const injectMetadata = async (ctx) => {
     // extract name
-    const name = await getName(ctx.host, ctx.url);
+    const host = ctx.host;
+    const url = ctx.url;
+    const aon = await getName(host, url);
 
-    // get address
     let address = '';
-    if (name) {
-        address = await getAddress(name);
+    // get address
+    if (/^0x[a-fA-F0-9]{40}$/.test(aon)) {
+        // try whether can use name
+        const name = await getNameByAddress(aon);
+        if (name) {
+            // redirect to name
+            const rootDomain = host.split('.').slice(-2).join('.');
+            const newURL = url.replace(`${rootDomain}/${aon}`, `${name}.${rootDomain}`);
+
+            ctx.response.redirect(newURL);
+            return;
+        } else {
+            // no name found, use address
+            address = aon;
+        }
+    } else {
+        address = await getAddress(aon);
     }
 
     // request for persona
