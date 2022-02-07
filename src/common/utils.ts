@@ -175,7 +175,7 @@ async function initContent(timestamp: string = '', isWeb3Only: boolean) {
     let QUERY_STRING = isWeb3Only ? 'Mirror.XYZ' : 'Twitter,Misskey,Mirror.XYZ,Jike';
 
     let allItems =
-        (await apiUserPersona.items.getListByPersona({
+        (await apiUserPersona.items.getList({
             persona: pageOwner.address,
             limit: config.splitPageLimits.contents,
             tsp: timestamp,
