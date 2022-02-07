@@ -1,25 +1,24 @@
 import config from '@/config';
-import Accounts from '@/views/Account/Accounts.vue';
-import SetupAccounts from '@/views/Account/SetupAccounts.vue';
-import Gitcoins from '@/views/Donation/Gitcoins.vue';
-import SetupGitcoins from '@/views/Donation/SetupGitcoins.vue';
-import SingleGitcoin from '@/views/Donation/SingleGitcoin.vue';
-import Followers from '@/views/Follow/Followers.vue';
-import Followings from '@/views/Follow/Followings.vue';
-import Footprints from '@/views/Footprint/Footprints.vue';
-import SetupFootprints from '@/views/Footprint/SetupFootprints.vue';
-import SingleFootprint from '@/views/Footprint/SingleFootprint.vue';
-import Home from '@/views/Home.vue';
-import Index from '@/views/Index.vue';
-import NFTs from '@/views/NFT/NFTs.vue';
-import SetupNFTs from '@/views/NFT/SetupNFTs.vue';
-import SingleNFT from '@/views/NFT/SingleNFT.vue';
-import EditProfile from '@/views/Setup/EditProfile.vue';
-import RNS from '@/views/Setup/RNS.vue';
-import RNSPending from '@/views/Setup/RNSPending.vue';
-import Setup from '@/views/Setup/Setup.vue';
+const Accounts = () => import('@/views/Account/Accounts.vue');
+const SetupAccounts = () => import('@/views/Account/SetupAccounts.vue');
+const Gitcoins = () => import('@/views/Donation/Gitcoins.vue');
+const SetupGitcoins = () => import('@/views/Donation/SetupGitcoins.vue');
+const SingleGitcoin = () => import('@/views/Donation/SingleGitcoin.vue');
+const Followers = () => import('@/views/Follow/Followers.vue');
+const Followings = () => import('@/views/Follow/Followings.vue');
+const Footprints = () => import('@/views/Footprint/Footprints.vue');
+const SetupFootprints = () => import('@/views/Footprint/SetupFootprints.vue');
+const SingleFootprint = () => import('@/views/Footprint/SingleFootprint.vue');
+const Home = () => import('@/views/Home.vue');
+const Index = () => import('@/views/Index.vue');
+const NFTs = () => import('@/views/NFT/NFTs.vue');
+const SetupNFTs = () => import('@/views/NFT/SetupNFTs.vue');
+const SingleNFT = () => import('@/views/NFT/SingleNFT.vue');
+const EditProfile = () => import('@/views/Setup/EditProfile.vue');
+const RNS = () => import('@/views/Setup/RNS.vue');
+const RNSPending = () => import('@/views/Setup/RNSPending.vue');
+const Setup = () => import('@/views/Setup/Setup.vue');
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
-
 const basePath = config.subDomain.isSubDomainMode ? '/' : '/:address/';
 
 export const routes: RouteRecordRaw[] = [

@@ -31,6 +31,26 @@ module.exports = (env, argv) => ({
             url: false,
         },
     },
+    optimization: {
+        splitChunks: {
+            cacheGroups: {
+                vendors: {
+                    chunks: 'all',
+                    test: /[\\/]node_modules[\\/]/,
+                    name: 'vendors',
+                    minChunks: 2,
+                },
+                ethersProjectGroup: {
+                    test: /@ethersproject/,
+                    chunks: 'initial',
+                    name: 'ethersProjectGroup',
+                    enforce: true,
+                    priority: 5,
+                    reuseExistingChunk: true,
+                },
+            },
+        },
+    },
     module: {
         strictExportPresence: true,
         rules: [
