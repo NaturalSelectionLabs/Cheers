@@ -38,7 +38,7 @@
         "@koa/router": "10.1.1",
         "@sentry/tracing": "6.17.3",
         "@sentry/vue": "6.16.1",
-        "@tailwindcss/aspect-ratio": "0.3.0",
+        "@tailwindcss/aspect-ratio": "0.4.0",
         "@tailwindcss/line-clamp": "0.2.2",
         "@walletconnect/web3-provider": "1.7.1",
         "assert": "2.0.0",
