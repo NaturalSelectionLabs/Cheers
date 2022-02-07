@@ -573,6 +573,9 @@ export default class Home extends Vue {
             this.startLoadingContents(),
             this.checkUserState(),
         ]);
+
+        // setup affix event
+        this.affixEvent(true);
     }
 
     async checkUserState() {
@@ -714,7 +717,6 @@ export default class Home extends Vue {
         this.contentTimestamp = timestamp;
         this.isContentsHaveMore = haveMore;
         this.isLoadingContents = false;
-        this.affixEvent(true);
     }
 
     async loadMoreContents() {
