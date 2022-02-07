@@ -245,20 +245,24 @@ async function initUser(user: RSS3DetailPersona | RSS3FullPersona, skipSignSync:
         if (user.name && !user.address) {
             user.address = await rns.name2Addr(user.name);
         }
-        if (user.address && !user.name) {
-            user.name = await rns.addr2Name(user.address);
-        }
-        user.file = (await RSS3APIPersona.files.get(user.address)) as RSS3Index;
-        if ('persona' in user) {
+        const result = await Promise.all([
+            RSS3APIPersona.backlinks.getList(user.address, 'following'),
+            RSS3APIPersona.links.getList(user.address, 'following'),
+            RSS3APIPersona.files.get(user.address),
+            !user.name ? rns.addr2Name(user.address) : user.name,
+        ]);
+        user.followers = result[0];
+        user.followings = result[1];
+        user.file = result[2] as RSS3Index;
+        user.name = result[3];
+        if ('persona' in user && user.file) {
             // Sync persona
             user.persona.files.set(user.file);
             if (!skipSignSync) {
                 await user.persona.files.sync();
             }
         }
-        user.profile = user.file.profile || {};
-        user.followers = await RSS3APIPersona.backlinks.getList(user.address, 'following');
-        user.followings = await RSS3APIPersona.links.getList(user.address, 'following');
+        user.profile = user.file?.profile || {};
         user.isReady = true;
     });
 }
