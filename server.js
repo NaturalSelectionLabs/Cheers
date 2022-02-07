@@ -7,9 +7,11 @@ const koaViews = require('koa-views');
 const koaStatic = require('koa-static');
 const path = require('path');
 const axios = require('axios');
+const compress = require('koa-compress');
 
 const app = new Koa();
 app.use(CORS());
+app.use(compress());
 
 app.use(koaStatic(path.join(__dirname, 'dist')));
 
