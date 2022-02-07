@@ -1,5 +1,3 @@
-/* eslint-disable import/no-anonymous-default-export */
-import setupTheme from '@/common/theme';
 import utils from '@/common/utils';
 import legacyConfig from '@/config';
 import WalletConnectProvider from '@walletconnect/web3-provider';
@@ -247,20 +245,24 @@ async function initUser(user: RSS3DetailPersona | RSS3FullPersona, skipSignSync:
         if (user.name && !user.address) {
             user.address = await rns.name2Addr(user.name);
         }
-        if (user.address && !user.name) {
-            user.name = await rns.addr2Name(user.address);
-        }
-        user.file = (await RSS3APIPersona.files.get(user.address)) as RSS3Index;
-        if ('persona' in user) {
+        const result = await Promise.all([
+            RSS3APIPersona.backlinks.getList(user.address, 'following'),
+            RSS3APIPersona.links.getList(user.address, 'following'),
+            RSS3APIPersona.files.get(user.address),
+            !user.name ? rns.addr2Name(user.address) : user.name,
+        ]);
+        user.followers = result[0];
+        user.followings = result[1];
+        user.file = result[2] as RSS3Index;
+        user.name = result[3];
+        if ('persona' in user && user.file) {
             // Sync persona
             user.persona.files.set(user.file);
             if (!skipSignSync) {
                 await user.persona.files.sync();
             }
         }
-        user.profile = user.file.profile || {};
-        user.followers = await RSS3APIPersona.backlinks.getList(user.address, 'following');
-        user.followings = await RSS3APIPersona.links.getList(user.address, 'following');
+        user.profile = user.file?.profile || {};
         user.isReady = true;
     });
 }
@@ -392,8 +394,6 @@ export default {
                     await initUser(RSS3PageOwner);
                 }
                 await setPageTitleFavicon();
-                // Setup theme
-                //await setupTheme();
                 dispatchEvent(Events.pageOwnerReady, RSS3PageOwner);
                 isSettingPageOwner = false;
                 resolve(RSS3PageOwner);
@@ -418,22 +418,6 @@ export default {
     },
     isValidRSS3,
 
-    buildProductBaseURL: (product: string, address: string, name?: string) => {
-        if (product in config.productsList) {
-            const p = config.productsList[product];
-            if (p.subDomainMode) {
-                if (name) {
-                    const fixedName = name.endsWith(config.rns.suffix) ? name.replace(config.rns.suffix, '') : name;
-                    return `${p.schema}${fixedName}.${p.baseDomain}`;
-                } else {
-                    return `${p.schema}${p.baseDomain}/${address}`;
-                }
-            } else {
-                return `${p.schema}${p.baseDomain}/${name || address}`;
-            }
-        }
-        return '';
-    },
     getAvailableThemes(assets: RSS3AutoAsset[], _passAssetsField: CustomField_PassAssets[]) {
         // ${platform}-${identity}-${type}-${uniqueID}
         const availableThemes: Theme[] = [];

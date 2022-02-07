@@ -12,7 +12,9 @@
         "serv:dev": "npm run build:dev && npm run serv",
         "serv:prod": "npm run build && npm run serv",
         "start": "npm run serv",
-        "pretty": "prettier --write \"./**/*.{js,vue,json}\""
+        "pretty": "prettier --write \"./**/*.{js,vue,json}\"",
+        "generateAnalyzeFile": "webpack --profile --json > stats.json",
+        "analyze": "webpack-bundle-analyzer --port 8888 ./dist/stats.json"
     },
     "lint-staged": {
         "**/*": "prettier --write --ignore-unknown"
@@ -32,7 +34,6 @@
     "homepage": "https://github.com/NaturalSelectionLabs/Web3Pass#readme",
     "dependencies": {
         "@babel/runtime": "7.16.7",
-        "@google/model-viewer": "1.9.2",
         "@koa/cors": "3.1.0",
         "@koa/router": "10.1.1",
         "@sentry/tracing": "6.17.3",
@@ -45,8 +46,6 @@
         "axios": "0.24.0",
         "boxicons": "2.1.1",
         "buffer": "6.0.3",
-        "canvas-confetti": "1.4.0",
-        "colorthief": "2.3.2",
         "crypto-browserify": "3.12.0",
         "ejs": "3.1.6",
         "eth-crypto": "2.1.0",
@@ -61,7 +60,6 @@
         "marked": "4.0.10",
         "moment": "2.29.1",
         "os-browserify": "0.3.0",
-        "postcss-100vh-fix": "1.0.2",
         "postcss-nested": "5.0.6",
         "raw-loader": "4.0.2",
         "rss3": "0.8.15",
@@ -77,7 +75,8 @@
         "vue-moment": "4.1.0",
         "vue-recaptcha-v3": "2.0.1",
         "vue3-autocounter": "1.0.6",
-        "vuedraggable": "4.1.0"
+        "vuedraggable": "4.1.0",
+        "webpack-bundle-analyzer": "4.5.0"
     },
     "devDependencies": {
         "@babel/core": "7.16.12",

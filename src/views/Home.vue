@@ -348,10 +348,6 @@
                 :showingAccountDetails="showingAccountDetails"
                 @closeDialog="closeAccountDialog"
             />
-            <!-- <Confetti
-                v-if="!isLoadingPersona && isOwner"
-                :isPCLayout="isPCLayout"
-            /> -->
         </div>
     </div>
     <div v-else class="flex items-center justify-center h-screen text-center">
@@ -376,7 +372,6 @@
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
 import Button from '@/components/Button/Button.vue';
-import BarCard from '@/components/Card/BarCard.vue';
 import Profile from '@/components/Profile/Profile.vue';
 import AccountItem from '@/components/Account/AccountItem.vue';
 import NFTItem from '@/components/NFT/NFTItem.vue';
@@ -407,10 +402,8 @@ import Header from '@/components/Common/Header.vue';
 import AccountModal from '@/components/Account/AccountModal.vue';
 import Smile from '@/components/Icons/Smile.vue';
 import LoadingSmile from '@/components/Loading/LoadingSmile.vue';
-import { flattenDeep } from 'lodash';
+import flattenDeep from 'lodash/flattenDeep';
 import { formatter } from '@/common/address';
-import Confetti from '@/components/Common/Confetti.vue';
-import axios from 'axios';
 
 interface Relations {
     followers: string[];
@@ -425,7 +418,6 @@ interface Relations {
         FootprintItem,
         Button,
         TransBarCard,
-        BarCard,
         Profile,
         AccountItem,
         NFTItem,
@@ -440,7 +432,6 @@ interface Relations {
         AccountModal,
         Smile,
         LoadingSmile,
-        Confetti,
     },
 })
 export default class Home extends Vue {
@@ -548,28 +539,17 @@ export default class Home extends Vue {
         this.ethAddress = pageOwner.address;
 
         utils.subDomainModeRedirect(this.rns);
-
-        this.isAccountRegistered = !!pageOwner.file?.signature;
-
         await this.updateUserInfo();
-
-        if (RSS3.isValidRSS3()) {
-            await RSS3.ensureLoginUser();
-            this.checkIsFollowing();
-            this.isOwner = RSS3.isNowOwner();
-        }
-
-        this.isLoadingPersona = false;
     }
 
     async updateUserInfo() {
         const pageOwner = RSS3.getPageOwner();
-
         const profile = pageOwner.profile;
 
         this.rss3Profile.avatar = profile?.avatar?.[0] || legacyConfig.defaultAvatar;
         this.rss3Profile.username = profile?.name || pageOwner.name || formatter(pageOwner.address);
         this.rss3Profile.address = this.ethAddress;
+        this.isAccountRegistered = !!pageOwner.file?.signature;
         if (profile?.bio) {
             // Profile
             const { extracted, fieldsMatch } = utils.extractEmbedFields(profile?.bio || '', ['SITE']);
@@ -584,34 +564,28 @@ export default class Home extends Vue {
             }
         }
 
-        this.startLoadingAccounts();
-
         this.rss3Relations.followers = pageOwner.followers;
         this.rss3Relations.followings = pageOwner.followings;
+        // load accounts, assets, contents and update user follow/unfollow/login state
+        await Promise.all([
+            this.startLoadingAccounts(),
+            this.startLoadingAssets(),
+            this.startLoadingContents(),
+            this.checkUserState(),
+        ]);
 
-        // Load assets
-        await this.startLoadingAssets(true);
+        // setup affix event
+        this.affixEvent(true);
+    }
 
-        // Load Contents
-        setTimeout(async () => {
-            const localStoreIsWeb3Only = JSON.parse(utils.getStorage('isWeb3Only') || 'false');
-            this.isWeb3Only = localStoreIsWeb3Only;
-            const { listed, haveMore, timestamp } = await utils.initContent('', this.isWeb3Only);
-            while (listed.length > 0) {
-                if ('target' in listed[0] && listed[0].target.field.includes('Mirror.XYZ')) {
-                    if (this.contents.findIndex((item) => 'target' in item && item.title === listed[0].title) === -1) {
-                        this.contents.push(listed[0]);
-                    }
-                } else {
-                    this.contents.push(listed[0]);
-                }
-                listed.shift();
-            }
-            this.contentTimestamp = timestamp;
-            this.isContentsHaveMore = haveMore;
-            this.isLoadingContents = false;
-            this.affixEvent(true);
-        }, 0);
+    async checkUserState() {
+        if (RSS3.isValidRSS3()) {
+            await RSS3.ensureLoginUser();
+            this.checkIsFollowing();
+            this.isOwner = RSS3.isNowOwner();
+        }
+
+        this.isLoadingPersona = false;
     }
 
     startLoadingAccounts() {
@@ -629,18 +603,22 @@ export default class Home extends Vue {
         }, 0);
     }
 
-    async loadAssetDetails(assetList: GeneralAsset[], limit?: number) {
-        let assetDetails: AnyObject[] = []; // todo: fix this
-        if (limit) {
-            const previewList = limit <= assetList.length ? assetList.slice(0, limit) : assetList;
-            assetDetails = await utils.loadAssets(previewList);
-        } else {
-            assetDetails = await utils.loadAssets(assetList);
-        }
-        return assetDetails;
+    async startLoadingAssets() {
+        this.isLoadingAssets = {
+            NFT: true,
+            Gitcoin: true,
+            Footprint: true,
+        };
+        const allAssets = await utils.initAssets();
+        // laod NFT, donation and footprint
+        await Promise.all([
+            this.ivLoadNFT(allAssets.nftsWithClassName),
+            this.ivLoadGitcoin(allAssets.donations.slice(0, config.assets.brief)),
+            this.ivLoadFootprint(allAssets.footprints.slice(0, config.assets.brief)),
+        ]);
     }
 
-    async ivLoadNFT(assets: GeneralAssetWithClass[]): Promise<boolean> {
+    async ivLoadNFT(assets: GeneralAssetWithClass[]) {
         // Get NFTs
         const classifiedBriefList: {
             [className: string]: GeneralAssetWithClass[];
@@ -695,58 +673,50 @@ export default class Home extends Vue {
         this.classifiedList = classifiedList;
         this.allClasses = Object.keys(this.classifiedList);
         this.isLoadingAssets.NFT = false;
-        return true;
     }
 
-    async ivLoadGitcoin(assets: GeneralAsset[]): Promise<boolean> {
+    async ivLoadGitcoin(assets: GeneralAsset[]) {
         if (assets) {
             this.gitcoins = await this.loadAssetDetails(assets);
             this.isLoadingAssets.Gitcoin = false;
-            return true;
         }
-        return false;
     }
 
-    async ivLoadFootprint(assets: GeneralAsset[]): Promise<boolean> {
+    async ivLoadFootprint(assets: GeneralAsset[]) {
         if (assets) {
             this.footprints = await this.loadAssetDetails(assets);
             this.isLoadingAssets.Footprint = false;
-            return true;
         }
-        return false;
     }
 
-    async ivLoadAsset(): Promise<boolean> {
-        let isFinish: boolean;
-        const allAssets = await utils.initAssets();
-        const result = await Promise.all([
-            this.ivLoadNFT(allAssets.nftsWithClassName),
-            this.ivLoadGitcoin(allAssets.donations.slice(0, config.assets.brief)),
-            this.ivLoadFootprint(allAssets.footprints.slice(0, config.assets.brief)),
-        ]);
-        isFinish = result[0] && result[1] && result[2];
-        if (isFinish) {
-            if (this.loadingAssetsIntervalID) {
-                clearInterval(this.loadingAssetsIntervalID);
-                this.loadingAssetsIntervalID = null;
+    async loadAssetDetails(assetList: GeneralAsset[], limit?: number) {
+        let assetDetails: AnyObject[] = []; // todo: fix this
+        if (limit) {
+            const previewList = limit <= assetList.length ? assetList.slice(0, limit) : assetList;
+            assetDetails = await utils.loadAssets(previewList);
+        } else {
+            assetDetails = await utils.loadAssets(assetList);
+        }
+        return assetDetails;
+    }
+
+    async startLoadingContents() {
+        const localStoreIsWeb3Only = JSON.parse(utils.getStorage('isWeb3Only') || 'false');
+        this.isWeb3Only = localStoreIsWeb3Only;
+        const { listed, haveMore, timestamp } = await utils.initContent('', this.isWeb3Only);
+        while (listed.length > 0) {
+            if ('target' in listed[0] && listed[0].target.field.includes('Mirror.XYZ')) {
+                if (this.contents.findIndex((item) => 'target' in item && item.title === listed[0].title) === -1) {
+                    this.contents.push(listed[0]);
+                }
+            } else {
+                this.contents.push(listed[0]);
             }
+            listed.shift();
         }
-        return isFinish;
-    }
-
-    async startLoadingAssets(refresh: boolean) {
-        if (refresh) {
-            this.isLoadingAssets = {
-                NFT: true,
-                Gitcoin: true,
-                Footprint: true,
-            };
-        }
-        if (!(await this.ivLoadAsset())) {
-            this.loadingAssetsIntervalID = setInterval(async () => {
-                await this.ivLoadAsset();
-            }, 2000);
-        }
+        this.contentTimestamp = timestamp;
+        this.isContentsHaveMore = haveMore;
+        this.isLoadingContents = false;
     }
 
     async loadMoreContents() {

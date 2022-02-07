@@ -91,7 +91,7 @@ import RSS3 from '@/common/rss3';
 import { utils as RSS3Utils } from 'rss3';
 import legacyConfig from '@/config';
 import config from '@/common/config';
-import { debounce, filter } from 'lodash';
+import debounce from 'lodash/debounce';
 import utils from '@/common/utils';
 import Header from '@/components/Common/Header.vue';
 import { DetailedNFT, GeneralAssetWithClass } from '@/common/types';
@@ -101,7 +101,6 @@ import { formatter } from '@/common/address';
 import AssetCard from '@/components/Card/AssetCard.vue';
 import Smile from '@/components/Icons/Smile.vue';
 import LoadingSmile from '@/components/Loading/LoadingSmile.vue';
-import axios from 'axios';
 
 @Options({
     name: 'NFTs',
@@ -132,6 +131,10 @@ export default class NFTs extends Vue {
     isLoadingAssets: boolean = true;
     isHavingMoreAssets: boolean = true;
     fallbackImage: string = legacyConfig.undefinedImageAlt;
+
+    async mounted() {
+        this.mountScrollEvent();
+    }
 
     async initLoad() {
         this.lastRoute = this.$route.fullPath;

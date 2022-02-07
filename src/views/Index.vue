@@ -104,14 +104,7 @@
                     Your Web3 in one shot. <br />
                 </span>
                 <div
-                    class="
-                        mt-4
-                        mx-auto
-                        w-60
-                        text-white text-xl
-                        leading-17.5
-                        md:flex md:flex-row md:gap-6 md:justify-center md:mt-8 md:w-full
-                    "
+                    class="mt-4 mx-auto w-60 text-white text-xl leading-17.5 md:flex md:flex-row md:gap-6 md:justify-center md:mt-8 md:w-full"
                 >
                     <Button size="sm" class="mb-6 w-60 h-13 text-walletConnect bg-card-bg" @click="walletConnect">
                         <WalletConnect :size="30" />
@@ -162,7 +155,6 @@ import Metamask from '@/components/Icons/Metamask.vue';
 import Loading from '@/components/Loading/Loading.vue';
 import LoadingContainer from '@/components/Loading/LoadingContainer.vue';
 import Logo from '@/components/Icons/Logo.vue';
-import ShadowLogo from '@/components/Icons/ShadowLogo.vue';
 import MenuIcon from '@/components/Icons/Menu.vue';
 import CloseIcon from '@/components/Icons/Close.vue';
 import config from '@/config';
@@ -177,7 +169,6 @@ import utils from '@/common/utils';
         Loading,
         LoadingContainer,
         Logo,
-        ShadowLogo,
         MenuIcon,
         CloseIcon,
     },

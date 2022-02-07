@@ -59,7 +59,7 @@ import GitcoinCard from '@/components/Donation/GitcoinCard.vue';
 import config from '@/config';
 import RSS3 from '@/common/rss3';
 import { DetailedDonation, GeneralAsset } from '@/common/types';
-import { debounce } from 'lodash';
+import debounce from 'lodash/debounce';
 import utils from '@/common/utils';
 import Header from '@/components/Common/Header.vue';
 import { utils as RSS3Utils } from 'rss3';
@@ -68,7 +68,6 @@ import IntersectionObserverContainer from '@/components/Common/IntersectionObser
 import { formatter } from '@/common/address';
 import Smile from '@/components/Icons/Smile.vue';
 import LoadingSmile from '@/components/Loading/LoadingSmile.vue';
-import axios from 'axios';
 
 @Options({
     name: 'Gitcoins',

@@ -3,6 +3,7 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
 const { VueLoaderPlugin } = require('vue-loader');
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 module.exports = (env, argv) => ({
     devtool: argv.mode === 'production' ? false : 'inline-cheap-module-source-map',
     entry: {
@@ -28,6 +29,26 @@ module.exports = (env, argv) => ({
             http: require.resolve('stream-http'),
             os: require.resolve('os-browserify/browser'),
             url: false,
+        },
+    },
+    optimization: {
+        splitChunks: {
+            cacheGroups: {
+                vendors: {
+                    chunks: 'all',
+                    test: /[\\/]node_modules[\\/]/,
+                    name: 'vendors',
+                    minChunks: 2,
+                },
+                ethersProjectGroup: {
+                    test: /@ethersproject/,
+                    chunks: 'initial',
+                    name: 'ethersProjectGroup',
+                    enforce: true,
+                    priority: 5,
+                    reuseExistingChunk: true,
+                },
+            },
         },
     },
     module: {
@@ -114,6 +135,10 @@ module.exports = (env, argv) => ({
         ],
     },
     plugins: [
+        new BundleAnalyzerPlugin({
+            analyzerMode: 'disabled',
+            generateStatsFile: true, // only set true under develop enviorment
+        }),
         new HtmlWebpackPlugin(
             argv.mode === 'production'
                 ? {

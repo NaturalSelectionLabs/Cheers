@@ -30,6 +30,7 @@
             :src="mainUrl"
             class="nft-item"
             :class="variableNFTClass"
+            ar
             ar-modes="webxr scene-viewer quick-look"
             environment-image="neutral"
             auto-rotate
@@ -97,7 +98,6 @@ export default class NFTItem extends Vue {
         ) {
             return 'website';
         } else if (this.mainUrl.endsWith('.gltf') || this.mainUrl.endsWith('.glb')) {
-            import(/* webpackChunkName: "model-viewer" */ '@google/model-viewer');
             return 'model';
         } else {
             return 'image';

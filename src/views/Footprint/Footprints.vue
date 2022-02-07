@@ -62,7 +62,7 @@ import legacyConfig from '@/config';
 import config from '@/common/config';
 import RSS3 from '@/common/rss3';
 import { utils as RSS3Utils } from 'rss3';
-import { debounce } from 'lodash';
+import debounce from 'lodash/debounce';
 import utils from '@/common/utils';
 import Header from '@/components/Common/Header.vue';
 import { DetailedFootprint, GeneralAsset } from '@/common/types';
@@ -71,7 +71,6 @@ import TransBarCard from '@/components/Card/TransBarCard.vue';
 import { formatter } from '@/common/address';
 import Smile from '@/components/Icons/Smile.vue';
 import LoadingSmile from '@/components/Loading/LoadingSmile.vue';
-import axios from 'axios';
 
 @Options({
     name: 'Footprints',
