@@ -145,17 +145,18 @@ export default class Followers extends Vue {
     async loadRNS() {
         const startNo = this.loadingNo;
         const endNo = this.followRenderList.length;
-        for (let i = startNo; i < endNo; i++) {
-            if (this.isPageActive) {
-                const item = this.followRenderList[i];
+        const indexList = Array.from(new Array(endNo + 1).keys()).slice(startNo);
+        this.loadingNo = endNo;
+        await Promise.all(
+            indexList.map(async (index) => {
+                const item = this.followRenderList[index];
                 try {
                     item.rns = await RNS.addr2Name(item.address);
                 } catch (e) {
                     console.log(item, e);
                 }
-                this.loadingNo = i;
-            }
-        }
+            }),
+        );
     }
 
     async activated() {
