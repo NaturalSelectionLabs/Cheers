@@ -595,6 +595,34 @@ export default class Home extends Vue {
     }
 
     async ivLoadNFT(assets: GeneralAssetWithClass[]) {
+        const nftsWithClassName = this.generateNFTsWithClassName(assets);
+        const assetIDList = nftsWithClassName.map((asset) =>
+            RSS3Utils.id.getAsset(asset.platform, asset.identity, asset.type, asset.uniqueID),
+        );
+        const displayedNFTsDetail = await utils.loadAssetsWithNoRetry(assetIDList);
+
+        this.sortNFTDetails(nftsWithClassName, displayedNFTsDetail);
+        this.isLoadingAssets.NFT = false;
+
+        for (let i = 0; i < 10; i++) {
+            const assetsNoDetails = assetIDList.filter(
+                (asset) => !displayedNFTsDetail.find((detail) => detail.id === asset),
+            );
+
+            if (!assetsNoDetails.length) {
+                // all the assets have details, break
+                break;
+            } else {
+                // already request but not get full details
+                // sleep for two seconds
+                await new Promise((r) => setTimeout(r, 2000));
+            }
+            displayedNFTsDetail.push(...(await utils.loadAssetsWithNoRetry(assetsNoDetails)));
+            this.sortNFTDetails(nftsWithClassName, displayedNFTsDetail);
+        }
+    }
+
+    generateNFTsWithClassName(assets: GeneralAssetWithClass[]) {
         // Get NFTs
         const classifiedBriefList: {
             [className: string]: GeneralAssetWithClass[];
@@ -611,8 +639,10 @@ export default class Home extends Vue {
         });
 
         const nftsWithClassName = flattenDeep(Object.values(classifiedBriefList));
-        const displayedNFTsDetail = await utils.loadAssets(nftsWithClassName);
+        return nftsWithClassName;
+    }
 
+    sortNFTDetails(nftsWithClassName: GeneralAssetWithClass[], displayedNFTsDetail: AnyObject[]) {
         const classifiedList: {
             [className: string]: DetailedNFT[];
         } = {
@@ -621,7 +651,6 @@ export default class Home extends Vue {
             Awards: [],
             Organizations: [],
         };
-
         nftsWithClassName.map((nft) => {
             const className = nft.class || 'Collectibles';
             if (!(className in classifiedList)) {
@@ -642,21 +671,72 @@ export default class Home extends Vue {
 
         this.classifiedList = classifiedList;
         this.allClasses = Object.keys(this.classifiedList);
-        this.isLoadingAssets.NFT = false;
     }
 
     async ivLoadGitcoin(assets: GeneralAsset[]) {
         if (assets) {
-            this.gitcoins = await this.loadAssetDetails(assets);
+            const assetIDList = assets.map((asset) =>
+                RSS3Utils.id.getAsset(asset.platform, asset.identity, asset.type, asset.uniqueID),
+            );
+            const gitcoins = await utils.loadAssetsWithNoRetry(assetIDList);
+            this.gitcoins = this.sortAssets(assetIDList, gitcoins);
             this.isLoadingAssets.Gitcoin = false;
+            for (let i = 0; i < 10; i++) {
+                const assetsNoDetails = assetIDList.filter(
+                    (asset) => !this.gitcoins.find((detail) => detail.id === asset),
+                );
+
+                if (!assetsNoDetails.length) {
+                    // all the assets have details, break
+                    break;
+                } else {
+                    // already request but not get full details
+                    // sleep for two seconds
+                    await new Promise((r) => setTimeout(r, 2000));
+                }
+                gitcoins.push(...(await utils.loadAssetsWithNoRetry(assetsNoDetails)));
+                this.gitcoins = this.sortAssets(assetIDList, gitcoins);
+            }
         }
     }
 
     async ivLoadFootprint(assets: GeneralAsset[]) {
         if (assets) {
-            this.footprints = await this.loadAssetDetails(assets);
+            const assetIDList = assets.map((asset) =>
+                RSS3Utils.id.getAsset(asset.platform, asset.identity, asset.type, asset.uniqueID),
+            );
+            const footprints = await utils.loadAssetsWithNoRetry(assetIDList);
+            this.footprints = this.sortAssets(assetIDList, footprints);
             this.isLoadingAssets.Footprint = false;
+            for (let i = 0; i < 10; i++) {
+                const assetsNoDetails = assetIDList.filter(
+                    (asset) => !this.footprints.find((detail) => detail.id === asset),
+                );
+
+                if (!assetsNoDetails.length) {
+                    // all the assets have details, break
+                    break;
+                } else {
+                    // already request but not get full details
+                    // sleep for two seconds
+                    await new Promise((r) => setTimeout(r, 2000));
+                }
+                footprints.push(...(await utils.loadAssetsWithNoRetry(assetsNoDetails)));
+                this.footprints = this.sortAssets(assetIDList, footprints);
+            }
         }
+    }
+
+    sortAssets(assetIDList: string[], assetDetailsList: AnyObject[]) {
+        const sortedAssetDetailsList: AnyObject[] = [];
+        assetIDList.map((assetID) => {
+            const detailedAsset = assetDetailsList.find((details) => details.id === assetID);
+            if (detailedAsset) {
+                sortedAssetDetailsList.push(detailedAsset);
+            }
+        });
+
+        return sortedAssetDetailsList;
     }
 
     async loadAssetDetails(assetList: GeneralAsset[], limit?: number) {
