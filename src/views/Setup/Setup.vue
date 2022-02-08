@@ -317,7 +317,7 @@ export default class Setup extends Vue {
             window.history.back();
             window.location.reload();
         } else {
-            this.$router.push(config.subDomain.preferSubDomainMode ? '/' : `/${rns || ethAddress}`);
+            this.$router.push(legacyConfig.subDomain.isSubDomainMode ? '/' : `/${rns || ethAddress}`);
         }
     }
 
@@ -366,7 +366,7 @@ export default class Setup extends Vue {
         const ethAddress = pageOwner.address;
         const redirectFrom = utils.getCrossDomainStorage('redirectFrom');
         utils.setCrossDomainStorage('redirectFrom', '');
-        await this.$router.push(config.subDomain.preferSubDomainMode ? redirectFrom || '/' : `/${rns || ethAddress}`);
+        await this.$router.push(legacyConfig.subDomain.isSubDomainMode ? redirectFrom || '/' : `/${rns || ethAddress}`);
     }
 
     async mounted() {
