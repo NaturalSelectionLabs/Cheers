@@ -24,6 +24,10 @@
     <meta name="twitter:player" content="<%- url %>" />
     <meta name="twitter:player:width" content="360" />
     <meta name="twitter:player:height" content="800" />
+
+    <script>
+        window.USER = JSON.parse('<%- user %>' || "{}");
+    </script>
 </head>
 
 <body>

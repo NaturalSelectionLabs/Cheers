@@ -94,7 +94,7 @@ const injectMetadata = async (ctx) => {
 
     // embed default data (so page don't need to request again)
     await ctx.render('index', {
-        user: JSON.stringify(persona),
+        user: JSON.stringify(persona).replace(/\\/g, '\\\\'),
         title: (persona?.profile?.name ? persona?.profile?.name + "'s " : '') + 'Cheers.Bio',
         avatar: persona?.profile?.avatar?.[0]?.replace('ipfs://', 'https://ipfs.io/ipfs/') || defaultAvatar,
         bio: persona?.profile?.bio?.replace(/\n/g, ' ') || 'Cheers.Bio',
