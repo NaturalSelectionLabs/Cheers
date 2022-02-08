@@ -18,6 +18,7 @@ const EditProfile = () => import('@/views/Setup/EditProfile.vue');
 const RNS = () => import('@/views/Setup/RNS.vue');
 const RNSPending = () => import('@/views/Setup/RNSPending.vue');
 const Setup = () => import('@/views/Setup/Setup.vue');
+const Invalid = () => import('@/views/Invalid.vue');
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
 const basePath = config.subDomain.isSubDomainMode ? '/' : '/:address/';
 
@@ -112,6 +113,11 @@ export const routes: RouteRecordRaw[] = [
         path: '/pending',
         name: 'RNSPending',
         component: RNSPending,
+    },
+    {
+        path: '/invalid',
+        name: 'Invalid',
+        component: Invalid,
     },
 ];
 

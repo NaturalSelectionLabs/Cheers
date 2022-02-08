@@ -1,5 +1,5 @@
 <template>
-    <div id="main" v-if="isAccountExist" class="m-auto pb-12 pt-8 px-4 max-w-screen-lg text-body-text">
+    <div id="main" class="m-auto pb-12 pt-8 px-4 max-w-screen-lg text-body-text">
         <Header :displayLogo="true" />
         <div class="flex flex-col gap-4 md:flex-row">
             <section class="md:w-3/5">
@@ -350,23 +350,6 @@
             />
         </div>
     </div>
-    <div v-else class="flex items-center justify-center h-screen text-center">
-        <div class="flex flex-col gap-8 items-center justify-between px-4">
-            <Logo :size="200" />
-            <div class="max-w-md text-primary-text text-2xl">
-                <p>This account is invalid...</p>
-            </div>
-            <div class="mx-auto w-83.5 text-2xl leading-17.5">
-                <Button
-                    size="lg"
-                    class="mb-9 w-full h-17.5 text-body-text bg-primary-btn rounded-3xl"
-                    @click="toHomePage"
-                >
-                    <span> Go Home </span>
-                </Button>
-            </div>
-        </div>
-    </div>
 </template>
 
 <script lang="ts">
@@ -383,8 +366,6 @@ import utils from '@/common/utils';
 import legacyConfig from '@/config';
 import GitcoinItem from '@/components/Donation/GitcoinItem.vue';
 import { Profile as ProfileInfo, GeneralAsset, DetailedNFT, GeneralAssetWithClass } from '@/common/types';
-
-import Logo from '@/components/Icons/Logo.vue';
 
 import FootprintCard from '@/components/Footprint/FootprintCard.vue';
 import ContentCard from '@/components/Content/ContentCard.vue';
@@ -425,7 +406,6 @@ interface Relations {
         GitcoinItem,
         FootprintCard,
         ContentCard,
-        Logo,
         Toolbar,
         AssetCard,
         Header,
@@ -451,7 +431,6 @@ export default class Home extends Vue {
         isLink: false,
     };
     isAccountRegistered: boolean = true;
-    isAccountExist: boolean = true;
     isLoadingAssets: {
         NFT: boolean;
         Gitcoin: boolean;
@@ -461,7 +440,6 @@ export default class Home extends Vue {
         Gitcoin: true,
         Footprint: true,
     };
-    loadingAssetsIntervalID: ReturnType<typeof setInterval> | null = null;
     isLoadingContents: boolean = true;
     isContentsHaveMore: boolean = true;
     isLoadingMore: boolean = false;
@@ -531,7 +509,7 @@ export default class Home extends Vue {
         this.isShowingAccount = false;
 
         if (parseInt(pageOwner.address) === 0) {
-            this.isAccountExist = false;
+            this.$router.push('/invalid');
             return;
         }
 
@@ -1019,13 +997,6 @@ export default class Home extends Vue {
             this.gitcoins = [];
             this.footprints = [];
             await this.initLoad();
-        }
-    }
-
-    async deactivated() {
-        if (this.loadingAssetsIntervalID) {
-            clearInterval(this.loadingAssetsIntervalID);
-            this.loadingAssetsIntervalID = null;
         }
     }
 
