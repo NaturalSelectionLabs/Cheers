@@ -233,20 +233,18 @@ async function updateAssetTags(assetFields: CustomField_PassAssets[]) {
             personaFile['_pass'].assets = [];
         }
         const assets: CustomField_PassAssets[] = personaFile['_pass'].assets;
-        await Promise.all(
-            assetFields.map((afo) => {
-                // Asset Field Object (afo)
-                // Old   Asset Field  (oaf)
-                const index = assets.findIndex((oaf) => oaf.id === afo.id);
-                if (index === -1) {
-                    // New Asset
-                    assets.push(afo);
-                } else {
-                    // Replace old Asset
-                    assets.splice(index, 1, afo);
-                }
-            }),
-        );
+        assetFields.map((afo) => {
+            // Asset Field Object (afo)
+            // Old   Asset Field  (oaf)
+            const index = assets.findIndex((oaf) => oaf.id === afo.id);
+            if (index === -1) {
+                // New Asset
+                assets.push(afo);
+            } else {
+                // Replace old Asset
+                assets.splice(index, 1, afo);
+            }
+        });
 
         // Update field
         personaFile['_pass'].assets = assets;
@@ -258,24 +256,20 @@ async function updateAssetTags(assetFields: CustomField_PassAssets[]) {
 
 async function setAssetTags(listed: RSS3AutoAsset[], unlisted: RSS3AutoAsset[]) {
     const assets: CustomField_PassAssets[] = [];
-    await Promise.all(
-        listed.map(async (asset, index) => {
-            const afo: CustomField_PassAssets = {
-                id: asset,
-                order: index,
-            };
-            assets.push(afo);
-        }),
-    );
-    await Promise.all(
-        unlisted.map(async (asset) => {
-            const afo: CustomField_PassAssets = {
-                id: asset,
-                hide: true,
-            };
-            assets.push(afo);
-        }),
-    );
+    listed.map(async (asset, index) => {
+        const afo: CustomField_PassAssets = {
+            id: asset,
+            order: index,
+        };
+        assets.push(afo);
+    });
+    unlisted.map((asset) => {
+        const afo: CustomField_PassAssets = {
+            id: asset,
+            hide: true,
+        };
+        assets.push(afo);
+    });
     await updateAssetTags(assets);
 }
 
@@ -296,8 +290,8 @@ const setTaggedOrder = (tagged: TypesWithTag, order?: number) => {
     return tagged;
 };
 const setAccountsTags = async (listed: TypesWithTag[], unlisted: TypesWithTag[]): Promise<TypesWithTag[]> => {
-    await Promise.all(listed.map((tagged, index) => setTaggedOrder(tagged, index)));
-    await Promise.all(unlisted.map((tagged) => setTaggedOrder(tagged)));
+    listed.map((tagged, index) => setTaggedOrder(tagged, index));
+    unlisted.map((tagged) => setTaggedOrder(tagged));
     return listed.concat(unlisted);
 };
 

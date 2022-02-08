@@ -588,19 +588,17 @@ export default class Home extends Vue {
         this.isLoadingPersona = false;
     }
 
-    startLoadingAccounts() {
+    async startLoadingAccounts() {
         this.accounts = [];
         const pageOwner = RSS3.getPageOwner();
-        setTimeout(async () => {
-            const { listed } = await utils.initAccounts();
-            // Push original account
-            const accounts = [
-                {
-                    id: RSS3Utils.id.getAccount('EVM+', pageOwner?.address),
-                },
-            ].concat(listed);
-            this.accounts = accounts.map((account) => RSS3Utils.id.parseAccount(account.id));
-        }, 0);
+        const { listed } = await utils.initAccounts();
+        // Push original account
+        const accounts = [
+            {
+                id: RSS3Utils.id.getAccount('EVM+', pageOwner?.address),
+            },
+        ].concat(listed);
+        this.accounts = accounts.map((account) => RSS3Utils.id.parseAccount(account.id));
     }
 
     async startLoadingAssets() {
@@ -624,17 +622,15 @@ export default class Home extends Vue {
             [className: string]: GeneralAssetWithClass[];
         } = {};
 
-        await Promise.all(
-            assets.map((nft) => {
-                const className = nft.class || 'Collectibles';
-                if (!(className in classifiedBriefList)) {
-                    classifiedBriefList[className] = [];
-                }
-                if (classifiedBriefList[className].length < config.assets.brief) {
-                    classifiedBriefList[className].push(nft);
-                }
-            }),
-        );
+        assets.map((nft) => {
+            const className = nft.class || 'Collectibles';
+            if (!(className in classifiedBriefList)) {
+                classifiedBriefList[className] = [];
+            }
+            if (classifiedBriefList[className].length < config.assets.brief) {
+                classifiedBriefList[className].push(nft);
+            }
+        });
 
         const nftsWithClassName = flattenDeep(Object.values(classifiedBriefList));
         const displayedNFTsDetail = await utils.loadAssets(nftsWithClassName);
@@ -648,27 +644,23 @@ export default class Home extends Vue {
             Organizations: [],
         };
 
-        await Promise.all(
-            nftsWithClassName.map((nft) => {
-                const className = nft.class || 'Collectibles';
-                if (!(className in classifiedList)) {
-                    classifiedList[className] = [];
-                }
-                const detailedNFT = displayedNFTsDetail.find(
-                    (dNFT) => dNFT.id === RSS3Utils.id.getAsset(nft.platform, nft.identity, nft.type, nft.uniqueID),
-                );
-                if (detailedNFT) {
-                    classifiedList[className].push(detailedNFT);
-                }
-            }),
-        );
-        await Promise.all(
-            Object.keys(classifiedList).map((listName) => {
-                if (classifiedList[listName].length === 0 && listName !== 'Collectibles') {
-                    delete classifiedList[listName];
-                }
-            }),
-        );
+        nftsWithClassName.map((nft) => {
+            const className = nft.class || 'Collectibles';
+            if (!(className in classifiedList)) {
+                classifiedList[className] = [];
+            }
+            const detailedNFT = displayedNFTsDetail.find(
+                (dNFT) => dNFT.id === RSS3Utils.id.getAsset(nft.platform, nft.identity, nft.type, nft.uniqueID),
+            );
+            if (detailedNFT) {
+                classifiedList[className].push(detailedNFT);
+            }
+        });
+        Object.keys(classifiedList).map((listName) => {
+            if (classifiedList[listName].length === 0 && listName !== 'Collectibles') {
+                delete classifiedList[listName];
+            }
+        });
 
         this.classifiedList = classifiedList;
         this.allClasses = Object.keys(this.classifiedList);

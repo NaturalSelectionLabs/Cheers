@@ -154,29 +154,26 @@ export default class SetupNFTs extends Vue {
     async mounted() {
         this.isLoading = true;
         await utils.tryEnsureOrRedirect(this.$route, this.$router);
-        const loginUser = await RSS3.getLoginUser();
+        const loginUser = RSS3.getLoginUser();
         await RSS3.setPageOwner(loginUser.address);
         const profile = loginUser.profile;
         this.avatar = profile?.avatar?.[0] || legacyConfig.defaultAvatar;
 
         // Get NFTs
         const { nftsWithClassName, hiddenNfts } = await utils.initAssets();
-
         const displayedNFTsDetail = await utils.loadAssets(nftsWithClassName);
 
-        await Promise.all(
-            nftsWithClassName.map((nft) => {
-                const className = nft.class || 'Collectibles';
-                if (!(className in this.classifiedList)) {
-                    this.classifiedList[className] = [];
-                }
-                this.classifiedList[className].push(
-                    displayedNFTsDetail.find(
-                        (dNFT) => dNFT.id === RSS3Utils.id.getAsset(nft.platform, nft.identity, nft.type, nft.uniqueID),
-                    ) || {},
-                );
-            }),
-        );
+        nftsWithClassName.map((nft) => {
+            const className = nft.class || 'Collectibles';
+            if (!(className in this.classifiedList)) {
+                this.classifiedList[className] = [];
+            }
+            this.classifiedList[className].push(
+                displayedNFTsDetail.find(
+                    (dNFT) => dNFT.id === RSS3Utils.id.getAsset(nft.platform, nft.identity, nft.type, nft.uniqueID),
+                ) || {},
+            );
+        });
         this.hiddenList = await utils.loadAssets(hiddenNfts);
         this.allClasses = Object.keys(this.classifiedList);
 
@@ -215,33 +212,26 @@ export default class SetupNFTs extends Vue {
         // await utils.setAssetTags(listed, unlisted);
         const assets: CustomField_PassAssets[] = [];
 
-        await Promise.all(
-            this.allClasses.map(async (className) => {
-                await Promise.all(
-                    this.classifiedList[className].map((nft, index) => {
-                        assets.push({
-                            id: nft.id,
-                            class: className,
-                            order: index + 1, // prevent 0 (which will not be saved)
-                        });
-                    }),
-                );
-            }),
-        );
-
-        await Promise.all(
-            this.hiddenList.map((hiddenNFT) => {
+        this.allClasses.map((className) => {
+            this.classifiedList[className].map((nft, index) => {
                 assets.push({
-                    id: hiddenNFT.id,
-                    hide: true,
+                    id: nft.id,
+                    class: className,
+                    order: index + 1, // prevent 0 (which will not be saved)
                 });
-            }),
-        );
+            });
+        });
+        this.hiddenList.map((hiddenNFT) => {
+            assets.push({
+                id: hiddenNFT.id,
+                hide: true,
+            });
+        });
 
         await utils.updateAssetTags(assets);
 
         this.isLoading = false;
-        await this.back();
+        this.back();
     }
 }
 </script>
