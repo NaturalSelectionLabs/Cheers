@@ -4,6 +4,7 @@
         <Bscscan v-if="chain === 'BSC'" />
         <PolygonScan v-if="chain === 'Polygon'" />
         <ArbiScan v-if="chain === 'Arbitrum'" />
+        <!-- todo: add avax scan -->
     </div>
 </template>
 

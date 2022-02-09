@@ -96,6 +96,9 @@ export default class NFTDetail extends Vue {
             case 'Arbitrum':
                 window.open(`https://arbiscan.io/token/${address}?a=${tokenId}`);
                 break;
+            case 'Avalanche':
+                // todo
+                break;
         }
     }
 
