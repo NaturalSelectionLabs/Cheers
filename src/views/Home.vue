@@ -599,12 +599,15 @@ export default class Home extends Vue {
         const assetIDList = nftsWithClassName.map((asset) =>
             RSS3Utils.id.getAsset(asset.platform, asset.identity, asset.type, asset.uniqueID),
         );
-        const displayedNFTsDetail = await utils.loadAssetsWithNoRetry(assetIDList);
-
-        this.sortNFTDetails(nftsWithClassName, displayedNFTsDetail);
-        this.isLoadingAssets.NFT = false;
-
+        if (assetIDList.length === 0) {
+            this.isLoadingAssets.NFT = false;
+            return;
+        }
+        let displayedNFTsDetail: AnyObject[] = [];
         for (let i = 0; i < 10; i++) {
+            if (displayedNFTsDetail.length !== 0) {
+                this.isLoadingAssets.NFT = false;
+            }
             const assetsNoDetails = assetIDList.filter(
                 (asset) => !displayedNFTsDetail.find((detail) => detail.id === asset),
             );
@@ -617,7 +620,8 @@ export default class Home extends Vue {
                 // sleep for two seconds
                 await new Promise((r) => setTimeout(r, 2000));
             }
-            displayedNFTsDetail.push(...(await utils.loadAssetsWithNoRetry(assetsNoDetails)));
+            console.log(`NFT retry ${i} times`);
+            displayedNFTsDetail = displayedNFTsDetail.concat(await utils.loadAssetsWithNoRetry(assetsNoDetails));
             this.sortNFTDetails(nftsWithClassName, displayedNFTsDetail);
         }
     }
@@ -675,13 +679,18 @@ export default class Home extends Vue {
 
     async ivLoadGitcoin(assets: GeneralAsset[]) {
         if (assets) {
+            if (assets.length === 0) {
+                this.isLoadingAssets.Gitcoin = false;
+                return;
+            }
             const assetIDList = assets.map((asset) =>
                 RSS3Utils.id.getAsset(asset.platform, asset.identity, asset.type, asset.uniqueID),
             );
-            const gitcoins = await utils.loadAssetsWithNoRetry(assetIDList);
-            this.gitcoins = this.sortAssets(assetIDList, gitcoins);
-            this.isLoadingAssets.Gitcoin = false;
+            let displayedGitcoinsDetail: AnyObject[] = [];
             for (let i = 0; i < 10; i++) {
+                if (displayedGitcoinsDetail.length !== 0) {
+                    this.isLoadingAssets.Gitcoin = false;
+                }
                 const assetsNoDetails = assetIDList.filter(
                     (asset) => !this.gitcoins.find((detail) => detail.id === asset),
                 );
@@ -694,21 +703,29 @@ export default class Home extends Vue {
                     // sleep for two seconds
                     await new Promise((r) => setTimeout(r, 2000));
                 }
-                gitcoins.push(...(await utils.loadAssetsWithNoRetry(assetsNoDetails)));
-                this.gitcoins = this.sortAssets(assetIDList, gitcoins);
+                console.log(`Donations retry ${i} times`);
+                displayedGitcoinsDetail = displayedGitcoinsDetail.concat(
+                    await utils.loadAssetsWithNoRetry(assetsNoDetails),
+                );
+                this.gitcoins = this.sortAssets(assetIDList, displayedGitcoinsDetail);
             }
         }
     }
 
     async ivLoadFootprint(assets: GeneralAsset[]) {
         if (assets) {
+            if (assets.length === 0) {
+                this.isLoadingAssets.Footprint = false;
+                return;
+            }
             const assetIDList = assets.map((asset) =>
                 RSS3Utils.id.getAsset(asset.platform, asset.identity, asset.type, asset.uniqueID),
             );
-            const footprints = await utils.loadAssetsWithNoRetry(assetIDList);
-            this.footprints = this.sortAssets(assetIDList, footprints);
-            this.isLoadingAssets.Footprint = false;
+            let displayFootprintsDetail: AnyObject[] = [];
             for (let i = 0; i < 10; i++) {
+                if (displayFootprintsDetail.length !== 0) {
+                    this.isLoadingAssets.Footprint = false;
+                }
                 const assetsNoDetails = assetIDList.filter(
                     (asset) => !this.footprints.find((detail) => detail.id === asset),
                 );
@@ -721,8 +738,11 @@ export default class Home extends Vue {
                     // sleep for two seconds
                     await new Promise((r) => setTimeout(r, 2000));
                 }
-                footprints.push(...(await utils.loadAssetsWithNoRetry(assetsNoDetails)));
-                this.footprints = this.sortAssets(assetIDList, footprints);
+                console.log(`Footprint retry ${i} times`);
+                displayFootprintsDetail = displayFootprintsDetail.concat(
+                    await utils.loadAssetsWithNoRetry(assetsNoDetails),
+                );
+                this.footprints = this.sortAssets(assetIDList, displayFootprintsDetail);
             }
         }
     }
@@ -737,17 +757,6 @@ export default class Home extends Vue {
         });
 
         return sortedAssetDetailsList;
-    }
-
-    async loadAssetDetails(assetList: GeneralAsset[], limit?: number) {
-        let assetDetails: AnyObject[] = []; // todo: fix this
-        if (limit) {
-            const previewList = limit <= assetList.length ? assetList.slice(0, limit) : assetList;
-            assetDetails = await utils.loadAssets(previewList);
-        } else {
-            assetDetails = await utils.loadAssets(assetList);
-        }
-        return assetDetails;
     }
 
     async startLoadingContents() {
