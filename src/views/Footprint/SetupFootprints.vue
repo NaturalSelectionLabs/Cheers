@@ -95,7 +95,7 @@ export default class SetupFootprints extends Vue {
 
     show: DetailedFootprint[] = [];
     hide: DetailedFootprint[] = [];
-    footprints: DetailedFootprint[] = [];
+    readyAssets: DetailedFootprint[] = [];
 
     isPCLayout: boolean = window.innerWidth > config.ui.md;
 
@@ -139,7 +139,7 @@ export default class SetupFootprints extends Vue {
                 // sleep for two seconds
                 await new Promise((r) => setTimeout(r, 2000));
             }
-            this.footprints = this.footprints.concat(await utils.loadAssetsWithNoRetry(assetsNoDetails, false));
+            this.readyAssets = this.readyAssets.concat(await utils.loadAssetsWithNoRetry(assetsNoDetails, false));
             this.updateReadyDetails();
         }
     }
@@ -165,11 +165,11 @@ export default class SetupFootprints extends Vue {
         const newShow: DetailedFootprint[] = [];
         const newHidden: DetailedFootprint[] = [];
         this.show.map((asset) => {
-            const detailedAsset = this.footprints.find((details) => details.id === asset.id);
+            const detailedAsset = this.readyAssets.find((details) => details.id === asset.id);
             newShow.push(detailedAsset || asset);
         });
         this.hide.map((asset) => {
-            const detailedAsset = this.footprints.find((details) => details.id === asset.id);
+            const detailedAsset = this.readyAssets.find((details) => details.id === asset.id);
             newHidden.push(detailedAsset || asset);
         });
         this.show = newShow;

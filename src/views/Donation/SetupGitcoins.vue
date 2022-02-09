@@ -95,7 +95,7 @@ export default class SetupGitcoins extends Vue {
 
     show: DetailedDonation[] = [];
     hide: DetailedDonation[] = [];
-    donations: DetailedDonation[] = [];
+    readyAssets: DetailedDonation[] = [];
 
     isPCLayout: boolean = window.innerWidth > config.ui.md;
 
@@ -140,7 +140,7 @@ export default class SetupGitcoins extends Vue {
                 // sleep for two seconds
                 await new Promise((r) => setTimeout(r, 2000));
             }
-            this.donations = this.donations.concat(await utils.loadAssetsWithNoRetry(assetsNoDetails, false));
+            this.readyAssets = this.readyAssets.concat(await utils.loadAssetsWithNoRetry(assetsNoDetails, false));
             this.updateReadyDetails();
         }
     }
@@ -167,11 +167,11 @@ export default class SetupGitcoins extends Vue {
         const newShow: DetailedDonation[] = [];
         const newHidden: DetailedDonation[] = [];
         this.show.map((asset) => {
-            const detailedAsset = this.donations.find((details) => details.id === asset.id);
+            const detailedAsset = this.readyAssets.find((details) => details.id === asset.id);
             newShow.push(detailedAsset || asset);
         });
         this.hide.map((asset) => {
-            const detailedAsset = this.donations.find((details) => details.id === asset.id);
+            const detailedAsset = this.readyAssets.find((details) => details.id === asset.id);
             newHidden.push(detailedAsset || asset);
         });
         this.show = newShow;
