@@ -12,9 +12,9 @@
                     <i v-if="isOwner" class="bx bx-pencil bx-xs cursor-pointer" @click="toSetupGitcoins" />
                 </template>
                 <template #details>
-                    <div class="grid gap-6 grid-cols-1 sm:grid-cols-2" v-if="gitcoins.length !== 0">
+                    <div class="grid gap-6 grid-cols-1 sm:grid-cols-2" v-if="sortedGitcoins.length !== 0">
                         <GitcoinCard
-                            v-for="item in gitcoins"
+                            v-for="item in sortedGitcoins"
                             :key="item.id"
                             :imageUrl="item.detail.grant.logo || undefinedImageAlt"
                             :timestamp="item.detail.txs.slice(-1)[0].timeStamp"
@@ -36,7 +36,7 @@
                         </div>
                     </IntersectionObserverContainer>
                     <div
-                        v-if="!isLoadingAssets && gitcoins.length === 0"
+                        v-if="!isLoadingAssets && sortedGitcoins.length === 0"
                         class="flex flex-row gap-2 items-end justify-center"
                     >
                         <span v-if="isOwner" class="font-light">Support some projects to get a shot</span>
@@ -58,7 +58,7 @@ import Button from '@/components/Button/Button.vue';
 import GitcoinCard from '@/components/Donation/GitcoinCard.vue';
 import config from '@/config';
 import RSS3 from '@/common/rss3';
-import { DetailedDonation, GeneralAsset } from '@/common/types';
+import { DetailedDonation } from '@/common/types';
 import debounce from 'lodash/debounce';
 import utils from '@/common/utils';
 import Header from '@/components/Common/Header.vue';
@@ -87,11 +87,12 @@ export default class Gitcoins extends Vue {
     grants: number = 0;
     contribs: number = 0;
     gitcoins: DetailedDonation[] = [];
+    sortedGitcoins: DetailedDonation[] = [];
     isOwner: boolean = false;
     rss3Profile: any = {};
     scrollTop: number = 0;
     lastRoute: string = '';
-    assetList: GeneralAsset[] = [];
+    assetIDList: string[] = [];
     assetsStartIndex: number = 0;
     isLoadingAssets: boolean = true;
     isHavingMoreAssets: boolean = true;
@@ -104,7 +105,6 @@ export default class Gitcoins extends Vue {
 
     async initLoad() {
         this.lastRoute = this.$route.fullPath;
-        this.gitcoins = [];
 
         const addrOrName = utils.getAddress(<string>this.$route.params.address);
         const pageOwner = await RSS3.setPageOwner(addrOrName);
@@ -121,8 +121,13 @@ export default class Gitcoins extends Vue {
         }
 
         const { donations } = await utils.initAssets();
-        this.assetList = donations;
+        this.assetIDList = donations.map((asset) =>
+            RSS3Utils.id.getAsset(asset.platform, asset.identity, asset.type, asset.uniqueID),
+        );
         this.isLoadingAssets = false;
+        this.assetsStartIndex = 0;
+        this.gitcoins = [];
+        this.sortedGitcoins = [];
         await this.loadMoreAssets();
     }
 
@@ -130,17 +135,44 @@ export default class Gitcoins extends Vue {
         if (!this.isLoadingAssets) {
             this.isLoadingAssets = true;
             let endIndex = this.assetsStartIndex + config.splitPageLimits.assets;
-            if (endIndex >= this.assetList.length) {
+            if (endIndex >= this.assetIDList.length) {
                 // Not having more assets
-                endIndex = this.assetList.length;
+                endIndex = this.assetIDList.length;
                 this.isHavingMoreAssets = false;
             }
-            this.gitcoins = this.gitcoins.concat(
-                await utils.loadAssets(this.assetList.slice(this.assetsStartIndex, endIndex)),
-            );
+            const requestList = this.assetIDList.slice(this.assetsStartIndex, endIndex);
+            this.gitcoins = this.gitcoins.concat(await utils.loadAssetsWithNoRetry(requestList));
+            this.sortedGitcoins = this.sortAssets();
             this.assetsStartIndex = endIndex;
             this.isLoadingAssets = false;
+            for (let i = 0; i < 10; i++) {
+                const assetsNoDetails = requestList.filter(
+                    (asset) => !this.gitcoins.find((detail) => detail.id === asset),
+                );
+                if (!assetsNoDetails.length) {
+                    // all the assets have details, break
+                    break;
+                } else {
+                    // already request but not get full details
+                    // sleep for two seconds
+                    await new Promise((r) => setTimeout(r, 2000));
+                }
+                this.gitcoins = this.gitcoins.concat(await utils.loadAssetsWithNoRetry(requestList));
+                this.sortedGitcoins = this.sortAssets();
+            }
         }
+    }
+
+    sortAssets() {
+        const sortedAssetDetailList: DetailedDonation[] = [];
+        this.assetIDList.map((assetID) => {
+            const detailedAsset = this.gitcoins.find((details) => details.id === assetID);
+            if (detailedAsset) {
+                sortedAssetDetailList.push(detailedAsset);
+            }
+        });
+
+        return sortedAssetDetailList;
     }
 
     toSetupGitcoins() {
