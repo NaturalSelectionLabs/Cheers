@@ -84,8 +84,6 @@ import LoadingSmile from '@/components/Loading/LoadingSmile.vue';
 export default class Gitcoins extends Vue {
     rns: string = '';
     ethAddress: string = '';
-    grants: number = 0;
-    contribs: number = 0;
     gitcoins: DetailedDonation[] = [];
     sortedGitcoins: DetailedDonation[] = [];
     isOwner: boolean = false;
@@ -142,7 +140,7 @@ export default class Gitcoins extends Vue {
             }
             const requestList = this.assetIDList.slice(this.assetsStartIndex, endIndex);
             this.gitcoins = this.gitcoins.concat(await utils.loadAssetsWithNoRetry(requestList));
-            this.sortedGitcoins = this.sortAssets();
+            this.sortedGitcoins = this.sortedGitcoins.concat(this.sortAssets(requestList));
             this.assetsStartIndex = endIndex;
             this.isLoadingAssets = false;
             for (let i = 0; i < 10; i++) {
@@ -158,21 +156,43 @@ export default class Gitcoins extends Vue {
                     await new Promise((r) => setTimeout(r, 2000));
                 }
                 this.gitcoins = this.gitcoins.concat(await utils.loadAssetsWithNoRetry(requestList));
-                this.sortedGitcoins = this.sortAssets();
+                this.updateReadyDetails();
             }
         }
     }
 
-    sortAssets() {
+    sortAssets(requestList: string[]) {
         const sortedAssetDetailList: DetailedDonation[] = [];
-        this.assetIDList.map((assetID) => {
+        requestList.map((assetID) => {
             const detailedAsset = this.gitcoins.find((details) => details.id === assetID);
             if (detailedAsset) {
                 sortedAssetDetailList.push(detailedAsset);
+            } else {
+                sortedAssetDetailList.push({
+                    id: assetID,
+                    detail: {
+                        grant: {},
+                        txs: [
+                            {
+                                formatedAmount: 0,
+                                symbol: 'DAI',
+                            },
+                        ],
+                    },
+                });
             }
         });
 
         return sortedAssetDetailList;
+    }
+
+    updateReadyDetails() {
+        let newSortedGitcoins: DetailedDonation[] = [];
+        this.sortedGitcoins.map((asset) => {
+            const detailedAsset = this.gitcoins.find((details) => details.id === asset.id);
+            newSortedGitcoins.push(detailedAsset || asset);
+        });
+        this.sortedGitcoins = newSortedGitcoins;
     }
 
     toSetupGitcoins() {

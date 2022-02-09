@@ -657,14 +657,18 @@ export default class Home extends Vue {
         };
         nftsWithClassName.map((nft) => {
             const className = nft.class || 'Collectibles';
+            const NFTId = RSS3Utils.id.getAsset(nft.platform, nft.identity, nft.type, nft.uniqueID);
             if (!(className in classifiedList)) {
                 classifiedList[className] = [];
             }
-            const detailedNFT = displayedNFTsDetail.find(
-                (dNFT) => dNFT.id === RSS3Utils.id.getAsset(nft.platform, nft.identity, nft.type, nft.uniqueID),
-            );
+            const detailedNFT = displayedNFTsDetail.find((dNFT) => dNFT.id === NFTId);
             if (detailedNFT) {
                 classifiedList[className].push(detailedNFT);
+            } else {
+                classifiedList[className].push({
+                    id: NFTId,
+                    detail: {},
+                });
             }
         });
         Object.keys(classifiedList).map((listName) => {
@@ -753,6 +757,13 @@ export default class Home extends Vue {
             const detailedAsset = assetDetailsList.find((details) => details.id === assetID);
             if (detailedAsset) {
                 sortedAssetDetailsList.push(detailedAsset);
+            } else {
+                sortedAssetDetailsList.push({
+                    id: assetID,
+                    detail: {
+                        grant: {},
+                    },
+                });
             }
         });
 

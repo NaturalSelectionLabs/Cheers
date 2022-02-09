@@ -142,7 +142,7 @@ export default class Footprints extends Vue {
             }
             const requestList = this.assetIDList.slice(this.assetsStartIndex, endIndex);
             this.footprints = this.footprints.concat(await utils.loadAssetsWithNoRetry(requestList));
-            this.sortedFootprints = this.sortAssets();
+            this.sortedFootprints = this.sortedFootprints.concat(this.sortAssets(requestList));
             this.assetsStartIndex = endIndex;
             this.isLoadingAssets = false;
             for (let i = 0; i < 10; i++) {
@@ -158,21 +158,35 @@ export default class Footprints extends Vue {
                     await new Promise((r) => setTimeout(r, 2000));
                 }
                 this.footprints = this.footprints.concat(await utils.loadAssetsWithNoRetry(requestList));
-                this.sortedFootprints = this.sortAssets();
+                this.updateReadyDetails();
             }
         }
     }
 
-    sortAssets() {
+    sortAssets(requestList: string[]) {
         const sortedAssetDetailList: DetailedFootprint[] = [];
-        this.assetIDList.map((assetID) => {
+        requestList.map((assetID) => {
             const detailedAsset = this.footprints.find((details) => details.id === assetID);
             if (detailedAsset) {
                 sortedAssetDetailList.push(detailedAsset);
+            } else {
+                sortedAssetDetailList.push({
+                    id: assetID,
+                    detail: {},
+                });
             }
         });
 
         return sortedAssetDetailList;
+    }
+
+    updateReadyDetails() {
+        let newSortedFootprints: DetailedFootprint[] = [];
+        this.sortedFootprints.map((asset) => {
+            const detailedAsset = this.footprints.find((details) => details.id === asset.id);
+            newSortedFootprints.push(detailedAsset || asset);
+        });
+        this.sortedFootprints = newSortedFootprints;
     }
 
     toSetupFootprints() {

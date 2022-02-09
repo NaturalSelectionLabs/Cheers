@@ -101,6 +101,7 @@ import { formatter } from '@/common/address';
 import AssetCard from '@/components/Card/AssetCard.vue';
 import Smile from '@/components/Icons/Smile.vue';
 import LoadingSmile from '@/components/Loading/LoadingSmile.vue';
+import assert from 'assert';
 
 @Options({
     name: 'NFTs',
@@ -178,7 +179,7 @@ export default class NFTs extends Vue {
             }
             const requestList = this.assetIDList.slice(this.assetsStartIndex, endIndex);
             this.nfts = this.nfts.concat(await utils.loadAssetsWithNoRetry(requestList));
-            this.sortedNfts = this.sortAssets();
+            this.sortedNfts = this.sortedNfts.concat(this.sortAssets(requestList));
             this.assetsStartIndex = endIndex;
             this.isLoadingAssets = false;
             for (let i = 0; i < 10; i++) {
@@ -192,21 +193,35 @@ export default class NFTs extends Vue {
                     await new Promise((r) => setTimeout(r, 2000));
                 }
                 this.nfts = this.nfts.concat(await utils.loadAssetsWithNoRetry(assetsNoDetails));
-                this.sortedNfts = this.sortAssets();
+                this.updateReadyDetails();
             }
         }
     }
 
-    sortAssets() {
+    sortAssets(requestList: string[]) {
         const sortedAssetDetailList: DetailedNFT[] = [];
-        this.assetIDList.map((assetID) => {
+        requestList.map((assetID) => {
             const detailedAsset = this.nfts.find((details) => details.id === assetID);
             if (detailedAsset) {
                 sortedAssetDetailList.push(detailedAsset);
+            } else {
+                sortedAssetDetailList.push({
+                    id: assetID,
+                    detail: {},
+                });
             }
         });
 
         return sortedAssetDetailList;
+    }
+
+    updateReadyDetails() {
+        let newSortedNfts: DetailedNFT[] = [];
+        this.sortedNfts.map((asset) => {
+            const detailedAsset = this.nfts.find((details) => details.id === asset.id);
+            newSortedNfts.push(detailedAsset || asset);
+        });
+        this.sortedNfts = newSortedNfts;
     }
 
     toSingleNFTPage(id: string) {
