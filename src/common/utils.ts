@@ -149,7 +149,7 @@ async function loadAssets(parsedAssets: GeneralAsset[]) {
     return sortedAssetDetailsList;
 }
 
-async function loadAssetsWithNoRetry(assetIDList: string[]) {
+async function loadAssetsWithNoRetry(assetIDList: string[], isFull: boolean = true) {
     if (!assetIDList.length) {
         return [];
     }
@@ -162,7 +162,7 @@ async function loadAssetsWithNoRetry(assetIDList: string[]) {
         splitList.map(async (items) => {
             const res = await apiUser.assets.getDetails({
                 assets: items,
-                full: true,
+                full: isFull,
             });
             // if have details return, add them to the res list
             if (res?.length) {
