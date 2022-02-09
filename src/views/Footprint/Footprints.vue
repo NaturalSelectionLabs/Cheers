@@ -12,9 +12,9 @@
                     <i v-if="isOwner" class="bx bx-pencil bx-xs cursor-pointer" @click="toSetupFootprints" />
                 </template>
                 <template #details>
-                    <div class="grid gap-4 grid-cols-1 sm:grid-cols-2" v-if="footprints.length !== 0">
+                    <div class="grid gap-4 grid-cols-1 sm:grid-cols-2" v-if="sortedFootprints.length !== 0">
                         <FootprintCard
-                            v-for="item of footprints"
+                            v-for="item of sortedFootprints"
                             :key="item.id"
                             :imageUrl="item.detail.image_url"
                             :username="rss3Profile.name"
@@ -38,7 +38,7 @@
                         </div>
                     </IntersectionObserverContainer>
                     <div
-                        v-if="!isLoadingAssets && footprints.length === 0"
+                        v-if="!isLoadingAssets && sortedFootprints.length === 0"
                         class="flex flex-row gap-2 items-end justify-center"
                     >
                         <span v-if="isOwner" class="font-light">Attend some events to get a shot</span>
@@ -65,7 +65,7 @@ import { utils as RSS3Utils } from 'rss3';
 import debounce from 'lodash/debounce';
 import utils from '@/common/utils';
 import Header from '@/components/Common/Header.vue';
-import { DetailedFootprint, GeneralAsset } from '@/common/types';
+import { DetailedFootprint } from '@/common/types';
 import IntersectionObserverContainer from '@/components/Common/IntersectionObserverContainer.vue';
 import TransBarCard from '@/components/Card/TransBarCard.vue';
 import { formatter } from '@/common/address';
@@ -88,11 +88,12 @@ export default class Footprints extends Vue {
     rns: string = '';
     ethAddress: string = '';
     footprints: DetailedFootprint[] = [];
+    sortedFootprints: DetailedFootprint[] = [];
     isOwner: boolean = false;
     rss3Profile: any = {};
     scrollTop: number = 0;
     lastRoute: string = '';
-    assetList: GeneralAsset[] = [];
+    assetIDList: string[] = [];
     assetsStartIndex: number = 0;
     isLoadingAssets: boolean = true;
     isHavingMoreAssets: boolean = true;
@@ -104,7 +105,6 @@ export default class Footprints extends Vue {
 
     async initLoad() {
         this.lastRoute = this.$route.fullPath;
-        this.footprints = [];
 
         const addrOrName = utils.getAddress(<string>this.$route.params.address);
         const pageOwner = await RSS3.setPageOwner(addrOrName);
@@ -121,8 +121,13 @@ export default class Footprints extends Vue {
         }
 
         const { footprints } = await utils.initAssets();
-        this.assetList = footprints;
+        this.assetIDList = footprints.map((asset) =>
+            RSS3Utils.id.getAsset(asset.platform, asset.identity, asset.type, asset.uniqueID),
+        );
+        this.assetsStartIndex = 0;
         this.isLoadingAssets = false;
+        this.footprints = [];
+        this.sortedFootprints = [];
         await this.loadMoreAssets();
     }
 
@@ -130,17 +135,58 @@ export default class Footprints extends Vue {
         if (!this.isLoadingAssets) {
             this.isLoadingAssets = true;
             let endIndex = this.assetsStartIndex + config.splitPageLimits.assets;
-            if (endIndex >= this.assetList.length) {
+            if (endIndex >= this.assetIDList.length) {
                 // Not having more assets
-                endIndex = this.assetList.length;
+                endIndex = this.assetIDList.length;
                 this.isHavingMoreAssets = false;
             }
-            this.footprints = this.footprints.concat(
-                await utils.loadAssets(this.assetList.slice(this.assetsStartIndex, endIndex)),
-            );
+            const requestList = this.assetIDList.slice(this.assetsStartIndex, endIndex);
+            this.footprints = this.footprints.concat(await utils.loadAssetsWithNoRetry(requestList));
+            this.sortedFootprints = this.sortedFootprints.concat(this.sortAssets(requestList));
             this.assetsStartIndex = endIndex;
             this.isLoadingAssets = false;
+            for (let i = 0; i < 10; i++) {
+                const assetsNoDetails = requestList.filter(
+                    (asset) => !this.footprints.find((detail) => detail.id === asset),
+                );
+                if (!assetsNoDetails.length) {
+                    // all the assets have details, break
+                    break;
+                } else {
+                    // already request but not get full details
+                    // sleep for two seconds
+                    await new Promise((r) => setTimeout(r, 2000));
+                }
+                this.footprints = this.footprints.concat(await utils.loadAssetsWithNoRetry(requestList));
+                this.updateReadyDetails();
+            }
         }
+    }
+
+    sortAssets(requestList: string[]) {
+        const sortedAssetDetailList: DetailedFootprint[] = [];
+        requestList.map((assetID) => {
+            const detailedAsset = this.footprints.find((details) => details.id === assetID);
+            if (detailedAsset) {
+                sortedAssetDetailList.push(detailedAsset);
+            } else {
+                sortedAssetDetailList.push({
+                    id: assetID,
+                    detail: {},
+                });
+            }
+        });
+
+        return sortedAssetDetailList;
+    }
+
+    updateReadyDetails() {
+        let newSortedFootprints: DetailedFootprint[] = [];
+        this.sortedFootprints.map((asset) => {
+            const detailedAsset = this.footprints.find((details) => details.id === asset.id);
+            newSortedFootprints.push(detailedAsset || asset);
+        });
+        this.sortedFootprints = newSortedFootprints;
     }
 
     toSetupFootprints() {

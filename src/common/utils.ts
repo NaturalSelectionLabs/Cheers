@@ -149,6 +149,30 @@ async function loadAssets(parsedAssets: GeneralAsset[]) {
     return sortedAssetDetailsList;
 }
 
+async function loadAssetsWithNoRetry(assetIDList: string[], isFull: boolean = true) {
+    if (!assetIDList.length) {
+        return [];
+    }
+    const apiUser = RSS3.getAPIUser().persona as IRSS3;
+    const assetDetailsList: AnyObject[] = []; // todo: fix this
+    const splitList: Array<string[]> = chunk(assetIDList, config.splitPageLimits.assets);
+
+    // process asset requests concurrently
+    await Promise.all(
+        splitList.map(async (items) => {
+            const res = await apiUser.assets.getDetails({
+                assets: items,
+                full: isFull,
+            });
+            // if have details return, add them to the res list
+            if (res?.length) {
+                assetDetailsList.push(...res);
+            }
+        }),
+    );
+    return assetDetailsList;
+}
+
 async function initAccounts(pageOwner = RSS3.getPageOwner()) {
     const listed: RSS3Account[] = [];
     const unlisted: RSS3Account[] = [];
@@ -379,6 +403,7 @@ const utils = {
     sortByOrderTag,
     initAssets,
     loadAssets,
+    loadAssetsWithNoRetry,
     initAccounts,
     extractEmbedFields,
     initContent,
