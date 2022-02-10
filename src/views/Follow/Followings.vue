@@ -17,7 +17,7 @@
                             :bio="item.bio"
                             :rns="item.rns"
                             :address="item.address"
-                            @click="toPublicPage(item.rns, item.address)"
+                            @click="toPublicPage(item.address, item.rns)"
                         />
                     </div>
                     <IntersectionObserverContainer
@@ -177,7 +177,7 @@ export default class Followings extends Vue {
         this.isPageActive = false;
     }
 
-    async toPublicPage(rns: string, ethAddress: string) {
+    toPublicPage(ethAddress: string, rns?: string) {
         if (rns) {
             window.location.href = `//${rns}.${legacyConfig.subDomain.rootDomain}`;
         } else {

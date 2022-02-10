@@ -43,7 +43,7 @@ import Header from '@/components/Common/Header.vue';
     components: { NFTDetail, NFTItem, NFTBadges, TransBarCard, Header },
 })
 export default class SingleNFT extends Vue {
-    private details: NFT = {
+    details: NFT = {
         chain: 'Ethereum.NFT',
         token_id: '',
         asset_contract: {

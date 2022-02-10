@@ -1103,7 +1103,7 @@ export default class Home extends Vue {
     affixEvent(isScrollDown: boolean) {
         if (window.innerWidth > config.ui.md) {
             // Enable
-            const containers = document.querySelectorAll('.affix-container');
+            const containers = document.querySelectorAll('.affix-container') as NodeListOf<HTMLElement>;
             if (isScrollDown) {
                 if (!this.isLastScrollingDown) {
                     containers.forEach((container) => {
