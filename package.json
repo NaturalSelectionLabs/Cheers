@@ -94,7 +94,7 @@
         "boxicons": "2.1.1",
         "compression-webpack-plugin": "9.2.0",
         "copy-webpack-plugin": "10.2.1",
-        "css-loader": "6.5.1",
+        "css-loader": "6.6.0",
         "cssnano": "5.0.16",
         "html-webpack-plugin": "5.5.0",
         "husky": "7.0.4",
