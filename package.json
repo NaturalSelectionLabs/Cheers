@@ -88,7 +88,7 @@
         "@types/js-cookie": "3.0.1",
         "@types/lodash": "4.14.178",
         "@types/marked": "4.0.1",
-        "@vue/compiler-sfc": "3.2.26",
+        "@vue/compiler-sfc": "3.2.30",
         "autoprefixer": "10.4.2",
         "babel-loader": "8.2.3",
         "boxicons": "2.1.1",
