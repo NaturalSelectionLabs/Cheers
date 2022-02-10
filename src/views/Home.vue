@@ -148,7 +148,7 @@
                                         item.detail.image_url ||
                                         item.detail.animation_url ||
                                         item.detail.animation_original_url ||
-                                        defaultAvatar
+                                        undefinedImage
                                     "
                                     size="sm"
                                     @click="toSingleItemPage(item.id)"

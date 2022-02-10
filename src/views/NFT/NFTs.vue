@@ -46,7 +46,7 @@
                         <AssetCard
                             v-for="item in sortedNfts"
                             :key="item.id"
-                            :image-url="item.detail.animation_url || item.detail.image_preview_url || defaultAvatar"
+                            :image-url="item.detail.animation_url || item.detail.image_preview_url || fallbackImage"
                             size="xl"
                             :type="title"
                             :name="item.detail.name"
