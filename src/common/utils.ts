@@ -112,8 +112,8 @@ async function loadAssets(parsedAssets: GeneralAsset[]) {
         if (!assetsNoDetails.length) {
             // all the assets have details, break
             break;
-        } else if (assetDetailsList.length !== 0) {
-            // already request but not get full details
+        } else {
+            // not get full details
             // sleep for two seconds
             await new Promise((r) => setTimeout(r, 3100));
         }
