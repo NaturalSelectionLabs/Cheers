@@ -20,7 +20,7 @@
                             <NFTItem
                                 class="cursor-pointer"
                                 size="auto"
-                                :image-url="item.detail.animation_url || item.detail.image_preview_url || fallbackImage"
+                                :image-url="item.detail.image_preview_url || item.detail.animation_url || fallbackImage"
                                 :poster-url="
                                     item.detail.image_preview_url ||
                                     item.detail.image_url ||
