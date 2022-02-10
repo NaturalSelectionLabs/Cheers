@@ -137,7 +137,7 @@ module.exports = (env, argv) => ({
     plugins: [
         new BundleAnalyzerPlugin({
             analyzerMode: 'disabled',
-            generateStatsFile: true, // only set true under develop enviorment
+            generateStatsFile: argv.mode !== 'production', // only set true under develop enviorment
         }),
         new HtmlWebpackPlugin(
             argv.mode === 'production'
