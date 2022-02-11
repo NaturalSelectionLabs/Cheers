@@ -771,6 +771,7 @@ export default class Home extends Vue {
     }
 
     async startLoadingContents() {
+        this.isLoadingContents = true;
         const localStoreIsWeb3Only = JSON.parse(utils.getStorage('isWeb3Only') || 'false');
         this.isWeb3Only = localStoreIsWeb3Only;
         const { listed, haveMore, timestamp } = await utils.initContent('', this.isWeb3Only);
