@@ -4,7 +4,7 @@
         <Bscscan v-if="chain === 'BSC'" />
         <PolygonScan v-if="chain === 'Polygon'" />
         <ArbiScan v-if="chain === 'Arbitrum'" />
-        <!-- todo: add avax scan -->
+        <AvaxScan v-if="chain === 'AVAX'" />
     </div>
 </template>
 
@@ -14,9 +14,10 @@ import Etherscan from '@/components/Icons/Etherscan.vue';
 import Bscscan from '@/components/Icons/Bscscan.vue';
 import PolygonScan from '@/components/Icons/PolygonScan.vue';
 import ArbiScan from '@/components/Icons/ArbiScan.vue';
+import AvaxScan from '@/components/Icons/AvaxScan.vue';
 
 @Options({
-    components: { ArbiScan, PolygonScan, Etherscan, Bscscan },
+    components: { ArbiScan, PolygonScan, Etherscan, Bscscan, AvaxScan },
     props: {
         chain: String,
     },

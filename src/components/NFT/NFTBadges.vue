@@ -16,7 +16,7 @@
                 'bg-Ethereum': chain === 'Ethereum.NFT',
                 'bg-Polygon': chain === 'Polygon.NFT',
                 'bg-Arbitrum': chain === 'Arbitrum.NFT',
-                'bg-Avalanche': chain === 'Avalanche.NFT',
+                'bg-Avalanche': chain === 'AVAX.NFT',
                 'bg-Ronin': chain === 'Ronin.NFT',
                 'badge-overlay': location === 'overlay',
                 'badge-header': location === 'header',
