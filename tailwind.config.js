@@ -150,6 +150,7 @@ module.exports = {
                 Ethereum: 'url(@/assets/images/chains/Ethereum.png)',
                 Polygon: 'url(@/assets/images/chains/Polygon.png)',
                 Arbitrum: 'url(@/assets/images/chains/Arbitrum.png)',
+                Avalanche: 'url(@/assets/images/chains/Avalanche.png)',
                 Ronin: 'url(@/assets/images/chains/Ronin.png)',
                 Misskey: 'url(@/assets/images/chains/Misskey.png)',
                 Twitter: 'url(@/assets/images/chains/Twitter.png)',
