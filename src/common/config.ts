@@ -28,7 +28,7 @@ const config = {
     splitPageLimits: {
         assets: 30,
         contents: 35,
-        follows: 15,
+        follows: 20,
     },
     recommendations: {
         endpoint: 'https://node-beta.rss3.dev',

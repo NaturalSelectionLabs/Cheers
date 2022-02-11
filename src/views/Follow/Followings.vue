@@ -147,7 +147,7 @@ export default class Followings extends Vue {
     async loadRNS() {
         const startNo = this.loadingNo;
         const endNo = this.followRenderList.length;
-        const indexList = Array.from(new Array(endNo + 1).keys()).slice(startNo);
+        const indexList = Array.from(new Array(endNo).keys()).slice(startNo);
         this.loadingNo = endNo;
         await Promise.all(
             indexList.map(async (index) => {
