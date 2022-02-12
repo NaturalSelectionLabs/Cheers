@@ -17,7 +17,6 @@ import { Options, Vue } from 'vue-class-component';
 import Button from '@/components/Button/Button.vue';
 import ImgHolder from '@/components/Common/ImgHolder.vue';
 import GitcoinItem from '@/components/Donation/GitcoinItem.vue';
-import config from '@/config';
 import RSS3 from '@/common/rss3';
 import utils from '@/common/utils';
 import GitcoinDetails from '@/components/Donation/GitcoinDetails.vue';
@@ -31,9 +30,9 @@ import Header from '@/components/Common/Header.vue';
 export default class SingleGitcoin extends Vue {
     rns: string = '';
     ethAddress: string = '';
-    grant?: GrantInfo = {
+    grant: GrantInfo = {
         active: true,
-        logo: config.defaultAvatar,
+        logo: '',
         slug: '...',
         reference_url: '...',
         description: '...',
