@@ -1,146 +1,144 @@
 <template>
-    <div class="h-screen text-body-text overflow-y-auto">
-        <div class="flex flex-col gap-y-4 m-auto pb-20 pt-8 px-4 max-w-md">
-            <div class="mb-6 text-center">
-                <h1 class="text-xl font-bold">Setup</h1>
-            </div>
-            <AvatarEditor class="m-auto" size="lg" :url="profile.avatar || defaultAvatar" ref="avatar" />
-            <Input class="w-full" :is-single-line="true" placeholder="Username" v-model="profile.name" />
-            <Input
-                class="w-full"
-                :is-single-line="true"
-                placeholder="Personal link"
-                prefix="https://"
-                v-model="profile.link"
-            />
-            <Input class="w-full" :is-single-line="false" placeholder="Bio" v-model="profile.bio" />
-
-            <TransBarCard title="Accounts" :haveContent="true" :haveContentInfo="accounts.length > 0">
-                <template #header>
-                    <Button size="sm" class="w-8 h-8 text-btn-icon bg-secondary-btn-card" @click="toManageAccounts">
-                        <i class="bx bx-plus bx-xs cursor-pointer" />
-                    </Button>
-                </template>
-                <template #content>
-                    <div
-                        class="inline-flex m-0.5 rounded-full"
-                        v-for="item in accounts"
-                        :key="item.platform + item.identity"
-                    >
-                        <EVMpAccountItem v-if="item.platform === 'EVM+'" :size="40" :address="item.identity" />
-                        <AccountItem v-else :size="40" :chain="item.platform" :address="item.identity" />
-                    </div>
-                </template>
-            </TransBarCard>
-
-            <TransBarCard
-                title="Collectibles"
-                :tip="isLoadingAssets.NFT ? 'Loading...' : 'Haven\'t found anything yet...'"
-                :haveDetails="false"
-                :haveContent="true"
-                :haveContentInfo="nfts.length > 0"
-            >
-                <template #header>
-                    <Button size="sm" class="w-8 h-8 text-btn-icon bg-secondary-btn-card" @click="toManageNFTs">
-                        <i class="bx bx-plus bx-xs cursor-pointer" />
-                    </Button>
-                </template>
-                <template #content>
-                    <NFTItem
-                        class="inline-flex mx-0.5"
-                        v-for="asset in nfts"
-                        :key="asset.id"
-                        size="sm"
-                        :image-url="asset.detail.animation_url || asset.detail.image_preview_url"
-                        :poster-url="asset.detail.image_preview_url"
-                    />
-                </template>
-            </TransBarCard>
-
-            <TransBarCard
-                title="Donations"
-                :tip="isLoadingAssets.Gitcoin ? 'Loading...' : 'Haven\'t found anything yet...'"
-                :haveDetails="gitcoins.length !== 0"
-                :haveContent="true"
-                :haveContentInfo="gitcoins.length > 0"
-            >
-                <template #header>
-                    <Button size="sm" class="w-8 h-8 text-btn-icon bg-secondary-btn-card" @click="toManageGitcoins">
-                        <i class="bx bx-plus bx-xs cursor-pointer" />
-                    </Button>
-                </template>
-                <template #content>
-                    <GitcoinItem
-                        class="inline-flex mx-0.5"
-                        v-for="item in gitcoins"
-                        :key="item.id"
-                        size="sm"
-                        :imageUrl="item.detail.grant.logo"
-                    />
-                </template>
-            </TransBarCard>
-
-            <TransBarCard
-                title="Footprints"
-                :tip="isLoadingAssets.Footprint ? 'Loading...' : 'Haven\'t found anything yet...'"
-                :haveDetails="false"
-                :haveContent="true"
-                :haveContentInfo="footprints.length > 0"
-            >
-                <template #header>
-                    <Button size="sm" class="w-8 h-8 text-btn-icon bg-secondary-btn-card" @click="toManageFootprints">
-                        <i class="bx bx-plus bx-xs cursor-pointer" />
-                    </Button>
-                </template>
-                <template #content>
-                    <FootprintItem
-                        class="inline-flex mx-0.5"
-                        v-for="asset in footprints"
-                        :key="asset.id"
-                        size="sm"
-                        :image-url="asset.detail.image_url"
-                    />
-                </template>
-            </TransBarCard>
-
-            <TransBarCard title="Contents" :haveContent="true" :haveContentInfo="true">
-                <template #content>
-                    <span>Check out in homepage!</span>
-                </template>
-            </TransBarCard>
-
-            <div class="flex gap-5 justify-between">
-                <Button
-                    size="sm"
-                    class="text-secondary-btn-text flex-1 h-9 text-lg bg-secondary-btn opacity-80"
-                    @click="back"
-                >
-                    <span>Back</span>
-                </Button>
-                <Button size="sm" class="flex-1 h-9 text-body-text text-lg bg-primary-btn opacity-80" @click="save">
-                    <span>Done</span>
-                </Button>
-            </div>
-            <LoadingContainer v-show="isLoading" :isLooping="true" />
-
-            <Modal v-if="isShowingNotice">
-                <template #header>
-                    <h1>Oops!</h1>
-                </template>
-                <template #body>
-                    <p class="mt-1 p-4">
-                        {{ notice }}
-                    </p>
-                </template>
-                <template #footer>
-                    <div class="flex flex-row gap-5">
-                        <Button size="sm" class="w-72 text-body-text bg-primary-btn" @click="isShowingNotice = false">
-                            OK
-                        </Button>
-                    </div>
-                </template>
-            </Modal>
+    <div class="flex flex-col gap-y-4 m-auto pb-20 pt-8 px-4 max-w-md text-body-text">
+        <div class="mb-6 text-center">
+            <h1 class="text-xl font-bold">Setup</h1>
         </div>
+        <AvatarEditor class="m-auto" size="lg" :url="profile.avatar || defaultAvatar" ref="avatar" />
+        <Input class="w-full" :is-single-line="true" placeholder="Username" v-model="profile.name" />
+        <Input
+            class="w-full"
+            :is-single-line="true"
+            placeholder="Personal link"
+            prefix="https://"
+            v-model="profile.link"
+        />
+        <Input class="w-full" :is-single-line="false" placeholder="Bio" v-model="profile.bio" />
+
+        <TransBarCard title="Accounts" :haveContent="true" :haveContentInfo="accounts.length > 0">
+            <template #header>
+                <Button size="sm" class="w-8 h-8 text-btn-icon bg-secondary-btn-card" @click="toManageAccounts">
+                    <i class="bx bx-plus bx-xs cursor-pointer" />
+                </Button>
+            </template>
+            <template #content>
+                <div
+                    class="inline-flex m-0.5 rounded-full"
+                    v-for="item in accounts"
+                    :key="item.platform + item.identity"
+                >
+                    <EVMpAccountItem v-if="item.platform === 'EVM+'" :size="40" :address="item.identity" />
+                    <AccountItem v-else :size="40" :chain="item.platform" :address="item.identity" />
+                </div>
+            </template>
+        </TransBarCard>
+
+        <TransBarCard
+            title="Collectibles"
+            :tip="isLoadingAssets.NFT ? 'Loading...' : 'Haven\'t found anything yet...'"
+            :haveDetails="false"
+            :haveContent="true"
+            :haveContentInfo="nfts.length > 0"
+        >
+            <template #header>
+                <Button size="sm" class="w-8 h-8 text-btn-icon bg-secondary-btn-card" @click="toManageNFTs">
+                    <i class="bx bx-plus bx-xs cursor-pointer" />
+                </Button>
+            </template>
+            <template #content>
+                <NFTItem
+                    class="inline-flex mx-0.5"
+                    v-for="asset in nfts"
+                    :key="asset.id"
+                    size="sm"
+                    :image-url="asset.detail.animation_url || asset.detail.image_preview_url"
+                    :poster-url="asset.detail.image_preview_url"
+                />
+            </template>
+        </TransBarCard>
+
+        <TransBarCard
+            title="Donations"
+            :tip="isLoadingAssets.Gitcoin ? 'Loading...' : 'Haven\'t found anything yet...'"
+            :haveDetails="gitcoins.length !== 0"
+            :haveContent="true"
+            :haveContentInfo="gitcoins.length > 0"
+        >
+            <template #header>
+                <Button size="sm" class="w-8 h-8 text-btn-icon bg-secondary-btn-card" @click="toManageGitcoins">
+                    <i class="bx bx-plus bx-xs cursor-pointer" />
+                </Button>
+            </template>
+            <template #content>
+                <GitcoinItem
+                    class="inline-flex mx-0.5"
+                    v-for="item in gitcoins"
+                    :key="item.id"
+                    size="sm"
+                    :imageUrl="item.detail.grant.logo"
+                />
+            </template>
+        </TransBarCard>
+
+        <TransBarCard
+            title="Footprints"
+            :tip="isLoadingAssets.Footprint ? 'Loading...' : 'Haven\'t found anything yet...'"
+            :haveDetails="false"
+            :haveContent="true"
+            :haveContentInfo="footprints.length > 0"
+        >
+            <template #header>
+                <Button size="sm" class="w-8 h-8 text-btn-icon bg-secondary-btn-card" @click="toManageFootprints">
+                    <i class="bx bx-plus bx-xs cursor-pointer" />
+                </Button>
+            </template>
+            <template #content>
+                <FootprintItem
+                    class="inline-flex mx-0.5"
+                    v-for="asset in footprints"
+                    :key="asset.id"
+                    size="sm"
+                    :image-url="asset.detail.image_url"
+                />
+            </template>
+        </TransBarCard>
+
+        <TransBarCard title="Contents" :haveContent="true" :haveContentInfo="true">
+            <template #content>
+                <span>Check out in homepage!</span>
+            </template>
+        </TransBarCard>
+
+        <div class="flex gap-5 justify-between">
+            <Button
+                size="sm"
+                class="text-secondary-btn-text flex-1 h-9 text-lg bg-secondary-btn opacity-80"
+                @click="back"
+            >
+                <span>Back</span>
+            </Button>
+            <Button size="sm" class="flex-1 h-9 text-body-text text-lg bg-primary-btn opacity-80" @click="save">
+                <span>Done</span>
+            </Button>
+        </div>
+        <LoadingContainer v-show="isLoading" :isLooping="true" />
+
+        <Modal v-if="isShowingNotice">
+            <template #header>
+                <h1>Oops!</h1>
+            </template>
+            <template #body>
+                <p class="mt-1 p-4">
+                    {{ notice }}
+                </p>
+            </template>
+            <template #footer>
+                <div class="flex flex-row gap-5">
+                    <Button size="sm" class="w-72 text-body-text bg-primary-btn" @click="isShowingNotice = false">
+                        OK
+                    </Button>
+                </div>
+            </template>
+        </Modal>
     </div>
 </template>
 
