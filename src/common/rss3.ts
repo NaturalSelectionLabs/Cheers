@@ -9,10 +9,8 @@ import rns from './rns';
 import AsyncLock from 'async-lock';
 import { CustomField_PassAssets, GeneralAsset } from './types';
 
-export interface IAssetProfile {
-    assets: GeneralAsset[];
-    status?: boolean;
-}
+import mitt from 'mitt';
+const emitter = mitt();
 
 export interface RSS3DetailPersona {
     file: RSS3Index | null;
@@ -51,11 +49,6 @@ let walletConnectProvider: WalletConnectProvider;
 let ethersProvider: ethers.providers.Web3Provider | null;
 const lock = new AsyncLock();
 let isSettingPageOwner: boolean = false;
-
-export interface IAssetProfile {
-    assets: GeneralAsset[];
-    status?: boolean;
-}
 
 const KeyNames = {
     ConnectMethod: 'CONNECT_METHOD',
@@ -286,13 +279,10 @@ async function disconnect() {
 }
 
 function dispatchEvent(event: string, detail: any) {
-    const evt = new CustomEvent(event, {
-        detail,
-        bubbles: true,
-        composed: true,
-    });
+    // using mitt because of the performance issues caused by custom DOM events
+    // refer to https://github.com/developit/mitt/issues/153
+    emitter.emit(event, detail);
     console.log(event, detail);
-    document.dispatchEvent(evt);
 }
 
 async function setPageTitleFavicon() {
@@ -314,7 +304,7 @@ async function ensureLoginUser() {
             if (RSS3LoginUser.isReady) {
                 resolve(RSS3LoginUser);
             } else {
-                document.addEventListener(Events.connect, () => {
+                emitter.on(Events.connect, () => {
                     resolve(RSS3LoginUser);
                 });
             }
@@ -398,7 +388,7 @@ export default {
                 isSettingPageOwner = false;
                 resolve(RSS3PageOwner);
             } else {
-                document.addEventListener(Events.pageOwnerReady, () => {
+                emitter.on(Events.pageOwnerReady, () => {
                     resolve(RSS3PageOwner);
                 });
             }
