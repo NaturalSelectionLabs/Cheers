@@ -1,13 +1,11 @@
 <template>
-    <div class="h-screen overflow-y-auto">
-        <div class="m-auto pb-20 pt-8 px-4 max-w-screen-lg">
-            <Header list="gitcoins" />
-            <div class="p-5 bg-white bg-opacity-50 rounded-xl md:py-12">
-                <section class="flex flex-col gap-y-8 m-auto max-w-screen-sm">
-                    <GitcoinItem :imageUrl="grant.logo" size="contain" />
-                    <GitcoinDetails :details="grant" :donationInfo="donationInfo" />
-                </section>
-            </div>
+    <div class="m-auto pb-20 pt-8 px-4 max-w-screen-lg">
+        <Header list="gitcoins" />
+        <div class="p-5 bg-white bg-opacity-50 rounded-xl md:py-12">
+            <section class="flex flex-col gap-y-8 m-auto max-w-screen-sm">
+                <GitcoinItem :imageUrl="grant.logo" size="contain" />
+                <GitcoinDetails :details="grant" :donationInfo="donationInfo" />
+            </section>
         </div>
     </div>
 </template>

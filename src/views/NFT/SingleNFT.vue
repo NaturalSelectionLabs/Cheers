@@ -1,28 +1,22 @@
 <template>
-    <div class="h-screen overflow-y-auto">
-        <div class="m-auto pb-20 pt-8 px-4 max-w-screen-lg">
-            <Header />
-            <TransBarCard :title="details.name" :haveDetails="true" :haveContent="false" :haveContentInfo="false">
-                <template #header>
-                    <NFTBadges
-                        :chain="details.chain"
-                        location="header"
-                        :collectionImg="details.collection?.image_url"
+    <div class="m-auto pb-20 pt-8 px-4 max-w-screen-lg">
+        <Header />
+        <TransBarCard :title="details.name" :haveDetails="true" :haveContent="false" :haveContentInfo="false">
+            <template #header>
+                <NFTBadges :chain="details.chain" location="header" :collectionImg="details.collection?.image_url" />
+            </template>
+            <template #details>
+                <div class="flex flex-col gap-4 m-auto py-4 w-full max-w-screen-sm md:py-8">
+                    <NFTItem
+                        :imageUrl="details.animation_url || details.image_url"
+                        :poster-url="details.image_url"
+                        size="contain"
+                        :is-showing-details="true"
                     />
-                </template>
-                <template #details>
-                    <div class="flex flex-col gap-4 m-auto py-4 w-full max-w-screen-sm md:py-8">
-                        <NFTItem
-                            :imageUrl="details.animation_url || details.image_url"
-                            :poster-url="details.image_url"
-                            size="contain"
-                            :is-showing-details="true"
-                        />
-                        <NFTDetail :chain="details.chain.split('.')[0]" :details="details" />
-                    </div>
-                </template>
-            </TransBarCard>
-        </div>
+                    <NFTDetail :chain="details.chain.split('.')[0]" :details="details" />
+                </div>
+            </template>
+        </TransBarCard>
     </div>
 </template>
 
