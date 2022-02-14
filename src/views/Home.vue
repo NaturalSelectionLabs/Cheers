@@ -545,15 +545,12 @@ export default class Home extends Vue {
         this.rss3Relations.followers = pageOwner.followers;
         this.rss3Relations.followings = pageOwner.followings;
         // load accounts, assets, contents and update user follow/unfollow/login state
-        await Promise.all([
-            this.startLoadingAccounts(),
-            this.startLoadingAssets(),
-            this.startLoadingContents(),
-            this.checkUserState(),
-        ]);
+        await Promise.all([this.startLoadingAccounts(), this.startLoadingAssets(), this.startLoadingContents()]);
 
         // setup affix event
         this.affixEvent(true);
+
+        setTimeout(this.checkUserState, 0);
     }
 
     async checkUserState() {
