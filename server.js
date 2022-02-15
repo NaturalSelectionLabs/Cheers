@@ -8,8 +8,14 @@ const koaStatic = require('koa-static');
 const path = require('path');
 const axios = require('axios');
 const ethers = require('ethers');
+const { default: sslify, xForwardedProtoResolver } = require('koa-sslify');
 
 const app = new Koa();
+app.use(
+    sslify({
+        resolver: xForwardedProtoResolver,
+    }),
+);
 app.use(CORS());
 
 app.use(koaStatic(path.join(__dirname, 'dist')));
@@ -56,7 +62,7 @@ const injectMetadata = async (ctx) => {
     // handle redirect (to cheers.bio)
     if (ctx.host.endsWith('rss3.bio')) {
         const fullUrl = ctx.request.href;
-        const newURL = fullUrl.replace('rss3.bio', `cheers.bio`);
+        const newURL = fullUrl.replace('rss3.bio', `cheers.bio`).replace('http://', 'https://');
         ctx.redirect(newURL);
         return;
     }
