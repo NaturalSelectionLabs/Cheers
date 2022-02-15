@@ -238,12 +238,17 @@ async function initUser(user: RSS3DetailPersona | RSS3FullPersona, skipSignSync:
         if (user.name && !user.address) {
             user.address = await rns.name2Addr(user.name);
         }
+        // console.log(user.file, user.name)
+        // todo: save page owner into state management system
+        //  (SDK getList will trigger get file, which produces one more request
+        //  and make pre-inject meta useless, or just delay the follow list loading ?)
         const [followers, followings, file, name] = await Promise.all([
             RSS3APIPersona.backlinks.getList(user.address, 'following'),
             RSS3APIPersona.links.getList(user.address, 'following'),
-            RSS3APIPersona.files.get(user.address),
-            !user.name ? rns.addr2Name(user.address) : user.name,
+            user.file ?? RSS3APIPersona.files.get(user.address),
+            user.name ?? rns.addr2Name(user.address),
         ]);
+        // await new Promise((r) => {}); // lock process for debug
         user.followers = followers;
         user.followings = followings;
         user.file = file as RSS3Index;
@@ -365,22 +370,30 @@ export default {
     setPageOwner: async (addrOrName: string) =>
         new Promise<RSS3DetailPersona>(async (resolve, reject) => {
             if (!isSettingPageOwner) {
+                console.log('Setting page owner', addrOrName);
                 isSettingPageOwner = true;
                 let isReloadRequired = false;
                 if (addrOrName.startsWith('0x') && addrOrName.length === 42) {
                     if (RSS3PageOwner.address !== addrOrName) {
                         isReloadRequired = true;
                         RSS3PageOwner.address = ethersUtils.getAddress(addrOrName);
-                        RSS3PageOwner.name = '';
+                        RSS3PageOwner.name = await rns.addr2Name(addrOrName);
                     }
                 } else {
                     if (RSS3PageOwner.name !== addrOrName) {
                         isReloadRequired = true;
                         RSS3PageOwner.name = addrOrName;
-                        RSS3PageOwner.address = '';
+                        RSS3PageOwner.address = await rns.name2Addr(addrOrName);
                     }
                 }
                 if (isReloadRequired) {
+                    const preinjectPageOwner = (window as any).USER;
+                    if (typeof preinjectPageOwner !== 'undefined' && RSS3PageOwner.address === preinjectPageOwner.id) {
+                        console.log('file hit', preinjectPageOwner);
+                        RSS3PageOwner.file = preinjectPageOwner;
+                    } else {
+                        RSS3PageOwner.file = null;
+                    }
                     await initUser(RSS3PageOwner);
                 }
                 await setPageTitleFavicon();
