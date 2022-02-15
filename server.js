@@ -8,8 +8,14 @@ const koaStatic = require('koa-static');
 const path = require('path');
 const axios = require('axios');
 // const compress = require('koa-compress');
+const { default: sslify, xForwardedProtoResolver } = require('koa-sslify');
 
 const app = new Koa();
+app.use(
+    sslify({
+        resolver: xForwardedProtoResolver,
+    }),
+);
 app.use(CORS());
 // app.use(compress());
 
@@ -73,7 +79,9 @@ const injectMetadata = async (ctx) => {
             // redirect to name
             const fullUrl = ctx.request.href;
             const rootDomain = host.split('.').slice(-2).join('.');
-            const newURL = fullUrl.replace(`${rootDomain}/${aon}`, `${name}.${rootDomain}`);
+            const newURL = fullUrl
+                .replace(`${rootDomain}/${aon}`, `${name}.${rootDomain}`)
+                .replace('http://', 'https://');
 
             console.log(newURL);
             ctx.redirect(newURL);
