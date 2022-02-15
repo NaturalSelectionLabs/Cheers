@@ -53,6 +53,14 @@ const getPersona = async (address) => {
 const router = new Router();
 
 const injectMetadata = async (ctx) => {
+    // handle redirect (to cheers.bio)
+    if (ctx.host.endsWith('rss3.bio')) {
+        const fullUrl = ctx.request.href;
+        const newURL = fullUrl.replace('rss3.bio', `cheers.bio`);
+        ctx.redirect(newURL);
+        return;
+    }
+
     // extract name
     const name = await getName(ctx.host, ctx.url);
 
