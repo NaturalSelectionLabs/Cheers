@@ -1,5 +1,5 @@
 <template>
-    <div id="main" v-if="isAccountExist" class="m-auto pb-12 pt-8 px-4 max-w-screen-lg text-body-text">
+    <div id="main" class="m-auto pb-12 pt-8 px-4 max-w-screen-lg text-body-text">
         <Header :displayLogo="true" />
         <div class="flex flex-col gap-4 md:flex-row">
             <section class="md:w-3/5">
@@ -148,7 +148,7 @@
                                         item.detail.image_url ||
                                         item.detail.animation_url ||
                                         item.detail.animation_original_url ||
-                                        defaultAvatar
+                                        undefinedImage
                                     "
                                     size="sm"
                                     @click="toSingleItemPage(item.id)"
@@ -350,23 +350,6 @@
             />
         </div>
     </div>
-    <div v-else class="flex items-center justify-center h-screen text-center">
-        <div class="flex flex-col gap-8 items-center justify-between px-4">
-            <Logo :size="200" />
-            <div class="max-w-md text-primary-text text-2xl">
-                <p>This account is invalid...</p>
-            </div>
-            <div class="mx-auto w-83.5 text-2xl leading-17.5">
-                <Button
-                    size="lg"
-                    class="mb-9 w-full h-17.5 text-body-text bg-primary-btn rounded-3xl"
-                    @click="toHomePage"
-                >
-                    <span> Go Home </span>
-                </Button>
-            </div>
-        </div>
-    </div>
 </template>
 
 <script lang="ts">
@@ -383,8 +366,6 @@ import utils from '@/common/utils';
 import legacyConfig from '@/config';
 import GitcoinItem from '@/components/Donation/GitcoinItem.vue';
 import { Profile as ProfileInfo, GeneralAsset, DetailedNFT, GeneralAssetWithClass } from '@/common/types';
-
-import Logo from '@/components/Icons/Logo.vue';
 
 import FootprintCard from '@/components/Footprint/FootprintCard.vue';
 import ContentCard from '@/components/Content/ContentCard.vue';
@@ -425,7 +406,6 @@ interface Relations {
         GitcoinItem,
         FootprintCard,
         ContentCard,
-        Logo,
         Toolbar,
         AssetCard,
         Header,
@@ -451,7 +431,6 @@ export default class Home extends Vue {
         isLink: false,
     };
     isAccountRegistered: boolean = true;
-    isAccountExist: boolean = true;
     isLoadingAssets: {
         NFT: boolean;
         Gitcoin: boolean;
@@ -461,7 +440,6 @@ export default class Home extends Vue {
         Gitcoin: true,
         Footprint: true,
     };
-    loadingAssetsIntervalID: ReturnType<typeof setInterval> | null = null;
     isLoadingContents: boolean = true;
     isContentsHaveMore: boolean = true;
     isLoadingMore: boolean = false;
@@ -531,7 +509,7 @@ export default class Home extends Vue {
         this.isShowingAccount = false;
 
         if (parseInt(pageOwner.address) === 0) {
-            this.isAccountExist = false;
+            this.$router.push('/invalid');
             return;
         }
 
@@ -567,15 +545,12 @@ export default class Home extends Vue {
         this.rss3Relations.followers = pageOwner.followers;
         this.rss3Relations.followings = pageOwner.followings;
         // load accounts, assets, contents and update user follow/unfollow/login state
-        await Promise.all([
-            this.startLoadingAccounts(),
-            this.startLoadingAssets(),
-            this.startLoadingContents(),
-            this.checkUserState(),
-        ]);
+        await Promise.all([this.startLoadingAccounts(), this.startLoadingAssets(), this.startLoadingContents()]);
 
         // setup affix event
         this.affixEvent(true);
+
+        setTimeout(this.checkUserState, 0);
     }
 
     async checkUserState() {
@@ -588,19 +563,17 @@ export default class Home extends Vue {
         this.isLoadingPersona = false;
     }
 
-    startLoadingAccounts() {
+    async startLoadingAccounts() {
         this.accounts = [];
         const pageOwner = RSS3.getPageOwner();
-        setTimeout(async () => {
-            const { listed } = await utils.initAccounts();
-            // Push original account
-            const accounts = [
-                {
-                    id: RSS3Utils.id.getAccount('EVM+', pageOwner?.address),
-                },
-            ].concat(listed);
-            this.accounts = accounts.map((account) => RSS3Utils.id.parseAccount(account.id));
-        }, 0);
+        const { listed } = await utils.initAccounts();
+        // Push original account
+        const accounts = [
+            {
+                id: RSS3Utils.id.getAccount('EVM+', pageOwner?.address),
+            },
+        ].concat(listed);
+        this.accounts = accounts.map((account) => RSS3Utils.id.parseAccount(account.id));
     }
 
     async startLoadingAssets() {
@@ -619,26 +592,58 @@ export default class Home extends Vue {
     }
 
     async ivLoadNFT(assets: GeneralAssetWithClass[]) {
+        const nftsWithClassName = this.generateNFTsWithClassName(assets);
+        const assetIDList = nftsWithClassName.map((asset) =>
+            RSS3Utils.id.getAsset(asset.platform, asset.identity, asset.type, asset.uniqueID),
+        );
+        if (assetIDList.length === 0) {
+            this.isLoadingAssets.NFT = false;
+            return;
+        }
+        let displayedNFTsDetail: AnyObject[] = [];
+        for (let i = 0; i < 10; i++) {
+            if (displayedNFTsDetail.length !== 0) {
+                this.isLoadingAssets.NFT = false;
+            }
+            const assetsNoDetails = assetIDList.filter(
+                (asset) => !displayedNFTsDetail.find((detail) => detail.id === asset),
+            );
+
+            if (!assetsNoDetails.length) {
+                // all the assets have details, break
+                break;
+            } else {
+                // already request but not get full details
+                // sleep for two seconds
+                await new Promise((r) => setTimeout(r, 2000));
+            }
+            console.log(`NFT retry ${i} times`);
+            displayedNFTsDetail = displayedNFTsDetail.concat(await utils.loadAssetsWithNoRetry(assetsNoDetails));
+            this.sortNFTDetails(nftsWithClassName, displayedNFTsDetail);
+        }
+    }
+
+    generateNFTsWithClassName(assets: GeneralAssetWithClass[]) {
         // Get NFTs
         const classifiedBriefList: {
             [className: string]: GeneralAssetWithClass[];
         } = {};
 
-        await Promise.all(
-            assets.map((nft) => {
-                const className = nft.class || 'Collectibles';
-                if (!(className in classifiedBriefList)) {
-                    classifiedBriefList[className] = [];
-                }
-                if (classifiedBriefList[className].length < config.assets.brief) {
-                    classifiedBriefList[className].push(nft);
-                }
-            }),
-        );
+        assets.map((nft) => {
+            const className = nft.class || 'Collectibles';
+            if (!(className in classifiedBriefList)) {
+                classifiedBriefList[className] = [];
+            }
+            if (classifiedBriefList[className].length < config.assets.brief) {
+                classifiedBriefList[className].push(nft);
+            }
+        });
 
         const nftsWithClassName = flattenDeep(Object.values(classifiedBriefList));
-        const displayedNFTsDetail = await utils.loadAssets(nftsWithClassName);
+        return nftsWithClassName;
+    }
 
+    sortNFTDetails(nftsWithClassName: GeneralAssetWithClass[], displayedNFTsDetail: AnyObject[]) {
         const classifiedList: {
             [className: string]: DetailedNFT[];
         } = {
@@ -647,60 +652,123 @@ export default class Home extends Vue {
             Awards: [],
             Organizations: [],
         };
-
-        await Promise.all(
-            nftsWithClassName.map((nft) => {
-                const className = nft.class || 'Collectibles';
-                if (!(className in classifiedList)) {
-                    classifiedList[className] = [];
-                }
-                const detailedNFT = displayedNFTsDetail.find(
-                    (dNFT) => dNFT.id === RSS3Utils.id.getAsset(nft.platform, nft.identity, nft.type, nft.uniqueID),
-                );
-                if (detailedNFT) {
-                    classifiedList[className].push(detailedNFT);
-                }
-            }),
-        );
-        await Promise.all(
-            Object.keys(classifiedList).map((listName) => {
-                if (classifiedList[listName].length === 0 && listName !== 'Collectibles') {
-                    delete classifiedList[listName];
-                }
-            }),
-        );
+        nftsWithClassName.map((nft) => {
+            const className = nft.class || 'Collectibles';
+            const NFTId = RSS3Utils.id.getAsset(nft.platform, nft.identity, nft.type, nft.uniqueID);
+            if (!(className in classifiedList)) {
+                classifiedList[className] = [];
+            }
+            const detailedNFT = displayedNFTsDetail.find((dNFT) => dNFT.id === NFTId);
+            if (detailedNFT) {
+                classifiedList[className].push(detailedNFT);
+            } else {
+                classifiedList[className].push({
+                    id: NFTId,
+                    detail: {},
+                });
+            }
+        });
+        Object.keys(classifiedList).map((listName) => {
+            if (classifiedList[listName].length === 0 && listName !== 'Collectibles') {
+                delete classifiedList[listName];
+            }
+        });
 
         this.classifiedList = classifiedList;
         this.allClasses = Object.keys(this.classifiedList);
-        this.isLoadingAssets.NFT = false;
     }
 
     async ivLoadGitcoin(assets: GeneralAsset[]) {
         if (assets) {
-            this.gitcoins = await this.loadAssetDetails(assets);
-            this.isLoadingAssets.Gitcoin = false;
+            if (assets.length === 0) {
+                this.isLoadingAssets.Gitcoin = false;
+                return;
+            }
+            const assetIDList = assets.map((asset) =>
+                RSS3Utils.id.getAsset(asset.platform, asset.identity, asset.type, asset.uniqueID),
+            );
+            let displayedGitcoinsDetail: AnyObject[] = [];
+            for (let i = 0; i < 10; i++) {
+                if (displayedGitcoinsDetail.length !== 0) {
+                    this.isLoadingAssets.Gitcoin = false;
+                }
+                const assetsNoDetails = assetIDList.filter(
+                    (asset) => !this.gitcoins.find((detail) => detail.id === asset),
+                );
+
+                if (!assetsNoDetails.length) {
+                    // all the assets have details, break
+                    break;
+                } else {
+                    // already request but not get full details
+                    // sleep for two seconds
+                    await new Promise((r) => setTimeout(r, 2000));
+                }
+                console.log(`Donations retry ${i} times`);
+                displayedGitcoinsDetail = displayedGitcoinsDetail.concat(
+                    await utils.loadAssetsWithNoRetry(assetsNoDetails),
+                );
+                this.gitcoins = this.sortAssets(assetIDList, displayedGitcoinsDetail);
+            }
         }
     }
 
     async ivLoadFootprint(assets: GeneralAsset[]) {
         if (assets) {
-            this.footprints = await this.loadAssetDetails(assets);
-            this.isLoadingAssets.Footprint = false;
+            if (assets.length === 0) {
+                this.isLoadingAssets.Footprint = false;
+                return;
+            }
+            const assetIDList = assets.map((asset) =>
+                RSS3Utils.id.getAsset(asset.platform, asset.identity, asset.type, asset.uniqueID),
+            );
+            let displayFootprintsDetail: AnyObject[] = [];
+            for (let i = 0; i < 10; i++) {
+                if (displayFootprintsDetail.length !== 0) {
+                    this.isLoadingAssets.Footprint = false;
+                }
+                const assetsNoDetails = assetIDList.filter(
+                    (asset) => !this.footprints.find((detail) => detail.id === asset),
+                );
+
+                if (!assetsNoDetails.length) {
+                    // all the assets have details, break
+                    break;
+                } else {
+                    // already request but not get full details
+                    // sleep for two seconds
+                    await new Promise((r) => setTimeout(r, 2000));
+                }
+                console.log(`Footprint retry ${i} times`);
+                displayFootprintsDetail = displayFootprintsDetail.concat(
+                    await utils.loadAssetsWithNoRetry(assetsNoDetails),
+                );
+                this.footprints = this.sortAssets(assetIDList, displayFootprintsDetail);
+            }
         }
     }
 
-    async loadAssetDetails(assetList: GeneralAsset[], limit?: number) {
-        let assetDetails: AnyObject[] = []; // todo: fix this
-        if (limit) {
-            const previewList = limit <= assetList.length ? assetList.slice(0, limit) : assetList;
-            assetDetails = await utils.loadAssets(previewList);
-        } else {
-            assetDetails = await utils.loadAssets(assetList);
-        }
-        return assetDetails;
+    sortAssets(assetIDList: string[], assetDetailsList: AnyObject[]) {
+        const sortedAssetDetailsList: AnyObject[] = [];
+        assetIDList.map((assetID) => {
+            const detailedAsset = assetDetailsList.find((details) => details.id === assetID);
+            if (detailedAsset) {
+                sortedAssetDetailsList.push(detailedAsset);
+            } else {
+                sortedAssetDetailsList.push({
+                    id: assetID,
+                    detail: {
+                        grant: {},
+                    },
+                });
+            }
+        });
+
+        return sortedAssetDetailsList;
     }
 
     async startLoadingContents() {
+        this.isLoadingContents = true;
         const localStoreIsWeb3Only = JSON.parse(utils.getStorage('isWeb3Only') || 'false');
         this.isWeb3Only = localStoreIsWeb3Only;
         const { listed, haveMore, timestamp } = await utils.initContent('', this.isWeb3Only);
@@ -1030,17 +1098,10 @@ export default class Home extends Vue {
         }
     }
 
-    async deactivated() {
-        if (this.loadingAssetsIntervalID) {
-            clearInterval(this.loadingAssetsIntervalID);
-            this.loadingAssetsIntervalID = null;
-        }
-    }
-
     affixEvent(isScrollDown: boolean) {
         if (window.innerWidth > config.ui.md) {
             // Enable
-            const containers = document.querySelectorAll('.affix-container');
+            const containers = document.querySelectorAll('.affix-container') as NodeListOf<HTMLElement>;
             if (isScrollDown) {
                 if (!this.isLastScrollingDown) {
                     containers.forEach((container) => {

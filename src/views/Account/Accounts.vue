@@ -1,50 +1,48 @@
 <template>
-    <div class="h-screen overflow-y-auto">
-        <div class="m-auto pb-32 pt-8 px-4 max-w-screen-lg">
-            <Header />
-            <TransBarCard
-                :title="rss3Profile.name ? rss3Profile.name + `'s Accounts` : 'Accounts'"
-                :haveDetails="true"
-                :haveContent="false"
-                :haveContentInfo="false"
-            >
-                <template #header>
-                    <i v-if="isOwner" class="bx bx-pencil bx-xs cursor-pointer" @click="toSetupAccounts" />
-                </template>
-                <template #details>
+    <div class="m-auto pb-32 pt-8 px-4 max-w-screen-lg">
+        <Header />
+        <TransBarCard
+            :title="rss3Profile.name ? rss3Profile.name + `'s Accounts` : 'Accounts'"
+            :haveDetails="true"
+            :haveContent="false"
+            :haveContentInfo="false"
+        >
+            <template #header>
+                <i v-if="isOwner" class="bx bx-pencil bx-xs cursor-pointer" @click="toSetupAccounts" />
+            </template>
+            <template #details>
+                <div
+                    class="grid gap-4 grid-cols-1 items-center justify-between py-4 w-full md:grid-cols-2 md:justify-start"
+                >
                     <div
-                        class="grid gap-4 grid-cols-1 items-center justify-between py-4 w-full md:grid-cols-2 md:justify-start"
+                        class="flex flex-row gap-4 items-center justify-between w-full cursor-pointer md:max-w-xs"
+                        v-for="item in accounts"
+                        :key="item.platform + item.identity"
+                        @click="displayDialog(item.identity, item.platform)"
                     >
-                        <div
-                            class="flex flex-row gap-4 items-center justify-between w-full cursor-pointer md:max-w-xs"
-                            v-for="item in accounts"
-                            :key="item.platform + item.identity"
-                            @click="displayDialog(item.identity, item.platform)"
-                        >
-                            <EVMpAccountItem v-if="item.platform === 'EVM+'" :size="70" :address="item.identity" />
-                            <AccountItem v-else :size="70" :chain="item.platform" :address="item.identity" />
-                            <span class="text-lg font-semibold truncate">{{ getDisplayAddress(item) }}</span>
-                            <section class="flex flex-row flex-shrink-0 gap-4">
-                                <i
-                                    class="bx bxs-copy bx-sm text-primary-text opacity-70 transform active:-translate-y-px"
-                                    @click.stop="copyToClipboard(item.identity)"
-                                />
-                                <i
-                                    class="bx bx-link-external bx-sm text-primary-text opacity-70 transform active:-translate-y-px"
-                                    @click.stop="toExternalLink(item.identity, item.platform)"
-                                />
-                            </section>
-                        </div>
+                        <EVMpAccountItem v-if="item.platform === 'EVM+'" :size="70" :address="item.identity" />
+                        <AccountItem v-else :size="70" :chain="item.platform" :address="item.identity" />
+                        <span class="text-lg font-semibold truncate">{{ getDisplayAddress(item) }}</span>
+                        <section class="flex flex-row flex-shrink-0 gap-4">
+                            <i
+                                class="bx bxs-copy bx-sm text-primary-text opacity-70 transform active:-translate-y-px"
+                                @click.stop="copyToClipboard(item.identity)"
+                            />
+                            <i
+                                class="bx bx-link-external bx-sm text-primary-text opacity-70 transform active:-translate-y-px"
+                                @click.stop="toExternalLink(item.identity, item.platform)"
+                            />
+                        </section>
                     </div>
-                </template>
-            </TransBarCard>
-        </div>
-        <AccountModal
-            :isShowingAccount="isShowingAccount"
-            :showingAccountDetails="showingAccountDetails"
-            @closeDialog="closeAccountDialog"
-        />
+                </div>
+            </template>
+        </TransBarCard>
     </div>
+    <AccountModal
+        :isShowingAccount="isShowingAccount"
+        :showingAccountDetails="showingAccountDetails"
+        @closeDialog="closeAccountDialog"
+    />
 </template>
 
 <script lang="ts">

@@ -27,15 +27,14 @@ import Vue3Autocounter from 'vue3-autocounter';
         timestamp: String,
         title: String,
         username: String,
-        amount: Array,
+        amount: Object,
     },
 })
 export default class GitcoinCard extends Vue {
     timestamp!: string;
-    date: string = '';
 
-    mounted() {
-        this.date = formatDate(this.timestamp);
+    get date() {
+        return this.timestamp ? formatDate(this.timestamp) : '';
     }
 }
 </script>

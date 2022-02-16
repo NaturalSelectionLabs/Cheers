@@ -112,8 +112,9 @@ async function loadAssets(parsedAssets: GeneralAsset[]) {
         if (!assetsNoDetails.length) {
             // all the assets have details, break
             break;
-        } else if (assetDetailsList.length !== 0) {
-            // already request but not get full details
+        } else if (i > 0) {
+            // not the first try
+            // not get full details
             // sleep for two seconds
             await new Promise((r) => setTimeout(r, 3100));
         }
@@ -147,6 +148,30 @@ async function loadAssets(parsedAssets: GeneralAsset[]) {
     });
 
     return sortedAssetDetailsList;
+}
+
+async function loadAssetsWithNoRetry(assetIDList: string[], isFull: boolean = true) {
+    if (!assetIDList.length) {
+        return [];
+    }
+    const apiUser = RSS3.getAPIUser().persona as IRSS3;
+    const assetDetailsList: AnyObject[] = []; // todo: fix this
+    const splitList: Array<string[]> = chunk(assetIDList, config.splitPageLimits.assets);
+
+    // process asset requests concurrently
+    await Promise.all(
+        splitList.map(async (items) => {
+            const res = await apiUser.assets.getDetails({
+                assets: items,
+                full: isFull,
+            });
+            // if have details return, add them to the res list
+            if (res?.length) {
+                assetDetailsList.push(...res);
+            }
+        }),
+    );
+    return assetDetailsList;
 }
 
 async function initAccounts(pageOwner = RSS3.getPageOwner()) {
@@ -233,20 +258,18 @@ async function updateAssetTags(assetFields: CustomField_PassAssets[]) {
             personaFile['_pass'].assets = [];
         }
         const assets: CustomField_PassAssets[] = personaFile['_pass'].assets;
-        await Promise.all(
-            assetFields.map((afo) => {
-                // Asset Field Object (afo)
-                // Old   Asset Field  (oaf)
-                const index = assets.findIndex((oaf) => oaf.id === afo.id);
-                if (index === -1) {
-                    // New Asset
-                    assets.push(afo);
-                } else {
-                    // Replace old Asset
-                    assets.splice(index, 1, afo);
-                }
-            }),
-        );
+        assetFields.map((afo) => {
+            // Asset Field Object (afo)
+            // Old   Asset Field  (oaf)
+            const index = assets.findIndex((oaf) => oaf.id === afo.id);
+            if (index === -1) {
+                // New Asset
+                assets.push(afo);
+            } else {
+                // Replace old Asset
+                assets.splice(index, 1, afo);
+            }
+        });
 
         // Update field
         personaFile['_pass'].assets = assets;
@@ -258,24 +281,20 @@ async function updateAssetTags(assetFields: CustomField_PassAssets[]) {
 
 async function setAssetTags(listed: RSS3AutoAsset[], unlisted: RSS3AutoAsset[]) {
     const assets: CustomField_PassAssets[] = [];
-    await Promise.all(
-        listed.map(async (asset, index) => {
-            const afo: CustomField_PassAssets = {
-                id: asset,
-                order: index,
-            };
-            assets.push(afo);
-        }),
-    );
-    await Promise.all(
-        unlisted.map(async (asset) => {
-            const afo: CustomField_PassAssets = {
-                id: asset,
-                hide: true,
-            };
-            assets.push(afo);
-        }),
-    );
+    listed.map(async (asset, index) => {
+        const afo: CustomField_PassAssets = {
+            id: asset,
+            order: index,
+        };
+        assets.push(afo);
+    });
+    unlisted.map((asset) => {
+        const afo: CustomField_PassAssets = {
+            id: asset,
+            hide: true,
+        };
+        assets.push(afo);
+    });
     await updateAssetTags(assets);
 }
 
@@ -296,8 +315,8 @@ const setTaggedOrder = (tagged: TypesWithTag, order?: number) => {
     return tagged;
 };
 const setAccountsTags = async (listed: TypesWithTag[], unlisted: TypesWithTag[]): Promise<TypesWithTag[]> => {
-    await Promise.all(listed.map((tagged, index) => setTaggedOrder(tagged, index)));
-    await Promise.all(unlisted.map((tagged) => setTaggedOrder(tagged)));
+    listed.map((tagged, index) => setTaggedOrder(tagged, index));
+    unlisted.map((tagged) => setTaggedOrder(tagged));
     return listed.concat(unlisted);
 };
 
@@ -385,6 +404,7 @@ const utils = {
     sortByOrderTag,
     initAssets,
     loadAssets,
+    loadAssetsWithNoRetry,
     initAccounts,
     extractEmbedFields,
     initContent,

@@ -19,7 +19,7 @@
                         placeholder="Enter an RNS"
                         :is-error="notice !== ''"
                         v-model="rns"
-                        @keyup.enter.native="verifyRNS"
+                        @keyup.enter="verifyRNS"
                         :is-disabled="isWithoutMetamask || isAlreadyHavingRNS"
                         :suffix="rnsSuffix"
                     />

@@ -14,13 +14,13 @@
                 <template #details>
                     <div
                         class="grid gap-3 grid-cols-2 justify-items-center sm:grid-cols-3 md:grid-cols-4"
-                        v-if="nfts.length !== 0 && title === 'Collectibles'"
+                        v-if="sortedNfts.length !== 0 && title === 'Collectibles'"
                     >
-                        <div class="relative w-full" v-for="item in nfts" :key="item.id">
+                        <div class="relative w-full" v-for="item in sortedNfts" :key="item.id">
                             <NFTItem
                                 class="cursor-pointer"
                                 size="auto"
-                                :image-url="item.detail.animation_url || item.detail.image_preview_url || fallbackImage"
+                                :image-url="item.detail.image_preview_url || item.detail.animation_url || fallbackImage"
                                 :poster-url="
                                     item.detail.image_preview_url ||
                                     item.detail.image_url ||
@@ -41,12 +41,12 @@
                     </div>
                     <div
                         class="grid gap-3 grid-cols-1 justify-items-center md:grid-cols-2"
-                        v-if="nfts.length !== 0 && title !== 'Collectibles'"
+                        v-if="sortedNfts.length !== 0 && title !== 'Collectibles'"
                     >
                         <AssetCard
-                            v-for="item in nfts"
+                            v-for="item in sortedNfts"
                             :key="item.id"
-                            :image-url="item.detail.animation_url || item.detail.image_preview_url || defaultAvatar"
+                            :image-url="item.detail.animation_url || item.detail.image_preview_url || fallbackImage"
                             size="xl"
                             :type="title"
                             :name="item.detail.name"
@@ -66,7 +66,7 @@
                         </div>
                     </IntersectionObserverContainer>
                     <div
-                        v-if="!isLoadingAssets && nfts.length === 0"
+                        v-if="!isLoadingAssets && sortedNfts.length === 0"
                         class="flex flex-row gap-2 items-end justify-center"
                     >
                         <span v-if="isOwner" class="font-light">Grab some collectibles to get a shot</span>
@@ -94,13 +94,14 @@ import config from '@/common/config';
 import debounce from 'lodash/debounce';
 import utils from '@/common/utils';
 import Header from '@/components/Common/Header.vue';
-import { DetailedNFT, GeneralAssetWithClass } from '@/common/types';
+import { DetailedNFT } from '@/common/types';
 import IntersectionObserverContainer from '@/components/Common/IntersectionObserverContainer.vue';
 import TransBarCard from '@/components/Card/TransBarCard.vue';
 import { formatter } from '@/common/address';
 import AssetCard from '@/components/Card/AssetCard.vue';
 import Smile from '@/components/Icons/Smile.vue';
 import LoadingSmile from '@/components/Loading/LoadingSmile.vue';
+import assert from 'assert';
 
 @Options({
     name: 'NFTs',
@@ -122,11 +123,12 @@ export default class NFTs extends Vue {
     ethAddress: string = '';
     isOwner: boolean = false;
     nfts: DetailedNFT[] = [];
+    sortedNfts: DetailedNFT[] = []; // the render NFT list
     rss3Profile: any = {};
     $gtag: any;
     scrollTop: number = 0;
     lastRoute: string = '';
-    assetList: GeneralAssetWithClass[] = [];
+    assetIDList: string[] = [];
     assetsStartIndex: number = 0;
     isLoadingAssets: boolean = true;
     isHavingMoreAssets: boolean = true;
@@ -156,9 +158,12 @@ export default class NFTs extends Vue {
         }
 
         const { nftsWithClassName } = await utils.initAssets();
-        this.assetList = nftsWithClassName.filter((element) => (element.class || 'Collectibles') === this.title);
+        this.assetIDList = nftsWithClassName
+            .filter((element) => (element.class || 'Collectibles') === this.title)
+            .map((asset) => RSS3Utils.id.getAsset(asset.platform, asset.identity, asset.type, asset.uniqueID));
         this.isLoadingAssets = false;
         this.nfts = [];
+        this.sortedNfts = [];
         this.assetsStartIndex = 0;
         await this.loadMoreAssets();
     }
@@ -167,23 +172,56 @@ export default class NFTs extends Vue {
         if (!this.isLoadingAssets) {
             this.isLoadingAssets = true;
             let endIndex = this.assetsStartIndex + config.splitPageLimits.assets;
-            if (endIndex >= this.assetList.length) {
+            if (endIndex >= this.assetIDList.length) {
                 // Not having more assets
-                endIndex = this.assetList.length;
+                endIndex = this.assetIDList.length;
                 this.isHavingMoreAssets = false;
             }
-            const nftDetailsList = await utils.loadAssets(this.assetList.slice(this.assetsStartIndex, endIndex));
-            this.assetList.map((nft) => {
-                const detailedNFT = nftDetailsList.find(
-                    (dNFT) => dNFT.id === RSS3Utils.id.getAsset(nft.platform, nft.identity, nft.type, nft.uniqueID),
-                );
-                if (detailedNFT) {
-                    this.nfts.push(detailedNFT);
-                }
-            });
+            const requestList = this.assetIDList.slice(this.assetsStartIndex, endIndex);
+            this.nfts = this.nfts.concat(await utils.loadAssetsWithNoRetry(requestList));
+            this.sortedNfts = this.sortedNfts.concat(this.sortAssets(requestList));
             this.assetsStartIndex = endIndex;
             this.isLoadingAssets = false;
+            for (let i = 0; i < 10; i++) {
+                const assetsNoDetails = requestList.filter((asset) => !this.nfts.find((detail) => detail.id === asset));
+                if (!assetsNoDetails.length) {
+                    // all the assets have details, break
+                    break;
+                } else {
+                    // already request but not get full details
+                    // sleep for two seconds
+                    await new Promise((r) => setTimeout(r, 2000));
+                }
+                this.nfts = this.nfts.concat(await utils.loadAssetsWithNoRetry(assetsNoDetails));
+                this.updateReadyDetails();
+            }
         }
+    }
+
+    sortAssets(requestList: string[]) {
+        const sortedAssetDetailList: DetailedNFT[] = [];
+        requestList.map((assetID) => {
+            const detailedAsset = this.nfts.find((details) => details.id === assetID);
+            if (detailedAsset) {
+                sortedAssetDetailList.push(detailedAsset);
+            } else {
+                sortedAssetDetailList.push({
+                    id: assetID,
+                    detail: {},
+                });
+            }
+        });
+
+        return sortedAssetDetailList;
+    }
+
+    updateReadyDetails() {
+        let newSortedNfts: DetailedNFT[] = [];
+        this.sortedNfts.map((asset) => {
+            const detailedAsset = this.nfts.find((details) => details.id === asset.id);
+            newSortedNfts.push(detailedAsset || asset);
+        });
+        this.sortedNfts = newSortedNfts;
     }
 
     toSingleNFTPage(id: string) {

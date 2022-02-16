@@ -19,7 +19,7 @@
                                         class="inline-flex mx-0.5"
                                         style="cursor: grab"
                                         size="md"
-                                        :imageUrl="element.detail.grant.logo"
+                                        :imageUrl="element.info?.image_preview_url"
                                     />
                                 </template>
                             </draggable>
@@ -41,7 +41,7 @@
                                         class="inline-flex mx-0.5"
                                         style="cursor: grab"
                                         size="md"
-                                        :imageUrl="element.detail.grant.logo"
+                                        :imageUrl="element.info?.image_preview_url"
                                     />
                                 </template>
                             </draggable>
@@ -76,6 +76,7 @@ import utils from '@/common/utils';
 import Header from '@/components/Common/Header.vue';
 import TransBarCard from '@/components/Card/TransBarCard.vue';
 import config from '@/common/config';
+import { utils as RSS3Utils } from 'rss3';
 
 @Options({
     name: 'SetupGitcoins',
@@ -89,24 +90,96 @@ import config from '@/common/config';
     },
 })
 export default class SetupGitcoins extends Vue {
-    isLoading: Boolean = false;
+    isShowLoading: Boolean = false;
+    isHideLoading: Boolean = false;
 
     show: DetailedDonation[] = [];
     hide: DetailedDonation[] = [];
+    readyAssets: DetailedDonation[] = [];
 
     isPCLayout: boolean = window.innerWidth > config.ui.md;
 
     async mounted() {
-        this.isLoading = true;
+        this.isShowLoading = true;
+        this.isHideLoading = true;
         await utils.tryEnsureOrRedirect(this.$route, this.$router);
-        const loginUser = await RSS3.getLoginUser();
+        const loginUser = RSS3.getLoginUser();
         await RSS3.setPageOwner(loginUser.address);
         // Get donations
         const { donations, hiddenDonations } = await utils.initAssets();
+        const showIDList = donations.map((asset) =>
+            RSS3Utils.id.getAsset(asset.platform, asset.identity, asset.type, asset.uniqueID),
+        );
+        const hideIDList = hiddenDonations.map((asset) =>
+            RSS3Utils.id.getAsset(asset.platform, asset.identity, asset.type, asset.uniqueID),
+        );
+        Promise.all([this.loadAssetDetails(showIDList, true), this.loadAssetDetails(hideIDList, false)]);
+    }
 
-        this.show = await utils.loadAssets(donations);
-        this.hide = await utils.loadAssets(hiddenDonations);
-        this.isLoading = false;
+    async loadAssetDetails(assetIDList: string[], isShow: boolean) {
+        if (isShow) {
+            this.show = this.sortAssets(assetIDList, await utils.loadAssetsWithNoRetry(assetIDList, false));
+            this.isShowLoading = false;
+        } else {
+            this.hide = this.sortAssets(assetIDList, await utils.loadAssetsWithNoRetry(assetIDList, false));
+            this.isHideLoading = false;
+        }
+
+        // here is the retry section
+        for (let i = 0; i < 10; i++) {
+            // no ready assets
+            const assetsNoDetails = assetIDList.filter(
+                (asset) =>
+                    !(isShow ? this.show : this.hide).find((detail) => detail.id === asset)?.hasOwnProperty('info'),
+            );
+            if (!assetsNoDetails.length) {
+                // all the assets have details, break
+                break;
+            } else {
+                // already request but not get full details
+                // sleep for two seconds
+                await new Promise((r) => setTimeout(r, 2000));
+            }
+            this.readyAssets = this.readyAssets.concat(await utils.loadAssetsWithNoRetry(assetsNoDetails, false));
+            this.updateReadyDetails();
+        }
+    }
+
+    sortAssets(assetIDList: string[], assetDetailsList: DetailedDonation[]) {
+        const sortedAssetDetailsList: DetailedDonation[] = [];
+        assetIDList.map((assetID) => {
+            const detailedAsset = assetDetailsList.find((details) => details.id === assetID);
+            if (detailedAsset) {
+                sortedAssetDetailsList.push(detailedAsset);
+            } else {
+                // placeholder for unready assets
+                sortedAssetDetailsList.push({
+                    id: assetID,
+                });
+            }
+        });
+
+        return sortedAssetDetailsList;
+    }
+
+    updateReadyDetails() {
+        // update current show and hide list by using its item's ID
+        const newShow: DetailedDonation[] = [];
+        const newHidden: DetailedDonation[] = [];
+        this.show.map((asset) => {
+            const detailedAsset = this.readyAssets.find((details) => details.id === asset.id);
+            newShow.push(detailedAsset || asset);
+        });
+        this.hide.map((asset) => {
+            const detailedAsset = this.readyAssets.find((details) => details.id === asset.id);
+            newHidden.push(detailedAsset || asset);
+        });
+        this.show = newShow;
+        this.hide = newHidden;
+    }
+
+    get isLoading() {
+        return this.isShowLoading || this.isHideLoading;
     }
 
     back() {
@@ -122,13 +195,15 @@ export default class SetupGitcoins extends Vue {
     }
 
     async save() {
-        this.isLoading = true;
+        this.isShowLoading = true;
+        this.isHideLoading = true;
         await utils.setAssetTags(
             this.show.map((asset) => asset.id),
             this.hide.map((asset) => asset.id),
         );
-        this.isLoading = false;
-        await this.back();
+        this.isShowLoading = false;
+        this.isHideLoading = false;
+        this.back();
     }
 }
 </script>

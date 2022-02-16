@@ -7,11 +7,17 @@ const koaViews = require('koa-views');
 const koaStatic = require('koa-static');
 const path = require('path');
 const axios = require('axios');
-const compress = require('koa-compress');
+// const compress = require('koa-compress');
+const { default: sslify, xForwardedProtoResolver } = require('koa-sslify');
 
 const app = new Koa();
+app.use(
+    sslify({
+        resolver: xForwardedProtoResolver,
+    }),
+);
 app.use(CORS());
-app.use(compress());
+// app.use(compress());
 
 app.use(koaStatic(path.join(__dirname, 'dist')));
 
@@ -73,7 +79,9 @@ const injectMetadata = async (ctx) => {
             // redirect to name
             const fullUrl = ctx.request.href;
             const rootDomain = host.split('.').slice(-2).join('.');
-            const newURL = fullUrl.replace(`${rootDomain}/${aon}`, `${name}.${rootDomain}`);
+            const newURL = fullUrl
+                .replace(`${rootDomain}/${aon}`, `${name}.${rootDomain}`)
+                .replace('http://', 'https://');
 
             console.log(newURL);
             ctx.redirect(newURL);
@@ -94,7 +102,7 @@ const injectMetadata = async (ctx) => {
 
     // embed default data (so page don't need to request again)
     await ctx.render('index', {
-        user: JSON.stringify(persona),
+        user: JSON.stringify(persona).replace(/\\/g, '\\\\'),
         title: (persona?.profile?.name ? persona?.profile?.name + "'s " : '') + 'Cheers.Bio',
         avatar: persona?.profile?.avatar?.[0]?.replace('ipfs://', 'https://ipfs.io/ipfs/') || defaultAvatar,
         bio: persona?.profile?.bio?.replace(/\n/g, ' ') || 'Cheers.Bio',

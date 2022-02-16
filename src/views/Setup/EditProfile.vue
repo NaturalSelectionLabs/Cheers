@@ -1,96 +1,91 @@
 <template>
-    <div class="h-screen text-body-text overflow-y-auto">
-        <div class="m-auto pb-20 px-4 py-9 max-w-screen-lg">
-            <div class="flex items-center justify-between mb-10 w-full text-center">
-                <i class="bx bx-chevron-left bx-sm text-secondary-btn-text w-10 h-10 cursor-pointer" @click="back"></i>
-                <div class="flex flex-grow justify-center mr-10">
-                    <h1 class="text-2xl font-bold">Edit Profile</h1>
-                </div>
+    <div class="m-auto pb-20 px-4 py-9 max-w-screen-lg text-body-text">
+        <div class="flex items-center justify-between mb-10 w-full text-center">
+            <i class="bx bx-chevron-left bx-sm text-secondary-btn-text w-10 h-10 cursor-pointer" @click="back"></i>
+            <div class="flex flex-grow justify-center mr-10">
+                <h1 class="text-2xl font-bold">Edit Profile</h1>
             </div>
-            <section class="m-auto max-w-md">
-                <AvatarEditor class="m-auto mb-4" size="lg" :url="profile.avatar || defaultAvatar" ref="avatar" />
-                <LinkButton
-                    class="m-auto mb-4"
-                    :class="{
-                        'cursor-default': rns,
-                    }"
-                    @click="toSetupRNS"
-                >
-                    <span class="px-4 py-1">{{ rns ? rns : 'Claim Your RNS' }}</span>
-                </LinkButton>
-                <Input class="mb-4 w-full" :is-single-line="true" placeholder="Username" v-model="profile.name" />
-                <Input
-                    class="mb-4 w-full"
-                    :is-single-line="true"
-                    placeholder="Personal link"
-                    prefix="https://"
-                    v-model="profile.link"
-                />
-                <Input class="mb-4 w-full" :is-single-line="false" placeholder="Bio" v-model="profile.bio" />
-
-                <div class="fixed left-0 right-0 flex gap-5 m-auto px-4 w-full max-w-md md:px-0">
-                    <Button
-                        size="sm"
-                        class="text-secondary-btn-text flex-1 h-9 text-base bg-secondary-btn opacity-80"
-                        @click="handleDiscard()"
-                        ><span>Discard</span></Button
-                    >
-                    <Button
-                        size="sm"
-                        class="flex-1 h-9 text-body-text text-base bg-primary-btn opacity-80"
-                        @click="save"
-                        ><span>Save</span></Button
-                    >
-                </div>
-            </section>
-
-            <LoadingContainer v-show="isLoading" :isLooping="true" />
-
-            <Modal v-if="isShowingNotice">
-                <template #header>
-                    <h1>Oops!</h1>
-                </template>
-                <template #body>
-                    <p class="mt-1 p-4">
-                        {{ notice }}
-                    </p>
-                </template>
-                <template #footer>
-                    <div v-if="!isSavingNotice" class="flex flex-row gap-5">
-                        <Button size="sm" class="w-72 text-body-text bg-primary-btn" @click="isShowingNotice = false">
-                            <span>OK</span>
-                        </Button>
-                    </div>
-                    <div v-else class="flex flex-row gap-5 w-full">
-                        <Button
-                            size="sm"
-                            class="w-33 text-body-text bg-secondary-btn"
-                            @click="
-                                () => {
-                                    isShowingNotice = false;
-                                    isSavingNotice = false;
-                                }
-                            "
-                        >
-                            <span>Cancel</span>
-                        </Button>
-                        <Button
-                            size="sm"
-                            class="w-33 text-body-text bg-primary-btn"
-                            @click="
-                                () => {
-                                    back();
-                                    isShowingNotice = false;
-                                    isSavingNotice = false;
-                                }
-                            "
-                        >
-                            <span>OK</span>
-                        </Button>
-                    </div>
-                </template>
-            </Modal>
         </div>
+        <section class="m-auto max-w-md">
+            <AvatarEditor class="m-auto mb-4" size="lg" :url="profile.avatar || defaultAvatar" ref="avatar" />
+            <LinkButton
+                class="m-auto mb-4"
+                :class="{
+                    'cursor-default': rns,
+                }"
+                @click="toSetupRNS"
+            >
+                <span class="px-4 py-1">{{ rns ? rns : 'Claim Your RNS' }}</span>
+            </LinkButton>
+            <Input class="mb-4 w-full" :is-single-line="true" placeholder="Username" v-model="profile.name" />
+            <Input
+                class="mb-4 w-full"
+                :is-single-line="true"
+                placeholder="Personal link"
+                prefix="https://"
+                v-model="profile.link"
+            />
+            <Input class="mb-4 w-full" :is-single-line="false" placeholder="Bio" v-model="profile.bio" />
+
+            <div class="fixed left-0 right-0 flex gap-5 m-auto px-4 w-full max-w-md md:px-0">
+                <Button
+                    size="sm"
+                    class="text-secondary-btn-text flex-1 h-9 text-base bg-secondary-btn opacity-80"
+                    @click="handleDiscard()"
+                    ><span>Discard</span></Button
+                >
+                <Button size="sm" class="flex-1 h-9 text-body-text text-base bg-primary-btn opacity-80" @click="save"
+                    ><span>Save</span></Button
+                >
+            </div>
+        </section>
+
+        <LoadingContainer v-show="isLoading" :isLooping="true" />
+
+        <Modal v-if="isShowingNotice">
+            <template #header>
+                <h1>Oops!</h1>
+            </template>
+            <template #body>
+                <p class="mt-1 p-4">
+                    {{ notice }}
+                </p>
+            </template>
+            <template #footer>
+                <div v-if="!isSavingNotice" class="flex flex-row gap-5">
+                    <Button size="sm" class="w-72 text-body-text bg-primary-btn" @click="isShowingNotice = false">
+                        <span>OK</span>
+                    </Button>
+                </div>
+                <div v-else class="flex flex-row gap-5 w-full">
+                    <Button
+                        size="sm"
+                        class="w-33 text-body-text bg-secondary-btn"
+                        @click="
+                            () => {
+                                isShowingNotice = false;
+                                isSavingNotice = false;
+                            }
+                        "
+                    >
+                        <span>Cancel</span>
+                    </Button>
+                    <Button
+                        size="sm"
+                        class="w-33 text-body-text bg-primary-btn"
+                        @click="
+                            () => {
+                                back();
+                                isShowingNotice = false;
+                                isSavingNotice = false;
+                            }
+                        "
+                    >
+                        <span>OK</span>
+                    </Button>
+                </div>
+            </template>
+        </Modal>
     </div>
 </template>
 

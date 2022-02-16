@@ -172,17 +172,13 @@ import utils from '@/common/utils';
         MenuIcon,
         CloseIcon,
     },
-    data() {
-        return {
-            mobileNavOpen: false,
-            top: true,
-        };
-    },
 })
 export default class Index extends Vue {
     rss3: RSS3DetailPersona | null = null;
     isHavingMetamaskPlugin: Boolean = (window as any).ethereum;
     isLoading: Boolean = false;
+    mobileNavOpen: Boolean = false;
+    top: Boolean = true;
     $gtag: any;
 
     async mounted() {

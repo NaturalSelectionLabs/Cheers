@@ -215,7 +215,7 @@
                             v-model="specifyNoSignAccount.account"
                             :prefix="specifyNoSignAccount.prefix"
                             :suffix="specifyNoSignAccount.suffix"
-                            @keyup.enter.native="addNoSignAccountConfirm"
+                            @keyup.enter="addNoSignAccountConfirm"
                         />
                     </div>
                     <p class="mt-4 text-sm">
@@ -302,8 +302,8 @@ import TransBarCard from '@/components/Card/TransBarCard.vue';
 })
 export default class SetupAccounts extends Vue {
     avatar: string = config.defaultAvatar;
-    additionalMetamaskAccounts: String[] = ['Ethereum', 'BSC'];
-    additionalNoSignAccounts: String[] = ['Misskey', 'Twitter', 'Jike'];
+    additionalMetamaskAccounts: string[] = ['Ethereum', 'BSC'];
+    additionalNoSignAccounts: string[] = ['Misskey', 'Twitter', 'Jike'];
     show: RSS3Account[] = [];
     hide: RSS3Account[] = [];
     toAdd: RSS3Account[] = [];
@@ -311,14 +311,14 @@ export default class SetupAccounts extends Vue {
     isLoading: Boolean = false;
     isShowingAddAccountNotice: Boolean = false;
     isNoticeErrorReport: Boolean = true;
-    addAccountNotice: String = '';
+    addAccountNotice?: string;
     isShowingAddSpecifyAccountInput: Boolean = false;
     rns: string = '';
     ethAddress: string = '';
     isAddrCopied: boolean = false;
     isPCLayout: boolean = window.innerWidth > 768;
 
-    mode: String = 'normal';
+    mode: string = 'normal';
 
     specifyNoSignAccount: {
         platform: string;
@@ -341,7 +341,7 @@ export default class SetupAccounts extends Vue {
 
     async mounted() {
         await utils.tryEnsureOrRedirect(this.$route, this.$router);
-        const loginUser = await RSS3.getLoginUser();
+        const loginUser = RSS3.getLoginUser();
         await RSS3.setPageOwner(loginUser.address);
         const sessionProfile = sessionStorage.getItem('profile');
         if (sessionProfile) {
@@ -354,7 +354,7 @@ export default class SetupAccounts extends Vue {
         this.ethAddress = loginUser.address;
         this.rns = loginUser.name;
 
-        const accounts = await loginUser.persona?.profile.accounts;
+        const accounts = loginUser.persona?.profile.accounts;
         if (accounts) {
             const { listed, unlisted } = await utils.initAccounts();
             this.show = listed;
@@ -370,7 +370,7 @@ export default class SetupAccounts extends Vue {
             this.isShowingAddAccountNotice = true;
             return;
         }
-        const loginUser = await RSS3.getLoginUser();
+        const loginUser = RSS3.getLoginUser();
         const newAccount = await RSS3.addNewMetamaskAccount();
         if (newAccount.id) {
             const equalDefaultAccount = newAccount.id === `EVM+-${loginUser.address}`;
@@ -533,7 +533,7 @@ export default class SetupAccounts extends Vue {
             return;
         }
         this.isLoading = false;
-        await this.back();
+        this.back();
     }
 }
 </script>

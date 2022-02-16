@@ -4,6 +4,8 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
 const { VueLoaderPlugin } = require('vue-loader');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+const CompressionWebpackPlugin = require('compression-webpack-plugin');
+const zlib = require('zlib');
 module.exports = (env, argv) => ({
     devtool: argv.mode === 'production' ? false : 'inline-cheap-module-source-map',
     entry: {
@@ -137,7 +139,7 @@ module.exports = (env, argv) => ({
     plugins: [
         new BundleAnalyzerPlugin({
             analyzerMode: 'disabled',
-            generateStatsFile: true, // only set true under develop enviorment
+            generateStatsFile: argv.mode !== 'production', // only set true under develop enviorment
         }),
         new HtmlWebpackPlugin(
             argv.mode === 'production'
@@ -171,7 +173,32 @@ module.exports = (env, argv) => ({
             PAGE_ENV:
                 process.env.PAGE_ENV === 'development' ? JSON.stringify('development') : JSON.stringify(argv.mode),
         }),
-    ],
+    ].concat(
+        argv.mode === 'production'
+            ? [
+                  // prod only plugins
+                  new CompressionWebpackPlugin({
+                      filename: '[path][base].gz',
+                      algorithm: 'gzip',
+                      test: /\.(js|css|html|otf)$/,
+                      threshold: 10240,
+                      minRatio: 0.8,
+                  }),
+                  new CompressionWebpackPlugin({
+                      filename: '[path][base].br',
+                      algorithm: 'brotliCompress',
+                      test: /\.(js|css|html|svg|otf)$/,
+                      compressionOptions: {
+                          params: {
+                              [zlib.constants.BROTLI_PARAM_QUALITY]: 11,
+                          },
+                      },
+                      threshold: 10240,
+                      minRatio: 0.8,
+                  }),
+              ]
+            : [],
+    ),
     experiments: {
         topLevelAwait: true,
     },
