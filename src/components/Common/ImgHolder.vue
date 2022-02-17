@@ -1,12 +1,19 @@
 <template>
     <div
-        class="img-holder"
         :class="{
-            round: isRounded,
-            square: isSquare,
+            'rounded-full': isRounded,
+            rounded: isSquare,
         }"
     >
-        <img :src="fixedSrc" :alt="alt" />
+        <img
+            class="h-full w-full object-cover"
+            :class="{
+                'rounded-full': isRounded,
+                rounded: isSquare,
+            }"
+            :src="fixedSrc"
+            :alt="alt"
+        />
     </div>
 </template>
 
@@ -30,28 +37,4 @@ export default class ImgHolder extends Vue {
 }
 </script>
 
-<style scoped lang="postcss">
-@layer components {
-    .img-holder {
-        > img {
-            @apply w-full h-full object-cover;
-        }
-
-        &.round {
-            @apply rounded-full;
-
-            > img {
-                @apply rounded-full;
-            }
-        }
-
-        &.square {
-            @apply rounded;
-
-            > img {
-                @apply rounded;
-            }
-        }
-    }
-}
-</style>
+<style scoped lang="postcss"></style>

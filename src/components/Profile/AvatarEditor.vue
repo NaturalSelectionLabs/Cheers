@@ -1,10 +1,23 @@
 <template>
-    <label class="avatar" :class="size">
-        <ImgHolder class="image" :src="newUrl || url" v-show="newUrl || url" :isRounded="true" alt="Avatar Upload" />
+    <label
+        class="relative flex cursor-pointer items-center justify-center rounded-full bg-white bg-opacity-50"
+        :class="{
+            'h-14 w-14': size === 'sm',
+            'h-16 w-16': size === 'md',
+            'h-24 w-24': size === 'lg',
+        }"
+    >
+        <ImgHolder
+            class="absolute left-0 top-0 h-full w-full rounded-full object-cover object-center"
+            :src="newUrl || url"
+            v-show="newUrl || url"
+            :isRounded="true"
+            alt="Avatar Upload"
+        />
         <div
-            class="plus"
+            class="z-0 flex h-full w-full items-center justify-center rounded-full"
             :class="{
-                fill: newUrl || url,
+                'bg-white bg-opacity-40': newUrl || url,
             }"
         >
             <i class="bx bx-plus bx-sm fill-current" v-show="!newUrl" />
@@ -49,32 +62,4 @@ export default class Avatar extends Vue {
 }
 </script>
 
-<style scoped lang="postcss">
-@layer components {
-    .avatar {
-        @apply relative flex items-center justify-center bg-white bg-opacity-50 rounded-full cursor-pointer;
-
-        &.sm {
-            @apply w-14 h-14;
-        }
-        &.md {
-            @apply w-16 h-16;
-        }
-        &.lg {
-            @apply w-24 h-24;
-        }
-
-        .image {
-            @apply absolute left-0 top-0 w-full h-full rounded-full object-cover object-center;
-        }
-
-        .plus {
-            @apply z-0 flex items-center justify-center w-full h-full rounded-full;
-
-            &.fill {
-                @apply bg-white bg-opacity-40;
-            }
-        }
-    }
-}
-</style>
+<style></style>

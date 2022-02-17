@@ -1,7 +1,7 @@
 <template>
     <div class="relative">
         <div
-            class="account-item"
+            class="rounded-full border border-item-border bg-item-bg bg-85 bg-center bg-no-repeat filter"
             :class="{
                 'bg-BSC': chain === 'BSC',
                 'bg-Ethereum': chain === 'Ethereum',
@@ -26,7 +26,7 @@
         <Button
             v-show="deleteMode"
             size="sm"
-            class="absolute z-20 right-0 top-0 w-6 h-6 text-account-btn-m-text bg-account-btn-m"
+            class="absolute right-0 top-0 z-20 h-6 w-6 bg-account-btn-m text-account-btn-m-text"
             @click="deleteAccount"
         >
             <i class="bx bx-minus bx-sm"></i>
@@ -66,10 +66,4 @@ export default class AccountItem extends Vue {
 }
 </script>
 
-<style scoped lang="postcss">
-@layer components {
-    .account-item {
-        @apply bg-item-bg bg-85 bg-center bg-no-repeat border border-item-border rounded-full filter;
-    }
-}
-</style>
+<style></style>

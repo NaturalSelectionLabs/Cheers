@@ -1,5 +1,7 @@
 <template>
-    <div class="scan-tag">
+    <div
+        class="flex items-center justify-center rounded-sm bg-white bg-contain bg-center bg-no-repeat bg-origin-content px-2 py-1.5 text-center leading-none"
+    >
         <Etherscan v-if="chain === 'Ethereum'" />
         <Bscscan v-if="chain === 'BSC'" />
         <PolygonScan v-if="chain === 'Polygon'" />
@@ -27,10 +29,4 @@ export default class ScanTag extends Vue {
 }
 </script>
 
-<style scoped lang="postcss">
-@layer components {
-    .scan-tag {
-        @apply flex items-center justify-center px-2 py-1.5 text-center leading-none bg-white bg-contain bg-center bg-no-repeat rounded-sm bg-origin-content;
-    }
-}
-</style>
+<style></style>

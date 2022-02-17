@@ -126,7 +126,6 @@ module.exports = (env, argv) => ({
                             },
                         },
                     },
-                    // 'less-loader'
                 ],
             },
             {

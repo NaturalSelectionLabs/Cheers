@@ -1,9 +1,9 @@
 <template>
     <span
-        class="tooltip"
+        class="tooltip absolute z-10 whitespace-nowrap rounded-sm border-link px-2 py-1 font-normal"
         :class="{
-            'color-default': viewOption === 'default' || !viewOption,
-            'color-account': viewOption === 'account',
+            'color-default bg-secondary-btn text-primary-text': viewOption === 'default' || !viewOption,
+            'color-account bg-account-bg text-account-title': viewOption === 'account',
         }"
         >{{ text }}</span
     >
@@ -24,30 +24,34 @@ export default class Tooltip extends Vue {
 </script>
 
 <style lang="postcss" scoped>
-@layer components {
-    .tooltip {
-        @apply absolute z-10 px-2 py-1 whitespace-nowrap font-normal border-link rounded-sm;
-        left: calc(100% + 5px);
-        top: calc(50% - 14px);
-    }
+.tooltip {
+    left: calc(100% + 5px);
+    top: calc(50% - 14px);
+}
 
-    .tooltip::after {
-        content: '';
-        @apply absolute bottom-full left-0 top-3 -ml-2 border-4 border-solid;
-    }
+.tooltip::after {
+    content: '';
+    /* absolute */
+    position: absolute;
+    /* bottom-full */
+    bottom: 100%;
+    /* left-0 */
+    left: 0;
+    /* top-3 */
+    top: 0.75rem;
+    /* -ml-2 */
+    margin-left: -0.5rem;
+    /* border-4 */
+    border-width: 4px;
+    /* border-solid */
+    border-style: solid;
+}
 
-    .color-default {
-        @apply text-primary-text bg-secondary-btn;
-        &.tooltip::after {
-            border-color: transparent rgba(0, 114, 255, 0.1) transparent transparent;
-        }
-    }
+.tooltip.color-default::after {
+    border-color: transparent rgba(0, 114, 255, 0.1) transparent transparent;
+}
 
-    .color-account {
-        @apply text-account-title bg-account-bg;
-        &.tooltip::after {
-            border-color: transparent #f6fff5 transparent transparent;
-        }
-    }
+.tooltip.color-account::after {
+    border-color: transparent #f6fff5 transparent transparent;
 }
 </style>

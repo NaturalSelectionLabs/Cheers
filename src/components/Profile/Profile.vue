@@ -1,28 +1,28 @@
 <template>
-    <div class="flex flex-col items-center p-4 bg-card-bg border-card rounded box-border md:p-6">
-        <div class="grid gap-x-6 gap-y-2 grid-cols-3 content-center items-center w-full md:grid-cols-5">
-            <ImgHolder class="col-span-1 col-start-1 w-22 h-22" :is-rounded="true" :is-border="false" :src="avatar" />
+    <div class="box-border flex flex-col items-center rounded border-card bg-card-bg p-4 md:p-6">
+        <div class="grid w-full grid-cols-3 content-center items-center gap-x-6 gap-y-2 md:grid-cols-5">
+            <ImgHolder class="col-span-1 col-start-1 h-22 w-22" :is-rounded="true" :is-border="false" :src="avatar" />
             <div
-                class="stats-container row-span-1 self-end ml-2 leading-5 md:col-span-1 md:col-start-2"
+                class="row-span-1 mb-2 ml-2 w-14 cursor-pointer self-end leading-5 md:col-span-1 md:col-start-2"
                 @click="toFollowersPage"
             >
-                <div class="stats-number">
+                <div class="text-base font-normal">
                     {{ followers }}
                 </div>
-                <div class="stats-type">Followers</div>
+                <div class="text-base font-normal leading-none">Followers</div>
             </div>
             <div
-                class="stats-container row-span-1 self-end leading-5 md:col-span-1 md:col-start-3"
+                class="row-span-1 mb-2 w-14 cursor-pointer self-end leading-5 md:col-span-1 md:col-start-3"
                 @click="toFollowingsPage"
             >
-                <div class="stats-number">
+                <div class="text-base font-normal">
                     {{ followings }}
                 </div>
-                <div class="stats-type">Followings</div>
+                <div class="text-base font-normal leading-none">Followings</div>
             </div>
             <span class="col-span-full row-start-2 text-2xl font-semibold">{{ username }}</span>
-            <section class="flex flex-col gap-x-10 gap-y-2 col-span-full row-start-3 items-start justify-start">
-                <div class="scrollbar-hide flex flex-row gap-x-2 max-w-full whitespace-nowrap overflow-auto">
+            <section class="col-span-full row-start-3 flex flex-col items-start justify-start gap-x-10 gap-y-2">
+                <div class="flex max-w-full flex-row gap-x-2 overflow-auto whitespace-nowrap scrollbar-hide">
                     <LinkButton @click="emitClickAddress">
                         <transition name="tip-fade" mode="out-in">
                             <span v-if="isShowingTooltip">Copied</span>
@@ -30,13 +30,10 @@
                         </transition>
                     </LinkButton>
                     <LinkButton @click="toExternalLink" v-if="website && !isLoadingPersona">
-                        <span><i class="bx bx-link align-bottom mr-1" />{{ fixWebsiteURI(website) }}</span>
+                        <span><i class="bx bx-link mr-1 align-bottom" />{{ fixWebsiteURI(website) }}</span>
                     </LinkButton>
                 </div>
-                <div
-                    class="scrollbar-hide max-h-5 flex flex-1 flex-row flex-shrink items-center"
-                    v-if="!isLoadingPersona"
-                >
+                <div class="max-h-5 flex flex-1 shrink flex-row items-center scrollbar-hide" v-if="!isLoadingPersona">
                     <slot name="Accounts" />
                 </div>
             </section>
@@ -115,27 +112,13 @@ export default class Profile extends Vue {
 </script>
 
 <style lang="postcss" scoped>
-@layer components {
-    .stats-container {
-        @apply mb-2 w-14 cursor-pointer;
+.tip-fade-enter-active,
+.tip-fade-leave-active {
+    transition: opacity 0.5s ease;
+}
 
-        .stats-number {
-            @apply text-base font-normal;
-        }
-
-        .stats-type {
-            @apply text-base font-normal leading-none;
-        }
-    }
-
-    .tip-fade-enter-active,
-    .tip-fade-leave-active {
-        transition: opacity 0.5s ease;
-    }
-
-    .tip-fade-enter-from,
-    .tip-fade-leave-to {
-        opacity: 0;
-    }
+.tip-fade-enter-from,
+.tip-fade-leave-to {
+    opacity: 0;
 }
 </style>

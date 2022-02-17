@@ -1,20 +1,20 @@
 <template>
     <div
-        class="wrapper"
+        class="box-border flex rounded-xl border-input border-input-border bg-card-bg pb-3 pl-5 pr-5 pt-3 font-extralight"
         :class="{
-            error: $props.isError,
+            'bg-red-100': $props.isError,
             'cursor-not-allowed': $props.isDisabled,
         }"
     >
-        <span v-if="$props.prefix" class="additional">
+        <span v-if="$props.prefix" class="mr-2 flex font-medium">
             {{ $props.prefix }}
         </span>
         <input
             v-if="isSingleLine"
             type="text"
-            class="input"
+            class="input flex w-full resize-none border-input border-input-border bg-white bg-opacity-0 font-extralight placeholder-black placeholder-opacity-20 outline-none"
             :class="{
-                error: $props.isError,
+                'bg-red-100': $props.isError,
                 'cursor-not-allowed': $props.isDisabled,
             }"
             :placeholder="placeholder"
@@ -24,9 +24,9 @@
         />
         <textarea
             v-else
-            class="input textarea"
+            class="input h-40"
             :class="{
-                error: $props.isError,
+                'bg-red-100': $props.isError,
                 'cursor-not-allowed': $props.isDisabled,
             }"
             :placeholder="placeholder"
@@ -59,28 +59,7 @@ export default class Input extends Vue {}
 </script>
 
 <style scoped lang="postcss">
-@layer components {
-    .wrapper {
-        @apply flex pb-3 pl-5 pr-5 pt-3 font-extralight bg-card-bg border-input border-input-border rounded-xl box-border;
-    }
-
-    .additional {
-        @apply flex mr-2 font-medium;
-    }
-
-    .input {
-        @apply placeholder-black placeholder-opacity-20 flex w-full font-extralight bg-white bg-opacity-0 border-input border-input-border outline-none resize-none;
-    }
-    .input::placeholder {
-        font-weight: 500;
-    }
-
-    .textarea {
-        @apply h-40;
-    }
-
-    .error {
-        @apply bg-red-100;
-    }
+.input::placeholder {
+    font-weight: 500;
 }
 </style>

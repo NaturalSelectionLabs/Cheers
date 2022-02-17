@@ -1,5 +1,7 @@
 <template>
-    <button class="link-btn">
+    <button
+        class="flex flex-row items-center justify-center gap-2 rounded-sm bg-secondary-btn px-3 pb-1 pt-1 text-center text-base font-light leading-none focus:outline-none"
+    >
         <slot></slot>
     </button>
 </template>
@@ -16,10 +18,4 @@ export default class LinkButton extends Vue {
 }
 </script>
 
-<style scoped lang="postcss">
-@layer components {
-    .link-btn {
-        @apply flex flex-row gap-2 items-center justify-center pb-1 pt-1 px-3 text-center text-base font-light leading-none bg-secondary-btn rounded-sm focus:outline-none;
-    }
-}
-</style>
+<style></style>

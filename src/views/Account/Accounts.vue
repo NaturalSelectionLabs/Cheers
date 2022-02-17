@@ -1,5 +1,5 @@
 <template>
-    <div class="m-auto pb-32 pt-8 px-4 max-w-screen-lg">
+    <div class="m-auto max-w-screen-lg px-4 pb-32 pt-8">
         <Header />
         <TransBarCard
             :title="rss3Profile.name ? rss3Profile.name + `'s Accounts` : 'Accounts'"
@@ -12,24 +12,24 @@
             </template>
             <template #details>
                 <div
-                    class="grid gap-4 grid-cols-1 items-center justify-between py-4 w-full md:grid-cols-2 md:justify-start"
+                    class="grid w-full grid-cols-1 items-center justify-between gap-4 py-4 md:grid-cols-2 md:justify-start"
                 >
                     <div
-                        class="flex flex-row gap-4 items-center justify-between w-full cursor-pointer md:max-w-xs"
+                        class="flex w-full cursor-pointer flex-row items-center justify-between gap-4 md:max-w-xs"
                         v-for="item in accounts"
                         :key="item.platform + item.identity"
                         @click="displayDialog(item.identity, item.platform)"
                     >
                         <EVMpAccountItem v-if="item.platform === 'EVM+'" :size="70" :address="item.identity" />
                         <AccountItem v-else :size="70" :chain="item.platform" :address="item.identity" />
-                        <span class="text-lg font-semibold truncate">{{ getDisplayAddress(item) }}</span>
-                        <section class="flex flex-row flex-shrink-0 gap-4">
+                        <span class="truncate text-lg font-semibold">{{ getDisplayAddress(item) }}</span>
+                        <section class="flex shrink-0 flex-row gap-4">
                             <i
-                                class="bx bxs-copy bx-sm text-primary-text opacity-70 transform active:-translate-y-px"
+                                class="bx bxs-copy bx-sm transform text-primary-text opacity-70 active:-translate-y-px"
                                 @click.stop="copyToClipboard(item.identity)"
                             />
                             <i
-                                class="bx bx-link-external bx-sm text-primary-text opacity-70 transform active:-translate-y-px"
+                                class="bx bx-link-external bx-sm transform text-primary-text opacity-70 active:-translate-y-px"
                                 @click.stop="toExternalLink(item.identity, item.platform)"
                             />
                         </section>

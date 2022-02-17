@@ -1,7 +1,9 @@
 <template>
-    <div class="trait-container">
-        <div class="trait-type">{{ traitType }}</div>
-        <div class="trait-value">{{ traitValue }}</div>
+    <div
+        class="flex flex-col items-start justify-center gap-1 rounded-sm border-card bg-primary-btn bg-opacity-10 px-5 py-3 leading-none text-body-text"
+    >
+        <div class="text-xs font-normal uppercase">{{ traitType }}</div>
+        <div class="text-sm font-medium capitalize">{{ traitValue }}</div>
     </div>
 </template>
 
@@ -20,16 +22,4 @@ export default class Trait extends Vue {
 }
 </script>
 
-<style scoped lang="postcss">
-@layer components {
-    .trait-container {
-        @apply flex flex-col gap-1 items-start justify-center px-5 py-3 text-body-text leading-none bg-primary-btn bg-opacity-10 border-card rounded-sm;
-    }
-    .trait-type {
-        @apply text-xs font-normal uppercase;
-    }
-    .trait-value {
-        @apply text-sm font-medium capitalize;
-    }
-}
-</style>
+<style></style>

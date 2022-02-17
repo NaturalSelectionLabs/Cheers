@@ -1,9 +1,8 @@
 module.exports = {
-    purge: {
-        enabled: true,
-        content: ['./index.html', './src/**/*.{vue,js,ts,jsx,tsx}'],
-    },
-    darkMode: false, // or 'media' or 'class'
+    content: [
+        // './index.html',
+        './src/**/*.{vue,js,ts,jsx,tsx}',
+    ],
     theme: {
         extend: {
             borderRadius: {
@@ -177,18 +176,6 @@ module.exports = {
             96: '24rem',
             112: '28rem',
             128: '32rem',
-        },
-    },
-    variants: {
-        extend: {
-            backgroundColor: ['active'],
-            backgroundOpacity: ['active'],
-            textColor: ['active'],
-            borderColor: ['active'],
-            display: ['group-hover'],
-            fill: ['active', 'focus'],
-            transfrom: ['active'],
-            translate: ['active'],
         },
     },
     plugins: [

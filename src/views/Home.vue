@@ -1,5 +1,5 @@
 <template>
-    <div id="main" class="m-auto pb-12 pt-8 px-4 max-w-screen-lg text-body-text">
+    <div id="main" class="m-auto max-w-screen-lg px-4 pb-12 pt-8 text-body-text">
         <Header :displayLogo="true" />
         <div class="flex flex-col gap-4 md:flex-row">
             <section class="md:w-3/5">
@@ -18,7 +18,7 @@
                     >
                         <template #Accounts>
                             <div
-                                class="inline-block mr-1 cursor-pointer"
+                                class="mr-1 inline-block cursor-pointer"
                                 v-for="item in accounts"
                                 :key="item.identity"
                                 @click="displayDialog(item.identity, item.platform)"
@@ -30,7 +30,7 @@
                                 v-if="isOwner"
                                 size="sm"
                                 shape="circle"
-                                class="inline-block mr-1 w-8 h-8 text-btn-icon bg-secondary-btn-card"
+                                class="mr-1 inline-block h-8 w-8 bg-secondary-btn-card text-btn-icon"
                                 @click="toManageAccounts"
                             >
                                 <i class="bx bx-pencil bx-xs" />
@@ -38,7 +38,7 @@
                             <Button
                                 size="sm"
                                 shape="circle"
-                                class="inline-block mr-1 w-8 h-8 text-btn-icon bg-secondary-btn-card"
+                                class="mr-1 inline-block h-8 w-8 bg-secondary-btn-card text-btn-icon"
                                 @click="toAccountsPage"
                             >
                                 <i class="bx bx-expand-alt bx-xs" />
@@ -72,7 +72,7 @@
                                     @click="toManageNFTs(className)"
                                 >
                                     <span
-                                        class="absolute -right-1.5 -top-1.5 inline-flex w-2 h-2 bg-red-500 rounded-full"
+                                        class="absolute -right-1.5 -top-1.5 inline-flex h-2 w-2 rounded-full bg-red-500"
                                     />
                                 </i>
                             </template>
@@ -98,7 +98,7 @@
                             <template #button>
                                 <Button
                                     size="sm"
-                                    class="w-8 h-8 text-btn-icon bg-secondary-btn-card"
+                                    class="h-8 w-8 bg-secondary-btn-card text-btn-icon"
                                     @click="toListPage(`nfts/${className}`)"
                                 >
                                     <i class="bx bx-expand-alt bx-xs" />
@@ -157,7 +157,7 @@
                             <template #button>
                                 <Button
                                     size="sm"
-                                    class="w-8 h-8 text-btn-icon bg-secondary-btn-card"
+                                    class="h-8 w-8 bg-secondary-btn-card text-btn-icon"
                                     @click="toListPage(`nfts/${className}`)"
                                 >
                                     <i class="bx bx-expand-alt bx-xs" />
@@ -195,14 +195,14 @@
                                 :key="item.id"
                                 :imageUrl="item.detail.image_url"
                                 size="sm"
-                                class="flex-shrink-0 mr-2 cursor-pointer"
+                                class="mr-2 shrink-0 cursor-pointer"
                                 @click="toSingleItemPage(item.id)"
                             />
                         </template>
                         <template #button>
                             <Button
                                 size="sm"
-                                class="w-8 h-8 text-btn-icon bg-secondary-btn-card"
+                                class="h-8 w-8 bg-secondary-btn-card text-btn-icon"
                                 @click="toListPage('Footprints')"
                             >
                                 <i class="bx bx-expand-alt bx-xs" />
@@ -233,7 +233,7 @@
                         <template #button>
                             <Button
                                 size="sm"
-                                class="w-8 h-8 text-btn-icon bg-secondary-btn-card"
+                                class="h-8 w-8 bg-secondary-btn-card text-btn-icon"
                                 @click="toListPage('Gitcoins')"
                             >
                                 <i class="bx bx-expand-alt bx-xs" />
@@ -248,7 +248,7 @@
                     <TransBarCard title="Content" :haveDetails="true" :haveContent="false">
                         <template #header>
                             <div class="flex flex-col gap-y-2" :class="{ 'pointer-events-none': isLoadingContents }">
-                                <div class="flex gap-2 items-center justify-between" @click="toggleWeb3Only()">
+                                <div class="flex items-center justify-between gap-2" @click="toggleWeb3Only()">
                                     <h2
                                         class="text-black text-opacity-50"
                                         :class="{ 'translate-x-5 text-opacity-80': isWeb3Only }"
@@ -256,10 +256,10 @@
                                         Web3 Only
                                     </h2>
                                     <div
-                                        class="flex items-center p-1 w-11 h-6 bg-gray-500 bg-opacity-10 rounded-full cursor-pointer duration-200 ease-in-out"
+                                        class="flex h-6 w-11 cursor-pointer items-center rounded-full bg-gray-500 bg-opacity-10 p-1 duration-200 ease-in-out"
                                     >
                                         <div
-                                            class="w-4 h-4 bg-black bg-opacity-50 rounded-full shadow-md transform duration-200 ease-in-out"
+                                            class="h-4 w-4 transform rounded-full bg-black bg-opacity-50 shadow-md duration-200 ease-in-out"
                                             :class="{ 'translate-x-5 bg-opacity-80': !isWeb3Only }"
                                         />
                                     </div>
@@ -297,7 +297,7 @@
                                 >
                                     <Button
                                         size="sm"
-                                        class="w-full h-6"
+                                        class="h-6 w-full"
                                         v-show="isContentsHaveMore"
                                         @click="loadMoreContents"
                                         id="contents-load-more-button"
@@ -307,15 +307,15 @@
                                     </Button>
                                 </IntersectionObserverContainer>
                             </div>
-                            <div v-else class="flex flex-col gap-1 items-center justify-center p-5 h-96">
+                            <div v-else class="flex h-96 flex-col items-center justify-center gap-1 p-5">
                                 <template v-if="isLoadingContents">
-                                    <span class="text-light w-1/2 text-center break-words">
+                                    <span class="text-light w-1/2 break-words text-center">
                                         One moment! Details on the way
                                     </span>
                                     <LoadingSmile :size="18" :isLooping="true" />
                                 </template>
                                 <template v-else>
-                                    <span class="text-light w-1/2 text-center break-words">
+                                    <span class="text-light w-1/2 break-words text-center">
                                         Looks like this user hasn't got a shot. Come back and check it out later.
                                     </span>
                                     <Smile :size="18" />
@@ -327,15 +327,15 @@
             </section>
 
             <div class="safe-area-fixed-bottom bg-footer-bg fixed bottom-0 left-0 mt-2 w-full">
-                <div class="flex flex-row gap-x-2 items-center justify-end m-auto px-4 py-2 max-w-screen-lg">
-                    <div class="text-right text-body-text text-xs font-normal">
+                <div class="m-auto flex max-w-screen-lg flex-row items-center justify-end gap-x-2 px-4 py-2">
+                    <div class="text-right text-xs font-normal text-body-text">
                         <a href="https://rss3.io/#/privacy"> Privacy </a>
                         |
                         <span>
                             Made with 🌀 by
                             <a
                                 href="https://rss3.io"
-                                class="text-body-text no-underline visited:no-underline active:no-underline text-xs font-normal"
+                                class="text-xs font-normal text-body-text no-underline visited:no-underline active:no-underline"
                             >
                                 RSS3
                             </a>

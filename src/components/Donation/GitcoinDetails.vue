@@ -1,17 +1,17 @@
 <template>
-    <div class="flex flex-col gap-4 items-start justify-start w-full text-body-text border-card rounded filter">
+    <div class="flex w-full flex-col items-start justify-start gap-4 rounded border-card text-body-text filter">
         <div class="w-full">
             <h2 class="break-words text-xl font-semibold">
                 {{ details.title || 'Inactive Project' }}
             </h2>
-            <div class="flex flex-row flex-wrap text-primary-text leading-normal space-x-1">
-                <p class="text-sm cursor-pointer truncate" @click="toExternalLink(details.reference_url)">
+            <div class="flex flex-row flex-wrap space-x-1 leading-normal text-primary-text">
+                <p class="cursor-pointer truncate text-sm" @click="toExternalLink(details.reference_url)">
                     <i class="bx bx-link align-middle" />
                     {{ details.reference_url }}
                 </p>
                 <template v-if="grantsUrl && grantsUrl !== details.reference_url">
                     <span class="px-1 text-sm font-semibold leading-tight">|</span>
-                    <p class="text-sm cursor-pointer truncate" @click="toExternalLink(grantsUrl)">
+                    <p class="cursor-pointer truncate text-sm" @click="toExternalLink(grantsUrl)">
                         {{ grantsUrl }}
                     </p>
                 </template>
@@ -19,7 +19,7 @@
         </div>
         <div class="w-full">
             <h2 class="break-words text-xl font-semibold">Description</h2>
-            <div class="line-clamp-3 break-words text-sm leading-normal">
+            <div class="break-words text-sm leading-normal line-clamp-3">
                 {{ details.description || 'No information provided by Gitcoin.' }}
             </div>
         </div>
@@ -36,10 +36,10 @@
                 />
             </h1>
         </div>
-        <div class="flex flex-col gap-y-2 w-full">
-            <div class="flex flex-row gap-x-2 items-center" v-for="item in donationInfo" :key="item.txHash">
-                <div class="flex flex-1 flex-row items-center justify-between px-4 py-2 text-black rounded-xl">
-                    <div class="flex-shrink pr-2">
+        <div class="flex w-full flex-col gap-y-2">
+            <div class="flex flex-row items-center gap-x-2" v-for="item in donationInfo" :key="item.txHash">
+                <div class="flex flex-1 flex-row items-center justify-between rounded-xl px-4 py-2 text-black">
+                    <div class="shrink pr-2">
                         <vue3-autocounter
                             ref="counter"
                             :startAmount="0"
@@ -51,11 +51,11 @@
                             :autoinit="true"
                         />
                     </div>
-                    <div class="flex-1 w-0 text-right text-primary-text truncate">
+                    <div class="w-0 flex-1 truncate text-right text-primary-text">
                         {{ timeDifferent(item.timeStamp) }}
                     </div>
                 </div>
-                <Button size="sm" class="w-9 h-9 text-white bg-primary-text" @click="toScanTx(item)">
+                <Button size="sm" class="h-9 w-9 bg-primary-text text-white" @click="toScanTx(item)">
                     <i class="bx bx-link-external bx-xs" />
                 </Button>
             </div>
