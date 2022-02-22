@@ -147,6 +147,8 @@ export interface Profile {
     bio: string;
     rns?: string;
     displayAddress?: string;
+    followers?: string[];
+    followings?: string[];
 }
 
 export interface CustomField_PassAssets {
