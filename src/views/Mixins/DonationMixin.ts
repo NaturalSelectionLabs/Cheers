@@ -28,7 +28,7 @@ export class DonationMixin extends Vue {
                 if (!assetsNoDetails.length) {
                     // all the assets have details, break
                     break;
-                } else {
+                } else if (i > 0) {
                     // already request but not get full details
                     // sleep for two seconds
                     await new Promise((r) => setTimeout(r, 2000));
