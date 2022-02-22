@@ -326,23 +326,7 @@
                 </div>
             </section>
 
-            <div class="safe-area-fixed-bottom bg-footer-bg fixed bottom-0 left-0 mt-2 w-full">
-                <div class="m-auto flex max-w-screen-lg flex-row items-center justify-end gap-x-2 px-4 py-2">
-                    <div class="text-right text-xs font-normal text-body-text">
-                        <a href="https://rss3.io/#/privacy"> Privacy </a>
-                        |
-                        <span>
-                            Made with 🌀 by
-                            <a
-                                href="https://rss3.io"
-                                class="text-xs font-normal text-body-text no-underline visited:no-underline active:no-underline"
-                            >
-                                RSS3
-                            </a>
-                        </span>
-                    </div>
-                </div>
-            </div>
+            <Footer />
             <AccountModal
                 :isShowingAccount="isShowingAccount"
                 :showingAccountDetails="showingAccountDetails"
@@ -380,6 +364,7 @@ import TransBarCard from '@/components/Card/TransBarCard.vue';
 import AssetCard from '@/components/Card/AssetCard.vue';
 import config from '@/common/config';
 import Header from '@/components/Common/Header.vue';
+import Footer from '@/components/Common/Footer.vue';
 import AccountModal from '@/components/Account/AccountModal.vue';
 import Smile from '@/components/Icons/Smile.vue';
 import LoadingSmile from '@/components/Loading/LoadingSmile.vue';
@@ -409,6 +394,7 @@ import { ContentMixin } from '@/views/Mixins/ContentMixin';
         Toolbar,
         AssetCard,
         Header,
+        Footer,
         AccountModal,
         Smile,
         LoadingSmile,
