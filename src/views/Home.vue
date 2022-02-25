@@ -60,7 +60,7 @@
                         <TransBarCard
                             v-if="className === 'Collectibles'"
                             :title="className"
-                            :tip="isLoadingAssets.NFT ? 'loading' : isOwner ? 'ownerEmpty' : 'notOwnerEmpty'"
+                            :tip="isLoadingNFT ? 'loading' : isOwner ? 'ownerEmpty' : 'notOwnerEmpty'"
                             :haveDetails="false"
                             :haveContent="true"
                             :haveContentInfo="classifiedList[className].length > 0"
@@ -109,7 +109,7 @@
                         <TransBarCard
                             v-else
                             :title="className"
-                            :tip="isLoadingAssets.NFT ? 'loading' : isOwner ? 'ownerEmpty' : 'notOwnerEmpty'"
+                            :tip="isLoadingNFT ? 'loading' : isOwner ? 'ownerEmpty' : 'notOwnerEmpty'"
                             :haveDetails="classifiedList[className].length > 0"
                             :haveContent="true"
                             :haveContentInfo="classifiedList[className].length > 0"
@@ -168,7 +168,7 @@
 
                     <TransBarCard
                         title="Footprints"
-                        :tip="isLoadingAssets.Footprint ? 'loading' : isOwner ? 'ownerEmpty' : 'notOwnerEmpty'"
+                        :tip="isLoadingFootprint ? 'loading' : isOwner ? 'ownerEmpty' : 'notOwnerEmpty'"
                         :haveDetails="footprints.length !== 0"
                         :haveContent="true"
                         :haveContentInfo="footprints.length > 0"
@@ -212,7 +212,7 @@
 
                     <TransBarCard
                         title="Donations"
-                        :tip="isLoadingAssets.Gitcoin ? 'loading' : isOwner ? 'ownerEmpty' : 'notOwnerEmpty'"
+                        :tip="isLoadingDonation ? 'loading' : isOwner ? 'ownerEmpty' : 'notOwnerEmpty'"
                         :haveDetails="false"
                         :haveContent="true"
                         :haveContentInfo="gitcoins.length > 0"
@@ -326,23 +326,7 @@
                 </div>
             </section>
 
-            <div class="safe-area-fixed-bottom bg-footer-bg fixed bottom-0 left-0 mt-2 w-full">
-                <div class="m-auto flex max-w-screen-lg flex-row items-center justify-end gap-x-2 px-4 py-2">
-                    <div class="text-right text-xs font-normal text-body-text">
-                        <a href="https://rss3.io/#/privacy"> Privacy </a>
-                        |
-                        <span>
-                            Made with 🌀 by
-                            <a
-                                href="https://rss3.io"
-                                class="text-xs font-normal text-body-text no-underline visited:no-underline active:no-underline"
-                            >
-                                RSS3
-                            </a>
-                        </span>
-                    </div>
-                </div>
-            </div>
+            <Footer />
             <AccountModal
                 :isShowingAccount="isShowingAccount"
                 :showingAccountDetails="showingAccountDetails"
@@ -353,7 +337,7 @@
 </template>
 
 <script lang="ts">
-import { Options, Vue } from 'vue-class-component';
+import { mixins, Options } from 'vue-class-component';
 import Button from '@/components/Button/Button.vue';
 import Profile from '@/components/Profile/Profile.vue';
 import AccountItem from '@/components/Account/AccountItem.vue';
@@ -365,7 +349,7 @@ import RNSUtils from '@/common/rns';
 import utils from '@/common/utils';
 import legacyConfig from '@/config';
 import GitcoinItem from '@/components/Donation/GitcoinItem.vue';
-import { Profile as ProfileInfo, GeneralAsset, DetailedNFT, GeneralAssetWithClass } from '@/common/types';
+import { Profile as ProfileInfo } from '@/common/types';
 
 import FootprintCard from '@/components/Footprint/FootprintCard.vue';
 import ContentCard from '@/components/Content/ContentCard.vue';
@@ -380,16 +364,17 @@ import TransBarCard from '@/components/Card/TransBarCard.vue';
 import AssetCard from '@/components/Card/AssetCard.vue';
 import config from '@/common/config';
 import Header from '@/components/Common/Header.vue';
+import Footer from '@/components/Common/Footer.vue';
 import AccountModal from '@/components/Account/AccountModal.vue';
 import Smile from '@/components/Icons/Smile.vue';
 import LoadingSmile from '@/components/Loading/LoadingSmile.vue';
-import flattenDeep from 'lodash/flattenDeep';
 import { formatter } from '@/common/address';
 
-interface Relations {
-    followers: string[];
-    followings: string[];
-}
+// mixins section
+import { NFTMixin } from '@/views/Mixins/NFTMixin';
+import { DonationMixin } from '@/views/Mixins/DonationMixin';
+import { FootprintMixin } from '@/views/Mixins/FootprintMixin';
+import { ContentMixin } from '@/views/Mixins/ContentMixin';
 
 @Options({
     name: 'Home',
@@ -409,12 +394,13 @@ interface Relations {
         Toolbar,
         AssetCard,
         Header,
+        Footer,
         AccountModal,
         Smile,
         LoadingSmile,
     },
 })
-export default class Home extends Vue {
+export default class Home extends mixins(NFTMixin, DonationMixin, FootprintMixin, ContentMixin) {
     rns: string = '';
     ethAddress: string = '';
     isFollowing: boolean = false;
@@ -431,21 +417,7 @@ export default class Home extends Vue {
         isLink: false,
     };
     isAccountRegistered: boolean = true;
-    isLoadingAssets: {
-        NFT: boolean;
-        Gitcoin: boolean;
-        Footprint: boolean;
-    } = {
-        NFT: true,
-        Gitcoin: true,
-        Footprint: true,
-    };
-    isLoadingContents: boolean = true;
-    isContentsHaveMore: boolean = true;
-    isLoadingMore: boolean = false;
-    currentTheme: string = '';
     isLoadingPersona: boolean = true;
-    isWeb3Only: boolean = false;
 
     rss3Profile: ProfileInfo = {
         avatar: legacyConfig.defaultAvatar,
@@ -454,39 +426,25 @@ export default class Home extends Vue {
         bio: '...',
         displayAddress: '',
     };
-    rss3Relations: Relations = {
+    rss3Relations: {
+        followers: string[];
+        followings: string[];
+    } = {
         followers: [],
         followings: [],
     };
     accounts: AnyObject[] = [];
-    // nfts: AnyObject[] = [];
-    gitcoins: AnyObject[] = [];
-    footprints: AnyObject[] = [];
-    contents: any[] = [];
-    contentTimestamp: string = '';
     $gtag: any;
     scrollTop: number = 0;
     lastRoute: string = '';
     undefinedImage = legacyConfig.undefinedImageAlt;
     defaultAvatar = legacyConfig.defaultAvatar;
-    // notice: string = '';
-    // isShowingNotice: boolean = false;
 
     isPCLayout: boolean = window.innerWidth > config.ui.md;
     isOwnerValidRSS3: boolean = false;
     ownerETHAddress: string = '';
 
     isLastScrollingDown: boolean = false;
-
-    classifiedList: {
-        [className: string]: DetailedNFT[];
-    } = {
-        Collectibles: [],
-        // Games: [],
-        // Awards: [],
-        // Organizations: [],
-    };
-    allClasses: string[] = Object.keys(this.classifiedList);
 
     async mounted() {
         window.onresize = () => {
@@ -577,11 +535,9 @@ export default class Home extends Vue {
     }
 
     async startLoadingAssets() {
-        this.isLoadingAssets = {
-            NFT: true,
-            Gitcoin: true,
-            Footprint: true,
-        };
+        this.isLoadingNFT = true;
+        this.isLoadingDonation = true;
+        this.isLoadingFootprint = true;
         const allAssets = await utils.initAssets();
         // laod NFT, donation and footprint
         await Promise.all([
@@ -589,224 +545,6 @@ export default class Home extends Vue {
             this.ivLoadGitcoin(allAssets.donations.slice(0, config.assets.brief)),
             this.ivLoadFootprint(allAssets.footprints.slice(0, config.assets.brief)),
         ]);
-    }
-
-    async ivLoadNFT(assets: GeneralAssetWithClass[]) {
-        const nftsWithClassName = this.generateNFTsWithClassName(assets);
-        const assetIDList = nftsWithClassName.map((asset) =>
-            RSS3Utils.id.getAsset(asset.platform, asset.identity, asset.type, asset.uniqueID),
-        );
-        if (assetIDList.length === 0) {
-            this.isLoadingAssets.NFT = false;
-            return;
-        }
-        let displayedNFTsDetail: AnyObject[] = [];
-        for (let i = 0; i < 10; i++) {
-            if (displayedNFTsDetail.length !== 0) {
-                this.isLoadingAssets.NFT = false;
-            }
-            const assetsNoDetails = assetIDList.filter(
-                (asset) => !displayedNFTsDetail.find((detail) => detail.id === asset),
-            );
-
-            if (!assetsNoDetails.length) {
-                // all the assets have details, break
-                break;
-            } else {
-                // already request but not get full details
-                // sleep for two seconds
-                await new Promise((r) => setTimeout(r, 2000));
-            }
-            console.log(`NFT retry ${i} times`);
-            displayedNFTsDetail = displayedNFTsDetail.concat(await utils.loadAssetsWithNoRetry(assetsNoDetails));
-            this.sortNFTDetails(nftsWithClassName, displayedNFTsDetail);
-        }
-    }
-
-    generateNFTsWithClassName(assets: GeneralAssetWithClass[]) {
-        // Get NFTs
-        const classifiedBriefList: {
-            [className: string]: GeneralAssetWithClass[];
-        } = {};
-
-        assets.map((nft) => {
-            const className = nft.class || 'Collectibles';
-            if (!(className in classifiedBriefList)) {
-                classifiedBriefList[className] = [];
-            }
-            if (classifiedBriefList[className].length < config.assets.brief) {
-                classifiedBriefList[className].push(nft);
-            }
-        });
-
-        const nftsWithClassName = flattenDeep(Object.values(classifiedBriefList));
-        return nftsWithClassName;
-    }
-
-    sortNFTDetails(nftsWithClassName: GeneralAssetWithClass[], displayedNFTsDetail: AnyObject[]) {
-        const classifiedList: {
-            [className: string]: DetailedNFT[];
-        } = {
-            Collectibles: [],
-            Games: [],
-            Awards: [],
-            Organizations: [],
-        };
-        nftsWithClassName.map((nft) => {
-            const className = nft.class || 'Collectibles';
-            const NFTId = RSS3Utils.id.getAsset(nft.platform, nft.identity, nft.type, nft.uniqueID);
-            if (!(className in classifiedList)) {
-                classifiedList[className] = [];
-            }
-            const detailedNFT = displayedNFTsDetail.find((dNFT) => dNFT.id === NFTId);
-            if (detailedNFT) {
-                classifiedList[className].push(detailedNFT);
-            } else {
-                classifiedList[className].push({
-                    id: NFTId,
-                    detail: {},
-                });
-            }
-        });
-        Object.keys(classifiedList).map((listName) => {
-            if (classifiedList[listName].length === 0 && listName !== 'Collectibles') {
-                delete classifiedList[listName];
-            }
-        });
-
-        this.classifiedList = classifiedList;
-        this.allClasses = Object.keys(this.classifiedList);
-    }
-
-    async ivLoadGitcoin(assets: GeneralAsset[]) {
-        if (assets) {
-            if (assets.length === 0) {
-                this.isLoadingAssets.Gitcoin = false;
-                return;
-            }
-            const assetIDList = assets.map((asset) =>
-                RSS3Utils.id.getAsset(asset.platform, asset.identity, asset.type, asset.uniqueID),
-            );
-            let displayedGitcoinsDetail: AnyObject[] = [];
-            for (let i = 0; i < 10; i++) {
-                if (displayedGitcoinsDetail.length !== 0) {
-                    this.isLoadingAssets.Gitcoin = false;
-                }
-                const assetsNoDetails = assetIDList.filter(
-                    (asset) => !this.gitcoins.find((detail) => detail.id === asset),
-                );
-
-                if (!assetsNoDetails.length) {
-                    // all the assets have details, break
-                    break;
-                } else {
-                    // already request but not get full details
-                    // sleep for two seconds
-                    await new Promise((r) => setTimeout(r, 2000));
-                }
-                console.log(`Donations retry ${i} times`);
-                displayedGitcoinsDetail = displayedGitcoinsDetail.concat(
-                    await utils.loadAssetsWithNoRetry(assetsNoDetails),
-                );
-                this.gitcoins = this.sortAssets(assetIDList, displayedGitcoinsDetail);
-            }
-        }
-    }
-
-    async ivLoadFootprint(assets: GeneralAsset[]) {
-        if (assets) {
-            if (assets.length === 0) {
-                this.isLoadingAssets.Footprint = false;
-                return;
-            }
-            const assetIDList = assets.map((asset) =>
-                RSS3Utils.id.getAsset(asset.platform, asset.identity, asset.type, asset.uniqueID),
-            );
-            let displayFootprintsDetail: AnyObject[] = [];
-            for (let i = 0; i < 10; i++) {
-                if (displayFootprintsDetail.length !== 0) {
-                    this.isLoadingAssets.Footprint = false;
-                }
-                const assetsNoDetails = assetIDList.filter(
-                    (asset) => !this.footprints.find((detail) => detail.id === asset),
-                );
-
-                if (!assetsNoDetails.length) {
-                    // all the assets have details, break
-                    break;
-                } else {
-                    // already request but not get full details
-                    // sleep for two seconds
-                    await new Promise((r) => setTimeout(r, 2000));
-                }
-                console.log(`Footprint retry ${i} times`);
-                displayFootprintsDetail = displayFootprintsDetail.concat(
-                    await utils.loadAssetsWithNoRetry(assetsNoDetails),
-                );
-                this.footprints = this.sortAssets(assetIDList, displayFootprintsDetail);
-            }
-        }
-    }
-
-    sortAssets(assetIDList: string[], assetDetailsList: AnyObject[]) {
-        const sortedAssetDetailsList: AnyObject[] = [];
-        assetIDList.map((assetID) => {
-            const detailedAsset = assetDetailsList.find((details) => details.id === assetID);
-            if (detailedAsset) {
-                sortedAssetDetailsList.push(detailedAsset);
-            } else {
-                sortedAssetDetailsList.push({
-                    id: assetID,
-                    detail: {
-                        grant: {},
-                    },
-                });
-            }
-        });
-
-        return sortedAssetDetailsList;
-    }
-
-    async startLoadingContents() {
-        this.isLoadingContents = true;
-        const localStoreIsWeb3Only = JSON.parse(utils.getStorage('isWeb3Only') || 'false');
-        this.isWeb3Only = localStoreIsWeb3Only;
-        const { listed, haveMore, timestamp } = await utils.initContent('', this.isWeb3Only);
-        while (listed.length > 0) {
-            if ('target' in listed[0] && listed[0].target.field.includes('Mirror.XYZ')) {
-                if (this.contents.findIndex((item) => 'target' in item && item.title === listed[0].title) === -1) {
-                    this.contents.push(listed[0]);
-                }
-            } else {
-                this.contents.push(listed[0]);
-            }
-            listed.shift();
-        }
-        this.contentTimestamp = timestamp;
-        this.isContentsHaveMore = haveMore;
-        this.isLoadingContents = false;
-    }
-
-    async loadMoreContents() {
-        this.isLoadingContents = true;
-
-        if (this.isContentsHaveMore) {
-            const { listed, haveMore, timestamp } = await utils.initContent(this.contentTimestamp, this.isWeb3Only);
-            while (listed.length > 0) {
-                if ('target' in listed[0] && listed[0].target.field.includes('Mirror.XYZ')) {
-                    if (this.contents.findIndex((item) => 'target' in item && item.title === listed[0].title) === -1) {
-                        this.contents.push(listed[0]);
-                    }
-                } else {
-                    this.contents.push(listed[0]);
-                }
-                listed.shift();
-            }
-            this.contentTimestamp = timestamp;
-            this.isContentsHaveMore = haveMore;
-        }
-
-        this.isLoadingContents = false;
     }
 
     async toggleFollow() {
@@ -873,33 +611,6 @@ export default class Home extends Vue {
             await loginUser.persona?.links.delete('following', pageOwner.address);
         }
         this.isFollowing = false;
-    }
-
-    async updateFilteredContent() {
-        const { listed, haveMore, timestamp } = await utils.initContent('', this.isWeb3Only);
-        while (listed.length > 0) {
-            if ('target' in listed[0] && listed[0].target.field.includes('Mirror.XYZ')) {
-                if (this.contents.findIndex((item) => 'target' in item && item.title === listed[0].title) === -1) {
-                    this.contents.push(listed[0]);
-                }
-            } else {
-                this.contents.push(listed[0]);
-            }
-            listed.shift();
-        }
-        this.contentTimestamp = timestamp;
-        this.isContentsHaveMore = haveMore;
-    }
-
-    async toggleWeb3Only() {
-        this.isLoadingContents = true;
-        this.contents = [];
-        if (this.isWeb3Only !== undefined) {
-            this.isWeb3Only = !this.isWeb3Only;
-            utils.setStorage('isWeb3Only', JSON.stringify(this.isWeb3Only));
-        }
-        await this.updateFilteredContent();
-        this.isLoadingContents = false;
     }
 
     toManageAccounts() {
@@ -1069,14 +780,11 @@ export default class Home extends Vue {
             if (el) {
                 el.scrollTop = this.scrollTop;
             }
-            this.contents = [];
+            this.clearContentDetails();
             await this.updateUserInfo();
         } else {
-            this.contents = [];
-            this.contentTimestamp = '';
             this.isFollowing = false;
             this.isOwner = false;
-            this.isLoadingContents = true;
             this.rss3Profile = {
                 avatar: legacyConfig.defaultAvatar,
                 username: '...',
@@ -1084,16 +792,10 @@ export default class Home extends Vue {
                 bio: '...',
                 displayAddress: '',
             };
-            this.isContentsHaveMore = true;
-            // this.nfts = [];
-            this.classifiedList = {
-                Collectibles: [],
-                // Games: [],
-                // Awards: [],
-                // Organizations: [],
-            };
-            this.gitcoins = [];
-            this.footprints = [];
+            this.clearNFTDetails();
+            this.clearDonationDetails();
+            this.clearFootprintDetails();
+            this.clearContentDetails();
             await this.initLoad();
         }
     }

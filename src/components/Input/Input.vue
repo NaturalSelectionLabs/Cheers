@@ -24,7 +24,7 @@
         />
         <textarea
             v-else
-            class="input h-40"
+            class="flex h-40 w-full resize-none border-input border-input-border bg-white bg-opacity-0 font-extralight placeholder-black placeholder-opacity-20 outline-none"
             :class="{
                 'bg-red-100': $props.isError,
                 'cursor-not-allowed': $props.isDisabled,
