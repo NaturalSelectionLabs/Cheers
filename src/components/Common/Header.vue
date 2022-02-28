@@ -118,12 +118,10 @@ export default class Header extends Vue {
     }
 
     toPublicPage() {
-        if (this.rns && this.ethAddress) {
-            if (this.rns && config.subDomain.isSubDomainMode) {
-                window.location.href = `//${this.rns}.${config.subDomain.rootDomain}`;
-            } else {
-                window.location.href = `//${config.subDomain.rootDomain}/${this.ethAddress}`;
-            }
+        if (this.rns) {
+            window.location.href = `//${this.rns}.${config.subDomain.rootDomain}`;
+        } else {
+            window.location.href = `//${config.subDomain.rootDomain}/${this.ethAddress}`;
         }
     }
 
