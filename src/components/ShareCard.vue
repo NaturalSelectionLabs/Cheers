@@ -9,7 +9,7 @@
             <div class="flex flex-row gap-4">
                 <ImgHolder class="flex h-8 w-8" :is-rounded="true" :is-border="false" :src="avatar" />
                 <div class="flex items-center text-lg font-normal md:text-xl">
-                    {{ name || rns || formattedAddress }}
+                    {{ name || rns || formattedAddress }}'s NFT Score
                 </div>
             </div>
             <div class="self-center font-vibur text-6xl md:text-7xl">
