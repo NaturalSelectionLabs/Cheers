@@ -95,7 +95,7 @@ export default class Leaderboard extends Vue {
             .map((profile) => {
                 return {
                     ...profile,
-                    score: res.top.find((element) => element.address === profile.persona).score,
+                    score: res.range.find((element) => element.address === profile.persona).score,
                     rns: '',
                 };
             })
