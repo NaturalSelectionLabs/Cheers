@@ -9,6 +9,7 @@
                     :ranking="index + 1"
                     :score="item.score"
                     v-for="(item, index) in topThree"
+                    :isTop="true"
                     :key="item.persona"
                     @click="toPublicPage(item.persona)"
                 />
@@ -20,6 +21,8 @@
                     :ranking="index + 1"
                     :score="item.score"
                     v-for="(item, index) in range"
+                    :isTop="false"
+                    :isOwner="item.persona === ethAddress"
                     :key="item.persona"
                     @click="toPublicPage(item.persona)"
                 />

@@ -1,7 +1,16 @@
 <template>
     <section class="flex cursor-pointer flex-row items-center justify-between">
         <div class="flex flex-row items-center justify-start gap-4">
-            <div class="rounded-full bg-primary-btn px-4 text-xl font-bold">{{ '#' + ranking }}</div>
+            <div
+                class="rounded-full px-4 text-xl font-bold"
+                :class="{
+                    'bg-primary-btn': isTop,
+                    'bg-gray-200': !isTop && !isOwner,
+                    'bg-secondary-btn': !isTop && isOwner,
+                }"
+            >
+                {{ '#' + ranking }}
+            </div>
             <ImgHolder
                 class="my-auto inline-flex h-10 w-10 cursor-pointer"
                 :is-rounded="true"
@@ -29,6 +38,8 @@ import config from '@/config';
         name: String,
         ranking: String,
         score: String,
+        isTop: Boolean,
+        isOwner: Boolean,
     },
 })
 export default class RankingCard extends Vue {
