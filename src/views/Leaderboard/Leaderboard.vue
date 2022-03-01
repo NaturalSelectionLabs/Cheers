@@ -4,27 +4,27 @@
         <div class="m-auto mt-4 flex max-w-screen-sm flex-col gap-8">
             <section class="flex flex-col gap-4 p-4">
                 <RankingCard
-                    v-for="(item, index) in topThree"
-                    :key="item.persona"
+                    v-for="item in topThree"
+                    :key="item.address"
                     :avatar="item.avatar"
-                    :name="item.name"
-                    :ranking="`${index + 1}`"
+                    :name="item.name || formatter(item.address)"
+                    :ranking="`${item.rank}`"
                     :score="item.score"
                     :isTop="true"
-                    @click="toPublicPage(item.persona)"
+                    @click="toPublicPage(item.address)"
                 />
             </section>
             <section class="flex flex-col gap-4 rounded border-card bg-card-bg p-4">
                 <RankingCard
-                    v-for="(item, index) in range"
-                    :key="item.persona"
+                    v-for="item in range"
+                    :key="item.address"
                     :avatar="item.avatar"
-                    :name="item.name"
-                    :ranking="`${index + 1}`"
+                    :name="item.name || formatter(item.address)"
+                    :ranking="`${item.rank}`"
                     :score="item.score"
                     :isTop="false"
-                    :isOwner="item.persona === ethAddress"
-                    @click="toPublicPage(item.persona)"
+                    :isOwner="item.address === ethAddress"
+                    @click="toPublicPage(item.address)"
                 />
             </section>
         </div>
@@ -39,6 +39,7 @@ import utils from '@/common/utils';
 import RSS3 from '@/common/rss3';
 import RNS from '@/common/rns';
 import legacyConfig from '@/config';
+import { formatter } from '@/common/address';
 
 @Options({
     name: 'Leaderboard',
@@ -63,40 +64,40 @@ export default class Leaderboard extends Vue {
 
     async getLeaderboard() {
         const res = await fetch(`https://raas.cheer.bio/user/${this.ethAddress}`).then((res: any) => res.json());
-        const topProfileSet = new Set<string>();
+        const top3ProfileSet = new Set<string>();
         const rangeProfileSet = new Set<string>();
 
-        res.top.forEach((element: { address: string }, index: number) => {
-            if (index < 3) {
-                topProfileSet.add(element.address);
-            }
-        });
+        console.log('Raas Res', res);
 
-        res.range.forEach((element: { address: string }) => {
+        const top3 = res.top.sort((a, b) => b.score - a.score).slice(0, 3);
+        const range = res.range;
+
+        top3.forEach((element: { address: string }) => {
+            top3ProfileSet.add(element.address);
+        });
+        range.forEach((element: { address: string }) => {
             rangeProfileSet.add(element.address);
         });
-        const [topThree, range] = await Promise.all([
-            RSS3.getAPIUser().persona.profile.getList(Array.from(topProfileSet)),
+        const [top3Profiles, rangeProfiles] = await Promise.all([
+            RSS3.getAPIUser().persona.profile.getList(Array.from(top3ProfileSet)),
             RSS3.getAPIUser().persona.profile.getList(Array.from(rangeProfileSet)),
         ]);
-        console.log(topThree);
-        console.log(range);
+        console.log('Top3Profile', top3Profiles);
+        console.log('RangeProfile', rangeProfiles);
 
-        this.topThree = topThree
-            .map((profile) => {
+        this.topThree = top3
+            .map((u) => {
                 return {
-                    ...profile,
-                    score: res.top.find((element) => element.address === profile.persona).score,
-                    rns: '',
+                    ...u,
+                    ...top3Profiles.find((profile) => u.address === profile.persona),
                 };
             })
             .sort((a, b) => b.score - a.score);
         this.range = range
-            .map((profile) => {
+            .map((u) => {
                 return {
-                    ...profile,
-                    score: res.range.find((element) => element.address === profile.persona).score,
-                    rns: '',
+                    ...u,
+                    ...rangeProfiles.find((profile) => u.address === profile.persona),
                 };
             })
             .sort((a, b) => b.score - a.score);
@@ -110,6 +111,8 @@ export default class Leaderboard extends Vue {
             window.location.href = `//${legacyConfig.subDomain.rootDomain}/${ethAddress}`;
         }
     }
+
+    formatter = formatter;
 }
 </script>
 
