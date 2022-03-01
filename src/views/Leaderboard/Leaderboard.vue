@@ -10,6 +10,7 @@
                     :score="item.score"
                     v-for="(item, index) in topThree"
                     :key="item.persona"
+                    @click="toPublicPage(item.persona)"
                 />
             </section>
             <section class="flex flex-col gap-4 rounded border-card bg-card-bg p-4">
@@ -20,6 +21,7 @@
                     :score="item.score"
                     v-for="(item, index) in range"
                     :key="item.persona"
+                    @click="toPublicPage(item.persona)"
                 />
             </section>
         </div>
@@ -32,6 +34,8 @@ import RankingCard from '@/components/Account/RankingCard.vue';
 import Header from '@/components/Common/Header.vue';
 import utils from '@/common/utils';
 import RSS3 from '@/common/rss3';
+import RNS from '@/common/rns';
+import legacyConfig from '@/config';
 
 @Options({
     name: 'Leaderboard',
@@ -80,6 +84,7 @@ export default class Leaderboard extends Vue {
                 return {
                     ...profile,
                     score: res.top.find((element) => element.address === profile.persona).score,
+                    rns: '',
                 };
             })
             .sort((a, b) => b.score - a.score);
@@ -88,9 +93,19 @@ export default class Leaderboard extends Vue {
                 return {
                     ...profile,
                     score: res.top.find((element) => element.address === profile.persona).score,
+                    rns: '',
                 };
             })
             .sort((a, b) => b.score - a.score);
+    }
+
+    async toPublicPage(ethAddress: string) {
+        const rns = await RNS.addr2Name(ethAddress);
+        if (rns) {
+            window.location.href = `//${rns}.${legacyConfig.subDomain.rootDomain}`;
+        } else {
+            window.location.href = `//${legacyConfig.subDomain.rootDomain}/${ethAddress}`;
+        }
     }
 }
 </script>

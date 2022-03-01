@@ -1,5 +1,5 @@
 <template>
-    <section class="flex flex-row items-center justify-between">
+    <section class="flex cursor-pointer flex-row items-center justify-between">
         <div class="flex flex-row items-center justify-start gap-4">
             <div class="rounded-full bg-primary-btn px-4 text-xl font-bold">{{ '#' + ranking }}</div>
             <ImgHolder
