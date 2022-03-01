@@ -246,7 +246,7 @@ async function initUser(user: RSS3DetailPersona | RSS3FullPersona, skipSignSync:
             RSS3APIPersona.backlinks.getList(user.address, 'following'),
             RSS3APIPersona.links.getList(user.address, 'following'),
             user.file ?? RSS3APIPersona.files.get(user.address),
-            user.name ?? rns.addr2Name(user.address),
+            user.name || rns.addr2Name(user.address),
         ]);
         // await new Promise((r) => {}); // lock process for debug
         user.followers = followers;
