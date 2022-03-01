@@ -62,11 +62,15 @@
                                 <LoadingSmile :size="18" :isLooping="true" v-show="isRankLoading" />
                                 <div class="flex flex-row gap-4" v-show="!isRankLoading">
                                     <div class="text-xl font-bold">{{ score }}</div>
-                                    <div class="rounded-full bg-secondary-btn px-4">{{ rank }}</div>
+                                    <div class="rounded-full bg-secondary-btn px-4"># {{ rank }}</div>
                                 </div>
                                 <div class="flex flex-row gap-2">
-                                    <Button size="sm" class="h-8 w-8 bg-secondary-btn-card text-btn-icon">
-                                        <i class="bx bx-share bx-flip-horizontal"></i>
+                                    <Button
+                                        size="sm"
+                                        class="h-8 w-8 bg-secondary-btn-card text-btn-icon"
+                                        @click="openShareCard"
+                                    >
+                                        <i class="bx bx-share bx-flip-horizontal" />
                                     </Button>
                                     <Button
                                         size="sm"
@@ -357,6 +361,16 @@
                 @closeDialog="closeAccountDialog"
             />
         </div>
+        <ShareCard
+            v-show="isSharing"
+            @close="isSharing = false"
+            :address="ethAddress"
+            :rns="rns"
+            :avatar="rss3Profile.avatar"
+            :name="rss3Profile.username"
+            :score="score.split('.')[0]"
+            :rank="rank"
+        />
     </div>
 </template>
 
@@ -399,10 +413,12 @@ import { NFTMixin } from '@/views/Mixins/NFTMixin';
 import { DonationMixin } from '@/views/Mixins/DonationMixin';
 import { FootprintMixin } from '@/views/Mixins/FootprintMixin';
 import { ContentMixin } from '@/views/Mixins/ContentMixin';
+import ShareCard from '@/components/ShareCard.vue';
 
 @Options({
     name: 'Home',
     components: {
+        ShareCard,
         IntersectionObserverContainer,
         EVMpAccountItem,
         FootprintItem,
@@ -474,6 +490,9 @@ export default class Home extends mixins(NFTMixin, DonationMixin, FootprintMixin
     isRankLoading: boolean = true;
     score: string = '0';
     rank: string = '0';
+
+    // for share
+    isSharing: boolean = false;
 
     async mounted() {
         window.onresize = () => {
@@ -587,7 +606,7 @@ export default class Home extends mixins(NFTMixin, DonationMixin, FootprintMixin
             .then((res: any) => res.json())
             .then((res) => {
                 this.score = res.user.score.toFixed(2);
-                this.rank = `# ${res.user.rank}`;
+                this.rank = `${res.user.rank}`;
             })
             .catch((res) => {});
 
@@ -869,6 +888,10 @@ export default class Home extends mixins(NFTMixin, DonationMixin, FootprintMixin
             } // else TODO
             this.isLastScrollingDown = isScrollDown;
         }
+    }
+
+    openShareCard() {
+        this.isSharing = true;
     }
 }
 </script>

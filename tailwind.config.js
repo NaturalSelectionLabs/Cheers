@@ -133,6 +133,7 @@ module.exports = {
                 33: '8.35rem', // 136px
                 45: '11.25rem', //180px, discard & save button width,
                 50: '12.5rem', //200px
+                90: '22.5rem', //360px
             },
             height: {
                 19: '4.875rem',
@@ -140,6 +141,7 @@ module.exports = {
                 50: '12.5rem', //200px
                 72: '18rem',
                 112: '28rem',
+                160: '40rem',
                 'screen-30': '30vh',
                 'screen-60': '60vh',
             },

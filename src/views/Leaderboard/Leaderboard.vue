@@ -4,26 +4,26 @@
         <div class="m-auto mt-4 flex max-w-screen-sm flex-col gap-8">
             <section class="flex flex-col gap-4 p-4">
                 <RankingCard
+                    v-for="(item, index) in topThree"
+                    :key="item.persona"
                     :avatar="item.avatar"
                     :name="item.name"
-                    :ranking="index + 1"
+                    :ranking="`${index + 1}`"
                     :score="item.score"
-                    v-for="(item, index) in topThree"
                     :isTop="true"
-                    :key="item.persona"
                     @click="toPublicPage(item.persona)"
                 />
             </section>
             <section class="flex flex-col gap-4 rounded border-card bg-card-bg p-4">
                 <RankingCard
+                    v-for="(item, index) in range"
+                    :key="item.persona"
                     :avatar="item.avatar"
                     :name="item.name"
-                    :ranking="index + 1"
+                    :ranking="`${index + 1}`"
                     :score="item.score"
-                    v-for="(item, index) in range"
                     :isTop="false"
                     :isOwner="item.persona === ethAddress"
-                    :key="item.persona"
                     @click="toPublicPage(item.persona)"
                 />
             </section>
