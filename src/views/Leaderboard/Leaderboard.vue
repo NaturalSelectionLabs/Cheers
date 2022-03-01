@@ -2,25 +2,25 @@
     <div class="m-auto max-w-screen-lg px-4 py-9 text-body-text">
         <Header title="Leaderboard" />
         <div class="m-auto mt-4 flex max-w-screen-sm flex-col gap-8">
-            <section class="p-4">
-                <!-- <RankingCard
+            <section class="flex flex-col gap-4 p-4">
+                <RankingCard
                     :avatar="item.avatar"
                     :name="item.name"
-                    :ranking="index"
-                    :score="1"
-                    v-for="(item, index) in top"
+                    :ranking="index + 1"
+                    :score="item.score"
+                    v-for="(item, index) in topThree"
                     :key="item.persona"
-                /> -->
+                />
             </section>
             <section class="flex flex-col gap-4 rounded border-card bg-card-bg p-4">
-                <!-- <RankingCard
+                <RankingCard
                     :avatar="item.avatar"
                     :name="item.name"
-                    :ranking="index"
-                    :score="1"
+                    :ranking="index + 1"
+                    :score="item.score"
                     v-for="(item, index) in range"
                     :key="item.persona"
-                /> -->
+                />
             </section>
         </div>
     </div>
@@ -74,6 +74,23 @@ export default class Leaderboard extends Vue {
         ]);
         console.log(topThree);
         console.log(range);
+
+        this.topThree = topThree
+            .map((profile) => {
+                return {
+                    ...profile,
+                    score: res.top.find((element) => element.address === profile.persona).score,
+                };
+            })
+            .sort((a, b) => b.score - a.score);
+        this.range = range
+            .map((profile) => {
+                return {
+                    ...profile,
+                    score: res.top.find((element) => element.address === profile.persona).score,
+                };
+            })
+            .sort((a, b) => b.score - a.score);
     }
 }
 </script>

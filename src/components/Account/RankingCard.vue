@@ -10,7 +10,9 @@
             />
             <div class="truncate text-base font-semibold md:text-xl">{{ name }}</div>
         </div>
-        <div class="text-base font-semibold text-primary-text md:text-xl">{{ score }}</div>
+        <div class="text-base font-semibold text-primary-text md:text-xl">
+            {{ (Math.round(score * 100) / 100).toFixed(2) }}
+        </div>
     </section>
 </template>
 
