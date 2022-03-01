@@ -64,7 +64,11 @@
                                     <div class="text-xl font-bold">{{ score }}</div>
                                     <div class="rounded-full bg-secondary-btn px-4">{{ rank }}</div>
                                 </div>
-                                <Button size="sm" class="h-8 w-8 bg-secondary-btn-card text-btn-icon">
+                                <Button
+                                    size="sm"
+                                    class="h-8 w-8 bg-secondary-btn-card text-btn-icon"
+                                    @click="toLeaderboard()"
+                                >
                                     <i class="bx bx-expand-alt bx-xs" />
                                 </Button>
                             </div>
@@ -649,6 +653,10 @@ export default class Home extends mixins(NFTMixin, DonationMixin, FootprintMixin
             await loginUser.persona?.links.delete('following', pageOwner.address);
         }
         this.isFollowing = false;
+    }
+
+    toLeaderboard() {
+        this.$router.push('/leaderboard');
     }
 
     toManageAccounts() {
