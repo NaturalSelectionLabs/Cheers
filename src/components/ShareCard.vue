@@ -7,17 +7,17 @@
             id="share-card"
         >
             <div class="flex flex-row gap-4">
-                <ImgHolder class="flex h-12 w-12" :is-rounded="true" :is-border="false" :src="avatar" />
-                <div class="flex items-center text-xl font-bold md:text-2xl">
+                <ImgHolder class="flex h-8 w-8" :is-rounded="true" :is-border="false" :src="avatar" />
+                <div class="flex items-center text-lg font-normal md:text-xl">
                     {{ name || rns || formattedAddress }}
                 </div>
             </div>
-            <div class="self-center text-8xl md:text-9xl">
+            <div class="self-center font-vibur text-6xl md:text-7xl">
                 {{ score }}
             </div>
             <div class="flex flex-row justify-between">
-                <div class="flex flex-row items-end gap-2 text-xl md:text-2xl">
-                    <div>No.</div>
+                <div class="flex flex-row items-end gap-2 font-vibur text-xl md:text-2xl">
+                    <div>#</div>
                     <div>
                         {{ rank }}
                     </div>
