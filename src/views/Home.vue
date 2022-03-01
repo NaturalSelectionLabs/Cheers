@@ -59,9 +59,10 @@
                     <TransBarCard title="NFT Score" :haveDetails="true" :haveContent="false">
                         <template #details>
                             <div class="flex flex-row items-center justify-between">
-                                <div class="flex flex-row gap-4">
-                                    <div class="text-xl font-bold">220</div>
-                                    <div class="rounded-full bg-secondary-btn px-4"># 1207</div>
+                                <LoadingSmile :size="18" :isLooping="true" v-show="isRankLoading" />
+                                <div class="flex flex-row gap-4" v-show="!isRankLoading">
+                                    <div class="text-xl font-bold">{{ score }}</div>
+                                    <div class="rounded-full bg-secondary-btn px-4">{{ rank }}</div>
                                 </div>
                                 <Button size="sm" class="h-8 w-8 bg-secondary-btn-card text-btn-icon">
                                     <i class="bx bx-expand-alt bx-xs" />
@@ -460,6 +461,11 @@ export default class Home extends mixins(NFTMixin, DonationMixin, FootprintMixin
 
     isLastScrollingDown: boolean = false;
 
+    // for leader board
+    isRankLoading: boolean = true;
+    score: string = '0';
+    rank: string = '0';
+
     async mounted() {
         window.onresize = () => {
             return (() => {
@@ -517,7 +523,12 @@ export default class Home extends mixins(NFTMixin, DonationMixin, FootprintMixin
         this.rss3Relations.followers = pageOwner.followers;
         this.rss3Relations.followings = pageOwner.followings;
         // load accounts, assets, contents and update user follow/unfollow/login state
-        await Promise.all([this.startLoadingAccounts(), this.startLoadingAssets(), this.startLoadingContents()]);
+        await Promise.all([
+            this.startLoadingAccounts(),
+            this.startLoadingAssets(),
+            this.startLoadingContents(),
+            this.startLoadingRanking(),
+        ]);
 
         // setup affix event
         this.affixEvent(true);
@@ -559,6 +570,19 @@ export default class Home extends mixins(NFTMixin, DonationMixin, FootprintMixin
             this.ivLoadGitcoin(allAssets.donations.slice(0, config.assets.brief)),
             this.ivLoadFootprint(allAssets.footprints.slice(0, config.assets.brief)),
         ]);
+    }
+
+    startLoadingRanking() {
+        this.isRankLoading = true;
+        fetch(`https://raas.cheer.bio/user/${this.ethAddress}`)
+            .then((res: any) => res.json())
+            .then((res) => {
+                this.score = res.user.score.toFixed(2);
+                this.rank = `# ${res.user.rank}`;
+            })
+            .catch((res) => {});
+
+        this.isRankLoading = false;
     }
 
     async toggleFollow() {
