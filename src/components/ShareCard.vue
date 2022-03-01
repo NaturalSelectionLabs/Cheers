@@ -2,39 +2,48 @@
     <div class="fixed top-0 left-0 h-screen w-screen">
         <div class="absolute h-full w-full bg-black bg-opacity-10" @click="close" />
         <div
-            class="absolute inset-0 m-auto flex h-160 w-90 flex-col justify-between rounded p-8"
+            class="absolute inset-0 m-auto flex h-120 w-67 flex-col justify-between rounded p-8 md:h-160 md:w-90"
             ref="card"
             id="share-card"
         >
             <div class="flex flex-row gap-4">
                 <ImgHolder class="flex h-12 w-12" :is-rounded="true" :is-border="false" :src="avatar" />
-                <div class="flex items-center text-2xl font-bold">
+                <div class="flex items-center text-xl font-bold md:text-2xl">
                     {{ name || rns || formattedAddress }}
                 </div>
             </div>
-            <div class="self-center text-9xl">
+            <div class="self-center text-8xl md:text-9xl">
                 {{ score }}
             </div>
             <div class="flex flex-row justify-between">
-                <div class="flex flex-row items-end gap-2 text-2xl">
+                <div class="flex flex-row items-end gap-2 text-xl md:text-2xl">
                     <div>No.</div>
                     <div>
                         {{ rank }}
                     </div>
                 </div>
-                <div class="h-12 w-10">
+                <div class="h-8 w-8 md:h-12 md:w-12">
                     <img :src="QRURL" alt="QRCode" />
                 </div>
             </div>
         </div>
         <div class="fixed bottom-10 flex w-full flex-row justify-center gap-4">
-            <Button size="sm" class="h-12 w-12 bg-secondary-btn-card text-btn-icon" @click="setRandColor">
+            <Button size="sm" class="h-8 w-8 bg-secondary-btn-card text-btn-icon md:h-12 md:w-12" @click="setRandColor">
                 <i class="bx bx-refresh bx-flip-horizontal" />
             </Button>
-            <Button v-if="isDownloading" size="sm" class="h-12 w-12 cursor-wait bg-secondary-btn-card text-btn-icon">
+            <Button
+                v-if="isDownloading"
+                size="sm"
+                class="h-8 w-8 cursor-wait bg-secondary-btn-card text-btn-icon md:h-12 md:w-12"
+            >
                 <i class="bx bx-sync bx-spin" />
             </Button>
-            <Button v-else size="sm" class="h-12 w-12 bg-secondary-btn-card text-btn-icon" @click="saveImg">
+            <Button
+                v-else
+                size="sm"
+                class="h-8 w-8 bg-secondary-btn-card text-btn-icon md:h-12 md:w-12"
+                @click="saveImg"
+            >
                 <i class="bx bx-download" />
             </Button>
         </div>

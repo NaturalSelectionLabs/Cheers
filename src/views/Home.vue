@@ -368,7 +368,7 @@
             :rns="rns"
             :avatar="rss3Profile.avatar"
             :name="rss3Profile.username"
-            :score="score.split('.')[0]"
+            :score="score"
             :rank="rank"
         />
     </div>
