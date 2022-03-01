@@ -64,13 +64,18 @@
                                     <div class="text-xl font-bold">{{ score }}</div>
                                     <div class="rounded-full bg-secondary-btn px-4">{{ rank }}</div>
                                 </div>
-                                <Button
-                                    size="sm"
-                                    class="h-8 w-8 bg-secondary-btn-card text-btn-icon"
-                                    @click="toLeaderboard()"
-                                >
-                                    <i class="bx bx-expand-alt bx-xs" />
-                                </Button>
+                                <div class="flex flex-row gap-2">
+                                    <Button size="sm" class="h-8 w-8 bg-secondary-btn-card text-btn-icon">
+                                        <i class="bx bx-share bx-flip-horizontal"></i>
+                                    </Button>
+                                    <Button
+                                        size="sm"
+                                        class="h-8 w-8 bg-secondary-btn-card text-btn-icon"
+                                        @click="toLeaderboard()"
+                                    >
+                                        <i class="bx bx-expand-alt bx-xs" />
+                                    </Button>
+                                </div>
                             </div>
                         </template>
                     </TransBarCard>
