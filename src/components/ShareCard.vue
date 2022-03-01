@@ -49,7 +49,6 @@ import QRCode from 'qrcode';
 import Button from '@/components/Button/Button.vue';
 
 const colors = [
-    { bg: '#005497', fg: '#215292' },
     { bg: '#0E38B1', fg: '#FFFFFF' },
     { bg: '#EEC0DB', fg: '#1B2AEA' },
     { bg: '#EF3E4A', fg: '#A2CAD0' },
