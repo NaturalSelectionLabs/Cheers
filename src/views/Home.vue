@@ -56,6 +56,20 @@
                         </template>
                     </Profile>
 
+                    <TransBarCard title="NFT Score" :haveDetails="true" :haveContent="false">
+                        <template #details>
+                            <div class="flex flex-row items-center justify-between">
+                                <div class="flex flex-row gap-4">
+                                    <div class="text-xl font-bold">220</div>
+                                    <div class="rounded-full bg-secondary-btn px-4"># 1207</div>
+                                </div>
+                                <Button size="sm" class="h-8 w-8 bg-secondary-btn-card text-btn-icon">
+                                    <i class="bx bx-expand-alt bx-xs" />
+                                </Button>
+                            </div>
+                        </template>
+                    </TransBarCard>
+
                     <template v-for="className in allClasses" :key="className">
                         <TransBarCard
                             v-if="className === 'Collectibles'"
