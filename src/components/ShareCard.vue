@@ -31,7 +31,10 @@
             <Button size="sm" class="h-12 w-12 bg-secondary-btn-card text-btn-icon" @click="setRandColor">
                 <i class="bx bx-refresh bx-flip-horizontal" />
             </Button>
-            <Button size="sm" class="h-12 w-12 bg-secondary-btn-card text-btn-icon" @click="saveImg">
+            <Button v-if="isDownloading" size="sm" class="h-12 w-12 cursor-wait bg-secondary-btn-card text-btn-icon">
+                <i class="bx bx-sync bx-spin" />
+            </Button>
+            <Button v-else size="sm" class="h-12 w-12 bg-secondary-btn-card text-btn-icon" @click="saveImg">
                 <i class="bx bx-download" />
             </Button>
         </div>
@@ -77,6 +80,7 @@ const colors = [
 export default class ShareCard extends Vue {
     address!: string;
     QRURL: string = '';
+    isDownloading: boolean = false;
 
     get formattedAddress() {
         return formatter(this.address);
@@ -114,19 +118,23 @@ export default class ShareCard extends Vue {
     }
 
     async saveImg() {
-        const card = document.getElementById('share-card');
-        if (card) {
-            const html2canvas: any = (await import(/* webpackChunkName: "html2canvas" */ '@/common/html2canvas.js'))
-                .default;
-            const canvas = await html2canvas(card, {
-                useCORS: true,
-                logging: false,
-                scale: 3,
-            });
-            const link = document.createElement('a');
-            link.download = `rank.png`;
-            link.href = canvas.toDataURL();
-            link.click();
+        if (!this.isDownloading) {
+            this.isDownloading = true;
+            const card = document.getElementById('share-card');
+            if (card) {
+                const html2canvas: any = (await import(/* webpackChunkName: "html2canvas" */ '@/common/html2canvas.js'))
+                    .default;
+                const canvas = await html2canvas(card, {
+                    useCORS: true,
+                    logging: false,
+                    scale: 3,
+                });
+                const link = document.createElement('a');
+                link.download = `rank.png`;
+                link.href = canvas.toDataURL();
+                link.click();
+            }
+            this.isDownloading = false;
         }
     }
 }
