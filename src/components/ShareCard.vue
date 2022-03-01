@@ -1,0 +1,68 @@
+<template>
+    <div class="relative w-full p-2">
+        <div class="shadow-share-card aspect-w-16 aspect-h-9 box-border rounded-2xl" ref="card">
+            <div class="absolute inset-0 flex h-full w-full flex-col justify-center p-8">
+                <FollowerCard
+                    class="shadow-blank"
+                    :avatar="$props.avatar"
+                    :name="$props.name"
+                    :address="$props.address"
+                    @color="getColor"
+                />
+                <div class="absolute bottom-4 right-8 md:bottom-5"><Passport /></div>
+            </div>
+        </div>
+    </div>
+</template>
+
+<script lang="ts">
+import { Options, Vue } from 'vue-class-component';
+import FollowerCard from '@/components/FollowerCard.vue';
+import Passport from '@/components/Icons/Passport.vue';
+import { hslToRgb, rgbToHsl } from '@/common/color';
+
+@Options({
+    components: { FollowerCard, Passport },
+    props: {
+        avatar: String,
+        name: String,
+        address: String,
+    },
+})
+export default class ShareCard extends Vue {
+    public themeColor?: string;
+    public deepColor?: string;
+    public lightColor?: string;
+
+    public getColor(value: [number, number, number]) {
+        this.deepColor = `rgb(${value[0]}, ${value[1]}, ${value[2]})`;
+        const hsl = rgbToHsl(...value);
+        const themeRGB = hslToRgb(hsl[0], hsl[1], 0.925);
+        this.themeColor = `rgb(${themeRGB[0]}, ${themeRGB[1]}, ${themeRGB[2]})`;
+        const lightRGB = hslToRgb(hsl[0], hsl[1], 0.95);
+        this.lightColor = `rgb(${lightRGB[0]}, ${lightRGB[1]}, ${lightRGB[2]})`;
+
+        // console.log(this.themeColor);
+        // console.log(this.deepColor);
+        // console.log(this.lightColor);
+
+        if (this.$refs.card) {
+            (<HTMLDivElement>this.$refs.card).style.background = this.createBackgroundString();
+        }
+    }
+
+    public createBackgroundString() {
+        return (
+            'linear-gradient(107.57deg, ' +
+            this.deepColor +
+            ' 18.23%, ' +
+            this.lightColor +
+            ' 99.85%, ' +
+            this.themeColor +
+            ' 99.9%)'
+        );
+    }
+}
+</script>
+
+<style></style>
