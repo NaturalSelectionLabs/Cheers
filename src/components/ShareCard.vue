@@ -12,12 +12,12 @@
                     {{ name || rns || formattedAddress }}'s NFT Score
                 </div>
             </div>
-            <div class="self-center font-vibur text-6xl md:text-7xl">
+            <div class="self-center font-alfa-slab-one text-6xl md:text-7xl">
                 {{ score }}
             </div>
             <div class="flex flex-row justify-between">
-                <div class="flex flex-row items-end gap-2 font-vibur text-xl md:text-2xl">
-                    <div>#</div>
+                <div class="flex flex-row items-end font-alfa-slab-one text-xl md:text-2xl">
+                    <div>Rank #</div>
                     <div>
                         {{ rank }}
                     </div>

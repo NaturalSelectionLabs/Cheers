@@ -126,6 +126,7 @@ module.exports = {
                 'sf-compact-rounded': 'SFCompactRounded, sans-serif',
                 serif: 'Times New Roman, SourceHanSerif, SourceHanSerifSC, SourceHanSerifTC, SourceHanSerifK, Times, serif',
                 vibur: 'Vibur',
+                'alfa-slab-one': 'Alfa Slab One',
             },
             width: {
                 19: '4.875rem', //78px, footprint item in footprint card
