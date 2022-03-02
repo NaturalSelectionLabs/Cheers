@@ -6,7 +6,7 @@
                 <RankingCard
                     v-for="item in topThree"
                     :key="item.address"
-                    :avatar="item.avatar"
+                    :avatar="item.avatar || getDefaultAvatar(item.address)"
                     :name="item.name || formatter(item.address)"
                     :ranking="`${item.rank}`"
                     :score="item.score"
@@ -18,7 +18,7 @@
                 <RankingCard
                     v-for="item in range"
                     :key="item.address"
-                    :avatar="item.avatar"
+                    :avatar="item.avatar || getDefaultAvatar(item.address)"
                     :name="item.name || formatter(item.address)"
                     :ranking="`${item.rank}`"
                     :score="item.score"
@@ -110,6 +110,10 @@ export default class Leaderboard extends Vue {
         } else {
             window.location.href = `//${legacyConfig.subDomain.rootDomain}/${ethAddress}`;
         }
+    }
+
+    getDefaultAvatar(ethAddress: string) {
+        return `https://stamp.fyi/avatar/${ethAddress}`;
     }
 
     formatter = formatter;
