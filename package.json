@@ -36,7 +36,7 @@
         "@babel/runtime": "7.17.2",
         "@koa/cors": "3.1.0",
         "@koa/router": "10.1.1",
-        "@sentry/tracing": "6.17.9",
+        "@sentry/tracing": "6.18.1",
         "@sentry/vue": "6.18.1",
         "@walletconnect/web3-provider": "1.7.1",
         "assert": "2.0.0",
