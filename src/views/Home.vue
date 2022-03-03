@@ -56,7 +56,7 @@
                         </template>
                     </Profile>
 
-                    <!-- <TransBarCard title="NFT Score" :haveDetails="true" :haveContent="false">
+                    <TransBarCard title="NFT Score" :haveDetails="true" :haveContent="false">
                         <template #details>
                             <div class="flex flex-row items-center justify-between">
                                 <LoadingSmile :size="18" :isLooping="true" v-show="isRankLoading" />
@@ -82,7 +82,7 @@
                                 </div>
                             </div>
                         </template>
-                    </TransBarCard> -->
+                    </TransBarCard>
 
                     <template v-for="className in allClasses" :key="className">
                         <TransBarCard
