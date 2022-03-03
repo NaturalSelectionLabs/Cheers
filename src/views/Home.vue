@@ -56,7 +56,7 @@
                         </template>
                     </Profile>
 
-                    <TransBarCard title="NFT Score" :haveDetails="true" :haveContent="false">
+                    <!-- <TransBarCard title="NFT Score" :haveDetails="true" :haveContent="false">
                         <template #details>
                             <div class="flex flex-row items-center justify-between">
                                 <LoadingSmile :size="18" :isLooping="true" v-show="isRankLoading" />
@@ -82,7 +82,7 @@
                                 </div>
                             </div>
                         </template>
-                    </TransBarCard>
+                    </TransBarCard> -->
 
                     <template v-for="className in allClasses" :key="className">
                         <TransBarCard
@@ -275,29 +275,25 @@
                 <div class="affix-container sticky">
                     <TransBarCard title="Content" :haveDetails="true" :haveContent="false">
                         <template #header>
-                            <div class="flex flex-col gap-y-2" :class="{ 'pointer-events-none': isLoadingContents }">
-                                <div class="flex items-center justify-between gap-2" @click="toggleWeb3Only()">
-                                    <h2
-                                        class="text-black text-opacity-50"
-                                        :class="{ 'translate-x-5 text-opacity-80': isWeb3Only }"
-                                    >
-                                        Web3 Only
-                                    </h2>
+                            <div
+                                class="flex items-center justify-between space-x-2"
+                                :class="[isLoadingContents ? 'pointer-events-none' : 'cursor-pointer']"
+                                @click="toggleWeb3Only()"
+                            >
+                                <h2 class="text-black text-opacity-50" :class="{ 'text-opacity-80': isWeb3Only }">
+                                    Web3 Only
+                                </h2>
+                                <div
+                                    class="flex h-6 w-11 items-center rounded-full bg-gray-500 bg-opacity-10 p-1 duration-200 ease-in-out"
+                                >
                                     <div
-                                        class="flex h-6 w-11 cursor-pointer items-center rounded-full bg-gray-500 bg-opacity-10 p-1 duration-200 ease-in-out"
-                                    >
-                                        <div
-                                            class="h-4 w-4 transform rounded-full bg-black bg-opacity-50 shadow-md duration-200 ease-in-out"
-                                            :class="{ 'translate-x-5 bg-opacity-80': !isWeb3Only }"
-                                        />
-                                    </div>
-                                    <h2
-                                        class="text-black text-opacity-50"
-                                        :class="{ 'translate-x-5 text-opacity-80': !isWeb3Only }"
-                                    >
-                                        Hybrid
-                                    </h2>
+                                        class="h-4 w-4 transform rounded-full bg-black bg-opacity-50 shadow-md duration-200 ease-in-out"
+                                        :class="{ 'translate-x-5 bg-opacity-80': !isWeb3Only }"
+                                    ></div>
                                 </div>
+                                <h2 class="text-black text-opacity-50" :class="{ 'text-opacity-80': !isWeb3Only }">
+                                    Hybrid
+                                </h2>
                             </div>
                         </template>
                         <template #details>
