@@ -1,31 +1,29 @@
 <template>
     <Modal v-show="isShowingAccount">
         <template #header>
-            <Button size="sm" class="absolute left-4 w-10 h-10" @click="emitCloseDialog">
+            <Button size="sm" class="absolute left-4 h-10 w-10" @click="emitCloseDialog">
                 <i class="bx bx-chevron-left bx-sm"></i>
             </Button>
         </template>
         <template #body>
-            <div class="flex flex-col gap-y-4 items-center">
+            <div class="flex h-full flex-col items-center justify-between pt-6">
                 <EVMpAccountItem
-                    class="m-auto mt-4"
                     v-if="showingAccountDetails.platform === 'EVM+'"
                     :size="90"
                     :address="showingAccountDetails.address"
                 />
                 <AccountItem
-                    class="m-auto mt-4"
                     v-else
                     :size="90"
                     :chain="showingAccountDetails.platform"
                     :address="showingAccountDetails.address"
                 />
-                <span class="address mt-4 text-center break-all text-xl font-semibold">
+                <span class="address break-all text-center text-xl font-semibold">
                     {{ showingAccountDetails.address }}
                 </span>
                 <Button
                     size="sm"
-                    class="text-md m-auto mt-4 w-1/4 text-white bg-primary-btn"
+                    class="text-md w-1/4 bg-primary-btn text-white"
                     @click="
                         showingAccountDetails.isLink
                             ? toExternalLink(showingAccountDetails.link)
