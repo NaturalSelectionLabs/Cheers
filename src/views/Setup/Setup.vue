@@ -1,54 +1,55 @@
 <template>
-    <div class="h-screen text-body-text overflow-y-auto">
-        <div class="flex flex-col gap-y-4 m-auto pb-20 pt-8 px-4 max-w-md">
-            <div class="mb-6 text-center">
-                <h1 class="text-xl font-bold">Setup</h1>
-            </div>
-            <AvatarEditor class="m-auto" size="lg" :url="profile.avatar || defaultAvatar" ref="avatar" />
-            <Input class="w-full" :is-single-line="true" placeholder="Username" v-model="profile.name" />
-            <Input
-                class="w-full"
-                :is-single-line="true"
-                placeholder="Personal link"
-                prefix="https://"
-                v-model="profile.link"
-            />
-            <Input class="w-full" :is-single-line="false" placeholder="Bio" v-model="profile.bio" />
+    <div class="m-auto flex max-w-md flex-col gap-y-4 px-4 pb-20 pt-8 text-body-text">
+        <div class="mb-6 text-center">
+            <h1 class="text-xl font-bold">Setup</h1>
+        </div>
+        <AvatarEditor class="m-auto" size="lg" :url="profile.avatar || defaultAvatar" ref="avatar" />
+        <Input class="w-full" :is-single-line="true" placeholder="Username" v-model="profile.name" />
+        <Input
+            class="w-full"
+            :is-single-line="true"
+            placeholder="Personal link"
+            prefix="https://"
+            v-model="profile.link"
+        />
+        <Input class="w-full" :is-single-line="false" placeholder="Bio" v-model="profile.bio" />
 
-            <TransBarCard title="Accounts" :haveContent="true" :haveContentInfo="accounts.length > 0">
-                <template #header>
-                    <Button size="sm" class="w-8 h-8 text-btn-icon bg-secondary-btn-card" @click="toManageAccounts">
-                        <i class="bx bx-plus bx-xs cursor-pointer" />
-                    </Button>
-                </template>
-                <template #content>
-                    <div
-                        class="inline-flex m-0.5 rounded-full"
-                        v-for="item in accounts"
-                        :key="item.platform + item.identity"
-                    >
-                        <EVMpAccountItem v-if="item.platform === 'EVM+'" :size="40" :address="item.identity" />
-                        <AccountItem v-else :size="40" :chain="item.platform" :address="item.identity" />
-                    </div>
-                </template>
-            </TransBarCard>
+        <TransBarCard title="Accounts" :haveContent="true" :haveContentInfo="accounts.length > 0">
+            <template #header>
+                <Button size="sm" class="h-8 w-8 bg-secondary-btn-card text-btn-icon" @click="toManageAccounts">
+                    <i class="bx bx-plus bx-xs cursor-pointer" />
+                </Button>
+            </template>
+            <template #content>
+                <div
+                    class="m-0.5 inline-flex rounded-full"
+                    v-for="item in accounts"
+                    :key="item.platform + item.identity"
+                >
+                    <EVMpAccountItem v-if="item.platform === 'EVM+'" :size="40" :address="item.identity" />
+                    <AccountItem v-else :size="40" :chain="item.platform" :address="item.identity" />
+                </div>
+            </template>
+        </TransBarCard>
 
+        <template v-for="className in allClasses" :key="className">
             <TransBarCard
-                title="Collectibles"
-                :tip="isLoadingAssets.NFT ? 'Loading...' : 'Haven\'t found anything yet...'"
+                v-if="className === 'Collectibles'"
+                :title="className"
+                :tip="isLoadingNFT ? 'loading' : 'ownerEmpty'"
                 :haveDetails="false"
                 :haveContent="true"
-                :haveContentInfo="nfts.length > 0"
+                :haveContentInfo="classifiedList[className].length > 0"
             >
                 <template #header>
-                    <Button size="sm" class="w-8 h-8 text-btn-icon bg-secondary-btn-card" @click="toManageNFTs">
+                    <Button size="sm" class="h-8 w-8 bg-secondary-btn-card text-btn-icon" @click="toManageNFTs">
                         <i class="bx bx-plus bx-xs cursor-pointer" />
                     </Button>
                 </template>
                 <template #content>
                     <NFTItem
-                        class="inline-flex mx-0.5"
-                        v-for="asset in nfts"
+                        class="mx-0.5 inline-flex"
+                        v-for="asset in classifiedList[className]"
                         :key="asset.id"
                         size="sm"
                         :image-url="asset.detail.animation_url || asset.detail.image_preview_url"
@@ -58,94 +59,119 @@
             </TransBarCard>
 
             <TransBarCard
-                title="Donations"
-                :tip="isLoadingAssets.Gitcoin ? 'Loading...' : 'Haven\'t found anything yet...'"
-                :haveDetails="gitcoins.length !== 0"
+                v-else
+                :title="className"
+                :tip="isLoadingNFT ? 'loading' : 'ownerEmpty'"
+                :haveDetails="classifiedList[className].length > 0"
                 :haveContent="true"
-                :haveContentInfo="gitcoins.length > 0"
+                :haveContentInfo="classifiedList[className].length > 0"
             >
                 <template #header>
-                    <Button size="sm" class="w-8 h-8 text-btn-icon bg-secondary-btn-card" @click="toManageGitcoins">
+                    <Button size="sm" class="h-8 w-8 bg-secondary-btn-card text-btn-icon" @click="toManageNFTs">
                         <i class="bx bx-plus bx-xs cursor-pointer" />
                     </Button>
                 </template>
                 <template #content>
-                    <GitcoinItem
-                        class="inline-flex mx-0.5"
-                        v-for="item in gitcoins"
-                        :key="item.id"
-                        size="sm"
-                        :imageUrl="item.detail.grant.logo"
-                    />
-                </template>
-            </TransBarCard>
-
-            <TransBarCard
-                title="Footprints"
-                :tip="isLoadingAssets.Footprint ? 'Loading...' : 'Haven\'t found anything yet...'"
-                :haveDetails="false"
-                :haveContent="true"
-                :haveContentInfo="footprints.length > 0"
-            >
-                <template #header>
-                    <Button size="sm" class="w-8 h-8 text-btn-icon bg-secondary-btn-card" @click="toManageFootprints">
-                        <i class="bx bx-plus bx-xs cursor-pointer" />
-                    </Button>
-                </template>
-                <template #content>
-                    <FootprintItem
-                        class="inline-flex mx-0.5"
-                        v-for="asset in footprints"
+                    <NFTItem
+                        class="mx-0.5 inline-flex"
+                        v-for="asset in classifiedList[className]"
                         :key="asset.id"
                         size="sm"
-                        :image-url="asset.detail.image_url"
+                        :image-url="asset.detail.animation_url || asset.detail.image_preview_url"
+                        :poster-url="asset.detail.image_preview_url"
                     />
                 </template>
             </TransBarCard>
+        </template>
 
-            <TransBarCard title="Contents" :haveContent="true" :haveContentInfo="true">
-                <template #content>
-                    <span>Check out in homepage!</span>
-                </template>
-            </TransBarCard>
-
-            <div class="flex gap-5 justify-between">
-                <Button
+        <TransBarCard
+            title="Donations"
+            :tip="isLoadingDonation ? 'loading' : 'ownerEmpty'"
+            :haveDetails="gitcoins.length !== 0"
+            :haveContent="true"
+            :haveContentInfo="gitcoins.length > 0"
+        >
+            <template #header>
+                <Button size="sm" class="h-8 w-8 bg-secondary-btn-card text-btn-icon" @click="toManageGitcoins">
+                    <i class="bx bx-plus bx-xs cursor-pointer" />
+                </Button>
+            </template>
+            <template #content>
+                <GitcoinItem
+                    class="mx-0.5 inline-flex"
+                    v-for="item in gitcoins"
+                    :key="item.id"
                     size="sm"
-                    class="text-secondary-btn-text flex-1 h-9 text-lg bg-secondary-btn opacity-80"
-                    @click="back"
-                >
-                    <span>Back</span>
-                </Button>
-                <Button size="sm" class="flex-1 h-9 text-body-text text-lg bg-primary-btn opacity-80" @click="save">
-                    <span>Done</span>
-                </Button>
-            </div>
-            <LoadingContainer v-show="isLoading" :isLooping="true" />
+                    :imageUrl="item.detail.grant.logo"
+                />
+            </template>
+        </TransBarCard>
 
-            <Modal v-if="isShowingNotice">
-                <template #header>
-                    <h1>Oops!</h1>
-                </template>
-                <template #body>
-                    <p class="mt-1 p-4">
-                        {{ notice }}
-                    </p>
-                </template>
-                <template #footer>
-                    <div class="flex flex-row gap-5">
-                        <Button size="sm" class="w-72 text-body-text bg-primary-btn" @click="isShowingNotice = false">
-                            OK
-                        </Button>
-                    </div>
-                </template>
-            </Modal>
+        <TransBarCard
+            title="Footprints"
+            :tip="isLoadingFootprint ? 'loading' : 'ownerEmpty'"
+            :haveDetails="false"
+            :haveContent="true"
+            :haveContentInfo="footprints.length > 0"
+        >
+            <template #header>
+                <Button size="sm" class="h-8 w-8 bg-secondary-btn-card text-btn-icon" @click="toManageFootprints">
+                    <i class="bx bx-plus bx-xs cursor-pointer" />
+                </Button>
+            </template>
+            <template #content>
+                <FootprintItem
+                    class="mx-0.5 inline-flex"
+                    v-for="asset in footprints"
+                    :key="asset.id"
+                    size="sm"
+                    :image-url="asset.detail.image_url"
+                />
+            </template>
+        </TransBarCard>
+
+        <TransBarCard title="Contents" :haveContent="true" :haveContentInfo="true">
+            <template #content>
+                <span>Check out in homepage!</span>
+            </template>
+        </TransBarCard>
+
+        <div class="flex justify-between gap-5">
+            <Button
+                size="sm"
+                class="text-secondary-btn-text h-9 flex-1 bg-secondary-btn text-lg opacity-80"
+                @click="back"
+            >
+                <span>Back</span>
+            </Button>
+            <Button size="sm" class="h-9 flex-1 bg-primary-btn text-lg text-body-text opacity-80" @click="save">
+                <span>Done</span>
+            </Button>
         </div>
+        <LoadingContainer v-show="isLoading" :isLooping="true" />
+
+        <Modal v-if="isShowingNotice">
+            <template #header>
+                <h1>Oops!</h1>
+            </template>
+            <template #body>
+                <p class="mt-1 p-4">
+                    {{ notice }}
+                </p>
+            </template>
+            <template #footer>
+                <div class="flex flex-row gap-5">
+                    <Button size="sm" class="w-72 bg-primary-btn text-body-text" @click="isShowingNotice = false">
+                        OK
+                    </Button>
+                </div>
+            </template>
+        </Modal>
     </div>
 </template>
 
 <script lang="ts">
-import { Options, Vue } from 'vue-class-component';
+import { mixins, Options } from 'vue-class-component';
 import Button from '@/components/Button/Button.vue';
 import AvatarEditor from '@/components/Profile/AvatarEditor.vue';
 import TransBarCard from '@/components/Card/TransBarCard.vue';
@@ -160,11 +186,15 @@ import { utils as RSS3Utils } from 'rss3';
 import legacyConfig from '@/config';
 import config from '@/common/config';
 
-import { DetailedFootprint, DetailedDonation, DetailedNFT } from '@/common/types';
 import GitcoinItem from '@/components/Donation/GitcoinItem.vue';
 import FootprintItem from '@/components/Footprint/FootprintItem.vue';
 import EVMpAccountItem from '@/components/Account/EVMpAccountItem.vue';
 import utils from '@/common/utils';
+
+// mixins section
+import { NFTMixin } from '@/views/Mixins/NFTMixin';
+import { DonationMixin } from '@/views/Mixins/DonationMixin';
+import { FootprintMixin } from '@/views/Mixins/FootprintMixin';
 
 @Options({
     name: 'Setup',
@@ -183,7 +213,7 @@ import utils from '@/common/utils';
         LoadingContainer,
     },
 })
-export default class Setup extends Vue {
+export default class Setup extends mixins(NFTMixin, DonationMixin, FootprintMixin) {
     profile: {
         avatar?: string;
         name: string;
@@ -198,33 +228,18 @@ export default class Setup extends Vue {
         platform: string;
         identity: string;
     }[] = [];
-    nfts: DetailedNFT[] = [];
-    gitcoins: DetailedDonation[] = [];
-    footprints: DetailedFootprint[] = [];
-    isLoading: Boolean = true;
-    isLoadingAssets: {
-        NFT: boolean;
-        Gitcoin: boolean;
-        Footprint: boolean;
-    } = {
-        NFT: true,
-        Gitcoin: true,
-        Footprint: true,
-    };
-    loadingAssetsIntervalID: ReturnType<typeof setInterval> | null = null;
+    isLoading: Boolean = false;
     maxValueLength: Number = 280;
     notice: String = '';
     isShowingNotice: Boolean = false;
-    currentTheme: string = '';
     $gtag: any;
     lastRoute: string = '';
     defaultAvatar: string = legacyConfig.defaultAvatar;
 
     async initLoad() {
-        this.isLoading = true;
         await utils.tryEnsureOrRedirect(this.$route, this.$router);
         await RSS3.ensureLoginUser();
-        const loginUser = await RSS3.getLoginUser();
+        const loginUser = RSS3.getLoginUser();
         await RSS3.setPageOwner(loginUser.address);
         const profile = loginUser.profile;
         this.profile.avatar = profile?.avatar?.[0];
@@ -238,41 +253,32 @@ export default class Setup extends Vue {
             this.profile.link = fieldsMatch?.['SITE'] || '';
         }
 
-        // Load assets
-        setTimeout(this.startLoadingAssets, 0);
-
-        // this.startLoadingAssets();
-        this.isLoading = false;
+        await Promise.all([this.startLoadingAccounts(), this.startLoadingAssets()]);
     }
 
-    startLoadingAccounts() {
+    async startLoadingAccounts() {
         this.accounts = [];
-        setTimeout(async () => {
-            await RSS3.ensureLoginUser();
-            const { listed } = await utils.initAccounts(RSS3.getLoginUser());
-            const accountList = listed.map((account) => RSS3Utils.id.parseAccount(account.id));
-            this.accounts = [
-                {
-                    platform: 'EVM+',
-                    identity: RSS3.getLoginUser().address,
-                },
-            ].concat(accountList);
-        }, 0);
+        const { listed } = await utils.initAccounts();
+        // Push original account
+        const accounts = [
+            {
+                id: RSS3Utils.id.getAccount('EVM+', RSS3.getPageOwner().address),
+            },
+        ].concat(listed);
+        this.accounts = accounts.map((account) => RSS3Utils.id.parseAccount(account.id));
     }
+
     async startLoadingAssets() {
-        const { nfts, donations, footprints } = await utils.initAssets();
-        setTimeout(async () => {
-            this.nfts = await utils.loadAssets(nfts.slice(0, config.assets.brief));
-            this.isLoadingAssets.NFT = false;
-        }, 0);
-        setTimeout(async () => {
-            this.gitcoins = await utils.loadAssets(donations.slice(0, config.assets.brief));
-            this.isLoadingAssets.Gitcoin = false;
-        }, 0);
-        setTimeout(async () => {
-            this.footprints = await utils.loadAssets(footprints.slice(0, config.assets.brief));
-            this.isLoadingAssets.Footprint = false;
-        }, 0);
+        this.isLoadingNFT = true;
+        this.isLoadingDonation = true;
+        this.isLoadingFootprint = true;
+        const allAssets = await utils.initAssets();
+        // laod NFT, donation and footprint
+        await Promise.all([
+            this.ivLoadNFT(allAssets.nftsWithClassName),
+            this.ivLoadGitcoin(allAssets.donations.slice(0, config.assets.brief)),
+            this.ivLoadFootprint(allAssets.footprints.slice(0, config.assets.brief)),
+        ]);
     }
 
     toManageAccounts() {
@@ -282,7 +288,7 @@ export default class Setup extends Vue {
 
     toManageNFTs() {
         // this.saveEdited();
-        if (this.isLoadingAssets.NFT) {
+        if (this.isLoadingNFT) {
             this.notice = 'NFTs still loading... Maybe check back later?';
             this.isShowingNotice = true;
         } else {
@@ -291,7 +297,7 @@ export default class Setup extends Vue {
     }
 
     toManageGitcoins() {
-        if (this.isLoadingAssets.Gitcoin) {
+        if (this.isLoadingDonation) {
             this.notice = 'Gitcoins still loading... Maybe check back later?';
             this.isShowingNotice = true;
         } else {
@@ -300,7 +306,7 @@ export default class Setup extends Vue {
     }
 
     toManageFootprints() {
-        if (this.isLoadingAssets.Footprint) {
+        if (this.isLoadingFootprint) {
             this.notice = 'Footprints still loading... Maybe check back later?';
             this.isShowingNotice = true;
         } else {
@@ -323,7 +329,7 @@ export default class Setup extends Vue {
 
     async save() {
         this.isLoading = true;
-        const loginUser = await RSS3.getLoginUser();
+        const loginUser = RSS3.getLoginUser();
         if (this.profile.name.length > this.maxValueLength) {
             this.notice = `Name cannot be longer than ${this.maxValueLength} chars`;
             this.isLoading = false;
@@ -359,8 +365,7 @@ export default class Setup extends Vue {
         // this.clearEdited();
         this.$gtag.event('finishEditProfile', { userid: loginUser.address });
         this.isLoading = false;
-        await RSS3.reloadLoginUser();
-        await RSS3.reloadPageOwner();
+        await Promise.all([RSS3.reloadLoginUser(), RSS3.reloadPageOwner()]);
         const pageOwner = RSS3.getPageOwner();
         const rns = pageOwner.name;
         const ethAddress = pageOwner.address;
@@ -371,19 +376,6 @@ export default class Setup extends Vue {
 
     async mounted() {
         await this.initLoad();
-    }
-
-    async activated() {
-        this.startLoadingAccounts();
-        await this.startLoadingAssets();
-    }
-
-    deactivated() {
-        if (this.loadingAssetsIntervalID) {
-            clearInterval(this.loadingAssetsIntervalID);
-            this.loadingAssetsIntervalID = null;
-        }
-        this.isLoading = false;
     }
 }
 </script>

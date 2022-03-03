@@ -1,5 +1,5 @@
 <template>
-    <div id="main" class="m-auto pb-12 pt-8 px-4 max-w-screen-lg text-body-text">
+    <div id="main" class="m-auto max-w-screen-lg px-4 pb-12 pt-8 text-body-text">
         <Header :displayLogo="true" />
         <div class="flex flex-col gap-4 md:flex-row">
             <section class="md:w-3/5">
@@ -18,7 +18,7 @@
                     >
                         <template #Accounts>
                             <div
-                                class="inline-block mr-1 cursor-pointer"
+                                class="mr-1 inline-block cursor-pointer"
                                 v-for="item in accounts"
                                 :key="item.identity"
                                 @click="displayDialog(item.identity, item.platform)"
@@ -30,7 +30,7 @@
                                 v-if="isOwner"
                                 size="sm"
                                 shape="circle"
-                                class="inline-block mr-1 w-8 h-8 text-btn-icon bg-secondary-btn-card"
+                                class="mr-1 inline-block h-8 w-8 bg-secondary-btn-card text-btn-icon"
                                 @click="toManageAccounts"
                             >
                                 <i class="bx bx-pencil bx-xs" />
@@ -38,7 +38,7 @@
                             <Button
                                 size="sm"
                                 shape="circle"
-                                class="inline-block mr-1 w-8 h-8 text-btn-icon bg-secondary-btn-card"
+                                class="mr-1 inline-block h-8 w-8 bg-secondary-btn-card text-btn-icon"
                                 @click="toAccountsPage"
                             >
                                 <i class="bx bx-expand-alt bx-xs" />
@@ -56,11 +56,39 @@
                         </template>
                     </Profile>
 
+                    <TransBarCard title="NFT Score" :haveDetails="true" :haveContent="false">
+                        <template #details>
+                            <div class="flex flex-row items-center justify-between">
+                                <LoadingSmile :size="18" :isLooping="true" v-show="isRankLoading" />
+                                <div class="flex flex-row gap-4" v-show="!isRankLoading">
+                                    <div class="text-xl font-bold">{{ score }}</div>
+                                    <div class="rounded-full bg-secondary-btn px-4"># {{ rank }}</div>
+                                </div>
+                                <div class="flex flex-row gap-2">
+                                    <Button
+                                        size="sm"
+                                        class="h-8 w-8 bg-secondary-btn-card text-btn-icon"
+                                        @click="openShareCard"
+                                    >
+                                        <i class="bx bx-share bx-flip-horizontal" />
+                                    </Button>
+                                    <Button
+                                        size="sm"
+                                        class="h-8 w-8 bg-secondary-btn-card text-btn-icon"
+                                        @click="toLeaderboard()"
+                                    >
+                                        <i class="bx bx-expand-alt bx-xs" />
+                                    </Button>
+                                </div>
+                            </div>
+                        </template>
+                    </TransBarCard>
+
                     <template v-for="className in allClasses" :key="className">
                         <TransBarCard
                             v-if="className === 'Collectibles'"
                             :title="className"
-                            :tip="isLoadingAssets.NFT ? 'loading' : isOwner ? 'ownerEmpty' : 'notOwnerEmpty'"
+                            :tip="isLoadingNFT ? 'loading' : isOwner ? 'ownerEmpty' : 'notOwnerEmpty'"
                             :haveDetails="false"
                             :haveContent="true"
                             :haveContentInfo="classifiedList[className].length > 0"
@@ -72,7 +100,7 @@
                                     @click="toManageNFTs(className)"
                                 >
                                     <span
-                                        class="absolute -right-1.5 -top-1.5 inline-flex w-2 h-2 bg-red-500 rounded-full"
+                                        class="absolute -right-1.5 -top-1.5 inline-flex h-2 w-2 rounded-full bg-red-500"
                                     />
                                 </i>
                             </template>
@@ -98,7 +126,7 @@
                             <template #button>
                                 <Button
                                     size="sm"
-                                    class="w-8 h-8 text-btn-icon bg-secondary-btn-card"
+                                    class="h-8 w-8 bg-secondary-btn-card text-btn-icon"
                                     @click="toListPage(`nfts/${className}`)"
                                 >
                                     <i class="bx bx-expand-alt bx-xs" />
@@ -109,7 +137,7 @@
                         <TransBarCard
                             v-else
                             :title="className"
-                            :tip="isLoadingAssets.NFT ? 'loading' : isOwner ? 'ownerEmpty' : 'notOwnerEmpty'"
+                            :tip="isLoadingNFT ? 'loading' : isOwner ? 'ownerEmpty' : 'notOwnerEmpty'"
                             :haveDetails="classifiedList[className].length > 0"
                             :haveContent="true"
                             :haveContentInfo="classifiedList[className].length > 0"
@@ -157,7 +185,7 @@
                             <template #button>
                                 <Button
                                     size="sm"
-                                    class="w-8 h-8 text-btn-icon bg-secondary-btn-card"
+                                    class="h-8 w-8 bg-secondary-btn-card text-btn-icon"
                                     @click="toListPage(`nfts/${className}`)"
                                 >
                                     <i class="bx bx-expand-alt bx-xs" />
@@ -168,7 +196,7 @@
 
                     <TransBarCard
                         title="Footprints"
-                        :tip="isLoadingAssets.Footprint ? 'loading' : isOwner ? 'ownerEmpty' : 'notOwnerEmpty'"
+                        :tip="isLoadingFootprint ? 'loading' : isOwner ? 'ownerEmpty' : 'notOwnerEmpty'"
                         :haveDetails="footprints.length !== 0"
                         :haveContent="true"
                         :haveContentInfo="footprints.length > 0"
@@ -195,14 +223,14 @@
                                 :key="item.id"
                                 :imageUrl="item.detail.image_url"
                                 size="sm"
-                                class="flex-shrink-0 mr-2 cursor-pointer"
+                                class="mr-2 shrink-0 cursor-pointer"
                                 @click="toSingleItemPage(item.id)"
                             />
                         </template>
                         <template #button>
                             <Button
                                 size="sm"
-                                class="w-8 h-8 text-btn-icon bg-secondary-btn-card"
+                                class="h-8 w-8 bg-secondary-btn-card text-btn-icon"
                                 @click="toListPage('Footprints')"
                             >
                                 <i class="bx bx-expand-alt bx-xs" />
@@ -212,7 +240,7 @@
 
                     <TransBarCard
                         title="Donations"
-                        :tip="isLoadingAssets.Gitcoin ? 'loading' : isOwner ? 'ownerEmpty' : 'notOwnerEmpty'"
+                        :tip="isLoadingDonation ? 'loading' : isOwner ? 'ownerEmpty' : 'notOwnerEmpty'"
                         :haveDetails="false"
                         :haveContent="true"
                         :haveContentInfo="gitcoins.length > 0"
@@ -233,7 +261,7 @@
                         <template #button>
                             <Button
                                 size="sm"
-                                class="w-8 h-8 text-btn-icon bg-secondary-btn-card"
+                                class="h-8 w-8 bg-secondary-btn-card text-btn-icon"
                                 @click="toListPage('Gitcoins')"
                             >
                                 <i class="bx bx-expand-alt bx-xs" />
@@ -248,7 +276,7 @@
                     <TransBarCard title="Content" :haveDetails="true" :haveContent="false">
                         <template #header>
                             <div class="flex flex-col gap-y-2" :class="{ 'pointer-events-none': isLoadingContents }">
-                                <div class="flex gap-2 items-center justify-between" @click="toggleWeb3Only()">
+                                <div class="flex items-center justify-between gap-2" @click="toggleWeb3Only()">
                                     <h2
                                         class="text-black text-opacity-50"
                                         :class="{ 'translate-x-5 text-opacity-80': isWeb3Only }"
@@ -256,10 +284,10 @@
                                         Web3 Only
                                     </h2>
                                     <div
-                                        class="flex items-center p-1 w-11 h-6 bg-gray-500 bg-opacity-10 rounded-full cursor-pointer duration-200 ease-in-out"
+                                        class="flex h-6 w-11 cursor-pointer items-center rounded-full bg-gray-500 bg-opacity-10 p-1 duration-200 ease-in-out"
                                     >
                                         <div
-                                            class="w-4 h-4 bg-black bg-opacity-50 rounded-full shadow-md transform duration-200 ease-in-out"
+                                            class="h-4 w-4 transform rounded-full bg-black bg-opacity-50 shadow-md duration-200 ease-in-out"
                                             :class="{ 'translate-x-5 bg-opacity-80': !isWeb3Only }"
                                         />
                                     </div>
@@ -297,7 +325,7 @@
                                 >
                                     <Button
                                         size="sm"
-                                        class="w-full h-6"
+                                        class="h-6 w-full"
                                         v-show="isContentsHaveMore"
                                         @click="loadMoreContents"
                                         id="contents-load-more-button"
@@ -307,15 +335,15 @@
                                     </Button>
                                 </IntersectionObserverContainer>
                             </div>
-                            <div v-else class="flex flex-col gap-1 items-center justify-center p-5 h-96">
+                            <div v-else class="flex h-96 flex-col items-center justify-center gap-1 p-5">
                                 <template v-if="isLoadingContents">
-                                    <span class="text-light w-1/2 text-center break-words">
+                                    <span class="text-light w-1/2 break-words text-center">
                                         One moment! Details on the way
                                     </span>
                                     <LoadingSmile :size="18" :isLooping="true" />
                                 </template>
                                 <template v-else>
-                                    <span class="text-light w-1/2 text-center break-words">
+                                    <span class="text-light w-1/2 break-words text-center">
                                         Looks like this user hasn't got a shot. Come back and check it out later.
                                     </span>
                                     <Smile :size="18" />
@@ -326,34 +354,28 @@
                 </div>
             </section>
 
-            <div class="safe-area-fixed-bottom bg-footer-bg fixed bottom-0 left-0 mt-2 w-full">
-                <div class="flex flex-row gap-x-2 items-center justify-end m-auto px-4 py-2 max-w-screen-lg">
-                    <div class="text-right text-body-text text-xs font-normal">
-                        <a href="https://rss3.io/#/privacy"> Privacy </a>
-                        |
-                        <span>
-                            Made with 🌀 by
-                            <a
-                                href="https://rss3.io"
-                                class="text-body-text no-underline visited:no-underline active:no-underline text-xs font-normal"
-                            >
-                                RSS3
-                            </a>
-                        </span>
-                    </div>
-                </div>
-            </div>
+            <Footer />
             <AccountModal
                 :isShowingAccount="isShowingAccount"
                 :showingAccountDetails="showingAccountDetails"
                 @closeDialog="closeAccountDialog"
             />
         </div>
+        <ShareCard
+            v-show="isSharing"
+            @close="isSharing = false"
+            :address="ethAddress"
+            :rns="rns"
+            :avatar="rss3Profile.avatar"
+            :name="rss3Profile.username"
+            :score="score"
+            :rank="rank"
+        />
     </div>
 </template>
 
 <script lang="ts">
-import { Options, Vue } from 'vue-class-component';
+import { mixins, Options } from 'vue-class-component';
 import Button from '@/components/Button/Button.vue';
 import Profile from '@/components/Profile/Profile.vue';
 import AccountItem from '@/components/Account/AccountItem.vue';
@@ -365,7 +387,7 @@ import RNSUtils from '@/common/rns';
 import utils from '@/common/utils';
 import legacyConfig from '@/config';
 import GitcoinItem from '@/components/Donation/GitcoinItem.vue';
-import { Profile as ProfileInfo, GeneralAsset, DetailedNFT, GeneralAssetWithClass } from '@/common/types';
+import { Profile as ProfileInfo } from '@/common/types';
 
 import FootprintCard from '@/components/Footprint/FootprintCard.vue';
 import ContentCard from '@/components/Content/ContentCard.vue';
@@ -380,20 +402,23 @@ import TransBarCard from '@/components/Card/TransBarCard.vue';
 import AssetCard from '@/components/Card/AssetCard.vue';
 import config from '@/common/config';
 import Header from '@/components/Common/Header.vue';
+import Footer from '@/components/Common/Footer.vue';
 import AccountModal from '@/components/Account/AccountModal.vue';
 import Smile from '@/components/Icons/Smile.vue';
 import LoadingSmile from '@/components/Loading/LoadingSmile.vue';
-import flattenDeep from 'lodash/flattenDeep';
 import { formatter } from '@/common/address';
 
-interface Relations {
-    followers: string[];
-    followings: string[];
-}
+// mixins section
+import { NFTMixin } from '@/views/Mixins/NFTMixin';
+import { DonationMixin } from '@/views/Mixins/DonationMixin';
+import { FootprintMixin } from '@/views/Mixins/FootprintMixin';
+import { ContentMixin } from '@/views/Mixins/ContentMixin';
+import ShareCard from '@/components/ShareCard.vue';
 
 @Options({
     name: 'Home',
     components: {
+        ShareCard,
         IntersectionObserverContainer,
         EVMpAccountItem,
         FootprintItem,
@@ -409,12 +434,13 @@ interface Relations {
         Toolbar,
         AssetCard,
         Header,
+        Footer,
         AccountModal,
         Smile,
         LoadingSmile,
     },
 })
-export default class Home extends Vue {
+export default class Home extends mixins(NFTMixin, DonationMixin, FootprintMixin, ContentMixin) {
     rns: string = '';
     ethAddress: string = '';
     isFollowing: boolean = false;
@@ -431,21 +457,7 @@ export default class Home extends Vue {
         isLink: false,
     };
     isAccountRegistered: boolean = true;
-    isLoadingAssets: {
-        NFT: boolean;
-        Gitcoin: boolean;
-        Footprint: boolean;
-    } = {
-        NFT: true,
-        Gitcoin: true,
-        Footprint: true,
-    };
-    isLoadingContents: boolean = true;
-    isContentsHaveMore: boolean = true;
-    isLoadingMore: boolean = false;
-    currentTheme: string = '';
     isLoadingPersona: boolean = true;
-    isWeb3Only: boolean = false;
 
     rss3Profile: ProfileInfo = {
         avatar: legacyConfig.defaultAvatar,
@@ -454,23 +466,19 @@ export default class Home extends Vue {
         bio: '...',
         displayAddress: '',
     };
-    rss3Relations: Relations = {
+    rss3Relations: {
+        followers: string[];
+        followings: string[];
+    } = {
         followers: [],
         followings: [],
     };
     accounts: AnyObject[] = [];
-    // nfts: AnyObject[] = [];
-    gitcoins: AnyObject[] = [];
-    footprints: AnyObject[] = [];
-    contents: any[] = [];
-    contentTimestamp: string = '';
     $gtag: any;
     scrollTop: number = 0;
     lastRoute: string = '';
     undefinedImage = legacyConfig.undefinedImageAlt;
     defaultAvatar = legacyConfig.defaultAvatar;
-    // notice: string = '';
-    // isShowingNotice: boolean = false;
 
     isPCLayout: boolean = window.innerWidth > config.ui.md;
     isOwnerValidRSS3: boolean = false;
@@ -478,15 +486,13 @@ export default class Home extends Vue {
 
     isLastScrollingDown: boolean = false;
 
-    classifiedList: {
-        [className: string]: DetailedNFT[];
-    } = {
-        Collectibles: [],
-        // Games: [],
-        // Awards: [],
-        // Organizations: [],
-    };
-    allClasses: string[] = Object.keys(this.classifiedList);
+    // for leader board
+    isRankLoading: boolean = true;
+    score: string = '0';
+    rank: string = '0';
+
+    // for share
+    isSharing: boolean = false;
 
     async mounted() {
         window.onresize = () => {
@@ -549,11 +555,13 @@ export default class Home extends Vue {
             this.startLoadingAccounts(),
             this.startLoadingAssets(),
             this.startLoadingContents(),
-            this.checkUserState(),
+            this.startLoadingRanking(),
         ]);
 
         // setup affix event
         this.affixEvent(true);
+
+        setTimeout(this.checkUserState, 0);
     }
 
     async checkUserState() {
@@ -580,11 +588,9 @@ export default class Home extends Vue {
     }
 
     async startLoadingAssets() {
-        this.isLoadingAssets = {
-            NFT: true,
-            Gitcoin: true,
-            Footprint: true,
-        };
+        this.isLoadingNFT = true;
+        this.isLoadingDonation = true;
+        this.isLoadingFootprint = true;
         const allAssets = await utils.initAssets();
         // laod NFT, donation and footprint
         await Promise.all([
@@ -594,222 +600,17 @@ export default class Home extends Vue {
         ]);
     }
 
-    async ivLoadNFT(assets: GeneralAssetWithClass[]) {
-        const nftsWithClassName = this.generateNFTsWithClassName(assets);
-        const assetIDList = nftsWithClassName.map((asset) =>
-            RSS3Utils.id.getAsset(asset.platform, asset.identity, asset.type, asset.uniqueID),
-        );
-        if (assetIDList.length === 0) {
-            this.isLoadingAssets.NFT = false;
-            return;
-        }
-        let displayedNFTsDetail: AnyObject[] = [];
-        for (let i = 0; i < 10; i++) {
-            if (displayedNFTsDetail.length !== 0) {
-                this.isLoadingAssets.NFT = false;
-            }
-            const assetsNoDetails = assetIDList.filter(
-                (asset) => !displayedNFTsDetail.find((detail) => detail.id === asset),
-            );
+    startLoadingRanking() {
+        this.isRankLoading = true;
+        fetch(`https://raas.cheer.bio/user/${this.ethAddress}`)
+            .then((res: any) => res.json())
+            .then((res) => {
+                this.score = res.user.score.toFixed(2);
+                this.rank = `${res.user.rank}`;
+            })
+            .catch((res) => {});
 
-            if (!assetsNoDetails.length) {
-                // all the assets have details, break
-                break;
-            } else {
-                // already request but not get full details
-                // sleep for two seconds
-                await new Promise((r) => setTimeout(r, 2000));
-            }
-            console.log(`NFT retry ${i} times`);
-            displayedNFTsDetail = displayedNFTsDetail.concat(await utils.loadAssetsWithNoRetry(assetsNoDetails));
-            this.sortNFTDetails(nftsWithClassName, displayedNFTsDetail);
-        }
-    }
-
-    generateNFTsWithClassName(assets: GeneralAssetWithClass[]) {
-        // Get NFTs
-        const classifiedBriefList: {
-            [className: string]: GeneralAssetWithClass[];
-        } = {};
-
-        assets.map((nft) => {
-            const className = nft.class || 'Collectibles';
-            if (!(className in classifiedBriefList)) {
-                classifiedBriefList[className] = [];
-            }
-            if (classifiedBriefList[className].length < config.assets.brief) {
-                classifiedBriefList[className].push(nft);
-            }
-        });
-
-        const nftsWithClassName = flattenDeep(Object.values(classifiedBriefList));
-        return nftsWithClassName;
-    }
-
-    sortNFTDetails(nftsWithClassName: GeneralAssetWithClass[], displayedNFTsDetail: AnyObject[]) {
-        const classifiedList: {
-            [className: string]: DetailedNFT[];
-        } = {
-            Collectibles: [],
-            Games: [],
-            Awards: [],
-            Organizations: [],
-        };
-        nftsWithClassName.map((nft) => {
-            const className = nft.class || 'Collectibles';
-            const NFTId = RSS3Utils.id.getAsset(nft.platform, nft.identity, nft.type, nft.uniqueID);
-            if (!(className in classifiedList)) {
-                classifiedList[className] = [];
-            }
-            const detailedNFT = displayedNFTsDetail.find((dNFT) => dNFT.id === NFTId);
-            if (detailedNFT) {
-                classifiedList[className].push(detailedNFT);
-            } else {
-                classifiedList[className].push({
-                    id: NFTId,
-                    detail: {},
-                });
-            }
-        });
-        Object.keys(classifiedList).map((listName) => {
-            if (classifiedList[listName].length === 0 && listName !== 'Collectibles') {
-                delete classifiedList[listName];
-            }
-        });
-
-        this.classifiedList = classifiedList;
-        this.allClasses = Object.keys(this.classifiedList);
-    }
-
-    async ivLoadGitcoin(assets: GeneralAsset[]) {
-        if (assets) {
-            if (assets.length === 0) {
-                this.isLoadingAssets.Gitcoin = false;
-                return;
-            }
-            const assetIDList = assets.map((asset) =>
-                RSS3Utils.id.getAsset(asset.platform, asset.identity, asset.type, asset.uniqueID),
-            );
-            let displayedGitcoinsDetail: AnyObject[] = [];
-            for (let i = 0; i < 10; i++) {
-                if (displayedGitcoinsDetail.length !== 0) {
-                    this.isLoadingAssets.Gitcoin = false;
-                }
-                const assetsNoDetails = assetIDList.filter(
-                    (asset) => !this.gitcoins.find((detail) => detail.id === asset),
-                );
-
-                if (!assetsNoDetails.length) {
-                    // all the assets have details, break
-                    break;
-                } else {
-                    // already request but not get full details
-                    // sleep for two seconds
-                    await new Promise((r) => setTimeout(r, 2000));
-                }
-                console.log(`Donations retry ${i} times`);
-                displayedGitcoinsDetail = displayedGitcoinsDetail.concat(
-                    await utils.loadAssetsWithNoRetry(assetsNoDetails),
-                );
-                this.gitcoins = this.sortAssets(assetIDList, displayedGitcoinsDetail);
-            }
-        }
-    }
-
-    async ivLoadFootprint(assets: GeneralAsset[]) {
-        if (assets) {
-            if (assets.length === 0) {
-                this.isLoadingAssets.Footprint = false;
-                return;
-            }
-            const assetIDList = assets.map((asset) =>
-                RSS3Utils.id.getAsset(asset.platform, asset.identity, asset.type, asset.uniqueID),
-            );
-            let displayFootprintsDetail: AnyObject[] = [];
-            for (let i = 0; i < 10; i++) {
-                if (displayFootprintsDetail.length !== 0) {
-                    this.isLoadingAssets.Footprint = false;
-                }
-                const assetsNoDetails = assetIDList.filter(
-                    (asset) => !this.footprints.find((detail) => detail.id === asset),
-                );
-
-                if (!assetsNoDetails.length) {
-                    // all the assets have details, break
-                    break;
-                } else {
-                    // already request but not get full details
-                    // sleep for two seconds
-                    await new Promise((r) => setTimeout(r, 2000));
-                }
-                console.log(`Footprint retry ${i} times`);
-                displayFootprintsDetail = displayFootprintsDetail.concat(
-                    await utils.loadAssetsWithNoRetry(assetsNoDetails),
-                );
-                this.footprints = this.sortAssets(assetIDList, displayFootprintsDetail);
-            }
-        }
-    }
-
-    sortAssets(assetIDList: string[], assetDetailsList: AnyObject[]) {
-        const sortedAssetDetailsList: AnyObject[] = [];
-        assetIDList.map((assetID) => {
-            const detailedAsset = assetDetailsList.find((details) => details.id === assetID);
-            if (detailedAsset) {
-                sortedAssetDetailsList.push(detailedAsset);
-            } else {
-                sortedAssetDetailsList.push({
-                    id: assetID,
-                    detail: {
-                        grant: {},
-                    },
-                });
-            }
-        });
-
-        return sortedAssetDetailsList;
-    }
-
-    async startLoadingContents() {
-        this.isLoadingContents = true;
-        const localStoreIsWeb3Only = JSON.parse(utils.getStorage('isWeb3Only') || 'false');
-        this.isWeb3Only = localStoreIsWeb3Only;
-        const { listed, haveMore, timestamp } = await utils.initContent('', this.isWeb3Only);
-        while (listed.length > 0) {
-            if ('target' in listed[0] && listed[0].target.field.includes('Mirror.XYZ')) {
-                if (this.contents.findIndex((item) => 'target' in item && item.title === listed[0].title) === -1) {
-                    this.contents.push(listed[0]);
-                }
-            } else {
-                this.contents.push(listed[0]);
-            }
-            listed.shift();
-        }
-        this.contentTimestamp = timestamp;
-        this.isContentsHaveMore = haveMore;
-        this.isLoadingContents = false;
-    }
-
-    async loadMoreContents() {
-        this.isLoadingContents = true;
-
-        if (this.isContentsHaveMore) {
-            const { listed, haveMore, timestamp } = await utils.initContent(this.contentTimestamp, this.isWeb3Only);
-            while (listed.length > 0) {
-                if ('target' in listed[0] && listed[0].target.field.includes('Mirror.XYZ')) {
-                    if (this.contents.findIndex((item) => 'target' in item && item.title === listed[0].title) === -1) {
-                        this.contents.push(listed[0]);
-                    }
-                } else {
-                    this.contents.push(listed[0]);
-                }
-                listed.shift();
-            }
-            this.contentTimestamp = timestamp;
-            this.isContentsHaveMore = haveMore;
-        }
-
-        this.isLoadingContents = false;
+        this.isRankLoading = false;
     }
 
     async toggleFollow() {
@@ -878,31 +679,8 @@ export default class Home extends Vue {
         this.isFollowing = false;
     }
 
-    async updateFilteredContent() {
-        const { listed, haveMore, timestamp } = await utils.initContent('', this.isWeb3Only);
-        while (listed.length > 0) {
-            if ('target' in listed[0] && listed[0].target.field.includes('Mirror.XYZ')) {
-                if (this.contents.findIndex((item) => 'target' in item && item.title === listed[0].title) === -1) {
-                    this.contents.push(listed[0]);
-                }
-            } else {
-                this.contents.push(listed[0]);
-            }
-            listed.shift();
-        }
-        this.contentTimestamp = timestamp;
-        this.isContentsHaveMore = haveMore;
-    }
-
-    async toggleWeb3Only() {
-        this.isLoadingContents = true;
-        this.contents = [];
-        if (this.isWeb3Only !== undefined) {
-            this.isWeb3Only = !this.isWeb3Only;
-            utils.setStorage('isWeb3Only', JSON.stringify(this.isWeb3Only));
-        }
-        await this.updateFilteredContent();
-        this.isLoadingContents = false;
+    toLeaderboard() {
+        this.$router.push('/leaderboard');
     }
 
     toManageAccounts() {
@@ -1072,14 +850,11 @@ export default class Home extends Vue {
             if (el) {
                 el.scrollTop = this.scrollTop;
             }
-            this.contents = [];
+            this.clearContentDetails();
             await this.updateUserInfo();
         } else {
-            this.contents = [];
-            this.contentTimestamp = '';
             this.isFollowing = false;
             this.isOwner = false;
-            this.isLoadingContents = true;
             this.rss3Profile = {
                 avatar: legacyConfig.defaultAvatar,
                 username: '...',
@@ -1087,16 +862,10 @@ export default class Home extends Vue {
                 bio: '...',
                 displayAddress: '',
             };
-            this.isContentsHaveMore = true;
-            // this.nfts = [];
-            this.classifiedList = {
-                Collectibles: [],
-                // Games: [],
-                // Awards: [],
-                // Organizations: [],
-            };
-            this.gitcoins = [];
-            this.footprints = [];
+            this.clearNFTDetails();
+            this.clearDonationDetails();
+            this.clearFootprintDetails();
+            this.clearContentDetails();
             await this.initLoad();
         }
     }
@@ -1119,6 +888,10 @@ export default class Home extends Vue {
             } // else TODO
             this.isLastScrollingDown = isScrollDown;
         }
+    }
+
+    openShareCard() {
+        this.isSharing = true;
     }
 }
 </script>

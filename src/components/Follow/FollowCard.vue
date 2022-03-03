@@ -1,36 +1,27 @@
 <template>
-    <div class="flex flex-row gap-6 items-center justify-start px-2 md:my-1 md:px-4" ref="card">
+    <div class="flex flex-row items-center justify-start gap-6 px-2 md:my-1 md:px-4" ref="card">
         <div class="avatar">
             <img
                 :src="fixedUrl"
                 :alt="name"
-                class="flex-grow-0 flex-shrink w-9 h-9 rounded-full object-cover md:w-14 md:h-14"
+                class="h-9 w-9 shrink grow-0 rounded-full object-cover md:h-14 md:w-14"
                 ref="avatar"
                 crossorigin="anonymous"
             />
         </div>
-        <div class="flex flex-1 flex-col w-0">
+        <div class="flex w-0 flex-1 flex-col">
             <div class="flex flex-row">
-                <div class="text-sm font-semibold truncate md:text-2xl">
+                <div class="truncate text-sm font-semibold md:text-2xl">
                     {{ $props.name || rnsWithSuffix || formatter($props.address) }}
                 </div>
                 <span
-                    class="
-                        ml-1.5
-                        px-1.5
-                        py-0.5
-                        text-sm
-                        bg-primary-text bg-opacity-5
-                        rounded-sm
-                        truncate
-                        md:ml-3 md:px-3 md:py-1 md:text-xl
-                    "
+                    class="ml-1.5 truncate rounded-sm bg-primary-text bg-opacity-5 px-1.5 py-0.5 text-sm md:ml-3 md:px-3 md:py-1 md:text-xl"
                 >
                     {{ $props.rns ? rnsWithSuffix : formatter($props.address) }}
                 </span>
             </div>
             <div class="flex">
-                <div class="text-xs truncate md:text-lg">
+                <div class="truncate text-xs md:text-lg">
                     {{ $props.bio }}
                 </div>
             </div>

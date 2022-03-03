@@ -1,11 +1,13 @@
 <template>
-    <div class="modal">
-        <div class="shadow" />
-        <div class="dialog">
-            <div class="header">
+    <div class="fixed left-0 top-0 m-0 h-screen w-screen p-0">
+        <div class="absolute left-0 top-0 m-0 h-screen w-screen bg-black p-0 opacity-30" />
+        <div
+            class="relative left-1/2 top-1/2 flex h-80 w-80 -translate-x-1/2 -translate-y-1/2 transform flex-col justify-between rounded border-modal border-modal-border bg-modal-bg p-4"
+        >
+            <div class="text-center text-xl font-semibold text-primary-text">
                 <slot name="header" />
             </div>
-            <div class="body">
+            <div class="h-full w-full flex-1 p-2">
                 <slot name="body" />
             </div>
             <div class="footer">
@@ -22,22 +24,4 @@ import { Options, Vue } from 'vue-class-component';
 export default class Modal extends Vue {}
 </script>
 
-<style scoped lang="postcss">
-@layer components {
-    .modal {
-        @apply fixed left-0 top-0 m-0 p-0 w-screen h-screen;
-        .shadow {
-            @apply absolute left-0 top-0 m-0 p-0 w-screen h-screen bg-black opacity-30;
-        }
-        .dialog {
-            @apply relative left-1/2 top-1/2 flex flex-col justify-between p-4 w-80 h-80 bg-modal-bg border-modal border-modal-border rounded transform -translate-x-1/2 -translate-y-1/2;
-            .header {
-                @apply text-center text-primary-text text-xl font-semibold;
-            }
-            .body {
-                @apply flex-1 p-2 w-full h-full;
-            }
-        }
-    }
-}
-</style>
+<style></style>

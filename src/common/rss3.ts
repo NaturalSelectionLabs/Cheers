@@ -9,10 +9,8 @@ import rns from './rns';
 import AsyncLock from 'async-lock';
 import { CustomField_PassAssets, GeneralAsset } from './types';
 
-export interface IAssetProfile {
-    assets: GeneralAsset[];
-    status?: boolean;
-}
+import mitt from 'mitt';
+const emitter = mitt();
 
 export interface RSS3DetailPersona {
     file: RSS3Index | null;
@@ -51,11 +49,6 @@ let walletConnectProvider: WalletConnectProvider;
 let ethersProvider: ethers.providers.Web3Provider | null;
 const lock = new AsyncLock();
 let isSettingPageOwner: boolean = false;
-
-export interface IAssetProfile {
-    assets: GeneralAsset[];
-    status?: boolean;
-}
 
 const KeyNames = {
     ConnectMethod: 'CONNECT_METHOD',
@@ -245,12 +238,17 @@ async function initUser(user: RSS3DetailPersona | RSS3FullPersona, skipSignSync:
         if (user.name && !user.address) {
             user.address = await rns.name2Addr(user.name);
         }
+        // console.log(user.file, user.name)
+        // todo: save page owner into state management system
+        //  (SDK getList will trigger get file, which produces one more request
+        //  and make pre-inject meta useless, or just delay the follow list loading ?)
         const [followers, followings, file, name] = await Promise.all([
             RSS3APIPersona.backlinks.getList(user.address, 'following'),
             RSS3APIPersona.links.getList(user.address, 'following'),
-            RSS3APIPersona.files.get(user.address),
-            !user.name ? rns.addr2Name(user.address) : user.name,
+            user.file ?? RSS3APIPersona.files.get(user.address),
+            user.name || rns.addr2Name(user.address),
         ]);
+        // await new Promise((r) => {}); // lock process for debug
         user.followers = followers;
         user.followings = followings;
         user.file = file as RSS3Index;
@@ -286,13 +284,10 @@ async function disconnect() {
 }
 
 function dispatchEvent(event: string, detail: any) {
-    const evt = new CustomEvent(event, {
-        detail,
-        bubbles: true,
-        composed: true,
-    });
+    // using mitt because of the performance issues caused by custom DOM events
+    // refer to https://github.com/developit/mitt/issues/153
+    emitter.emit(event, detail);
     console.log(event, detail);
-    document.dispatchEvent(evt);
 }
 
 async function setPageTitleFavicon() {
@@ -314,7 +309,7 @@ async function ensureLoginUser() {
             if (RSS3LoginUser.isReady) {
                 resolve(RSS3LoginUser);
             } else {
-                document.addEventListener(Events.connect, () => {
+                emitter.on(Events.connect, () => {
                     resolve(RSS3LoginUser);
                 });
             }
@@ -375,22 +370,30 @@ export default {
     setPageOwner: async (addrOrName: string) =>
         new Promise<RSS3DetailPersona>(async (resolve, reject) => {
             if (!isSettingPageOwner) {
+                console.log('Setting page owner', addrOrName);
                 isSettingPageOwner = true;
                 let isReloadRequired = false;
                 if (addrOrName.startsWith('0x') && addrOrName.length === 42) {
                     if (RSS3PageOwner.address !== addrOrName) {
                         isReloadRequired = true;
                         RSS3PageOwner.address = ethersUtils.getAddress(addrOrName);
-                        RSS3PageOwner.name = '';
+                        RSS3PageOwner.name = await rns.addr2Name(addrOrName);
                     }
                 } else {
                     if (RSS3PageOwner.name !== addrOrName) {
                         isReloadRequired = true;
                         RSS3PageOwner.name = addrOrName;
-                        RSS3PageOwner.address = '';
+                        RSS3PageOwner.address = await rns.name2Addr(addrOrName);
                     }
                 }
                 if (isReloadRequired) {
+                    const preinjectPageOwner = (window as any).USER;
+                    if (typeof preinjectPageOwner !== 'undefined' && RSS3PageOwner.address === preinjectPageOwner.id) {
+                        console.log('file hit', preinjectPageOwner);
+                        RSS3PageOwner.file = preinjectPageOwner;
+                    } else {
+                        RSS3PageOwner.file = null;
+                    }
                     await initUser(RSS3PageOwner);
                 }
                 await setPageTitleFavicon();
@@ -398,7 +401,7 @@ export default {
                 isSettingPageOwner = false;
                 resolve(RSS3PageOwner);
             } else {
-                document.addEventListener(Events.pageOwnerReady, () => {
+                emitter.on(Events.pageOwnerReady, () => {
                     resolve(RSS3PageOwner);
                 });
             }

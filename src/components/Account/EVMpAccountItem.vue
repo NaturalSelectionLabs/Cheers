@@ -1,7 +1,7 @@
 <template>
     <div class="relative">
         <div
-            class="account-item bg-item-bg"
+            class="flex items-center justify-center overflow-hidden rounded-full border border-item-border bg-item-bg filter"
             :style="{ width: size + 'px', height: size + 'px' }"
             @mouseenter="isHover = true"
             @mouseout="isHover = false"
@@ -9,13 +9,16 @@
             @touchend="isHover = false"
             ref="account"
         >
-            <div class="icon" :class="[address ? 'mix-blend-overlay' : 'opacity-50']" />
+            <div
+                class="h-full w-full bg-EVM bg-85 bg-center bg-no-repeat"
+                :class="[address ? 'mix-blend-overlay' : 'opacity-50']"
+            />
         </div>
         <Tooltip v-if="enableTooltip" v-show="isHover" :text="addressFilter($props.address)" view-option="account" />
         <Button
             v-show="deleteMode"
             size="sm"
-            class="absolute z-20 right-0 top-0 w-6 h-6 text-account-btn-m-text bg-account-btn-m"
+            class="absolute right-0 top-0 z-20 h-6 w-6 bg-account-btn-m text-account-btn-m-text"
             @click="deleteAccount"
         >
             <i class="bx bx-minus bx-sm"></i>
@@ -82,14 +85,4 @@ export default class EVMpAccountItem extends Vue {
 }
 </script>
 
-<style scoped lang="postcss">
-@layer components {
-    .account-item {
-        @apply flex items-center justify-center border border-item-border rounded-full overflow-hidden filter;
-
-        .icon {
-            @apply w-full h-full bg-EVM bg-85 bg-center bg-no-repeat;
-        }
-    }
-}
-</style>
+<style></style>

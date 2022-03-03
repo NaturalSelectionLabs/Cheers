@@ -1,16 +1,16 @@
 <template>
-    <div class="badges-container">
+    <div class="flex flex-row items-center justify-end gap-1">
         <div
             v-if="collectionImg"
-            class="badge"
+            class="rounded-full border-sm border-item-border bg-item-bg bg-cover bg-center bg-no-repeat"
             :class="{
-                'badge-overlay': location === 'overlay',
-                'badge-header': location === 'header',
+                'h-6 w-6': location === 'overlay',
+                'h-7 w-7': location === 'header',
             }"
             :style="{ backgroundImage: `url(${collectionImg})` }"
         />
         <div
-            class="badge bg-white"
+            class="rounded-full border-sm border-item-border bg-item-bg bg-white bg-cover bg-center bg-no-repeat"
             :class="{
                 'bg-BSC': chain === 'BSC.NFT',
                 'bg-Ethereum': chain === 'Ethereum.NFT',
@@ -18,8 +18,8 @@
                 'bg-Arbitrum': chain === 'Arbitrum.NFT',
                 'bg-Avalanche': chain === 'AVAX.NFT',
                 'bg-Ronin': chain === 'Ronin.NFT',
-                'badge-overlay': location === 'overlay',
-                'badge-header': location === 'header',
+                'h-6 w-6': location === 'overlay',
+                'h-7 w-7': location === 'header',
             }"
         />
     </div>
@@ -42,20 +42,4 @@ export default class NFTBadges extends Vue {
 }
 </script>
 
-<style scoped lang="postcss">
-@layer components {
-    .badges-container {
-        @apply flex flex-row gap-1 items-center justify-end;
-    }
-
-    .badge {
-        @apply bg-item-bg bg-cover bg-center bg-no-repeat border-sm border-item-border rounded-full;
-    }
-    .badge-overlay {
-        @apply w-6 h-6;
-    }
-    .badge-header {
-        @apply w-7 h-7;
-    }
-}
-</style>
+<style></style>

@@ -1,10 +1,10 @@
 <template>
-    <div class="flex flex-row items-center justify-start w-full text-body-text border-card rounded-2xl cursor-pointer">
+    <div class="flex w-full cursor-pointer flex-row items-center justify-start rounded-2xl border-card text-body-text">
         <div
-            class="flex-shrink m-0.5 w-22 h-22 bg-white bg-cover bg-center bg-no-repeat rounded-2xl md:w-28 md:h-28"
+            class="m-0.5 h-22 w-22 shrink rounded-2xl bg-white bg-cover bg-center bg-no-repeat md:h-28 md:w-28"
             :style="{ backgroundImage: `url(${imageUrl})` }"
         />
-        <div class="flex-1 pl-8 w-0 text-sm md:text-base">
+        <div class="w-0 flex-1 pl-8 text-sm md:text-base">
             <p>{{ date }}</p>
             <div class="line-clamp-3">
                 <span class="text-primary-text">{{ username + ' contributed ' }}</span>

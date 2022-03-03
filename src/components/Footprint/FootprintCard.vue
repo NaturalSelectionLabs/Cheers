@@ -1,14 +1,14 @@
 <template>
-    <div class="flex flex-row gap-2 justify-start cursor-pointer">
-        <FootprintItem :imageUrl="imageUrl" :size="type === 'details' ? 'xl' : 'lg'" class="flex-shrink-0" />
+    <div class="flex cursor-pointer flex-row justify-start gap-2">
+        <FootprintItem :imageUrl="imageUrl" :size="type === 'details' ? 'xl' : 'lg'" class="shrink-0" />
         <section
-            class="flex flex-1 flex-col justify-center w-0 text-body-text text-sm leading-normal"
+            class="flex w-0 flex-1 flex-col justify-center text-sm leading-normal text-body-text"
             :class="{ 'md:gap-1': type === 'details' }"
         >
-            <span class="text-body-text truncate">{{ getDate() }}</span>
-            <span class="text-body-text truncate">@ {{ location }}</span>
+            <span class="truncate text-body-text">{{ getDate() }}</span>
+            <span class="truncate text-body-text">@ {{ location }}</span>
             <div class="line-clamp-2">
-                {{ username }} attended <span class="flex-1 w-0">{{ activity }}</span>
+                {{ username }} attended <span class="w-0 flex-1">{{ activity }}</span>
             </div>
         </section>
     </div>

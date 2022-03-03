@@ -1,49 +1,44 @@
 <template>
-    <div class="h-screen text-body-text overflow-y-auto">
-        <div class="m-auto pb-20 pt-8 px-4 max-w-screen-lg">
-            <Header />
-            <TransBarCard
-                :title="(rss3Profile.name ? rss3Profile.name + `'s ` : '') + 'Followings'"
-                :have-details="true"
-            >
-                <template #details>
-                    <div class="flex flex-col gap-y-4 m-auto mt-2 w-full md:mt-4">
-                        <FollowCard
-                            class="w-auto cursor-pointer"
-                            v-for="item in followRenderList"
-                            :key="item.address"
-                            :avatar="item.avatar"
-                            :name="item.username"
-                            :bio="item.bio"
-                            :rns="item.rns"
-                            :address="item.address"
-                            @click="toPublicPage(item.address, item.rns)"
-                        />
+    <div class="m-auto pb-20 pt-8 px-4 max-w-screen-lg text-body-text">
+        <Header />
+        <TransBarCard :title="(rss3Profile.name ? rss3Profile.name + `'s ` : '') + 'Followings'" :have-details="true">
+            <template #details>
+                <div class="flex flex-col gap-y-4 m-auto mt-2 w-full md:mt-4">
+                    <FollowCard
+                        class="w-auto cursor-pointer"
+                        v-for="item in followRenderList"
+                        :key="item.address"
+                        :avatar="item.avatar"
+                        :name="item.username"
+                        :bio="item.bio"
+                        :rns="item.rns"
+                        :address="item.address"
+                        @click="toPublicPage(item.address, item.rns)"
+                    />
+                </div>
+                <IntersectionObserverContainer
+                    v-if="isHavingMoreFollows"
+                    :once="false"
+                    :enabled="!isLoadingFollows"
+                    @trigger="loadMoreFollows"
+                >
+                    <div class="flex gap-2 items-start justify-center">
+                        <span class="font-light">One moment </span>
+                        <LoadingSmile :size="18" :isLooping="true" />
                     </div>
-                    <IntersectionObserverContainer
-                        v-if="isHavingMoreFollows"
-                        :once="false"
-                        :enabled="!isLoadingFollows"
-                        @trigger="loadMoreFollows"
-                    >
-                        <div class="flex gap-2 items-start justify-center">
-                            <span class="font-light">One moment </span>
-                            <LoadingSmile :size="18" :isLooping="true" />
-                        </div>
-                    </IntersectionObserverContainer>
-                    <div
-                        v-if="!isLoadingFollows && followRenderList.length === 0"
-                        class="flex flex-row gap-2 items-end justify-center"
-                    >
-                        <span class="font-light">
-                            Looks like this user hasn't got a shot.<br />
-                            Come back and check it out later
-                        </span>
-                        <Smile :size="18" class="mb-1" />
-                    </div>
-                </template>
-            </TransBarCard>
-        </div>
+                </IntersectionObserverContainer>
+                <div
+                    v-if="!isLoadingFollows && followRenderList.length === 0"
+                    class="flex flex-row gap-2 items-end justify-center"
+                >
+                    <span class="font-light">
+                        Looks like this user hasn't got a shot.<br />
+                        Come back and check it out later
+                    </span>
+                    <Smile :size="18" class="mb-1" />
+                </div>
+            </template>
+        </TransBarCard>
     </div>
 </template>
 

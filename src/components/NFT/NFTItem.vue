@@ -1,10 +1,10 @@
 <template>
     <div
         :class="{
-            'w-10 h-10 rounded-sm': size === 'sm',
-            'w-16 h-16 rounded': size === 'md',
-            'w-22 h-22 md:w-28 md:h-28 rounded': size === 'xl',
-            'w-full aspect-w-1 aspect-h-1 rounded':
+            'h-10 w-10 rounded-sm': size === 'sm',
+            'h-16 w-16 rounded': size === 'md',
+            'h-22 w-22 rounded md:h-28 md:w-28': size === 'xl',
+            'aspect-w-1 aspect-h-1 w-full rounded':
                 size === 'auto' ||
                 (viewType === 'model' && isShowingDetails) ||
                 (!(imageUrl && posterUrl) && isShowingDetails),
@@ -15,7 +15,7 @@
             v-if="viewType === 'video'"
             :src="mainUrl"
             :poster="subUrl"
-            class="nft-item"
+            class="h-full w-full border border-item-border bg-item-bg filter"
             :class="variableNFTClass"
             :autoplay="isShowingDetails"
             loop
@@ -24,11 +24,16 @@
             muted
             :controls="isShowingDetails"
         />
-        <iframe v-else-if="viewType === 'website'" :src="mainUrl" class="nft-item" :class="variableNFTClass" />
+        <iframe
+            v-else-if="viewType === 'website'"
+            :src="mainUrl"
+            class="h-full w-full border border-item-border bg-item-bg filter"
+            :class="variableNFTClass"
+        />
         <model-viewer
             v-else-if="viewType === 'model'"
             :src="mainUrl"
-            class="nft-item"
+            class="h-full w-full border border-item-border bg-item-bg filter"
             :class="variableNFTClass"
             ar
             ar-modes="webxr scene-viewer quick-look"
@@ -37,7 +42,13 @@
             camera-controls
             loading="eager"
         />
-        <img v-else :src="mainUrl" class="nft-item" :class="variableNFTClass" @error="replaceByDefault" />
+        <img
+            v-else
+            :src="mainUrl"
+            class="h-full w-full border border-item-border bg-item-bg filter"
+            :class="variableNFTClass"
+            @error="replaceByDefault"
+        />
     </div>
 </template>
 
@@ -117,10 +128,4 @@ export default class NFTItem extends Vue {
 }
 </script>
 
-<style scoped lang="postcss">
-@layer components {
-    .nft-item {
-        @apply w-full h-full bg-item-bg border border-item-border filter;
-    }
-}
-</style>
+<style></style>

@@ -1,10 +1,10 @@
 <template>
     <button
-        class="btn"
+        class="flex transform flex-row items-center justify-center gap-2 border-button border-btn-border text-center leading-none focus:outline-none active:-translate-y-px"
         :class="{
-            'btn-lg': size === 'lg',
-            'btn-sm': size === 'sm',
-            circle: shape === 'circle',
+            'rounded px-5 py-4': size === 'lg',
+            'rounded-sm px-2 py-2': size === 'sm',
+            'rounded-full': shape === 'circle',
         }"
     >
         <slot></slot>
@@ -26,19 +26,4 @@ export default class Button extends Vue {
 }
 </script>
 
-<style scoped lang="postcss">
-@layer components {
-    .btn {
-        @apply flex flex-row gap-2 items-center justify-center text-center leading-none border-button border-btn-border focus:outline-none transform active:-translate-y-px;
-    }
-    .btn-lg {
-        @apply px-5 py-4 rounded;
-    }
-    .btn-sm {
-        @apply px-2 py-2 rounded-sm;
-    }
-    .circle {
-        @apply rounded-full;
-    }
-}
-</style>
+<style></style>

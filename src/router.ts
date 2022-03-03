@@ -19,6 +19,7 @@ const RNS = () => import('@/views/Setup/RNS.vue');
 const RNSPending = () => import('@/views/Setup/RNSPending.vue');
 const Setup = () => import('@/views/Setup/Setup.vue');
 const Invalid = () => import('@/views/Invalid.vue');
+const Leaderboard = () => import('@/views/Leaderboard/Leaderboard.vue');
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
 const basePath = config.subDomain.isSubDomainMode ? '/' : '/:address/';
 
@@ -37,6 +38,11 @@ export const routes: RouteRecordRaw[] = [
         path: basePath + 'followings',
         name: 'Followings',
         component: Followings,
+    },
+    {
+        path: basePath + 'leaderboard',
+        name: 'Leaderboard',
+        component: Leaderboard,
     },
     {
         path: basePath + 'accounts',
@@ -132,6 +138,13 @@ if (!config.subDomain.isSubDomainMode) {
 const router = createRouter({
     history: createWebHistory(),
     routes,
+    scrollBehavior(to, from, savedPosition) {
+        if (savedPosition) {
+            return savedPosition;
+        } else {
+            return { top: 0, left: 0 };
+        }
+    },
 });
 
 export default router;
