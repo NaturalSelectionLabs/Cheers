@@ -371,6 +371,7 @@
             :score="score"
             :rank="rank"
         />
+        <Confetti v-if="!isLoadingPersona && isOwner && isNewlyActivate" :isPCLayout="isPCLayout" />
     </div>
 </template>
 
@@ -413,10 +414,13 @@ import { DonationMixin } from '@/views/Mixins/DonationMixin';
 import { FootprintMixin } from '@/views/Mixins/FootprintMixin';
 import { ContentMixin } from '@/views/Mixins/ContentMixin';
 import ShareCard from '@/components/Card/ShareCard.vue';
+import Confetti from '@/components/Common/Confetti.vue';
+import axios from 'axios';
 
 @Options({
     name: 'Home',
     components: {
+        Confetti,
         ShareCard,
         IntersectionObserverContainer,
         EVMpAccountItem,
@@ -495,6 +499,9 @@ export default class Home extends mixins(NFTMixin, DonationMixin, FootprintMixin
     // for share
     isSharing: boolean = false;
 
+    // for confetti
+    isNewlyActivate: boolean = false;
+
     async mounted() {
         window.onresize = () => {
             return (() => {
@@ -554,16 +561,20 @@ export default class Home extends mixins(NFTMixin, DonationMixin, FootprintMixin
 
         setTimeout(this.checkUserState, 0);
 
-        // load accounts, assets, contents and update user follow/unfollow/login state
-        await Promise.all([
-            this.startLoadingAccounts(),
-            this.startLoadingAssets(),
-            this.startLoadingContents(),
-            this.startLoadingRanking(),
-        ]);
+        setTimeout(this.checkActivate, 0);
 
-        // setup affix event
-        this.affixEvent(true);
+        setTimeout(async () => {
+            // load accounts, assets, contents and update user follow/unfollow/login state
+            await Promise.all([
+                this.startLoadingAccounts(),
+                this.startLoadingAssets(),
+                this.startLoadingContents(),
+                this.startLoadingRanking(),
+            ]);
+
+            // setup affix event
+            this.affixEvent(true);
+        }, 0);
     }
 
     async checkUserState() {
@@ -906,6 +917,18 @@ export default class Home extends mixins(NFTMixin, DonationMixin, FootprintMixin
 
     openShareCard() {
         this.isSharing = true;
+    }
+
+    async checkActivate() {
+        const activateUrl = `https://raas.cheer.bio/activate/${this.ethAddress}`;
+        const res = await (await fetch(activateUrl)).json();
+        if (res.ok && res.data === false) {
+            // Not activated
+            this.isNewlyActivate = true;
+            await fetch(activateUrl, {
+                method: 'POST',
+            });
+        }
     }
 }
 </script>
