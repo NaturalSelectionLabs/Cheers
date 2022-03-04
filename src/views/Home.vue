@@ -350,7 +350,6 @@
                 </div>
             </section>
 
-            <Footer />
             <AccountModal
                 :isShowingAccount="isShowingAccount"
                 :showingAccountDetails="showingAccountDetails"
@@ -398,7 +397,6 @@ import TransBarCard from '@/components/Card/TransBarCard.vue';
 import AssetCard from '@/components/Card/AssetCard.vue';
 import config from '@/common/config';
 import Header from '@/components/Common/Header.vue';
-import Footer from '@/components/Common/Footer.vue';
 import AccountModal from '@/components/Account/AccountModal.vue';
 import Smile from '@/components/Icons/Smile.vue';
 import LoadingSmile from '@/components/Loading/LoadingSmile.vue';
@@ -409,7 +407,7 @@ import { NFTMixin } from '@/views/Mixins/NFTMixin';
 import { DonationMixin } from '@/views/Mixins/DonationMixin';
 import { FootprintMixin } from '@/views/Mixins/FootprintMixin';
 import { ContentMixin } from '@/views/Mixins/ContentMixin';
-import ShareCard from '@/components/ShareCard.vue';
+import ShareCard from '@/components/Card/ShareCard.vue';
 
 @Options({
     name: 'Home',
@@ -430,7 +428,6 @@ import ShareCard from '@/components/ShareCard.vue';
         Toolbar,
         AssetCard,
         Header,
-        Footer,
         AccountModal,
         Smile,
         LoadingSmile,

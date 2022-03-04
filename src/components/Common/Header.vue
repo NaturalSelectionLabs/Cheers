@@ -1,39 +1,43 @@
 <template>
     <div class="relative flex items-center justify-between pb-4 text-body-text">
         <Logo v-if="displayLogo" class="cursor-pointer" @click="toHomePage" :size="55" />
-        <div v-else class="flex items-center justify-center w-10 h-10 cursor-pointer" @click="back">
+        <div v-else class="flex h-10 w-10 cursor-pointer items-center justify-center" @click="back">
             <i class="bx bx-chevron-left bx-sm" />
         </div>
         <h1 v-if="title" class="text-2xl font-bold">{{ title }}</h1>
         <ImgHolder
             v-if="isLogin"
-            class="inline-flex my-auto w-10 h-10 cursor-pointer"
+            class="my-auto inline-flex h-10 w-10 cursor-pointer"
             :is-rounded="true"
             :is-border="false"
             :src="avatar || defaultAvatar"
             :alt="rns || ethAddress || ''"
             @click="toggleDialog()"
         />
-        <Button v-else size="sm" class="w-32 text-body-text bg-primary-btn" @click="toHomePage"> Connect </Button>
+        <Button v-else size="sm" class="w-32 bg-primary-btn text-body-text" @click="toHomePage"> Connect </Button>
         <transition name="fade">
             <template v-if="isdisplayDialog">
                 <div
-                    class="absolute z-50 bottom-0 right-0 flex flex-col gap-2 justify-center -my-2 mx-2 p-5 w-32 bg-white rounded shadow-md transform translate-y-full"
+                    class="absolute bottom-0 right-0 z-50 -my-2 mx-2 flex w-32 translate-y-full transform flex-col justify-center gap-2 rounded bg-white p-5 shadow-md"
                 >
-                    <div class="flex flex-row gap-2 items-center cursor-pointer" @click="toPublicPage">
+                    <div class="flex cursor-pointer flex-row items-center gap-2" @click="toPublicPage">
                         <i class="bx bx-user bx-xs text-btn-icon" />
                         Home
                     </div>
-                    <div class="flex flex-row gap-2 items-center cursor-pointer" @click="logout">
+                    <div class="flex cursor-pointer flex-row items-center gap-2" @click="logout">
                         <i class="bx bx-log-out bx-xs text-btn-icon" />
                         Logout
+                    </div>
+                    <div class="flex cursor-pointer flex-row items-center gap-2" @click="toPrivacy">
+                        <i class="bx bx-lock bx-xs text-btn-icon" />
+                        Privacy
                     </div>
                 </div>
             </template>
         </transition>
         <div
             v-if="isdisplayDialog && isLogin"
-            class="fixed z-10 left-0 top-0 m-0 p-0 w-screen h-screen"
+            class="fixed left-0 top-0 z-10 m-0 h-screen w-screen p-0"
             @click="toggleDialog()"
         />
     </div>
@@ -123,6 +127,10 @@ export default class Header extends Vue {
         } else {
             window.location.href = `//${config.subDomain.rootDomain}/${this.ethAddress}`;
         }
+    }
+
+    toPrivacy() {
+        window.location.href = 'https://rss3.io/#/privacy';
     }
 
     async logout() {
