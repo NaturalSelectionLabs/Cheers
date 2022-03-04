@@ -28,6 +28,9 @@
             </div>
         </div>
         <div class="fixed bottom-10 flex w-full flex-row justify-center gap-4">
+            <Button size="sm" class="h-8 w-8 bg-secondary-btn-card text-btn-icon md:h-12 md:w-12" @click="tweet">
+                <i class="bx bx-share bx-flip-horizontal" />
+            </Button>
             <Button size="sm" class="h-8 w-8 bg-secondary-btn-card text-btn-icon md:h-12 md:w-12" @click="setRandColor">
                 <i class="bx bx-refresh bx-flip-horizontal" />
             </Button>
@@ -144,6 +147,11 @@ export default class ShareCard extends Vue {
             }
             this.isDownloading = false;
         }
+    }
+
+    async tweet() {
+        const URL = window.location;
+        window.open(`https://twitter.com/intent/tweet?text=Check out my NFT score at ${URL}.`);
     }
 }
 </script>
