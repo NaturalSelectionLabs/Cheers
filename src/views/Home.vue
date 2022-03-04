@@ -546,6 +546,9 @@ export default class Home extends mixins(NFTMixin, DonationMixin, FootprintMixin
 
         this.rss3Relations.followers = pageOwner.followers;
         this.rss3Relations.followings = pageOwner.followings;
+
+        setTimeout(this.checkUserState, 0);
+
         // load accounts, assets, contents and update user follow/unfollow/login state
         await Promise.all([
             this.startLoadingAccounts(),
@@ -556,8 +559,6 @@ export default class Home extends mixins(NFTMixin, DonationMixin, FootprintMixin
 
         // setup affix event
         this.affixEvent(true);
-
-        setTimeout(this.checkUserState, 0);
     }
 
     async checkUserState() {
