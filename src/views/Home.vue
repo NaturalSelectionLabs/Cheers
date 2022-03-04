@@ -561,8 +561,6 @@ export default class Home extends mixins(NFTMixin, DonationMixin, FootprintMixin
 
         setTimeout(this.checkUserState, 0);
 
-        setTimeout(this.checkActivate, 0);
-
         setTimeout(async () => {
             // load accounts, assets, contents and update user follow/unfollow/login state
             await Promise.all([
@@ -571,6 +569,8 @@ export default class Home extends mixins(NFTMixin, DonationMixin, FootprintMixin
                 this.startLoadingContents(),
                 this.startLoadingRanking(),
             ]);
+
+            this.checkActivate(); // only after Ranking (cause using same server, otherwise user will be undefined)
 
             // setup affix event
             this.affixEvent(true);
