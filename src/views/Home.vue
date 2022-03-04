@@ -59,11 +59,16 @@
                     <TransBarCard title="NFT Score" :haveDetails="true" :haveContent="false">
                         <template #details>
                             <div class="flex flex-row items-center justify-between">
-                                <LoadingSmile :size="18" :isLooping="true" v-show="isRankLoading" />
-                                <div class="flex flex-row gap-4" v-show="!isRankLoading">
-                                    <div class="text-xl font-bold">{{ score }}</div>
-                                    <div class="rounded-full bg-secondary-btn px-4"># {{ rank }}</div>
-                                </div>
+                                <Transition name="fade" mode="out-in">
+                                    <div v-if="scoreMsg">{{ scoreMsg }}</div>
+                                    <div v-else-if="ogMsg">{{ ogMsg }}</div>
+                                    <div v-else-if="nftCountMsg">{{ nftCountMsg }}</div>
+                                    <div class="flex flex-row gap-4" v-else>
+                                        <div class="text-xl font-bold">{{ score }}</div>
+                                        <div class="rounded-full bg-secondary-btn px-4"># {{ rank }}</div>
+                                    </div>
+                                </Transition>
+
                                 <div class="flex flex-row gap-2">
                                     <Button
                                         size="sm"
@@ -483,6 +488,9 @@ export default class Home extends mixins(NFTMixin, DonationMixin, FootprintMixin
     isRankLoading: boolean = true;
     score: string = '0';
     rank: string = '0';
+    scoreMsg: string = 'Starting calculation...';
+    ogMsg: string = '';
+    nftCountMsg: string = '';
 
     // for share
     isSharing: boolean = false;
@@ -594,17 +602,27 @@ export default class Home extends mixins(NFTMixin, DonationMixin, FootprintMixin
         ]);
     }
 
-    startLoadingRanking() {
-        this.isRankLoading = true;
+    async startLoadingRanking() {
+        let ogIndex = 0;
+        let nft_counts = 0;
         fetch(`https://raas.cheer.bio/user/${this.ethAddress}`)
             .then((res: any) => res.json())
             .then((res) => {
                 this.score = res.user.score.toFixed(2);
                 this.rank = `${res.user.rank}`;
+                nft_counts = res.user.nft_counts;
+                const currentTime = new Date().getTime() / 1000;
+                const ogTime = Date.parse(res.user.first_tx_tsp) / 1000;
+                ogIndex = (currentTime - ogTime) / (currentTime - 1498160400);
             })
             .catch((res) => {});
-
-        this.isRankLoading = false;
+        this.scoreMsg = '';
+        this.ogMsg = `Calculating your Web3 OG index: ${ogIndex} `;
+        await new Promise((r) => setTimeout(r, 2000));
+        this.ogMsg = '';
+        this.nftCountMsg = `Scanning your NFTs: ${nft_counts} `;
+        await new Promise((r) => setTimeout(r, 2000));
+        this.nftCountMsg = '';
     }
 
     async toggleFollow() {
@@ -845,6 +863,7 @@ export default class Home extends mixins(NFTMixin, DonationMixin, FootprintMixin
                 el.scrollTop = this.scrollTop;
             }
             this.clearContentDetails();
+            this.scoreMsg = 'Starting calculation...';
             await this.updateUserInfo();
         } else {
             this.isFollowing = false;
@@ -856,6 +875,7 @@ export default class Home extends mixins(NFTMixin, DonationMixin, FootprintMixin
                 bio: '...',
                 displayAddress: '',
             };
+            this.scoreMsg = 'Starting calculation...';
             this.clearNFTDetails();
             this.clearDonationDetails();
             this.clearFootprintDetails();
@@ -890,4 +910,14 @@ export default class Home extends mixins(NFTMixin, DonationMixin, FootprintMixin
 }
 </script>
 
-<style></style>
+<style scoped>
+.fade-enter-active,
+.fade-leave-active {
+    transition: opacity 0.5s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+    opacity: 0;
+}
+</style>
