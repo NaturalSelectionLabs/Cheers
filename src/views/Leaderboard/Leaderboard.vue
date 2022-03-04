@@ -1,7 +1,7 @@
 <template>
-    <div class="m-auto max-w-screen-lg px-4 py-9 text-body-text">
+    <div class="m-auto flex h-screen max-w-screen-lg flex-col overflow-hidden px-4 py-9 text-body-text">
         <Header title="Leaderboard" />
-        <div class="m-auto mt-4 flex max-w-screen-sm flex-col gap-8">
+        <div class="m-auto mt-4 flex min-h-0 w-full max-w-screen-sm flex-1 flex-col gap-8">
             <section class="flex flex-col gap-4 p-4">
                 <RankingCard
                     v-for="item in topThree"
@@ -14,7 +14,18 @@
                     @click="toPublicPage(item.address)"
                 />
             </section>
-            <section class="flex flex-col gap-4 rounded border-card bg-card-bg p-4">
+            <section class="flex flex-col gap-4 overflow-y-auto rounded border-card bg-card-bg p-4">
+                <IntersectionObserverContainer
+                    v-if="!isInitLoading"
+                    :once="false"
+                    :enabled="!isLoadingRanking"
+                    @trigger="loadMoreUpRanking"
+                >
+                    <Button size="sm" class="h-6 w-full" @click="loadMoreUpRanking">
+                        <i v-if="isLoadingRanking" class="bx bx-loader-circle bx-spin"></i>
+                        <i v-else class="bx bx-dots-horizontal-rounded" />
+                    </Button>
+                </IntersectionObserverContainer>
                 <RankingCard
                     v-for="item in range"
                     :key="item.address"
@@ -24,16 +35,23 @@
                     :score="item.score"
                     :isTop="false"
                     :isOwner="item.address === ethAddress"
+                    :id="item.address === ethAddress ? 'my-ranking' : undefined"
                     @click="toPublicPage(item.address)"
                 />
-                <IntersectionObserverContainer :once="false" :enabled="!isLoadingRanking" @trigger="loadMoreRanking">
-                    <Button size="sm" class="h-6 w-full" @click="loadMoreRanking">
+                <IntersectionObserverContainer
+                    v-if="!isInitLoading"
+                    :once="false"
+                    :enabled="!isLoadingRanking"
+                    @trigger="loadMoreDownRanking"
+                >
+                    <Button size="sm" class="h-6 w-full" @click="loadMoreDownRanking">
                         <i v-if="isLoadingRanking" class="bx bx-loader-circle bx-spin"></i>
                         <i v-else class="bx bx-dots-horizontal-rounded" />
                     </Button>
                 </IntersectionObserverContainer>
             </section>
         </div>
+        <LoadingContainer v-if="isInitLoading" />
     </div>
 </template>
 
@@ -48,14 +66,16 @@ import RSS3 from '@/common/rss3';
 import RNS from '@/common/rns';
 import legacyConfig from '@/config';
 import { formatter } from '@/common/address';
+import LoadingContainer from '@/components/Loading/LoadingContainer.vue';
 
 @Options({
     name: 'Leaderboard',
-    components: { Header, RankingCard, Button, IntersectionObserverContainer },
+    components: { LoadingContainer, Header, RankingCard, Button, IntersectionObserverContainer },
 })
 export default class Leaderboard extends Vue {
     topThree: any[] = [];
     range: any[] = [];
+    isInitLoading: boolean = true;
     isLoadingRanking: boolean = true;
     ethAddress: string = '';
 
@@ -108,6 +128,10 @@ export default class Leaderboard extends Vue {
             })
             .sort((a, b) => b.score - a.score);
         this.isLoadingRanking = false;
+        this.isInitLoading = false;
+        setTimeout(() => {
+            document.getElementById('my-ranking')?.scrollIntoView();
+        }, 0);
     }
 
     async toPublicPage(ethAddress: string) {
@@ -123,7 +147,31 @@ export default class Leaderboard extends Vue {
         return `https://stamp.fyi/avatar/${ethAddress}`;
     }
 
-    async loadMoreRanking() {
+    async loadMoreUpRanking() {
+        this.isLoadingRanking = true;
+        const index = this.range[0].rank - 1;
+        const range = await (
+            await fetch(`https://raas.cheer.bio/range?from=${index - 10 > 0 ? index - 10 : 1}&to=${index}`)
+        ).json();
+        const rangeProfileSet = new Set<string>();
+        range.forEach((element: { address: string }) => {
+            rangeProfileSet.add(element.address);
+        });
+        const rangeProfiles = await RSS3.getAPIUser().persona.profile.getList(Array.from(rangeProfileSet));
+
+        this.range = [
+            ...range.map((u) => {
+                return {
+                    ...u,
+                    ...rangeProfiles.find((profile) => u.address === profile.persona),
+                };
+            }),
+            ...this.range,
+        ];
+        this.isLoadingRanking = false;
+    }
+
+    async loadMoreDownRanking() {
         this.isLoadingRanking = true;
         const index = this.range[this.range.length - 1].rank + 1;
         const range = await fetch(`https://raas.cheer.bio/range?from=${index}&to=${index + 10}`).then((res: any) =>
@@ -144,6 +192,7 @@ export default class Leaderboard extends Vue {
                 };
             }),
         ];
+        this.isLoadingRanking = false;
     }
 
     formatter = formatter;
