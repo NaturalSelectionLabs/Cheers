@@ -36,7 +36,7 @@ import ImgHolder from '@/components/Common/ImgHolder.vue';
         avatar: String,
         name: String,
         ranking: String,
-        score: String,
+        score: Number,
         isTop: Boolean,
         isOwner: Boolean,
     },
