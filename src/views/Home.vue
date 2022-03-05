@@ -371,7 +371,7 @@
             :score="score"
             :rank="rank"
         />
-        <Confetti v-if="!isLoadingPersona && isOwner && isNewlyActivate" :isPCLayout="isPCLayout" />
+        <Confetti v-if="isSharing" :isPCLayout="isPCLayout" />
     </div>
 </template>
 
