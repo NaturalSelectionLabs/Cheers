@@ -16,7 +16,7 @@
                 <div class="font-alfa-slab-one text-6xl md:text-7xl">
                     {{ score }}
                 </div>
-                <div>of {{ count }} NFTs</div>
+                <div class="md:text-xl">of {{ count }} NFTs</div>
             </div>
             <div class="flex flex-row justify-between">
                 <div class="flex flex-row items-end font-alfa-slab-one text-xl md:text-2xl">
