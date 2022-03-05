@@ -9,11 +9,14 @@
             <div class="flex flex-row gap-4">
                 <ImgHolder class="flex h-8 w-8" :is-rounded="true" :is-border="false" :src="avatar" />
                 <div class="flex items-center text-lg font-normal md:text-xl">
-                    {{ name || rns || formattedAddress }}'s NFT Score
+                    {{ name || rns || formattedAddress }}'s NFTScore
                 </div>
             </div>
-            <div class="self-center font-alfa-slab-one text-6xl md:text-7xl">
-                {{ score }}
+            <div class="self-center text-center">
+                <div class="font-alfa-slab-one text-6xl md:text-7xl">
+                    {{ score }}
+                </div>
+                <div>of {{ count }} NFTs</div>
             </div>
             <div class="flex flex-row justify-between">
                 <div class="flex flex-row items-end font-alfa-slab-one text-xl md:text-2xl">
@@ -86,6 +89,7 @@ const colors = [
         name: String, // Username setting in profile
         score: String,
         rank: String,
+        count: Number,
     },
 })
 export default class ShareCard extends Vue {
@@ -151,7 +155,7 @@ export default class ShareCard extends Vue {
 
     async tweet() {
         const URL = window.location;
-        window.open(`https://twitter.com/intent/tweet?text=Check out my NFT score at ${URL}.`);
+        window.open(`https://twitter.com/intent/tweet?text=Check out my NFTScore at ${URL}.`);
     }
 }
 </script>

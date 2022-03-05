@@ -56,7 +56,7 @@
                         </template>
                     </Profile>
 
-                    <TransBarCard title="NFT Score" :haveDetails="true" :haveContent="false">
+                    <TransBarCard title="NFTScore" :haveDetails="true" :haveContent="false">
                         <template #details>
                             <div class="flex flex-row items-center justify-between">
                                 <Transition name="fade" mode="out-in">
@@ -370,6 +370,7 @@
             :name="rss3Profile.username"
             :score="score"
             :rank="rank"
+            :count="nftCount"
         />
         <Confetti v-if="isSharing" :isPCLayout="isPCLayout" />
     </div>
@@ -494,6 +495,7 @@ export default class Home extends mixins(NFTMixin, DonationMixin, FootprintMixin
     rank: string = '0';
     scoreMsg: string = 'Starting calculation...';
     ogMsg: string = '';
+    nftCount: number = 0;
     nftCountMsg: string = '';
 
     // for share
@@ -622,6 +624,7 @@ export default class Home extends mixins(NFTMixin, DonationMixin, FootprintMixin
                 this.score = res.user.score.toFixed(2);
                 this.rank = `${res.user.rank}`;
                 nft_counts = res.user.nft_counts;
+                this.nftCount = nft_counts;
                 const currentTime = new Date().getTime() / 1000;
                 const ogTime = Date.parse(res.user.first_tx_tsp) / 1000;
                 ogIndex = (currentTime - ogTime) / (currentTime - 1498160400);
