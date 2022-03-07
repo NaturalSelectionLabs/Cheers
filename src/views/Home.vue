@@ -618,23 +618,19 @@ export default class Home extends mixins(NFTMixin, DonationMixin, FootprintMixin
     async startLoadingRanking() {
         let ogIndex = 0;
         let nft_counts = 0;
-        fetch(`https://raas.cheer.bio/user/${this.ethAddress}`)
-            .then((res: any) => res.json())
-            .then((res) => {
-                this.score = res.user.score.toFixed(2);
-                this.rank = `${res.user.rank}`;
-                nft_counts = res.user.nft_counts;
-                this.nftCount = nft_counts;
-                const currentTime = new Date().getTime() / 1000;
-                const ogTime = Date.parse(res.user.first_tx_tsp) / 1000;
-                ogIndex = (currentTime - ogTime) / (currentTime - 1498160400);
-            })
-            .catch((res) => {});
+        const res = await (await fetch(`https://raas.cheer.bio/user/${this.ethAddress}`)).json();
+        this.score = res.user.score.toFixed(2);
+        this.rank = `${res.user.rank}`;
+        nft_counts = res.user.nft_counts;
+        this.nftCount = nft_counts;
+        const currentTime = new Date().getTime() / 1000;
+        const ogTime = Date.parse(res.user.first_tx_tsp) / 1000;
+        ogIndex = (currentTime - ogTime) / (currentTime - 1498160400);
         this.scoreMsg = '';
-        this.ogMsg = `Calculating your Web3 OG index: ${ogIndex} `;
+        this.ogMsg = `Calculating your Web3 OG index: ${ogIndex.toFixed(3)} `;
         await new Promise((r) => setTimeout(r, 2000));
         this.ogMsg = '';
-        this.nftCountMsg = `Scanning your NFTs: ${nft_counts} `;
+        this.nftCountMsg = `Scanning through ${nft_counts} NFTs`;
         await new Promise((r) => setTimeout(r, 2000));
         this.nftCountMsg = '';
     }
