@@ -388,7 +388,7 @@ export default {
                 }
                 if (isReloadRequired) {
                     const preinjectPageOwner = (window as any).USER;
-                    if (typeof preinjectPageOwner !== 'undefined' && RSS3PageOwner.address === preinjectPageOwner.id) {
+                    if (preinjectPageOwner && RSS3PageOwner.address === preinjectPageOwner?.id) {
                         console.log('file hit', preinjectPageOwner);
                         RSS3PageOwner.file = preinjectPageOwner;
                     } else {
