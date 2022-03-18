@@ -142,7 +142,7 @@ export default class Capsule extends Vue {
             tsp,
             reCaptcha: captchaToken,
         });
-        console.log(res.data);
+        // console.log(res.data);
         if (res.data.error) {
             //TODO
             console.log(res.data.error);
@@ -168,7 +168,7 @@ export default class Capsule extends Vue {
                     res.data.expiry,
                     res.data.sig,
                 );
-                console.log('tx', txData);
+                // console.log('tx', txData);
                 const tx = await this.wallet.signTransaction({
                     ...txData,
                     gasLimit: 200000,
@@ -176,7 +176,7 @@ export default class Capsule extends Vue {
                 });
                 const r = await provider.sendTransaction(tx);
 
-                console.log(r.hash);
+                // console.log(r.hash);
                 this.isCreated = true;
                 this.txn = r.hash;
             } catch (e) {
