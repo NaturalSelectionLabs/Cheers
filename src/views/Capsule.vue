@@ -178,6 +178,7 @@ export default class Capsule extends Vue {
             if (this.wallet) {
                 try {
                     const contractSigned = contract.connect(provider);
+                    this.notice = '';
                     this.isSubmitted = true;
                     const txData = await contractSigned.populateTransaction.mint(
                         this.recipient,
