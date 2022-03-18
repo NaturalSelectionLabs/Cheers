@@ -135,10 +135,17 @@ export default class Capsule extends Vue {
     }
 
     async createCapsule() {
-        if (this.openTsp < this.minTsp) {
+
+        this.notice = '';
+        if (this.recipient === '') {
+            this.notice = "Please enter the recipient's address.";
+            return;
+        } else if (this.openTsp < this.minTsp) {
             this.notice = 'Please re-enter a time at least one year from now.';
             return;
         } else {
+            this.isSubmitted = true;
+
             const captchaToken = await this.verifyWithCaptcha.exec();
             // console.log(captchaToken);
 
@@ -154,6 +161,9 @@ export default class Capsule extends Vue {
             if (res.data.error) {
                 //TODO
                 // console.log(res.data.error);
+
+                this.isSubmitted = false;
+
                 if (res.data.error === 'Invalid token.') {
                     this.notice = 'Something went wrong. Please try again.';
                 } else {
@@ -161,7 +171,8 @@ export default class Capsule extends Vue {
                 }
                 return;
             }
-            this.isSubmitted = true;
+
+
             let abi = ['function mint(address receiver, bytes32 mHash, uint tsp, uint expiry, bytes memory sig)'];
             // let contractAddress = ''; // bsc testnet
             let contractAddress = '0x999017cb5652caf5f324a8e44f813903ba3c46eb'; // bsc mainnet
@@ -174,6 +185,9 @@ export default class Capsule extends Vue {
             if (this.wallet) {
                 try {
                     const contractSigned = contract.connect(provider);
+                    this.notice = '';
+                    this.isSubmitted = true;
+
                     const txData = await contractSigned.populateTransaction.mint(
                         this.recipient,
                         res.data.msgHash,
@@ -193,7 +207,11 @@ export default class Capsule extends Vue {
                     this.isCreated = true;
                     this.txn = r.hash;
                 } catch (e) {
+
+                    this.notice = 'Something went wrong. Please try again.';
                     console.log(e);
+                    this.isSubmitted = false;
+
                 }
             }
         }
