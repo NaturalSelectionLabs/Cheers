@@ -133,7 +133,7 @@ export default class Capsule extends Vue {
         const captchaToken = await this.verifyWithCaptcha.exec();
         console.log(captchaToken);
 
-        const res = await axios.post(`http://164.92.156.197:3000/mint/`, {
+        const res = await axios.post(`https://capsule.cheer.bio/mint/`, {
             minter: this.walletAddress,
             receiver: this.recipient,
             words: this.message,
