@@ -62,7 +62,7 @@
                     :class="{ disabled: isSubmitted }"
                     @click="createCapsule"
                 >
-                    <span class="w-80 text-left">Create</span>
+                    <span class="w-80 text-left">{{ isSubmitted ? 'Creating...' : 'Create' }}</span>
                 </Button>
             </div>
 
