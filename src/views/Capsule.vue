@@ -132,7 +132,7 @@ export default class Capsule extends Vue {
 
     async createCapsule() {
         const captchaToken = await this.verifyWithCaptcha.exec();
-        console.log(captchaToken);
+        // console.log(captchaToken);
 
         const tsp = Math.ceil(new Date(this.openTsp).valueOf() / 1000);
         const res = await axios.post(`https://capsule.cheer.bio/mint/`, {
