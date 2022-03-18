@@ -135,6 +135,7 @@ export default class Capsule extends Vue {
     }
 
     async createCapsule() {
+
         this.notice = '';
         if (this.recipient === '') {
             this.notice = "Please enter the recipient's address.";
@@ -144,6 +145,7 @@ export default class Capsule extends Vue {
             return;
         } else {
             this.isSubmitted = true;
+
             const captchaToken = await this.verifyWithCaptcha.exec();
             // console.log(captchaToken);
 
@@ -159,7 +161,9 @@ export default class Capsule extends Vue {
             if (res.data.error) {
                 //TODO
                 // console.log(res.data.error);
+
                 this.isSubmitted = false;
+
                 if (res.data.error === 'Invalid token.') {
                     this.notice = 'Something went wrong. Please try again.';
                 } else {
@@ -167,6 +171,7 @@ export default class Capsule extends Vue {
                 }
                 return;
             }
+
 
             let abi = ['function mint(address receiver, bytes32 mHash, uint tsp, uint expiry, bytes memory sig)'];
             // let contractAddress = ''; // bsc testnet
@@ -182,6 +187,7 @@ export default class Capsule extends Vue {
                     const contractSigned = contract.connect(provider);
                     this.notice = '';
                     this.isSubmitted = true;
+
                     const txData = await contractSigned.populateTransaction.mint(
                         this.recipient,
                         res.data.msgHash,
@@ -201,9 +207,11 @@ export default class Capsule extends Vue {
                     this.isCreated = true;
                     this.txn = r.hash;
                 } catch (e) {
+
                     this.notice = 'Something went wrong. Please try again.';
                     console.log(e);
                     this.isSubmitted = false;
+
                 }
             }
         }
