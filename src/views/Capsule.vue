@@ -86,7 +86,7 @@ import Button from '@/components/Button/Button.vue';
 import Input from '@/components/Input/Input.vue';
 import { useReCaptcha } from 'vue-recaptcha-v3';
 import axios from 'axios';
-import { ethers } from 'ethers';
+import { ethers, Wallet } from 'ethers';
 
 @Options({
     name: 'Capsule',
@@ -96,6 +96,7 @@ import { ethers } from 'ethers';
     },
 })
 export default class Capsule extends Vue {
+    wallet: Wallet | undefined;
     walletAddress: string = '';
     isPrepared: boolean = false;
     isCreated: boolean = false;
@@ -124,8 +125,8 @@ export default class Capsule extends Vue {
     }
 
     async createWallet() {
-        const wallet = ethers.Wallet.createRandom();
-        this.walletAddress = wallet.address;
+        this.wallet = ethers.Wallet.createRandom();
+        this.walletAddress = this.wallet.address;
         this.isPrepared = true;
     }
 
@@ -141,7 +142,23 @@ export default class Capsule extends Vue {
             reCaptcha: captchaToken,
         });
         console.log(res.data);
-        this.isCreated = true;
+
+        let abi = [
+            'event ValueChanged(address indexed author, string oldValue, string newValue)',
+            'constructor(string value)',
+            'function getValue() view returns (string value)',
+            'function setValue(string value)',
+        ];
+        let contractAddress = '';
+        let url = '';
+        let provider = new ethers.providers.JsonRpcProvider(url);
+        let contract = new ethers.Contract(contractAddress, abi, provider);
+        if (this.wallet) {
+            let contractSigned = contract.connect(this.wallet);
+            let tx = await contractSigned.setValue();
+            await tx.wait();
+            this.isCreated = true;
+        }
     }
 
     openUrl(url: string) {

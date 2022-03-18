@@ -8422,11 +8422,6 @@ vue3-autocounter@1.0.6:
   resolved "https://registry.yarnpkg.com/vue3-autocounter/-/vue3-autocounter-1.0.6.tgz#655e275707aeb084628facd7b231be09d383521d"
   integrity sha512-jOgCD2WaOjt/tOAAGKDm2DTyQRdKyfqJv5ElUz/vR0ZJgUd4yDd6UX6+2YU3LQpY4qoFNZkzLloAfALAqK041g==
 
-vue3-recaptcha-v2@1.0.1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/vue3-recaptcha-v2/-/vue3-recaptcha-v2-1.0.1.tgz#999df9e1ef10e6e11882e44602ad3373e8116512"
-  integrity sha512-nn7kcVTze/gRdb2kMEf9CAVpStXID+cKlt1tIWNR+K5OYER8cSfcm5Mz+9/w9gDgLTIdRPsGTiqssAD+L/4c/g==
-
 vue@3.2.31:
   version "3.2.31"
   resolved "https://registry.yarnpkg.com/vue/-/vue-3.2.31.tgz#e0c49924335e9f188352816788a4cca10f817ce6"
