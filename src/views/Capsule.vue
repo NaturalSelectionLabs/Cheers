@@ -143,6 +143,7 @@ export default class Capsule extends Vue {
             this.notice = 'Please re-enter a time at least one year from now.';
             return;
         } else {
+            this.isSubmitted = true;
             const captchaToken = await this.verifyWithCaptcha.exec();
             // console.log(captchaToken);
 
@@ -158,6 +159,7 @@ export default class Capsule extends Vue {
             if (res.data.error) {
                 //TODO
                 // console.log(res.data.error);
+                this.isSubmitted = false;
                 if (res.data.error === 'Invalid token.') {
                     this.notice = 'Something went wrong. Please try again.';
                 } else {
