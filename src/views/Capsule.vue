@@ -151,9 +151,9 @@ export default class Capsule extends Vue {
 
         let abi = ['function mint(address receiver, bytes32 mHash, uint tsp, uint expiry, bytes memory sig)'];
         // let contractAddress = ''; // bsc testnet
-        let contractAddress = '0x999017cb5652caf5f324a8e44f813903ba3c46eb'; // TODO: bsc mainnet
+        let contractAddress = '0x999017cb5652caf5f324a8e44f813903ba3c46eb'; // bsc mainnet
         // let url = 'https://data-seed-prebsc-1-s1.binance.org:8545'; // bsc testnet
-        let url = 'bsc-dataseed.binance.org:8545'; // bsc mainnet
+        let url = 'bsc-dataseed.binance.org'; // bsc mainnet
 
         let provider = new ethers.providers.JsonRpcProvider(url);
         let contract = new ethers.Contract(contractAddress, abi, this.wallet);
