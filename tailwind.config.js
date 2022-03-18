@@ -6,6 +6,7 @@ module.exports = {
     theme: {
         extend: {
             borderRadius: {
+                xs: '6px',
                 sm: '12px',
                 DEFAULT: '20px',
             },
@@ -126,6 +127,8 @@ module.exports = {
                 'sf-compact-rounded': 'SFCompactRounded, sans-serif',
                 serif: 'Times New Roman, SourceHanSerif, SourceHanSerifSC, SourceHanSerifTC, SourceHanSerifK, Times, serif',
                 vibur: 'Vibur',
+                cormorant: 'Cormorant',
+                notoSerif: 'Noto Serif',
                 'alfa-slab-one': 'Alfa Slab One',
             },
             width: {
@@ -162,6 +165,7 @@ module.exports = {
                 Jike: 'url(@/assets/images/chains/Jike.png)',
                 Solana: 'url(@/assets/images/chains/Solana.png)',
                 Roninscan: 'url(@/assets/images/scans/Roninscan.png)',
+                paper: 'url(@/assets/images/natural-paper.png)',
             }),
             backgroundSize: {
                 85: '85%',

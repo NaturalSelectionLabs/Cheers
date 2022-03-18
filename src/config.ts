@@ -891,4 +891,7 @@ export default {
             ],
         },
     },
+    capsule: {
+        endpoint: '',
+    },
 };

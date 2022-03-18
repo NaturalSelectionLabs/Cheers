@@ -56,14 +56,19 @@
                         </template>
                     </Profile>
 
-                    <!-- <TransBarCard title="NFT Score" :haveDetails="true" :haveContent="false">
+                    <!-- <TransBarCard title="NFTScore" :haveDetails="true" :haveContent="false">
                         <template #details>
                             <div class="flex flex-row items-center justify-between">
-                                <LoadingSmile :size="18" :isLooping="true" v-show="isRankLoading" />
-                                <div class="flex flex-row gap-4" v-show="!isRankLoading">
-                                    <div class="text-xl font-bold">{{ score }}</div>
-                                    <div class="rounded-full bg-secondary-btn px-4"># {{ rank }}</div>
-                                </div>
+                                <Transition name="fade" mode="out-in">
+                                    <div v-if="scoreMsg">{{ scoreMsg }}</div>
+                                    <div v-else-if="ogMsg">{{ ogMsg }}</div>
+                                    <div v-else-if="nftCountMsg">{{ nftCountMsg }}</div>
+                                    <div class="flex flex-row gap-4" v-else>
+                                        <div class="text-xl font-bold">{{ score }}</div>
+                                        <div class="rounded-full bg-secondary-btn px-4"># {{ rank }}</div>
+                                    </div>
+                                </Transition>
+
                                 <div class="flex flex-row gap-2">
                                     <Button
                                         size="sm"
@@ -350,14 +355,13 @@
                 </div>
             </section>
 
-            <Footer />
             <AccountModal
                 :isShowingAccount="isShowingAccount"
                 :showingAccountDetails="showingAccountDetails"
                 @closeDialog="closeAccountDialog"
             />
         </div>
-        <ShareCard
+        <!-- <ShareCard
             v-show="isSharing"
             @close="isSharing = false"
             :address="ethAddress"
@@ -366,7 +370,9 @@
             :name="rss3Profile.username"
             :score="score"
             :rank="rank"
+            :count="nftCount"
         />
+        <Confetti v-if="isSharing" :isPCLayout="isPCLayout" /> -->
     </div>
 </template>
 
@@ -398,7 +404,6 @@ import TransBarCard from '@/components/Card/TransBarCard.vue';
 import AssetCard from '@/components/Card/AssetCard.vue';
 import config from '@/common/config';
 import Header from '@/components/Common/Header.vue';
-import Footer from '@/components/Common/Footer.vue';
 import AccountModal from '@/components/Account/AccountModal.vue';
 import Smile from '@/components/Icons/Smile.vue';
 import LoadingSmile from '@/components/Loading/LoadingSmile.vue';
@@ -409,11 +414,14 @@ import { NFTMixin } from '@/views/Mixins/NFTMixin';
 import { DonationMixin } from '@/views/Mixins/DonationMixin';
 import { FootprintMixin } from '@/views/Mixins/FootprintMixin';
 import { ContentMixin } from '@/views/Mixins/ContentMixin';
-import ShareCard from '@/components/ShareCard.vue';
+import ShareCard from '@/components/Card/ShareCard.vue';
+import Confetti from '@/components/Common/Confetti.vue';
+import axios from 'axios';
 
 @Options({
     name: 'Home',
     components: {
+        Confetti,
         ShareCard,
         IntersectionObserverContainer,
         EVMpAccountItem,
@@ -430,7 +438,6 @@ import ShareCard from '@/components/ShareCard.vue';
         Toolbar,
         AssetCard,
         Header,
-        Footer,
         AccountModal,
         Smile,
         LoadingSmile,
@@ -486,9 +493,16 @@ export default class Home extends mixins(NFTMixin, DonationMixin, FootprintMixin
     isRankLoading: boolean = true;
     score: string = '0';
     rank: string = '0';
+    scoreMsg: string = 'Starting calculation...';
+    ogMsg: string = '';
+    nftCount: number = 0;
+    nftCountMsg: string = '';
 
     // for share
     isSharing: boolean = false;
+
+    // for confetti
+    isNewlyActivate: boolean = false;
 
     async mounted() {
         window.onresize = () => {
@@ -546,18 +560,23 @@ export default class Home extends mixins(NFTMixin, DonationMixin, FootprintMixin
 
         this.rss3Relations.followers = pageOwner.followers;
         this.rss3Relations.followings = pageOwner.followings;
-        // load accounts, assets, contents and update user follow/unfollow/login state
-        await Promise.all([
-            this.startLoadingAccounts(),
-            this.startLoadingAssets(),
-            this.startLoadingContents(),
-            this.startLoadingRanking(),
-        ]);
-
-        // setup affix event
-        this.affixEvent(true);
 
         setTimeout(this.checkUserState, 0);
+
+        setTimeout(async () => {
+            // load accounts, assets, contents and update user follow/unfollow/login state
+            await Promise.all([
+                this.startLoadingAccounts(),
+                this.startLoadingAssets(),
+                this.startLoadingContents(),
+                this.startLoadingRanking(),
+            ]);
+
+            this.checkActivate(); // only after Ranking (cause using same server, otherwise user will be undefined)
+
+            // setup affix event
+            this.affixEvent(true);
+        }, 0);
     }
 
     async checkUserState() {
@@ -596,17 +615,24 @@ export default class Home extends mixins(NFTMixin, DonationMixin, FootprintMixin
         ]);
     }
 
-    startLoadingRanking() {
-        this.isRankLoading = true;
-        fetch(`https://raas.cheer.bio/user/${this.ethAddress}`)
-            .then((res: any) => res.json())
-            .then((res) => {
-                this.score = res.user.score.toFixed(2);
-                this.rank = `${res.user.rank}`;
-            })
-            .catch((res) => {});
-
-        this.isRankLoading = false;
+    async startLoadingRanking() {
+        let ogIndex = 0;
+        let nft_counts = 0;
+        const res = await (await fetch(`https://raas.cheer.bio/user/${this.ethAddress}`)).json();
+        this.score = res.user.score.toFixed(2);
+        this.rank = `${res.user.rank}`;
+        nft_counts = res.user.nft_counts;
+        this.nftCount = nft_counts;
+        const currentTime = new Date().getTime() / 1000;
+        const ogTime = Date.parse(res.user.first_tx_tsp) / 1000;
+        ogIndex = (currentTime - ogTime) / (currentTime - 1498160400);
+        this.scoreMsg = '';
+        this.ogMsg = `Calculating your Web3 OG index: ${ogIndex.toFixed(3)} `;
+        await new Promise((r) => setTimeout(r, 2000));
+        this.ogMsg = '';
+        this.nftCountMsg = `Scanning through ${nft_counts} NFTs`;
+        await new Promise((r) => setTimeout(r, 2000));
+        this.nftCountMsg = '';
     }
 
     async toggleFollow() {
@@ -847,6 +873,7 @@ export default class Home extends mixins(NFTMixin, DonationMixin, FootprintMixin
                 el.scrollTop = this.scrollTop;
             }
             this.clearContentDetails();
+            this.scoreMsg = 'Starting calculation...';
             await this.updateUserInfo();
         } else {
             this.isFollowing = false;
@@ -858,6 +885,7 @@ export default class Home extends mixins(NFTMixin, DonationMixin, FootprintMixin
                 bio: '...',
                 displayAddress: '',
             };
+            this.scoreMsg = 'Starting calculation...';
             this.clearNFTDetails();
             this.clearDonationDetails();
             this.clearFootprintDetails();
@@ -889,7 +917,29 @@ export default class Home extends mixins(NFTMixin, DonationMixin, FootprintMixin
     openShareCard() {
         this.isSharing = true;
     }
+
+    async checkActivate() {
+        const activateUrl = `https://raas.cheer.bio/activate/${this.ethAddress}`;
+        const res = await (await fetch(activateUrl)).json();
+        if (res.ok && res.data === false) {
+            // Not activated
+            this.isNewlyActivate = true;
+            await fetch(activateUrl, {
+                method: 'POST',
+            });
+        }
+    }
 }
 </script>
 
-<style></style>
+<style scoped>
+.fade-enter-active,
+.fade-leave-active {
+    transition: opacity 0.5s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+    opacity: 0;
+}
+</style>
