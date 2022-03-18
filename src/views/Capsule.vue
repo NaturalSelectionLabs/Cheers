@@ -59,6 +59,7 @@
                 <Button
                     size="lg"
                     class="h-14 w-90 rounded-xs bg-black font-cormorant text-2xl font-medium text-white"
+                    :class="{ disabled: isSubmitted }"
                     @click="createCapsule"
                 >
                     <span class="w-80 text-left">Create</span>
@@ -106,6 +107,7 @@ export default class Capsule extends Vue {
     minTsp: string = '';
     notice: string = '';
     txn: string = '';
+    isSubmitted: boolean = false;
 
     verifyWithCaptcha = setup(() => {
         const reCaptcha = useReCaptcha();
@@ -131,6 +133,7 @@ export default class Capsule extends Vue {
     }
 
     async createCapsule() {
+        this.isSubmitted = true;
         const captchaToken = await this.verifyWithCaptcha.exec();
         // console.log(captchaToken);
 
@@ -171,8 +174,8 @@ export default class Capsule extends Vue {
                 // console.log('tx', txData);
                 const tx = await this.wallet.signTransaction({
                     ...txData,
-                    gasLimit: 200000,
-                    gasPrice: await provider.getGasPrice(),
+                    gasLimit: 180000,
+                    gasPrice: 5000000000,
                 });
                 const r = await provider.sendTransaction(tx);
 
@@ -194,5 +197,12 @@ export default class Capsule extends Vue {
 <style scoped lang="postcss">
 .input::placeholder {
     font-weight: 500;
+}
+
+.disabled {
+    cursor: not-allowed;
+    pointer-events: none;
+
+    opacity: 0.5;
 }
 </style>
