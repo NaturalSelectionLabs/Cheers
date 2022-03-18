@@ -7163,6 +7163,11 @@ readdirp@~3.6.0:
   dependencies:
     picomatch "^2.2.1"
 
+recaptcha-v3@^1.8.0:
+  version "1.10.0"
+  resolved "https://registry.yarnpkg.com/recaptcha-v3/-/recaptcha-v3-1.10.0.tgz#f966b5a0d8021fd2ed85ac4be832f6acb6ec1ed1"
+  integrity sha512-aGTxYSk3FFNKnXeKDbLpgRDRyIHRZNBF5HyaXXAN1Aj4TSyyZvmoAn9CylvpqLV3pYpIQavwc+2rzhNFn5SsLQ==
+
 rechoir@^0.7.0:
   version "0.7.1"
   resolved "https://registry.yarnpkg.com/rechoir/-/rechoir-0.7.1.tgz#9478a96a1ca135b5e88fc027f03ee92d6c645686"
@@ -8341,6 +8346,13 @@ vue-moment@4.1.0:
   dependencies:
     moment "^2.19.2"
 
+vue-recaptcha-v3@2.0.1:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/vue-recaptcha-v3/-/vue-recaptcha-v3-2.0.1.tgz#10b07bbe07881734b9997111cfe3c9a9ca786bdb"
+  integrity sha512-isEDtOfHU4wWRrZZuxciAELtQmPOeEEdicPNa0f1AOyLPy3sCcBEcpFt+FOcO3RQv5unJ3Yn5NlsWtXv9rXqjg==
+  dependencies:
+    recaptcha-v3 "^1.8.0"
+
 vue-router@4.0.12:
   version "4.0.12"
   resolved "https://registry.yarnpkg.com/vue-router/-/vue-router-4.0.12.tgz#8dc792cddf5bb1abcc3908f9064136de7e13c460"
@@ -8368,6 +8380,11 @@ vue3-autocounter@1.0.6:
   version "1.0.6"
   resolved "https://registry.yarnpkg.com/vue3-autocounter/-/vue3-autocounter-1.0.6.tgz#655e275707aeb084628facd7b231be09d383521d"
   integrity sha512-jOgCD2WaOjt/tOAAGKDm2DTyQRdKyfqJv5ElUz/vR0ZJgUd4yDd6UX6+2YU3LQpY4qoFNZkzLloAfALAqK041g==
+
+vue3-recaptcha-v2@1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/vue3-recaptcha-v2/-/vue3-recaptcha-v2-1.0.1.tgz#999df9e1ef10e6e11882e44602ad3373e8116512"
+  integrity sha512-nn7kcVTze/gRdb2kMEf9CAVpStXID+cKlt1tIWNR+K5OYER8cSfcm5Mz+9/w9gDgLTIdRPsGTiqssAD+L/4c/g==
 
 vue@3.2.31:
   version "3.2.31"
