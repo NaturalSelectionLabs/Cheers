@@ -1,5 +1,5 @@
 <template>
-    <div class="fixed h-full w-full bg-paper px-36 py-36">
+    <div class="h-full w-full bg-paper px-36 py-36">
         <div class="flex flex-col items-start gap-20">
             <h1 class="font-cormorant text-6xl">Capsule</h1>
             <!-- On Entering -->
