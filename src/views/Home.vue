@@ -56,7 +56,7 @@
                         </template>
                     </Profile>
 
-                    <TransBarCard title="NFTScore" :haveDetails="true" :haveContent="false">
+                    <!-- <TransBarCard title="NFTScore" :haveDetails="true" :haveContent="false">
                         <template #details>
                             <div class="flex flex-row items-center justify-between">
                                 <Transition name="fade" mode="out-in">
@@ -87,7 +87,7 @@
                                 </div>
                             </div>
                         </template>
-                    </TransBarCard>
+                    </TransBarCard> -->
 
                     <template v-for="className in allClasses" :key="className">
                         <TransBarCard
@@ -361,7 +361,7 @@
                 @closeDialog="closeAccountDialog"
             />
         </div>
-        <ShareCard
+        <!-- <ShareCard
             v-show="isSharing"
             @close="isSharing = false"
             :address="ethAddress"
@@ -372,7 +372,7 @@
             :rank="rank"
             :count="nftCount"
         />
-        <Confetti v-if="isSharing" :isPCLayout="isPCLayout" />
+        <Confetti v-if="isSharing" :isPCLayout="isPCLayout" /> -->
     </div>
 </template>
 
