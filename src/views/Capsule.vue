@@ -1,5 +1,5 @@
 <template>
-    <div class="fixed h-full w-full overflow-hidden bg-paper px-36 py-36">
+    <div class="fixed h-full w-full overflow-x-hidden bg-paper px-36 py-36">
         <div class="flex flex-col items-start gap-20">
             <h1 class="font-cormorant text-6xl">Capsule</h1>
             <!-- On Entering -->
@@ -71,7 +71,7 @@
                 <Button
                     size="lg"
                     class="h-14 w-90 rounded-xs bg-black font-cormorant text-2xl font-medium text-white"
-                    @click="openUrl(`https://etherscan.io/tx/${txn}`)"
+                    @click="openUrl(`https://testnet.bscscan.com/tx/${txn}`)"
                 >
                     <span class="w-80 text-left">Check</span>
                 </Button>
@@ -134,30 +134,54 @@ export default class Capsule extends Vue {
         const captchaToken = await this.verifyWithCaptcha.exec();
         console.log(captchaToken);
 
+        const tsp = Math.ceil(new Date(this.openTsp).valueOf() / 1000);
         const res = await axios.post(`https://capsule.cheer.bio/mint/`, {
             minter: this.walletAddress,
             receiver: this.recipient,
             words: this.message,
-            tsp: new Date(this.openTsp).valueOf(),
+            tsp,
             reCaptcha: captchaToken,
         });
         console.log(res.data);
+        if (res.data.error) {
+            //TODO
+            console.log(res.data.error);
+            return;
+        }
 
-        let abi = [
-            'event ValueChanged(address indexed author, string oldValue, string newValue)',
-            'constructor(string value)',
-            'function getValue() view returns (string value)',
-            'function setValue(string value)',
-        ];
-        let contractAddress = '';
-        let url = '';
+        let abi = ['function mint(address receiver, bytes32 mHash, uint tsp, uint expiry, bytes memory sig)'];
+        let contractAddress = '0x423065D18e6014818C10B34675652a4F498D933a'; // bsc testnet
+        // let contractAddress = ''; // TODO: bsc mainnet
+        let url = 'https://data-seed-prebsc-1-s1.binance.org:8545'; // bsc testnet
+        // let url = 'bsc-dataseed.binance.org:8545'; // bsc mainnet
+
         let provider = new ethers.providers.JsonRpcProvider(url);
-        let contract = new ethers.Contract(contractAddress, abi, provider);
+        let contract = new ethers.Contract(contractAddress, abi, this.wallet);
+
         if (this.wallet) {
-            let contractSigned = contract.connect(this.wallet);
-            let tx = await contractSigned.setValue();
-            await tx.wait();
-            this.isCreated = true;
+            try {
+                const contractSigned = contract.connect(provider);
+                const txData = await contractSigned.populateTransaction.mint(
+                    this.recipient,
+                    res.data.msgHash,
+                    tsp,
+                    res.data.expiry,
+                    res.data.sig,
+                );
+                console.log('tx', txData);
+                const tx = await this.wallet.signTransaction({
+                    ...txData,
+                    gasLimit: 200000,
+                    gasPrice: await provider.getGasPrice(),
+                });
+                const r = await provider.sendTransaction(tx);
+
+                console.log(r.hash);
+                this.isCreated = true;
+                this.txn = r.hash;
+            } catch (e) {
+                console.log(e);
+            }
         }
     }
 
