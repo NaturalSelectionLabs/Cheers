@@ -15,7 +15,7 @@
                 class="my-auto inline-flex h-10 w-10 cursor-pointer"
                 :is-rounded="true"
                 :is-border="false"
-                :src="avatar || defaultAvatar"
+                :src="avatar"
             />
             <div class="truncate text-base font-semibold md:text-xl">{{ name }}</div>
         </div>
@@ -28,7 +28,6 @@
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
 import ImgHolder from '@/components/Common/ImgHolder.vue';
-import config from '@/config';
 
 @Options({
     name: 'Leaderboard',
@@ -37,13 +36,12 @@ import config from '@/config';
         avatar: String,
         name: String,
         ranking: String,
-        score: String,
+        score: Number,
         isTop: Boolean,
         isOwner: Boolean,
     },
 })
 export default class RankingCard extends Vue {
-    defaultAvatar: string = config.defaultAvatar;
     avatar!: string;
     name!: string;
     ranking!: string;

@@ -129,6 +129,7 @@ module.exports = {
                 vibur: 'Vibur',
                 cormorant: 'Cormorant',
                 notoSerif: 'Noto Serif',
+                'alfa-slab-one': 'Alfa Slab One',
             },
             width: {
                 19: '4.875rem', //78px, footprint item in footprint card

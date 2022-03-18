@@ -9,15 +9,18 @@
             <div class="flex flex-row gap-4">
                 <ImgHolder class="flex h-8 w-8" :is-rounded="true" :is-border="false" :src="avatar" />
                 <div class="flex items-center text-lg font-normal md:text-xl">
-                    {{ name || rns || formattedAddress }}'s NFT Score
+                    {{ name || rns || formattedAddress }}'s NFTScore
                 </div>
             </div>
-            <div class="self-center font-vibur text-6xl md:text-7xl">
-                {{ score }}
+            <div class="self-center text-center">
+                <div class="font-alfa-slab-one text-6xl md:text-7xl">
+                    {{ score }}
+                </div>
+                <div class="md:text-xl">of {{ count }} NFTs</div>
             </div>
             <div class="flex flex-row justify-between">
-                <div class="flex flex-row items-end gap-2 font-vibur text-xl md:text-2xl">
-                    <div>#</div>
+                <div class="flex flex-row items-end font-alfa-slab-one text-xl md:text-2xl">
+                    <div>Rank #</div>
                     <div>
                         {{ rank }}
                     </div>
@@ -28,6 +31,9 @@
             </div>
         </div>
         <div class="fixed bottom-10 flex w-full flex-row justify-center gap-4">
+            <Button size="sm" class="h-8 w-8 bg-secondary-btn-card text-btn-icon md:h-12 md:w-12" @click="tweet">
+                <i class="bx bx-share bx-flip-horizontal" />
+            </Button>
             <Button size="sm" class="h-8 w-8 bg-secondary-btn-card text-btn-icon md:h-12 md:w-12" @click="setRandColor">
                 <i class="bx bx-refresh bx-flip-horizontal" />
             </Button>
@@ -83,6 +89,7 @@ const colors = [
         name: String, // Username setting in profile
         score: String,
         rank: String,
+        count: Number,
     },
 })
 export default class ShareCard extends Vue {
@@ -144,6 +151,11 @@ export default class ShareCard extends Vue {
             }
             this.isDownloading = false;
         }
+    }
+
+    async tweet() {
+        const URL = window.location;
+        window.open(`https://twitter.com/intent/tweet?text=Check out my NFTScore at ${URL}.`);
     }
 }
 </script>
