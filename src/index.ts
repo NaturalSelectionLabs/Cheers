@@ -5,6 +5,7 @@ import App from './App.vue';
 import router from './router';
 import VueGtag from 'vue-gtag';
 import Hotjar from 'vue-hotjar';
+import { VueReCaptcha } from 'vue-recaptcha-v3';
 // import * as Sentry from '@sentry/vue';
 // import { Integrations } from '@sentry/tracing';
 
@@ -23,6 +24,13 @@ app.use(
 
 app.use(Hotjar, {
     id: '2541834', // Hotjar Site ID
+});
+
+app.use(VueReCaptcha, {
+    siteKey: '6LeidOkeAAAAAE96G7CtUDBXI8bGeScJRPchWGvq',
+    loaderOptions: {
+        useRecaptchaNet: true,
+    },
 });
 
 /* IFTRUE_isNDevelop */

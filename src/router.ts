@@ -20,6 +20,7 @@ const RNSPending = () => import('@/views/Setup/RNSPending.vue');
 const Setup = () => import('@/views/Setup/Setup.vue');
 const Invalid = () => import('@/views/Invalid.vue');
 const Leaderboard = () => import('@/views/Leaderboard/Leaderboard.vue');
+const Capsule = () => import('@/views/Capsule.vue');
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
 const basePath = config.subDomain.isSubDomainMode ? '/' : '/:address/';
 
@@ -124,6 +125,11 @@ export const routes: RouteRecordRaw[] = [
         path: '/invalid',
         name: 'Invalid',
         component: Invalid,
+    },
+    {
+        path: '/capsule',
+        name: 'Capsule',
+        component: Capsule,
     },
 ];
 

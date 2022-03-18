@@ -22,6 +22,4 @@
     src: url('./fonts/SF-Compact-Rounded-Semibold.otf') format('opentype');
 }
 
-@import url('https://fonts.googleapis.com/css2?family=Vibur&display=swap');
-
-@import url('https://fonts.googleapis.com/css2?family=Alfa+Slab+One&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cormorant:wght@400;500&family=Noto+Serif&family=Vibur&display=swap&family=Alfa+Slab+One&display=swap');
