@@ -115,7 +115,7 @@ export default class Capsule extends Vue {
         const reCaptcha = useReCaptcha();
         const exec = async () => {
             await reCaptcha?.recaptchaLoaded();
-            return await reCaptcha?.executeRecaptcha('createWallet');
+            return await reCaptcha?.executeRecaptcha(this.walletAddress);
         };
         return {
             exec,
@@ -135,10 +135,9 @@ export default class Capsule extends Vue {
     }
 
     async createCapsule() {
-
         this.notice = '';
-        if (this.recipient === '') {
-            this.notice = "Please enter the recipient's address.";
+        if (!ethers.utils.isAddress(this.recipient)) {
+            this.notice = "Please enter a valid recipient's address.";
             return;
         } else if (this.openTsp < this.minTsp) {
             this.notice = 'Please re-enter a time at least one year from now.';
@@ -165,13 +164,12 @@ export default class Capsule extends Vue {
                 this.isSubmitted = false;
 
                 if (res.data.error === 'Invalid token.') {
-                    this.notice = 'Something went wrong. Please try again.';
+                    this.notice = 'Too many requests. Please try again later.';
                 } else {
-                    this.notice = res.data.error;
+                    this.notice = 'Something went wrong. Please try again.';
                 }
                 return;
             }
-
 
             let abi = ['function mint(address receiver, bytes32 mHash, uint tsp, uint expiry, bytes memory sig)'];
             // let contractAddress = ''; // bsc testnet
@@ -207,11 +205,9 @@ export default class Capsule extends Vue {
                     this.isCreated = true;
                     this.txn = r.hash;
                 } catch (e) {
-
                     this.notice = 'Something went wrong. Please try again.';
                     console.log(e);
                     this.isSubmitted = false;
-
                 }
             }
         }
