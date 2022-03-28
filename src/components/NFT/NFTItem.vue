@@ -87,7 +87,12 @@ export default class NFTItem extends Vue {
     }
 
     get viewType(): 'video' | 'website' | 'model' | 'image' {
-        if (this.mainUrl.endsWith('.mp4') || this.mainUrl.endsWith('.mov') || this.mainUrl.endsWith('.webm')) {
+        if (
+            this.mainUrl.endsWith('.mp4') ||
+            this.mainUrl.endsWith('.mov') ||
+            this.mainUrl.endsWith('.webm') ||
+            this.mainUrl.endsWith('.mp3')
+        ) {
             if (
                 !(
                     this.posterUrl?.endsWith('.mp4') ||
