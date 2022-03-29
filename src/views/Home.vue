@@ -10,7 +10,7 @@
                         :address="ethAddress"
                         :rns="rns"
                         :followers="rss3Relations.followers.length"
-                        :followings="rss3Relations.followings.length"
+                        :following="rss3Relations.following.length"
                         :bio="rss3Profile.bio"
                         :website="rss3Profile.displayAddress"
                         :is-loading-persona="isLoadingPersona"
@@ -289,10 +289,29 @@
                                     Web3 Only
                                 </h2>
                                 <div
-                                    class="flex h-6 w-11 items-center rounded-full bg-gray-500 bg-opacity-10 p-1 duration-200 ease-in-out"
+                                    class="
+                                        flex
+                                        h-6
+                                        w-11
+                                        items-center
+                                        rounded-full
+                                        bg-gray-500 bg-opacity-10
+                                        p-1
+                                        duration-200
+                                        ease-in-out
+                                    "
                                 >
                                     <div
-                                        class="h-4 w-4 transform rounded-full bg-black bg-opacity-50 shadow-md duration-200 ease-in-out"
+                                        class="
+                                            h-4
+                                            w-4
+                                            transform
+                                            rounded-full
+                                            bg-black bg-opacity-50
+                                            shadow-md
+                                            duration-200
+                                            ease-in-out
+                                        "
                                         :class="{ 'translate-x-5 bg-opacity-80': !isWeb3Only }"
                                     ></div>
                                 </div>
@@ -471,10 +490,10 @@ export default class Home extends mixins(NFTMixin, DonationMixin, FootprintMixin
     };
     rss3Relations: {
         followers: string[];
-        followings: string[];
+        following: string[];
     } = {
         followers: [],
-        followings: [],
+        following: [],
     };
     accounts: AnyObject[] = [];
     $gtag: any;
@@ -559,7 +578,7 @@ export default class Home extends mixins(NFTMixin, DonationMixin, FootprintMixin
         }
 
         this.rss3Relations.followers = pageOwner.followers;
-        this.rss3Relations.followings = pageOwner.followings;
+        this.rss3Relations.following = pageOwner.following;
 
         setTimeout(this.checkUserState, 0);
 
@@ -667,7 +686,7 @@ export default class Home extends mixins(NFTMixin, DonationMixin, FootprintMixin
     checkIsFollowing() {
         const loginUser = RSS3.getLoginUser();
         const pageOwner = RSS3.getPageOwner();
-        const followList = loginUser.followings;
+        const followList = loginUser.following;
         if (followList?.includes(pageOwner.address)) {
             this.isFollowing = true;
             return true;
@@ -683,7 +702,7 @@ export default class Home extends mixins(NFTMixin, DonationMixin, FootprintMixin
 
         if (!this.checkIsFollowing()) {
             pageOwner.followers.push(loginUser.address);
-            loginUser.followings.push(pageOwner.address);
+            loginUser.following.push(pageOwner.address);
             await loginUser.persona?.links.post('following', pageOwner.address);
         }
         this.isFollowing = true;
@@ -695,7 +714,7 @@ export default class Home extends mixins(NFTMixin, DonationMixin, FootprintMixin
 
         if (this.checkIsFollowing()) {
             pageOwner.followers.splice(pageOwner.followers.indexOf(loginUser.address), 1);
-            loginUser.followings.splice(loginUser.followings.indexOf(pageOwner.address), 1);
+            loginUser.following.splice(loginUser.following.indexOf(pageOwner.address), 1);
             await loginUser.persona?.links.delete('following', pageOwner.address);
         }
         this.isFollowing = false;

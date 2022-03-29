@@ -1,7 +1,7 @@
 <template>
     <div class="m-auto pb-20 pt-8 px-4 max-w-screen-lg text-body-text">
         <Header />
-        <TransBarCard :title="(rss3Profile.name ? rss3Profile.name + `'s ` : '') + 'Followings'" :have-details="true">
+        <TransBarCard :title="(rss3Profile.name ? rss3Profile.name + `'s ` : '') + 'Following'" :have-details="true">
             <template #details>
                 <div class="flex flex-col gap-y-4 m-auto mt-2 w-full md:mt-4">
                     <FollowCard
@@ -60,7 +60,7 @@ import Smile from '@/components/Icons/Smile.vue';
 import LoadingSmile from '@/components/Loading/LoadingSmile.vue';
 
 @Options({
-    name: 'Followings',
+    name: 'Following',
     components: {
         TransBarCard,
         IntersectionObserverContainer,
@@ -72,7 +72,7 @@ import LoadingSmile from '@/components/Loading/LoadingSmile.vue';
         LoadingSmile,
     },
 })
-export default class Followings extends Vue {
+export default class Following extends Vue {
     followRenderList: Profile[] = [];
     rss3Profile: RSS3Profile = {};
     lastRoute: string = '';
@@ -97,7 +97,7 @@ export default class Followings extends Vue {
             this.rss3Profile = pageOwner.profile;
         }
 
-        this.followList = Array.from(new Set(pageOwner.followings)).reverse();
+        this.followList = Array.from(new Set(pageOwner.following)).reverse();
 
         this.isLoadingFollows = false;
         await this.loadMoreFollows();

@@ -13,12 +13,12 @@
             </div>
             <div
                 class="row-span-1 mb-2 w-14 cursor-pointer self-end leading-5 md:col-span-1 md:col-start-3"
-                @click="toFollowingsPage"
+                @click="toFollowingPage"
             >
                 <div class="text-base font-normal">
-                    {{ followings }}
+                    {{ following }}
                 </div>
-                <div class="text-base font-normal leading-none">Followings</div>
+                <div class="text-base font-normal leading-none">Following</div>
             </div>
             <span class="col-span-full row-start-2 text-2xl font-semibold">{{ username }}</span>
             <section class="col-span-full row-start-3 flex flex-col items-start justify-start gap-x-10 gap-y-2">
@@ -60,7 +60,7 @@ import config from '@/config';
         username: String,
         address: String,
         followers: Number,
-        followings: Number,
+        following: Number,
         website: String,
         bio: String,
         rns: String,
@@ -80,8 +80,8 @@ export default class Profile extends Vue {
     toFollowersPage() {
         this.$router.push((config.subDomain.isSubDomainMode ? '' : `/${this.rns || this.address}`) + `/followers`);
     }
-    toFollowingsPage() {
-        this.$router.push((config.subDomain.isSubDomainMode ? '' : `/${this.rns || this.address}`) + `/followings`);
+    toFollowingPage() {
+        this.$router.push((config.subDomain.isSubDomainMode ? '' : `/${this.rns || this.address}`) + `/following`);
     }
 
     filter(address: string) {

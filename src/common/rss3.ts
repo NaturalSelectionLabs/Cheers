@@ -18,7 +18,7 @@ export interface RSS3DetailPersona {
     name: string;
     profile: RSS3Profile | null;
     followers: string[];
-    followings: string[];
+    following: string[];
     isReady: boolean;
 }
 
@@ -34,7 +34,7 @@ export const EMPTY_RSS3_DP: RSS3DetailPersona = {
     name: '',
     profile: null,
     followers: [],
-    followings: [],
+    following: [],
     isReady: false,
 };
 export type IRSS3 = RSS3;
@@ -242,7 +242,7 @@ async function initUser(user: RSS3DetailPersona | RSS3FullPersona, skipSignSync:
         // todo: save page owner into state management system
         //  (SDK getList will trigger get file, which produces one more request
         //  and make pre-inject meta useless, or just delay the follow list loading ?)
-        const [followers, followings, file, name] = await Promise.all([
+        const [followers, following, file, name] = await Promise.all([
             RSS3APIPersona.backlinks.getList(user.address, 'following'),
             RSS3APIPersona.links.getList(user.address, 'following'),
             user.file ?? RSS3APIPersona.files.get(user.address),
@@ -250,7 +250,7 @@ async function initUser(user: RSS3DetailPersona | RSS3FullPersona, skipSignSync:
         ]);
         // await new Promise((r) => {}); // lock process for debug
         user.followers = followers;
-        user.followings = followings;
+        user.following = following;
         user.file = file as RSS3Index;
         user.name = name;
         if ('persona' in user && user.file) {
