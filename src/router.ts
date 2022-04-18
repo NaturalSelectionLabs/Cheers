@@ -5,7 +5,7 @@ const Gitcoins = () => import('@/views/Donation/Gitcoins.vue');
 const SetupGitcoins = () => import('@/views/Donation/SetupGitcoins.vue');
 const SingleGitcoin = () => import('@/views/Donation/SingleGitcoin.vue');
 const Followers = () => import('@/views/Follow/Followers.vue');
-const Followings = () => import('@/views/Follow/Followings.vue');
+const Following = () => import('@/views/Follow/Following.vue');
 const Footprints = () => import('@/views/Footprint/Footprints.vue');
 const SetupFootprints = () => import('@/views/Footprint/SetupFootprints.vue');
 const SingleFootprint = () => import('@/views/Footprint/SingleFootprint.vue');
@@ -36,9 +36,9 @@ export const routes: RouteRecordRaw[] = [
         component: Followers,
     },
     {
-        path: basePath + 'followings',
-        name: 'Followings',
-        component: Followings,
+        path: basePath + 'following',
+        name: 'Following',
+        component: Following,
     },
     {
         path: basePath + 'leaderboard',
