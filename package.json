@@ -90,7 +90,7 @@
         "@types/canvas-confetti": "1.4.2",
         "@types/chrome": "0.0.180",
         "@types/js-cookie": "3.0.1",
-        "@types/lodash": "4.14.179",
+        "@types/lodash": "4.14.181",
         "@types/marked": "4.0.2",
         "@types/qrcode": "1.4.2",
         "@vue/compiler-sfc": "3.2.31",
