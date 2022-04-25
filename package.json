@@ -95,7 +95,7 @@
         "@types/qrcode": "1.4.2",
         "@vue/compiler-sfc": "3.2.31",
         "autoprefixer": "10.4.2",
-        "babel-loader": "8.2.4",
+        "babel-loader": "8.2.5",
         "boxicons": "2.1.1",
         "compression-webpack-plugin": "9.2.0",
         "copy-webpack-plugin": "10.2.4",
