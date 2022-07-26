@@ -624,10 +624,6 @@ export default class Home extends mixins(NFTMixin, DonationMixin, FootprintMixin
         this.isFollowing = false;
     }
 
-    toLeaderboard() {
-        this.$router.push('/leaderboard');
-    }
-
     toManageAccounts() {
         this.$router.push('/setup/accounts');
     }
