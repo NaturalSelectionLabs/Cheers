@@ -1,9 +1,9 @@
 <template>
-    <div id="main" class="max-w-screen-lg px-4 pt-8 pb-12 m-auto text-body-text">
+    <div id="main" class="m-auto max-w-screen-lg px-4 pt-8 pb-12 text-body-text">
         <Header :displayLogo="true" />
         <div class="flex flex-col gap-4 md:flex-row">
             <section class="md:w-3/5">
-                <div class="sticky flex flex-col gap-4 affix-container">
+                <div class="affix-container sticky flex flex-col gap-4">
                     <Profile
                         :avatar="rss3Profile.avatar"
                         :username="rss3Profile.username"
@@ -18,7 +18,7 @@
                     >
                         <template #Accounts>
                             <div
-                                class="inline-block mr-1 cursor-pointer"
+                                class="mr-1 inline-block cursor-pointer"
                                 v-for="item in accounts"
                                 :key="item.identity"
                                 @click="displayDialog(item.identity, item.platform)"
@@ -30,7 +30,7 @@
                                 v-if="isOwner"
                                 size="sm"
                                 shape="circle"
-                                class="inline-block w-8 h-8 mr-1 bg-secondary-btn-card text-btn-icon"
+                                class="mr-1 inline-block h-8 w-8 bg-secondary-btn-card text-btn-icon"
                                 @click="toManageAccounts"
                             >
                                 <i class="bx bx-pencil bx-xs" />
@@ -38,7 +38,7 @@
                             <Button
                                 size="sm"
                                 shape="circle"
-                                class="inline-block w-8 h-8 mr-1 bg-secondary-btn-card text-btn-icon"
+                                class="mr-1 inline-block h-8 w-8 bg-secondary-btn-card text-btn-icon"
                                 @click="toAccountsPage"
                             >
                                 <i class="bx bx-expand-alt bx-xs" />
@@ -56,39 +56,6 @@
                         </template>
                     </Profile>
 
-                    <!-- <TransBarCard title="NFTScore" :haveDetails="true" :haveContent="false">
-                        <template #details>
-                            <div class="flex flex-row items-center justify-between">
-                                <Transition name="fade" mode="out-in">
-                                    <div v-if="scoreMsg">{{ scoreMsg }}</div>
-                                    <div v-else-if="ogMsg">{{ ogMsg }}</div>
-                                    <div v-else-if="nftCountMsg">{{ nftCountMsg }}</div>
-                                    <div class="flex flex-row gap-4" v-else>
-                                        <div class="text-xl font-bold">{{ score }}</div>
-                                        <div class="px-4 rounded-full bg-secondary-btn"># {{ rank }}</div>
-                                    </div>
-                                </Transition>
-
-                                <div class="flex flex-row gap-2">
-                                    <Button
-                                        size="sm"
-                                        class="w-8 h-8 bg-secondary-btn-card text-btn-icon"
-                                        @click="openShareCard"
-                                    >
-                                        <i class="bx bx-share bx-flip-horizontal" />
-                                    </Button>
-                                    <Button
-                                        size="sm"
-                                        class="w-8 h-8 bg-secondary-btn-card text-btn-icon"
-                                        @click="toLeaderboard()"
-                                    >
-                                        <i class="bx bx-expand-alt bx-xs" />
-                                    </Button>
-                                </div>
-                            </div>
-                        </template>
-                    </TransBarCard> -->
-
                     <template v-for="className in allClasses" :key="className">
                         <TransBarCard
                             v-if="className === 'Collectibles'"
@@ -101,7 +68,7 @@
                             <template #header>
                                 <i
                                     v-if="isOwner"
-                                    class="relative cursor-pointer bx bx-pencil bx-xs"
+                                    class="bx bx-pencil bx-xs relative cursor-pointer"
                                     @click="toManageNFTs(className)"
                                 >
                                     <span
@@ -131,7 +98,7 @@
                             <template #button>
                                 <Button
                                     size="sm"
-                                    class="w-8 h-8 bg-secondary-btn-card text-btn-icon"
+                                    class="h-8 w-8 bg-secondary-btn-card text-btn-icon"
                                     @click="toListPage(`nfts/${className}`)"
                                 >
                                     <i class="bx bx-expand-alt bx-xs" />
@@ -150,7 +117,7 @@
                             <template #header>
                                 <i
                                     v-if="isOwner"
-                                    class="cursor-pointer bx bx-pencil bx-xs"
+                                    class="bx bx-pencil bx-xs cursor-pointer"
                                     @click="toManageNFTs(className)"
                                 />
                             </template>
@@ -190,7 +157,7 @@
                             <template #button>
                                 <Button
                                     size="sm"
-                                    class="w-8 h-8 bg-secondary-btn-card text-btn-icon"
+                                    class="h-8 w-8 bg-secondary-btn-card text-btn-icon"
                                     @click="toListPage(`nfts/${className}`)"
                                 >
                                     <i class="bx bx-expand-alt bx-xs" />
@@ -207,7 +174,7 @@
                         :haveContentInfo="footprints.length > 0"
                     >
                         <template #header>
-                            <i v-if="isOwner" class="cursor-pointer bx bx-pencil bx-xs" @click="toManageFootprints" />
+                            <i v-if="isOwner" class="bx bx-pencil bx-xs cursor-pointer" @click="toManageFootprints" />
                         </template>
                         <template #details>
                             <FootprintCard
@@ -228,14 +195,14 @@
                                 :key="item.id"
                                 :imageUrl="item.detail.image_url"
                                 size="sm"
-                                class="mr-2 cursor-pointer shrink-0"
+                                class="mr-2 shrink-0 cursor-pointer"
                                 @click="toSingleItemPage(item.id)"
                             />
                         </template>
                         <template #button>
                             <Button
                                 size="sm"
-                                class="w-8 h-8 bg-secondary-btn-card text-btn-icon"
+                                class="h-8 w-8 bg-secondary-btn-card text-btn-icon"
                                 @click="toListPage('Footprints')"
                             >
                                 <i class="bx bx-expand-alt bx-xs" />
@@ -251,7 +218,7 @@
                         :haveContentInfo="gitcoins.length > 0"
                     >
                         <template #header>
-                            <i v-if="isOwner" class="cursor-pointer bx bx-pencil bx-xs" @click="toManageGitcoins" />
+                            <i v-if="isOwner" class="bx bx-pencil bx-xs cursor-pointer" @click="toManageGitcoins" />
                         </template>
                         <template #content>
                             <GitcoinItem
@@ -266,7 +233,7 @@
                         <template #button>
                             <Button
                                 size="sm"
-                                class="w-8 h-8 bg-secondary-btn-card text-btn-icon"
+                                class="h-8 w-8 bg-secondary-btn-card text-btn-icon"
                                 @click="toListPage('Gitcoins')"
                             >
                                 <i class="bx bx-expand-alt bx-xs" />
@@ -277,7 +244,7 @@
             </section>
 
             <section class="md:w-2/5">
-                <div class="sticky affix-container">
+                <div class="affix-container sticky">
                     <TransBarCard title="Content" :haveDetails="true" :haveContent="false">
                         <template #header>
                             <div
@@ -289,10 +256,10 @@
                                     Web3 Only
                                 </h2>
                                 <div
-                                    class="flex items-center h-6 p-1 duration-200 ease-in-out bg-gray-500 rounded-full  w-11 bg-opacity-10"
+                                    class="flex h-6 w-11 items-center rounded-full bg-gray-500 bg-opacity-10 p-1 duration-200 ease-in-out"
                                 >
                                     <div
-                                        class="w-4 h-4 duration-200 ease-in-out transform bg-black bg-opacity-50 rounded-full shadow-md "
+                                        class="h-4 w-4 transform rounded-full bg-black bg-opacity-50 shadow-md duration-200 ease-in-out"
                                         :class="{ 'translate-x-5 bg-opacity-80': !isWeb3Only }"
                                     ></div>
                                 </div>
@@ -326,7 +293,7 @@
                                 >
                                     <Button
                                         size="sm"
-                                        class="w-full h-6"
+                                        class="h-6 w-full"
                                         v-show="isContentsHaveMore"
                                         @click="loadMoreContents"
                                         id="contents-load-more-button"
@@ -336,15 +303,15 @@
                                     </Button>
                                 </IntersectionObserverContainer>
                             </div>
-                            <div v-else class="flex flex-col items-center justify-center gap-1 p-5 h-96">
+                            <div v-else class="flex h-96 flex-col items-center justify-center gap-1 p-5">
                                 <template v-if="isLoadingContents">
-                                    <span class="w-1/2 text-center break-words text-light">
+                                    <span class="text-light w-1/2 break-words text-center">
                                         One moment! Details on the way
                                     </span>
                                     <LoadingSmile :size="18" :isLooping="true" />
                                 </template>
                                 <template v-else>
-                                    <span class="w-1/2 text-center break-words text-light">
+                                    <span class="text-light w-1/2 break-words text-center">
                                         Looks like this user hasn't got a shot. Come back and check it out later.
                                     </span>
                                     <Smile :size="18" />
@@ -361,18 +328,6 @@
                 @closeDialog="closeAccountDialog"
             />
         </div>
-        <!-- <ShareCard
-            v-show="isSharing"
-            @close="isSharing = false"
-            :address="ethAddress"
-            :rns="rns"
-            :avatar="rss3Profile.avatar"
-            :name="rss3Profile.username"
-            :score="score"
-            :rank="rank"
-            :count="nftCount"
-        />
-        <Confetti v-if="isSharing" :isPCLayout="isPCLayout" /> -->
     </div>
 </template>
 
@@ -491,15 +446,10 @@ export default class Home extends mixins(NFTMixin, DonationMixin, FootprintMixin
 
     // for leader board
     isRankLoading: boolean = true;
-    score: string = '0';
-    rank: string = '0';
     scoreMsg: string = 'Starting calculation...';
     ogMsg: string = '';
     nftCount: number = 0;
     nftCountMsg: string = '';
-
-    // for share
-    isSharing: boolean = false;
 
     // for confetti
     isNewlyActivate: boolean = false;
@@ -565,14 +515,7 @@ export default class Home extends mixins(NFTMixin, DonationMixin, FootprintMixin
 
         setTimeout(async () => {
             // load accounts, assets, contents and update user follow/unfollow/login state
-            await Promise.all([
-                this.startLoadingAccounts(),
-                this.startLoadingAssets(),
-                this.startLoadingContents(),
-                this.startLoadingRanking(),
-            ]);
-
-            this.checkActivate(); // only after Ranking (cause using same server, otherwise user will be undefined)
+            await Promise.all([this.startLoadingAccounts(), this.startLoadingAssets(), this.startLoadingContents()]);
 
             // setup affix event
             this.affixEvent(true);
@@ -613,26 +556,6 @@ export default class Home extends mixins(NFTMixin, DonationMixin, FootprintMixin
             this.ivLoadGitcoin(allAssets.donations.slice(0, config.assets.brief)),
             this.ivLoadFootprint(allAssets.footprints.slice(0, config.assets.brief)),
         ]);
-    }
-
-    async startLoadingRanking() {
-        let ogIndex = 0;
-        let nft_counts = 0;
-        const res = await (await fetch(`https://raas.cheer.bio/user/${this.ethAddress}`)).json();
-        this.score = res.user.score.toFixed(2);
-        this.rank = `${res.user.rank}`;
-        nft_counts = res.user.nft_counts;
-        this.nftCount = nft_counts;
-        const currentTime = new Date().getTime() / 1000;
-        const ogTime = Date.parse(res.user.first_tx_tsp) / 1000;
-        ogIndex = (currentTime - ogTime) / (currentTime - 1498160400);
-        this.scoreMsg = '';
-        this.ogMsg = `Calculating your Web3 OG index: ${ogIndex.toFixed(3)} `;
-        await new Promise((r) => setTimeout(r, 2000));
-        this.ogMsg = '';
-        this.nftCountMsg = `Scanning through ${nft_counts} NFTs`;
-        await new Promise((r) => setTimeout(r, 2000));
-        this.nftCountMsg = '';
     }
 
     async toggleFollow() {
@@ -911,22 +834,6 @@ export default class Home extends mixins(NFTMixin, DonationMixin, FootprintMixin
                 }
             } // else TODO
             this.isLastScrollingDown = isScrollDown;
-        }
-    }
-
-    openShareCard() {
-        this.isSharing = true;
-    }
-
-    async checkActivate() {
-        const activateUrl = `https://raas.cheer.bio/activate/${this.ethAddress}`;
-        const res = await (await fetch(activateUrl)).json();
-        if (res.ok && res.data === false) {
-            // Not activated
-            this.isNewlyActivate = true;
-            await fetch(activateUrl, {
-                method: 'POST',
-            });
         }
     }
 }
