@@ -54,15 +54,6 @@ const getAddress = async (name) => {
     }
 };
 
-const getPersona = async (address) => {
-    try {
-        return (await axios.get(`https://prenode.rss3.dev/${address}`)).data;
-    } catch (e) {
-        console.log(e);
-        return null;
-    }
-};
-
 const router = new Router();
 
 const injectMetadata = async (ctx) => {
@@ -71,43 +62,22 @@ const injectMetadata = async (ctx) => {
     const aon = await getName(host, ctx.url);
 
     let address = '';
-    // get address
-    if (/^0x[a-fA-F0-9]{40}$/.test(aon)) {
-        // try whether can use name
-        const name = await getNameByAddress(aon);
-        if (name) {
-            // redirect to name
-            const fullUrl = ctx.request.href;
-            const rootDomain = host.split('.').slice(-2).join('.');
-            const newURL = fullUrl
-                .replace(`${rootDomain}/${aon}`, `${name}.${rootDomain}`)
-                .replace('http://', 'https://');
-
-            console.log(newURL);
-            ctx.redirect(newURL);
-            return;
-        } else {
-            // no name found, use address
+    if (aon) {
+        // get address
+        if (/^0x[a-fA-F0-9]{40}$/.test(aon)) {
+            // Is address
             address = aon;
+        } else {
+            address = await getAddress(aon);
         }
-    } else {
-        address = await getAddress(aon);
     }
 
-    // request for persona
-    let persona = {};
+    // Redirect to RSS3.io
     if (address) {
-        persona = await getPersona(address);
+        await ctx.redirect(`https://rss3.io/result?search=${address}`);
+    } else {
+        await ctx.redirect('https://rss3.io/');
     }
-
-    // embed default data (so page don't need to request again)
-    await ctx.render('index', {
-        user: JSON.stringify(persona).replace(/\\/g, '\\\\'),
-        title: (persona?.profile?.name ? persona?.profile?.name + "'s " : '') + 'Cheers.Bio',
-        avatar: persona?.profile?.avatar?.[0]?.replace('ipfs://', 'https://ipfs.io/ipfs/') || defaultAvatar,
-        bio: persona?.profile?.bio?.replace(/\n/g, ' ') || 'Cheers.Bio',
-        url: ctx.request.href.replace('http://', 'https://'),
-    });
 };
 
 router.get('/(.*)', injectMetadata);
