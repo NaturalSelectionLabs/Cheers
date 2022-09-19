@@ -27,16 +27,6 @@ app.use(
     }),
 );
 
-const getNameByAddress = async (address) => {
-    try {
-        const name = (await axios.get(`https://rss3.domains/address/${address}`)).data;
-        return name?.rnsName.replace('.rss3', '') || name?.dasName || name?.ensName || '';
-    } catch (e) {
-        console.log(e);
-        return '';
-    }
-};
-
 const getName = async (host, url) => {
     if (host.split('.').length > 2) {
         return host.split('.').slice(0, -2).join('.');
@@ -76,7 +66,7 @@ const injectMetadata = async (ctx) => {
     if (address && parseInt(address, 16) !== 0) {
         await ctx.redirect(`https://rss3.io/result?search=${address}`);
     } else {
-        await ctx.redirect('https://rss3.io/');
+        await ctx.redirect(`https://rss3.io/result?search=${aon}`);
     }
 };
 
