@@ -65,7 +65,7 @@ const injectMetadata = async (ctx) => {
     // Redirect to RSS3.io
     if (address && parseInt(address, 16) !== 0) {
         await ctx.redirect(`https://rss3.io/result?search=${address}`);
-    } else {
+    } else if (typeof aon !== 'undefined') {
         await ctx.redirect(`https://rss3.io/result?search=${aon}`);
     }
 };
